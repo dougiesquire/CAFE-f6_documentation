@@ -1,0 +1,13 @@
+
+======================================================================================
+                  Resource Usage on 2021-11-25 16:09:40:
+   Job Id:             31734469.gadi-pbs
+   Project:            xv83
+   Exit Status:        271 (Linux Signal 15 SIGTERM Termination)
+   Service Units:      26.00
+   NCPUs Requested:    48                     NCPUs Used: 48              
+                                           CPU Time Used: 00:00:58                                   
+   Memory Requested:   192.0GB               Memory Used: 3.45GB          
+   Walltime requested: 02:00:00            Walltime Used: 00:16:15        
+   JobFS requested:    100.0GB                JobFS used: 0B              
+======================================================================================
