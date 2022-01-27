@@ -92,3 +92,6 @@ target/
 *.pdf
 *.png
 *.mp4
+
+# MOM executable
+*.x
