@@ -1,4 +1,4 @@
-/g/data/xv83/users/ds0092/active_projects/Squire_2022_CAFE-f6/data/raw/c5-d60-pX-f6-20080501/c5-d60-pX-f6-20080501-mem001/scratch/ux06/ds0092/CAFE/forecasts/f6/WIP/c5-d60-pX-f6-20080501/mem001/mom-1800.out
+/g/data/xv83/users/ds0092/active_projects/Squire_2022_CAFE-f6/data/raw/c5-d60-pX-f6-20090501/c5-d60-pX-f6-20090501-mem001/scratch/ux06/ds0092/CAFE/forecasts/f6/WIP/c5-d60-pX-f6-20090501/mem001/mom-1200.out
  ==================Summary of completed MOM integration=======================
  
   Some of the basic physical parameters used in the simulation
@@ -12,7 +12,7 @@
  
   Finished MOM integration using ZSTAR as the vertical coordinate.
   B-grid was used for the horizontal layout of discrete variables.
-  number of time steps                             =        175296
+  number of time steps                             =        262944
   number of prog-tracers                           =            15
   number of diag-tracers                           =             3
   number of i-points(ni)                           =           360
@@ -23,9 +23,9 @@
   number of wet ocean velocity points              =       2524992
   slow motion time tendency computed using         =        twolevel                        
   barotropic motion computed using                 =  barotropic_pred_corr            
-  tracer time step dtts (secs)                     =       1800.000000
-  baroclinic velocity time step dtuv (secs)        =       1800.000000
-  barotropic time step dtbt (secs)                 =         18.000000
+  tracer time step dtts (secs)                     =       1200.000000
+  baroclinic velocity time step dtuv (secs)        =       1200.000000
+  barotropic time step dtbt (secs)                 =         12.000000
   implicit Coriolis parameter acor                 =          0.500000
   implicit vertical mixing parameter aidif         =          1.000000
  
