@@ -1,9 +1,13 @@
 def round_to_start_of_month(ds, dim):
-    """ Return provided array with specified time dimension rounded to the start of 
-        the month 
+    """Return provided array with specified time dimension rounded to the start of
+    the month
     """
     from xarray.coding.cftime_offsets import MonthBegin
-    return ds.assign_coords({dim: ds[dim].dt.floor('D') - MonthBegin()})
+    if isinstance(dim, str):
+        dim = [dim]
+    for d in dim:
+        ds = ds.copy().assign_coords({d: ds[d].compute().dt.floor("D") - MonthBegin()})
+    return ds
 
 
 def coarsen_monthly_to_annual(ds, start_point=None, dim="time"):
