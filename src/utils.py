@@ -55,7 +55,7 @@ def estimate_cell_areas(ds, lon_dim="lon", lat_dim="lat"):
     dy = dlat * R
     dx = dlon * R * cos(deg2rad(ds[lat_dim]))
 
-    return dy * dx
+    return (dy * dx).broadcast_like(ds[[lon_dim, lat_dim]]).fillna(0)
 
 
 def convert_time_to_lead(ds, time_dim='time', init_dim='init', lead_dim='lead'):
