@@ -1,4 +1,10 @@
 # Helper functions for loading CAFE data
+__all__ = [
+    "open_f6",
+    "open_f5",
+    "open_d60",
+    "open_h0"
+]
 
 import glob
 
