@@ -1,11 +1,14 @@
 # Helper functions for opening data in a common format
 __all__ = [
-    "CAFEf6",
-    "CAFEf5",
+    "CAFEf6_hcst",
+    "CAFEf5_hcst",
     "CAFE60v1",
-    "CAFEh0",
+    "CAFE_hist",
     "JRA55",
     "HadISST",
+    "EN422",
+    "CanESM5_hcst",
+    "CanESM5_hist",
 ]
 
 import glob
@@ -23,14 +26,15 @@ from .utils import (
 
 
 PATHS = {
-    "CAFEf6": "/g/data/xv83/dcfp/CAFE-f6/",
-    "CAFEf5": "/g/data/xv83/dcfp/CAFE-f5/",
+    "CAFEf6_hcst": "/g/data/xv83/dcfp/CAFE-f6/",
+    "CAFEf5_hcst": "/g/data/xv83/dcfp/CAFE-f5/",
     "CAFE60v1": "/g/data/xv83/dcfp/CAFE60v1/",
-    "CAFEh0": "/g/data/xv83/users/ds0092/data/CAFE/historical/WIP/",
+    "CAFE_hist": "/g/data/xv83/users/ds0092/data/CAFE/historical/WIP/",
     "JRA55": "/g/data/xv83/reanalyses/JRA55/",
     "HadISST": "/g/data/xv83/reanalyses/HadISST/",
     "EN422": "/g/data/xv83/reanalyses/EN.4.2.2/",
-    "CanESM5": "/g/data/oi10/replicas/CMIP6/DCPP/CCCma/CanESM5/dcppA-hindcast/",
+    "CanESM5_hcst": "/g/data/oi10/replicas/CMIP6/DCPP/CCCma/CanESM5/dcppA-hindcast/",
+    "CanESM5_hist": "/g/data/oi10/replicas/CMIP6/CMIP/CCCma/CanESM5/historical/",
 }
 
 JRA55_VARIABLE_TRANSLATION = {
@@ -97,14 +101,14 @@ def _maybe_translate_variables(variables, translation_dict):
     return translated_variables, translation
 
 
-def CAFEf6(realm, variables, preprocess=None):
+def CAFEf6_hcst(realm, variables, preprocess=None):
     """Open CAFE-f6 forecast data"""
 
     if isinstance(variables, str):
         variables = [variables]
 
     files = sorted(
-        glob.glob(f"{PATHS['CAFEf6']}/c5-d60-pX-f6-????1101/{realm}.zarr.zip")
+        glob.glob(f"{PATHS['CAFEf6_hcst']}/c5-d60-pX-f6-????1101/{realm}.zarr.zip")
     )  # Skip May starts
     ds = xr.open_mfdataset(
         files,
@@ -120,14 +124,14 @@ def CAFEf6(realm, variables, preprocess=None):
     return ds
 
 
-def CAFEf5(realm, variables, preprocess=None):
+def CAFEf5_hcst(realm, variables, preprocess=None):
     """Open CAFE-f5 forecast data"""
 
     if isinstance(variables, str):
         variables = [variables]
 
     ds = xr.open_dataset(
-        f"{PATHS['CAFEf5']}/NOV/{realm}.zarr.zip", engine="zarr", chunks={}
+        f"{PATHS['CAFEf5_hcst']}/NOV/{realm}.zarr.zip", engine="zarr", chunks={}
     )[
         variables
     ]  # Skip May starts
@@ -135,7 +139,7 @@ def CAFEf5(realm, variables, preprocess=None):
 
     # Append 2020 forecast from CAFE-f6
     ds_2020 = xr.open_dataset(
-        f"{PATHS['CAFEf6']}/c5-d60-pX-f6-20201101/{realm}.zarr.zip",
+        f"{PATHS['CAFEf6_hcst']}/c5-d60-pX-f6-20201101/{realm}.zarr.zip",
         engine="zarr",
         chunks={},
     )[variables]
@@ -167,20 +171,20 @@ def CAFE60v1(realm, variables):
     return ds
 
 
-def CAFEh0(realm, variables):
+def CAFE_hist(realm, variables):
     """Open CAFE historical run data"""
 
     if isinstance(variables, str):
         variables = [variables]
 
     hist = xr.open_dataset(
-        f"{PATHS['CAFEh0']}/c5-d60-pX-hist-19601101/ZARR/{realm}.zarr.zip",
+        f"{PATHS['CAFE_hist']}/c5-d60-pX-hist-19601101/ZARR/{realm}.zarr.zip",
         engine="zarr",
         chunks={},
     )[variables]
 
     ctrl = xr.open_dataset(
-        f"{PATHS['CAFEh0']}/c5-d60-pX-ctrl-19601101/ZARR/{realm}.zarr.zip",
+        f"{PATHS['CAFE_hist']}/c5-d60-pX-ctrl-19601101/ZARR/{realm}.zarr.zip",
         engine="zarr",
         chunks={},
     )[variables]
@@ -260,17 +264,17 @@ def EN422(variables):
     return ds
 
 
-def CanESM5(realm, variables):
+def CanESM5_hcst(realm, variables):
     import dask
 
     @dask.delayed
-    def _open_CanESM5_delayed(y, e, v):
-        file = f"{PATHS['CanESM5']}/s{y-1}-r{e}i1p2f1/{realm}/{v}/gn/v20190429/{v}_{realm}_CanESM5_dcppA-hindcast_s{y-1}-r{e}i1p2f1_gn_{y}01-{y+9}12.nc"
+    def _open_CanESM5_hcst_delayed(y, e, v):
+        file = f"{PATHS['CanESM5_hcst']}/s{y-1}-r{e}i1p2f1/{realm}/{v}/gn/v20190429/{v}_{realm}_CanESM5_dcppA-hindcast_s{y-1}-r{e}i1p2f1_gn_{y}01-{y+9}12.nc"
         ds = xr.open_dataset(file, chunks={})[v]
         return ds
 
-    def _open_CanESM5(y, e, v):
-        var_data = _open_CanESM5_delayed(y, e, v).data
+    def _open_CanESM5_hcst(y, e, v):
+        var_data = _open_CanESM5_hcst_delayed(y, e, v).data
 
         # Tell Dask the delayed function returns an array, and the size and type of that array
         return dask.array.from_delayed(var_data, d0.shape, d0.dtype)
@@ -288,7 +292,7 @@ def CanESM5(realm, variables):
     ds = []
     for v in CMIP_variables:
         ds0 = xr.open_dataset(
-            f"{PATHS['CanESM5']}/s{years[0]-1}-r{ensembles[0]}i1p2f1/{realm}/{v}/gn/v20190429/{v}_{realm}_CanESM5_dcppA-hindcast_s{years[0]-1}-r{ensembles[0]}i1p2f1_gn_{years[0]}01-{years[0]+9}12.nc",
+            f"{PATHS['CanESM5_hcst']}/s{years[0]-1}-r{ensembles[0]}i1p2f1/{realm}/{v}/gn/v20190429/{v}_{realm}_CanESM5_dcppA-hindcast_s{years[0]-1}-r{ensembles[0]}i1p2f1_gn_{years[0]}01-{years[0]+9}12.nc",
             chunks={},
         )
         d0 = convert_time_to_lead(ds0)[v]
@@ -296,7 +300,7 @@ def CanESM5(realm, variables):
         delayed = []
         for y in years:
             delayed.append(
-                dask.array.stack([_open_CanESM5(y, e, v) for e in ensembles], axis=0)
+                dask.array.stack([_open_CanESM5_hcst(y, e, v) for e in ensembles], axis=0)
             )
         delayed = dask.array.stack(delayed, axis=0)
 
@@ -322,5 +326,57 @@ def CanESM5(realm, variables):
         )
     ds = xr.merge(ds).rename(rename)
     ds = _normalise_variables(ds)
+
+    return ds.compute()
+
+
+def CanESM5_hist(realm, variables):
+    import dask
+
+    @dask.delayed
+    def _open_CanESM5_hist_delayed(e, v):
+        file = f"{PATHS['CanESM5_hist']}/r{e}i1p2f1/{realm}/{v}/gn/v20190429/{v}_{realm}_CanESM5_historical_r{e}i1p2f1_gn_185001-201412.nc"
+        ds = xr.open_dataset(file, chunks={})[v]
+        return ds
+
+    def _open_CanESM5_hist(e, v):
+        var_data = _open_CanESM5_hist_delayed(e, v).data
+
+        # Tell Dask the delayed function returns an array, and the size and type of that array
+        return dask.array.from_delayed(var_data, d0.shape, d0.dtype)
+
+    if isinstance(variables, str):
+        variables = [variables]
+
+    CMIP_variables, rename = _maybe_translate_variables(
+        variables, CMIP_VARIABLE_TRANSLATION
+    )
+
+    ensembles = range(1, 40 + 1)
+
+    ds = []
+    for v in CMIP_variables:
+        d0 = xr.open_dataset(
+            f"{PATHS['CanESM5_hist']}/r{ensembles[0]}i1p2f1/{realm}/{v}/gn/v20190429/{v}_{realm}_CanESM5_historical_r{ensembles[0]}i1p2f1_gn_185001-201412.nc",
+            chunks={},
+        )[v]
+        # d0 = utils.force_to_Julian_calendar(d0)
+
+        delayed = dask.array.stack([_open_CanESM5_hist(e, v) for e in ensembles], axis=0)
+
+        member = ensembles
+        ds.append(
+            xr.DataArray(
+                delayed,
+                dims=["member", *d0.dims],
+                coords={
+                    "member": ensembles,
+                    **d0.coords,
+                },
+                attrs=d0.attrs,
+            ).to_dataset(name=v)
+        )
+        ds = xr.merge(ds).rename(rename)
+        ds = _normalise_variables(ds)
 
     return ds.compute()

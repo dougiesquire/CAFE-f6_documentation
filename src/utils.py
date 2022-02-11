@@ -48,6 +48,22 @@ def coarsen_monthly_to_annual(ds, start_point=None, dim="time"):
     )
 
 
+def get_cdo_area_weights(ds):
+    """
+    Returns the area weights computed using cdo's gridarea function
+    Note, this function writes ds to disk, so strip back ds to only what is needed
+    """
+    import os
+    from cdo import Cdo
+
+    ds.to_netcdf("in.nc")
+    Cdo().gridarea(input="in.nc", output="out.nc")
+    weights = xr.open_dataset("out.nc")
+    os.remove("in.nc")
+    os.remove("out.nc")
+    return weights["cell_area"]
+
+
 def estimate_cell_areas(ds, lon_dim="lon", lat_dim="lat"):
     """
     Calculate the area of each grid cell.
