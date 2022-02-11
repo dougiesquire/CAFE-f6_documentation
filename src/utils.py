@@ -1,17 +1,34 @@
+import xarray as xr
+
 __all__ = [
-    "round_to_start_of_month", 
+    "round_to_start_of_month",
     "coarsen_monthly_to_annual",
     "estimate_cell_areas",
     "convert_time_to_lead",
     "truncate_latitudes",
 ]
-    
-    
+
+
+def force_to_Julian_calendar(ds):
+    """Force calendar of time dimension to Julian"""
+    return ds.assign_coords(
+        {
+            "time": xr.cftime_range(
+                start=ds.time[0].item().strftime(),
+                end=ds.time[-1].item().strftime(),
+                freq=xr.infer_freq(ds.time),
+                calendar="julian",
+            )
+        }
+    )
+
+
 def round_to_start_of_month(ds, dim):
     """Return provided array with specified time dimension rounded to the start of
     the month
     """
     from xarray.coding.cftime_offsets import MonthBegin
+
     if isinstance(dim, str):
         dim = [dim]
     for d in dim:
@@ -20,8 +37,8 @@ def round_to_start_of_month(ds, dim):
 
 
 def coarsen_monthly_to_annual(ds, start_point=None, dim="time"):
-    """ Coarsen monthly data to annual, applying 'max' to all relevant coords and
-        optionally starting at a particular point in the array
+    """Coarsen monthly data to annual, applying 'max' to all relevant coords and
+    optionally starting at a particular point in the array
     """
     aux_coords = [c for c in ds.coords if dim in ds[c].dims]
     return (
@@ -67,32 +84,32 @@ def estimate_cell_areas(ds, lon_dim="lon", lat_dim="lat"):
     return (dy * dx).broadcast_like(ds[[lon_dim, lat_dim]]).fillna(0)
 
 
-def convert_time_to_lead(ds, time_dim='time', init_dim='init', lead_dim='lead'):
-    """ Return provided array with time dimension converted to lead time dimension 
-        and time added as additional coordinate
+def convert_time_to_lead(ds, time_dim="time", init_dim="init", lead_dim="lead"):
+    """Return provided array with time dimension converted to lead time dimension
+    and time added as additional coordinate
     """
     init_date = ds[time_dim].time[0].item()
     lead_time = range(len(ds[time_dim]))
-    time_coord = ds[time_dim].rename(
-        {time_dim: lead_dim}).assign_coords(
-        {lead_dim: lead_time}).expand_dims(
-        {init_dim: [init_date]})
-    dataset = ds.rename(
-        {time_dim: lead_dim}).assign_coords(
-        {lead_dim: lead_time,
-         init_dim: [init_date]})
-    dataset = dataset.assign_coords(
-        {time_dim: time_coord})
+    time_coord = (
+        ds[time_dim]
+        .rename({time_dim: lead_dim})
+        .assign_coords({lead_dim: lead_time})
+        .expand_dims({init_dim: [init_date]})
+    )
+    dataset = ds.rename({time_dim: lead_dim}).assign_coords(
+        {lead_dim: lead_time, init_dim: [init_date]}
+    )
+    dataset = dataset.assign_coords({time_dim: time_coord})
     return dataset
 
 
 def truncate_latitudes(ds, dp=10):
-    """ Return provided array with latitudes truncated to specified dp.
-    
-        This is necessary due to precision differences from running forecasts on 
-        different systems 
+    """Return provided array with latitudes truncated to specified dp.
+
+    This is necessary due to precision differences from running forecasts on
+    different systems
     """
     for dim in ds.dims:
-        if 'lat' in dim:
+        if "lat" in dim:
             ds = ds.assign_coords({dim: ds[dim].round(decimals=dp)})
     return ds
