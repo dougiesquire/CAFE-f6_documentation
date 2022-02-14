@@ -120,7 +120,7 @@ def convert_time_to_lead(ds, time_dim="time", init_dim="init", lead_dim="lead"):
         .rename({time_dim: lead_dim})
         .assign_coords({lead_dim: lead_time})
         .expand_dims({init_dim: [init_date]})
-    )
+    ).compute()
     dataset = ds.rename({time_dim: lead_dim}).assign_coords(
         {lead_dim: lead_time, init_dim: [init_date]}
     )

@@ -1,0 +1,14 @@
+path:
+  "/g/data/oi10/replicas/CMIP6/DCPP/CCCma/CanESM5/dcppA-hindcast/"
+    
+rename:
+  t_ref: "tas"
+  precip: "pr"
+  sst: "tos"
+  
+normalise:
+  precip: 86400.0
+  
+postprocess:
+  coarsen_monthly_to_annual:
+      dim: "lead"

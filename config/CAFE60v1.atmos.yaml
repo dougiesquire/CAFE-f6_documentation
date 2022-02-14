@@ -1,11 +1,19 @@
+name:
+  "CAFE60v1"
+  
 path:
   "/g/data/xv83/dcfp/CAFE60v1/"
-
-rename:
-  member: "ensemble"
+  
+variables:
+  atmos_isobaric_month:
+    - "t_ref"
+    - "precip"
   
 normalise:
   precip: 86400
+  
+rename:
+  member: "ensemble"
   
 # Functions from src.utils to be applied sequentially to opened dataset
 postprocess: 
