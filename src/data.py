@@ -73,51 +73,23 @@ def _composite_function(function_dict):
     return composite(*funcs)
 
 
-def open_dataset(dataset, config, variables=None, realm=None):
+def open_dataset(config):
     """
     Open a dataset according to specifications in a config file
-
-    Parameters
-    ----------
-    dataset : str
-        The name of the dataset to open. Current available datasets are:
-        - "JRA55": the Japanese 55-year reanalysis on CAFE grid
-        - "HadISST": Hadley Center SST reanalysis
-        - "EN422": Hadley Center temperature and salinity XBT analysis
-        - "CAFEf6": CSIRO 96-member forecasts
-        - "CAFEf5": CSIRO 10-member forecasts
-        - "CAFE60v1": CSIRO 60-year coupled reanalysis
-        - "CAFE_hist": CSIRO 96-member historical run
-        - "CanESM5": CCCma CanESM5 CMIP6 dcppA-hindcast submissions
-        - "CanESM5_hist": CCCma CanESM5 historical run
-    config : str
-        Path to the config file to use
-    variables : str or list of str, optional
-        Variables to open. If None (default), open the variables specified
-        in the provided config file
-    realm : str, optional
-        Realm of the variables to open. If None (default), use the realm
-        specified in the provided config file
     """
     cfg = _load_config(config)
 
-    if variables is not None:
-        variables = variables
-        realm = realm
-    else:
-        if "variables" in cfg:
-            variables = cfg["variables"]
-            if "realm" in cfg:
-                realm = cfg["realm"]
-            else:
-                realm = None
-        else:
-            raise ValueError(
-                "No variables are listed in the config or were provided to this function"
-            )
+    dataset = cfg["name"]
 
-    if isinstance(variables, str):
-        variables = [variables]
+    if "variables" in cfg:
+        if isinstance(cfg["variables"], list):
+            variables = {None: cfg["variables"]}
+        else:
+            variables = cfg["variables"]
+    else:
+        raise ValueError(
+            "No variables are listed in the config or were provided to this function"
+        )
 
     if "rename" in cfg:
         variables = _maybe_translate_variables(variables, cfg["rename"])
@@ -127,7 +99,10 @@ def open_dataset(dataset, config, variables=None, realm=None):
     else:
         preprocess = None
 
-    ds = getattr(_open, dataset)(cfg["path"], realm, variables, preprocess)
+    ds = []
+    for realm, var in variables.items():
+        ds.append(getattr(_open, dataset)(cfg["path"], realm, var, preprocess))
+    ds = xr.merge(ds)
 
     if "rename" in cfg:
         ds = _maybe_rename(ds, cfg["rename"])
