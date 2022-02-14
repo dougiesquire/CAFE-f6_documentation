@@ -36,19 +36,28 @@ def round_to_start_of_month(ds, dim):
     return ds
 
 
-def coarsen_monthly_to_annual(ds, start_point=None, dim="time"):
+def coarsen_monthly_to_annual(ds, start_points=None, dim="time"):
     """Coarsen monthly data to annual, applying 'max' to all relevant coords and
-    optionally starting at a particular point in the array
+    optionally starting at a particular time point in the array
     """
+    if start_points is None:
+        start_points = [None]
+        
+    if isinstance(start_points, str):
+        start_points = [start_points]
+        
     aux_coords = [c for c in ds.coords if dim in ds[c].dims]
-    return (
-        ds.sel({dim: slice(start_point, None)})
-        .coarsen({dim: 12}, boundary="trim", coord_func={d: "max" for d in aux_coords})
-        .mean()
-    )
+    dss = []
+    for start_point in start_points:
+        dss.append(
+            ds.sel({dim: slice(start_point, None)})
+            .coarsen({dim: 12}, boundary="trim", coord_func={d: "max" for d in aux_coords})
+            .mean()
+        )
+    return xr.concat(dss, dim=dim).sortby(dim)
 
 
-def get_cdo_area_weights(ds):
+def gridarea_cdo(ds):
     """
     Returns the area weights computed using cdo's gridarea function
     Note, this function writes ds to disk, so strip back ds to only what is needed

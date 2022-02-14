@@ -1,0 +1,16 @@
+path:
+  "/g/data/xv83/reanalyses/JRA55/"
+    
+rename:
+  t_ref: "TMP_GDS0_HTGL"
+  precip: "TPRAT_GDS0_SFC"
+  time: "initial_time0_hours"
+
+# Functions from src.utils to be applied sequentially to opened dataset
+postprocess: 
+  force_to_Julian_calendar:
+  truncate_latitudes:
+  coarsen_monthly_to_annual:
+      start_points: ["1960-11-01", "1960-01-01"]
+      dim: "time"
+  

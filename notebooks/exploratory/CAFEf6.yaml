@@ -1,0 +1,20 @@
+path:
+  "/g/data/xv83/dcfp/CAFE-f6/"
+  
+rename:
+  member: "ensemble"
+  
+normalise:
+  precip: 86400
+
+# Functions from src.utils to be applied sequentially prior to concatenation
+preprocess:
+  convert_time_to_lead:
+  truncate_latitudes:
+  coarsen_monthly_to_annual:
+    dim: "lead"
+  
+# Functions from src.utils to be applied sequentially to opened dataset
+postprocess: 
+  round_to_start_of_month:
+    dim: ["init", "time"]

@@ -1,0 +1,18 @@
+path:
+  "/g/data/xv83/dcfp/CAFE-f5/"
+  
+rename:
+  init: "init_date"
+  lead: "lead_time"
+  member: "ensemble"
+  
+normalise:
+  precip: 86400
+  
+# Functions from src.utils to be applied sequentially to opened dataset
+postprocess: 
+  truncate_latitudes:
+  coarsen_monthly_to_annual:
+    dim: "lead"
+  round_to_start_of_month:
+    dim: ["init", "time"]

@@ -1,0 +1,18 @@
+path:
+  "/g/data/xv83/users/ds0092/data/CAFE/historical/WIP/"
+
+rename:
+  member: "ensemble"
+  
+normalise:
+  precip: 86400
+  
+# Functions from src.utils to be applied sequentially to opened dataset
+postprocess: 
+  truncate_latitudes:
+  round_to_start_of_month:
+    dim: "time"
+  coarsen_monthly_to_annual:
+      start_points: ["1960-11-01", "1960-01-01"]
+      dim: "time"
+  

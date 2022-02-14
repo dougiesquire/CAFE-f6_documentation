@@ -217,6 +217,7 @@ def JRA55(realm, variables):
         chunks={},
         use_cftime=True,
     )[JRA55_variables]
+    
     ds = ds.rename({**rename, "initial_time0_hours": "time"})
     ds = force_to_Julian_calendar(ds)
     ds = truncate_latitudes(ds)
@@ -334,13 +335,12 @@ def CanESM5_hist(realm, variables):
     import dask
 
     @dask.delayed
-    def _open_CanESM5_hist_delayed(e, v):
-        file = f"{PATHS['CanESM5_hist']}/r{e}i1p2f1/{realm}/{v}/gn/v20190429/{v}_{realm}_CanESM5_historical_r{e}i1p2f1_gn_185001-201412.nc"
-        ds = xr.open_dataset(file, chunks={})[v]
+    def _open_CanESM5_hist_delayed(f):
+        ds = xr.open_dataset(f, chunks={})[v]
         return ds
 
-    def _open_CanESM5_hist(e, v):
-        var_data = _open_CanESM5_hist_delayed(e, v).data
+    def _open_CanESM5_hist(f):
+        var_data = _open_CanESM5_hist_delayed(f).data
 
         # Tell Dask the delayed function returns an array, and the size and type of that array
         return dask.array.from_delayed(var_data, d0.shape, d0.dtype)
@@ -352,31 +352,34 @@ def CanESM5_hist(realm, variables):
         variables, CMIP_VARIABLE_TRANSLATION
     )
 
-    ensembles = range(1, 40 + 1)
-
     ds = []
+    member = range(1, 40 + 1)
     for v in CMIP_variables:
+        files = sorted(
+            glob.glob(
+                f"{PATHS['CanESM5_hist']}/r*i1p2f1/{realm}/{v}/gn/v20190429/{v}_{realm}_CanESM5_historical_r*i1p2f1_gn_185001-201412.nc"
+            )
+        )
         d0 = xr.open_dataset(
-            f"{PATHS['CanESM5_hist']}/r{ensembles[0]}i1p2f1/{realm}/{v}/gn/v20190429/{v}_{realm}_CanESM5_historical_r{ensembles[0]}i1p2f1_gn_185001-201412.nc",
+            files[0],
             chunks={},
         )[v]
-        # d0 = utils.force_to_Julian_calendar(d0)
 
-        delayed = dask.array.stack([_open_CanESM5_hist(e, v) for e in ensembles], axis=0)
+        delayed = dask.array.stack([_open_CanESM5_hist(f) for f in files], axis=0)
 
-        member = ensembles
         ds.append(
             xr.DataArray(
                 delayed,
                 dims=["member", *d0.dims],
                 coords={
-                    "member": ensembles,
+                    "member": member,
                     **d0.coords,
                 },
                 attrs=d0.attrs,
             ).to_dataset(name=v)
         )
-        ds = xr.merge(ds).rename(rename)
-        ds = _normalise_variables(ds)
+    ds = xr.merge(ds).rename(rename)
+    ds = _normalise_variables(ds)
+    ds = round_to_start_of_month(ds, dim="time")
 
     return ds.compute()

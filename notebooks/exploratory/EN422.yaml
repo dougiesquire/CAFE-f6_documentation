@@ -1,0 +1,16 @@
+path:
+  "/g/data/xv83/reanalyses/EN.4.2.2/"
+    
+rename:
+  temp: "temperature"
+  salt: "salinity"
+
+# Functions from src.utils to be applied sequentially to opened dataset
+postprocess: 
+  round_to_start_of_month:
+    dim: "time"
+  force_to_Julian_calendar:
+  coarsen_monthly_to_annual:
+      start_points: ["1960-11-01", "1960-01-01"]
+      dim: "time"
+  
