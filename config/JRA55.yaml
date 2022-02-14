@@ -1,5 +1,34 @@
+# Config file for specifying processing using src.data.open_dataset()
+# ==================================================================================
+
+# name: required
+#    The name of the dataset. Must match a method in src.data._open
+# path: required
+#    The base path of the dataset
+# variables: required
+#    List of variables to include. For some datasets, the should be further broken
+#    into subkeys indicating the realm for each list of variables (e.g. ocean_month). 
+#    Non-native variable names can be provided when an appropriate `rename` key is 
+#    also provided
+# normalise: optional
+#    Variable scale factors
+# rename: optional
+#    Translation between desired variable names and native variable names
+# preprocess: optional
+#    Functions and kwargs from src.utils to be applied sequentially prior to 
+#    concatenation. Only used for datasets comprised of multiple concatenated files
+# postprocess: optional
+#    Functions and kwargs from src.utils to be applied sequentially to opened dataset
+
+name: "JRA55"
+
 path:
   "/g/data/xv83/reanalyses/JRA55/"
+    
+variables:
+  surface_month_cafe-grid:
+    - "t_ref"
+    - "precip"
     
 rename:
   t_ref: "TMP_GDS0_HTGL"

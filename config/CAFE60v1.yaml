@@ -20,10 +20,11 @@
 # postprocess: optional
 #    Functions and kwargs from src.utils to be applied sequentially to opened dataset
 
-name: "CAFEf5"
-
+name:
+  "CAFE60v1"
+  
 path:
-  "/g/data/xv83/dcfp/CAFE-f5/"
+  "/g/data/xv83/dcfp/CAFE60v1/"
   
 variables:
   atmos_isobaric_month:
@@ -36,14 +37,13 @@ normalise:
   precip: 86400
   
 rename:
-  init: "init_date"
-  lead: "lead_time"
   member: "ensemble"
-
-# Functions from src.utils to be applied sequentially to opened dataset
+  
 postprocess: 
   truncate_latitudes:
-  coarsen_monthly_to_annual:
-    dim: "lead"
   round_to_start_of_month:
-    dim: ["init", "time"]
+    dim: "time"
+  coarsen_monthly_to_annual:
+      start_points: ["1960-11-01", "1960-01-01"]
+      dim: "time"
+  

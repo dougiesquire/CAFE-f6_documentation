@@ -78,8 +78,19 @@ def open_dataset(config):
     Open a dataset according to specifications in a config file
     """
     cfg = _load_config(config)
+    
+    # List of datasets that have open methods impletemented
+    methods = [
+        method_name for method_name in dir(_open) if callable(getattr(_open, method_name))
+    ]
+    methods = [m for m in methods if "__" not in m]
 
-    dataset = cfg["name"]
+    if "name" in cfg:
+        dataset = cfg["name"]
+    else:
+        raise ValueError(
+            f"Please provide an entry for 'name' in the config file so that I know how to open the data. Available options are {methods}"
+        )
 
     if "variables" in cfg:
         if isinstance(cfg["variables"], list):
@@ -99,10 +110,15 @@ def open_dataset(config):
     else:
         preprocess = None
 
-    ds = []
-    for realm, var in variables.items():
-        ds.append(getattr(_open, dataset)(cfg["path"], realm, var, preprocess))
-    ds = xr.merge(ds)
+    if hasattr(_open, dataset):
+        ds = []
+        for realm, var in variables.items():
+            ds.append(getattr(_open, dataset)(cfg["path"], realm, var, preprocess))
+        ds = xr.merge(ds)
+    else:
+        raise ValueError(
+            f"There is no method available to open '{dataset}'. Please ensure that the 'name' entry in the config file matches an existing method in src.data._open, or add a new method for this data. Available methods are {methods}"
+        )
 
     if "rename" in cfg:
         ds = _maybe_rename(ds, cfg["rename"])
@@ -169,26 +185,9 @@ class _open:
         """Open CAFE-f5 variables from specified realm, including appending first
         10 members of CAFE-f6 for 2020 forecast
         """
-        ds = xr.open_dataset(f"{path}/NOV/{realm}.zarr.zip", engine="zarr", chunks={})[
+        return xr.open_dataset(f"{path}/NOV/{realm}.zarr.zip", engine="zarr", chunks={})[
             variables
         ]
-
-        # Append 2020 forecast from CAFE-f6
-        cfg_f6 = _load_config("CAFEf6")
-        ds_2020 = xr.open_dataset(
-            f"{cfg_f6['path']}/c5-d60-pX-f6-20201101/{realm}.zarr.zip",
-            engine="zarr",
-            chunks={},
-        )[variables].isel(ensemble=range(10))
-        ds_2020 = utils.convert_time_to_lead(
-            ds_2020, init_dim="init_date", lead_dim="lead_time"
-        )
-        ds_2020 = utils.truncate_latitudes(ds_2020)
-
-        ds = ds.assign_coords(
-            {"time": ds["time"].compute()}
-        )  # Required for concat below
-        return xr.concat([ds, ds_2020], dim="init_date")
 
     def CAFE60v1(path, realm, variables, _):
         """Open CAFE60v1 variables from specified realm"""
