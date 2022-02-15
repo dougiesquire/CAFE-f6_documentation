@@ -9,6 +9,19 @@ __all__ = [
 ]
 
 
+def rechunk(ds, chunks):
+    """Rechunk dataset"""
+    return ds.chunk(chunks)
+
+
+def interpolate_to_grid_from_file(ds, file):
+    import xesmf
+    """Interpolate to a grid read from a file using xesmf"""
+    ds_out = xr.open_dataset(file)
+    regridder = xesmf.Regridder(ds, ds_out, "bilinear")
+    return regridder(ds)
+
+
 def force_to_Julian_calendar(ds):
     """Force calendar of time dimension to Julian"""
     return ds.assign_coords(

@@ -1,51 +1,83 @@
-# Config file for specifying processing using src.data.open_dataset()
+# Config file for specifying processing using src.data.prepare_dataset()
 # ==================================================================================
 
 # name: required
 #    The name of the dataset. Must match a method in src.data._open
-# path: required
-#    The base path of the dataset
-# variables: required
-#    List of variables to include. For some datasets, the should be further broken
-#    into subkeys indicating the realm for each list of variables (e.g. ocean_month). 
-#    Non-native variable names can be provided when an appropriate `rename` key is 
-#    also provided
-# normalise: optional
-#    Variable scale factors
 # rename: optional
 #    Translation between desired variable names and native variable names
-# preprocess: optional
-#    Functions and kwargs from src.utils to be applied sequentially prior to 
-#    concatenation. Only used for datasets comprised of multiple concatenated files
-# postprocess: optional
-#    Functions and kwargs from src.utils to be applied sequentially to opened dataset
+# scale_variables: optional
+#    Variable scale factors
+# prepare: required
+#    Output variables to prepare and save. Each variable can include the following
+#    uses: required
+#        List of input variables required to compute the output variable. For some 
+#        datasets, this should be further broken into subkeys indicating the realm 
+#        for each list of variables (e.g. ocean_month). Non-native variable names 
+#        can be provided when an appropriate `rename` key is also provided
+#    preprocess: optional
+#        Functions and kwargs from src.utils to be applied sequentially prior to 
+#        concatenation. Only used for datasets comprised of multiple concatenated 
+#        files
+#    apply: optional
+#        Functions and kwargs from src.utils to be applied sequentially to opened 
+#        dataset. These are applied after the variables are renamed and rescaled
 
 name: "CAFEf6"
 
-path:
-  "/g/data/xv83/dcfp/CAFE-f6/"
-  
-variables:
-  atmos_isobaric_month:
-    - "t_ref"
-    - "precip"
-  ocean_month:
-    - "sst"
-    
 rename:
   member: "ensemble"
+  x: "xt_ocean"
+  y: "yt_ocean"
+  lon: "geolon_t"
+  lat: "geolat_t"
   
-normalise:
+scale_variables:
   precip: 86400
 
-# Functions from src.utils to be applied sequentially prior to concatenation
-preprocess:
-  convert_time_to_lead:
-  truncate_latitudes:
-  coarsen_monthly_to_annual:
-    dim: "lead"
-  
-# Functions from src.utils to be applied sequentially to opened dataset
-postprocess: 
-  round_to_start_of_month:
-    dim: ["init", "time"]
+prepare:
+  t_ref:
+    uses:
+      atmos_isobaric_month:
+        - "t_ref"
+    preprocess:
+      convert_time_to_lead:
+      truncate_latitudes:
+      coarsen_monthly_to_annual:
+        dim: "lead"
+    apply:
+      round_to_start_of_month:
+        dim: ["init", "time"]
+      rechunk:
+        chunks:  {"init": -1, "lead": 1, "member": -1, "lat": -1, "lon": -1}
+        
+  precip:
+    uses:
+      atmos_isobaric_month:
+        - "precip"
+    preprocess:
+      convert_time_to_lead:
+      truncate_latitudes:
+      coarsen_monthly_to_annual:
+        dim: "lead"
+    apply:
+      round_to_start_of_month:
+        dim: ["init", "time"]
+      rechunk:
+        chunks: {"init": -1, "lead": 1, "member": -1, "lat": -1, "lon": -1}
+        
+  sst:
+    uses:
+      ocean_month:
+        - "sst"
+    preprocess:
+      convert_time_to_lead:
+      truncate_latitudes:
+      coarsen_monthly_to_annual:
+        dim: "lead"
+    apply:
+      round_to_start_of_month:
+        dim: ["init", "time"]
+      interpolate_to_grid_from_file:
+        file: "/g/data/xv83/users/ds0092/active_projects/Squire_2022_CAFE-f6/data/raw/HadISST_grid.nc"
+      rechunk:
+        chunks: {"init": -1, "lead": 1, "member": -1, "lat": 90, "lon": 90}
