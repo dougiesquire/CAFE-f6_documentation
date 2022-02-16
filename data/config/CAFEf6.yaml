@@ -37,35 +37,35 @@ scale_variables:
   precip: 86400
 
 prepare:
-#   t_ref:
-#     uses:
-#       atmos_isobaric_month:
-#         - "t_ref"
-#     preprocess:
-#       convert_time_to_lead:
-#       truncate_latitudes:
-#       coarsen_monthly_to_annual:
-#         dim: "lead"
-#     apply:
-#       round_to_start_of_month:
-#         dim: ["init", "time"]
-#       rechunk:
-#         chunks:  {"init": -1, "lead": 1, "member": -1, "lat": -1, "lon": -1}
+  t_ref:
+    uses:
+      atmos_isobaric_month:
+        - "t_ref"
+    preprocess:
+      convert_time_to_lead:
+      truncate_latitudes:
+      coarsen_monthly_to_annual:
+        dim: "lead"
+    apply:
+      round_to_start_of_month:
+        dim: ["init", "time"]
+      rechunk:
+        chunks:  {"init": -1, "lead": 1, "member": -1, "lat": -1, "lon": -1}
         
-#   precip:
-#     uses:
-#       atmos_isobaric_month:
-#         - "precip"
-#     preprocess:
-#       convert_time_to_lead:
-#       truncate_latitudes:
-#       coarsen_monthly_to_annual:
-#         dim: "lead"
-#     apply:
-#       round_to_start_of_month:
-#         dim: ["init", "time"]
-#       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1, "lat": -1, "lon": -1}
+  precip:
+    uses:
+      atmos_isobaric_month:
+        - "precip"
+    preprocess:
+      convert_time_to_lead:
+      truncate_latitudes:
+      coarsen_monthly_to_annual:
+        dim: "lead"
+    apply:
+      round_to_start_of_month:
+        dim: ["init", "time"]
+      rechunk:
+        chunks: {"init": -1, "lead": 1, "member": -1, "lat": -1, "lon": -1}
         
   sst:
     uses:

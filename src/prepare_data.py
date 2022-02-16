@@ -400,8 +400,8 @@ def prepare_dataset(config, save_dir):
 
             if hasattr(_open, cfg["name"]):
                 ds = []
+                logger.info(f"Processing {cfg['name']}: {variable}")
                 for realm, var in input_variables.items():
-                    logger.info(f"Processing {var}")
                     ds.append(getattr(_open, cfg["name"])(var, realm, preprocess))
                 ds = xr.merge(ds)
             else:
@@ -483,7 +483,7 @@ def main(configs, config_dir, save_dir):
         configs = [os.path.basename(c) for c in configs]
     
     for config in configs:
-        logger.info(f"Processing raw data using {config}")
+        logger.info(f"Preparing raw data using {config}")
         prepare_dataset(f"{config_dir}/{config}", save_dir)
         
     cluster.close()
