@@ -126,7 +126,7 @@ class _open:
         concanenating forecasts
         """
         files = sorted(
-            glob.glob(DATA_DIR / f"CAFEf6/c5-d60-pX-f6-????1101/{realm}.zarr.zip")
+            glob.glob(f"{DATA_DIR}/CAFEf6/c5-d60-pX-f6-????1101/{realm}.zarr.zip")
         )
         return xr.open_mfdataset(
             files,
@@ -186,7 +186,7 @@ class _open:
 
         def _CanESM5_file(y, m, v):
             version = "v20190429"
-            return f"{DATA_DIR}/CanESM5/s{y-1}-r{m}i1p2f1/{realm}/{v}/gn/{version}/{v}_{realm}_CanESM5_dcppA-hindcast_s{y-1}-r{m}i1p2f1_gn_{y}01-{y+9}12.nc"
+            return DATA_DIR / f"CanESM5/s{y-1}-r{m}i1p2f1/{realm}/{v}/gn/{version}/{v}_{realm}_CanESM5_dcppA-hindcast_s{y-1}-r{m}i1p2f1_gn_{y}01-{y+9}12.nc"
 
         @dask.delayed
         def _open_CanESM5_delayed(y, m, v):
@@ -361,6 +361,8 @@ def prepare_dataset(config, save_dir):
     """
     Prepare a dataset according to a provided config file and save as netcdf
     """
+    logger = logging.getLogger(__name__)
+    
     cfg = _load_config(config)
 
     # List of datasets that have open methods impletemented
@@ -399,6 +401,7 @@ def prepare_dataset(config, save_dir):
             if hasattr(_open, cfg["name"]):
                 ds = []
                 for realm, var in input_variables.items():
+                    logger.info(f"Processing {var}")
                     ds.append(getattr(_open, cfg["name"])(var, realm, preprocess))
                 ds = xr.merge(ds)
             else:
@@ -482,6 +485,9 @@ def main(configs, config_dir, save_dir):
     for config in configs:
         logger.info(f"Processing raw data using {config}")
         prepare_dataset(f"{config_dir}/{config}", save_dir)
+        
+    cluster.close()
+    client.close()
     
 
 if __name__ == "__main__":
