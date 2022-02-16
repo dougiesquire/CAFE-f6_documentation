@@ -16,8 +16,9 @@
 #        can be provided when an appropriate `rename` key is also provided
 #    preprocess: optional
 #        Functions and kwargs from src.utils to be applied sequentially prior to 
-#        concatenation. Only used for datasets comprised of multiple concatenated 
-#        files
+#        concatenation (for datasets comprised of multiple concatenated) and/or 
+#        prior to merging of variables from multiple realms into a single dataset.
+#        These are applied before the variables are renamed and rescaled.
 #    apply: optional
 #        Functions and kwargs from src.utils to be applied sequentially to opened 
 #        dataset. These are applied after the variables are renamed and rescaled
@@ -71,13 +72,29 @@ prepare:
         - "sst"
     preprocess:
       convert_time_to_lead:
-      truncate_latitudes:
       coarsen_monthly_to_annual:
         dim: "lead"
     apply:
       round_to_start_of_month:
         dim: ["init", "time"]
       interpolate_to_grid_from_file:
-        file: "/g/data/xv83/users/ds0092/active_projects/Squire_2022_CAFE-f6/data/raw/HadISST_grid.nc"
+        file: "data/raw/gridinfo/HadISST_grid.nc"
+      rechunk:
+        chunks: {"init": -1, "lead": 1, "member": -1, "lat": 90, "lon": 90}
+        
+  ohc300:
+    uses:
+      ocean_month:
+        - "temp"
+    preprocess:
+      convert_time_to_lead:
+      coarsen_monthly_to_annual:
+        dim: "lead"
+    apply:
+      round_to_start_of_month:
+        dim: ["init", "time"]
+      calculate_ohc300:
+      interpolate_to_grid_from_file:
+        file: "data/raw/gridinfo/HadISST_grid.nc"
       rechunk:
         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 90, "lon": 90}

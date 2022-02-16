@@ -1,12 +1,84 @@
 import xarray as xr
 
-__all__ = [
-    "round_to_start_of_month",
-    "coarsen_monthly_to_annual",
-    "estimate_cell_areas",
-    "convert_time_to_lead",
-    "truncate_latitudes",
-]
+from pathlib import Path
+PROJECT_DIR = Path(__file__).resolve().parents[1]
+
+
+def calculate_ohc300(temp, depth_dim="depth"):
+    """
+    Calculate the ocean heat content above 300m
+
+    The input DataArray or Dataset is assumed to have the variable
+    name "temp" and is assumed to be in Kelvin
+    """
+    rho0 = 1035.000  # [kg/m^3]
+    Cp0 = 3989.245  # [J/kg/K]
+
+    ocean_mask = temp.isel({depth_dim: 0}, drop=True).notnull()
+    temp300 = temp.where(temp[depth_dim] <= 300, drop=True).fillna(0)
+    ohc300 = rho0 * Cp0 * temp300.integrate(depth_dim)
+    return ohc300.where(ocean_mask).rename({"temp": "ohc300"})
+
+
+def add_CAFE_grid_info(ds):
+    atmos_file = PROJECT_DIR / "data/raw/gridinfo/CAFE_atmos_grid.nc"
+    ocean_file = PROJECT_DIR / "data/raw/gridinfo/CAFE_ocean_grid.nc"
+    atmos_grid = xr.open_dataset(atmos_file)
+    ocean_grid = xr.open_dataset(ocean_file)
+
+    atmos = ["area", "latb", "lonb", "zsurf"]
+    ocean_t = ["area_t", "geolat_t", "geolon_t"]
+    ocean_u = ["area_u", "geolat_c", "geolon_c"]
+
+    if ("lat" in ds.dims) | ("lon" in ds.dims):
+        ds = ds.assign_coords(atmos_grid.coords)
+
+    if ("xt_ocean" in ds.dims) | ("yt_ocean" in ds.dims):
+        if "st_ocean" in ds.dims:
+            ocean_t += ["st_edges_ocean"]
+        if "sw_ocean" in ds.dims:
+            ocean_t += ["sw_edges_ocean"]
+        ds = ds.assign_coords(ocean_grid[ocean_t].coords)
+
+    if ("xu_ocean" in ds.dims) | ("yu_ocean" in ds.dims):
+        if "st_ocean" in ds.dims:
+            ocean_t += ["st_edges_ocean"]
+        if "sw_ocean" in ds.dims:
+            ocean_t += ["sw_edges_ocean"]
+        ds = ds.assign_coords(ocean_grid[ocean_u].coords)
+
+    return ds
+
+
+def convert_time_to_lead(ds, time_dim="time", init_dim="init", lead_dim="lead"):
+    """Return provided array with time dimension converted to lead time dimension
+    and time added as additional coordinate
+    """
+    init_date = ds[time_dim].time[0].item()
+    lead_time = range(len(ds[time_dim]))
+    time_coord = (
+        ds[time_dim]
+        .rename({time_dim: lead_dim})
+        .assign_coords({lead_dim: lead_time})
+        .expand_dims({init_dim: [init_date]})
+    ).compute()
+    dataset = ds.rename({time_dim: lead_dim}).assign_coords(
+        {lead_dim: lead_time, init_dim: [init_date]}
+    )
+    dataset = dataset.assign_coords({time_dim: time_coord})
+    return dataset
+
+
+def truncate_latitudes(ds, dp=10):
+    """Return provided array with latitudes truncated to specified dp.
+
+    This is necessary due to precision differences from running forecasts on
+    different systems
+    """
+    for dim in ds.dims:
+        if "lat" in dim:
+            ds = ds.assign_coords({dim: ds[dim].round(decimals=dp)})
+    return ds
 
 
 def rechunk(ds, chunks):
@@ -14,12 +86,31 @@ def rechunk(ds, chunks):
     return ds.chunk(chunks)
 
 
-def interpolate_to_grid_from_file(ds, file):
+def interpolate_to_grid_from_file(ds, file, add_area=True):
     import xesmf
-    """Interpolate to a grid read from a file using xesmf"""
+    """
+        Interpolate to a grid read from a file using xesmf
+        file path should be relative to the project directory
+        
+        Note, xESMF puts zeros where there is no data to interpolate. Here we
+        add an offset to ensure no zeros, mask zeros, and then remove offset
+        This hack will potentially do funny things for interpolation methods 
+        more complicated than bilinear.
+        See https://github.com/JiaweiZhuang/xESMF/issues/15
+    """
+    file = PROJECT_DIR / file
     ds_out = xr.open_dataset(file)
+    
+    C = 1
+    ds = ds.copy() + C
     regridder = xesmf.Regridder(ds, ds_out, "bilinear")
-    return regridder(ds)
+    ds = regridder(ds)
+    ds = ds.where(ds != 0.0) - C
+    if add_area:
+        area = gridarea_cdo(ds_out)
+        return ds.assign_coords({"area": area})
+    else:
+        return ds
 
 
 def force_to_Julian_calendar(ds):
@@ -78,11 +169,11 @@ def gridarea_cdo(ds):
     import os
     from cdo import Cdo
 
-    ds.to_netcdf("in.nc")
-    Cdo().gridarea(input="in.nc", output="out.nc")
-    weights = xr.open_dataset("out.nc")
-    os.remove("in.nc")
-    os.remove("out.nc")
+    ds.to_netcdf("./in.nc")
+    Cdo().gridarea(input="./in.nc", output="./out.nc")
+    weights = xr.open_dataset("./out.nc").load()
+    os.remove("./in.nc")
+    os.remove("./out.nc")
     return weights["cell_area"]
 
 
@@ -120,34 +211,3 @@ def estimate_cell_areas(ds, lon_dim="lon", lat_dim="lat"):
     dx = dlon * R * cos(deg2rad(ds[lat_dim]))
 
     return (dy * dx).broadcast_like(ds[[lon_dim, lat_dim]]).fillna(0)
-
-
-def convert_time_to_lead(ds, time_dim="time", init_dim="init", lead_dim="lead"):
-    """Return provided array with time dimension converted to lead time dimension
-    and time added as additional coordinate
-    """
-    init_date = ds[time_dim].time[0].item()
-    lead_time = range(len(ds[time_dim]))
-    time_coord = (
-        ds[time_dim]
-        .rename({time_dim: lead_dim})
-        .assign_coords({lead_dim: lead_time})
-        .expand_dims({init_dim: [init_date]})
-    ).compute()
-    dataset = ds.rename({time_dim: lead_dim}).assign_coords(
-        {lead_dim: lead_time, init_dim: [init_date]}
-    )
-    dataset = dataset.assign_coords({time_dim: time_coord})
-    return dataset
-
-
-def truncate_latitudes(ds, dp=10):
-    """Return provided array with latitudes truncated to specified dp.
-
-    This is necessary due to precision differences from running forecasts on
-    different systems
-    """
-    for dim in ds.dims:
-        if "lat" in dim:
-            ds = ds.assign_coords({dim: ds[dim].round(decimals=dp)})
-    return ds

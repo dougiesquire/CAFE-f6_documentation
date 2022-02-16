@@ -23,21 +23,34 @@
 #        Functions and kwargs from src.utils to be applied sequentially to opened 
 #        dataset. These are applied after the variables are renamed and rescaled
 
-name: "HadISST"
+name: "JRA55"
 
 rename:
-  lat: "latitude"
-  lon: "longitude"
+  t_ref: "TMP_GDS0_HTGL"
+  precip: "TPRAT_GDS0_SFC"
+  time: "initial_time0_hours"
 
 prepare:
-  sst:
+  t_ref:
     uses:
-      ocean_month:
-        - "sst"
+      surface_month_cafe-grid:
+        - "t_ref"
     apply:
-      round_to_start_of_month:
-        dim: "time"
       force_to_Julian_calendar:
+      truncate_latitudes:
+      coarsen_monthly_to_annual:
+        start_points: ["1960-11-01", "1960-01-01"]
+        dim: "time"
+      rechunk:
+        chunks:  {"time": -1, "lat": -1, "lon": -1}
+        
+  precip:
+    uses:
+      surface_month_cafe-grid:
+        - "precip"
+    apply:
+      force_to_Julian_calendar:
+      truncate_latitudes:
       coarsen_monthly_to_annual:
         start_points: ["1960-11-01", "1960-01-01"]
         dim: "time"

@@ -23,23 +23,53 @@
 #        Functions and kwargs from src.utils to be applied sequentially to opened 
 #        dataset. These are applied after the variables are renamed and rescaled
 
-name: "HadISST"
+name: "CanESM5"
 
 rename:
-  lat: "latitude"
+  t_ref: "tas"
+  precip: "pr"
+  sst: "tos"
+  x: "i"
+  y: "j"
   lon: "longitude"
+  lat: "latitude"
+  
+scale_variables:
+  precip: 86400
 
 prepare:
+  t_ref:
+    uses:
+      Amon:
+        - "t_ref"
+    apply:
+      coarsen_monthly_to_annual:
+        dim: "lead"
+      interpolate_to_grid_from_file:
+        file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
+      rechunk:
+        chunks: {"init": -1, "lead": 1, "member": -1, "lat": -1, "lon": -1}
+        
+  precip:
+    uses:
+      Amon:
+        - "precip"
+    apply:
+      coarsen_monthly_to_annual:
+        dim: "lead"
+      interpolate_to_grid_from_file:
+        file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
+      rechunk:
+        chunks: {"init": -1, "lead": 1, "member": -1, "lat": -1, "lon": -1}
+      
   sst:
     uses:
-      ocean_month:
+      Omon:
         - "sst"
     apply:
-      round_to_start_of_month:
-        dim: "time"
-      force_to_Julian_calendar:
       coarsen_monthly_to_annual:
-        start_points: ["1960-11-01", "1960-01-01"]
-        dim: "time"
+        dim: "lead"
+      interpolate_to_grid_from_file:
+        file: "data/raw/gridinfo/HadISST_grid.nc"
       rechunk:
-        chunks:  {"time": -1, "lat": -1, "lon": -1}
+        chunks: {"init": -1, "lead": 1, "member": -1, "lat": 90, "lon": 90}
