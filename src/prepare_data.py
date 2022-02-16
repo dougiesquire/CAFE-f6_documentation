@@ -1,20 +1,21 @@
 import os
+from pathlib import Path
+
+import yaml
 
 import glob
 
 import logging
-
 import argparse
 
 import dask
 import xarray as xr
 
-import yaml
 from functools import reduce, partial
 
 from src import utils
 
-from pathlib import Path
+
 PROJECT_DIR = Path(__file__).resolve().parents[1]
 DATA_DIR = PROJECT_DIR / "data/raw"
 
@@ -422,21 +423,65 @@ def prepare_dataset(config, save_dir):
         raise ValueError(f"No variables were specified to prepare")
         
         
+def _start_dask_cluster():
+    from dask.distributed import Client
+    from dask_jobqueue import PBSCluster
+
+    walltime = "02:00:00"
+    cores = 48
+    memory = "192GB"
+    cluster = PBSCluster(
+        processes=1,
+        walltime=str(walltime),
+        cores=cores,
+        memory=str(memory),
+        job_extra=[
+            "-l ncpus=" + str(cores),
+            "-l mem=" + str(memory),
+            "-P xv83",
+            "-l jobfs=100GB",
+            "-l storage=gdata/xv83+gdata/oi10",
+        ],
+        local_directory="$PBS_JOBFS",
+        header_skip=["select"],
+    )
+    
+    cluster.scale(jobs=1)
+    client = Client(cluster)
+    
+    # Wait for workers
+    client.wait_for_workers(n_workers=1)
+    
+    return cluster, client
+
+    
 def main(configs, config_dir, save_dir):
-    """Process raw dataset(s) according to provided config file(s)"""
+    """
+    Process raw data according to provided config file(s)
+    
+    To add additional dataset:
+        1. If data is on NCI, symlink the location of the data in ../data/raw
+        2. Add a new, appropriately-named, method to prepare_data._open
+        3. Prepare a config file for the new dataset, where the 'name' key matches
+            the name of the new method in prepare_data._open
+    """
     logger = logging.getLogger(__name__)
     
+    logger.info("Spinning up a dask cluster")
+    cluster, client = _start_dask_cluster()
+    logger.info(f"Dask daskboard link: {client.dashboard_link}")
+    
+    logger.info("Generating grid files")
     generate_HadISST_grid_file()
     generate_CAFE_grid_files()
-    
+
     if 'all' in configs:
-        configs = glob.glob(f"{config_path}/*")
+        configs = glob.glob(f"{config_dir}/*")
         configs = [os.path.basename(c) for c in configs]
     
     for config in configs:
-        print(f"Processing raw data according to {config}")
-        logger.info(f"Processing raw data according to {config}")
-        prepare_dataset(f"{config_path}/{config}", save_dir)
+        logger.info(f"Processing raw data using {config}")
+        prepare_dataset(f"{config_dir}/{config}", save_dir)
     
 
 if __name__ == "__main__":
@@ -449,7 +494,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "configs", 
         type=str, 
-        nargs='+', 
+        nargs='*', 
         default=['all'],
         help='Configuration files to process, defaults to all files in --config_dir'
     )
