@@ -9,11 +9,16 @@ import logging
 import argparse
 
 import dask
+from dask.distributed import Client
+
 import xarray as xr
 
 from functools import reduce, partial
 
 from src import utils
+
+
+dask.config.set(**{"array.slicing.split_large_chunks": False})
 
 
 PROJECT_DIR = Path(__file__).resolve().parents[1]
@@ -36,7 +41,7 @@ def _maybe_translate_variables(variables, translation_dict):
         for v in var:
             try:
                 translated_variables[realm].append(translation_dict[v])
-            except KeyError as exception:
+            except KeyError:
                 translated_variables[realm].append(v)
     return translated_variables
 
@@ -91,7 +96,10 @@ class _open:
         """Open JRA55 variables from specified realm"""
         file = DATA_DIR / f"JRA55/{realm}.zarr.zip"
         ds = xr.open_dataset(
-            file, engine="zarr", chunks={}, use_cftime=True,
+            file,
+            engine="zarr",
+            chunks={},
+            use_cftime=True,
         )[variables]
         if preprocess is not None:
             return preprocess(ds)
@@ -102,7 +110,10 @@ class _open:
         """Open HadISST variables from specified realm"""
         file = DATA_DIR / f"HadISST/{realm}.zarr"
         ds = xr.open_dataset(
-            file, engine="zarr", chunks={}, use_cftime=True,
+            file,
+            engine="zarr",
+            chunks={},
+            use_cftime=True,
         )[variables]
         ds = ds.where(ds > -1000)
         if preprocess is not None:
@@ -114,7 +125,9 @@ class _open:
         """Open EN.4.2.2 variables"""
         files = sorted(glob.glob(f"{DATA_DIR}/EN.4.2.2/*.nc"))
         ds = xr.open_mfdataset(
-            files, parallel=True, use_cftime=True,
+            files,
+            parallel=True,
+            use_cftime=True,
         )[variables]
         if preprocess is not None:
             return preprocess(ds)
@@ -151,9 +164,7 @@ class _open:
     def CAFE60v1(variables, realm, preprocess):
         """Open CAFE60v1 variables from specified realm"""
         file = DATA_DIR / f"CAFE60v1/{realm}.zarr.zip"
-        ds = xr.open_dataset(file, engine="zarr", chunks={})[
-            variables
-        ]
+        ds = xr.open_dataset(file, engine="zarr", chunks={})[variables]
         if preprocess is not None:
             return preprocess(ds)
         else:
@@ -162,7 +173,7 @@ class _open:
     def CAFE_hist(variables, realm, preprocess):
         """Open CAFE historical run variables from specified realm"""
         hist_file = DATA_DIR / f"CAFE_hist/{realm}.zarr.zip"
-        hist = xr.open_dataset(hist_file, engine="zarr",chunks={})[variables]
+        hist = xr.open_dataset(hist_file, engine="zarr", chunks={})[variables]
 
         ctrl_file = DATA_DIR / f"CAFE_ctrl/{realm}.zarr.zip"
         ctrl = xr.open_dataset(ctrl_file, engine="zarr", chunks={})[variables]
@@ -186,7 +197,10 @@ class _open:
 
         def _CanESM5_file(y, m, v):
             version = "v20190429"
-            return DATA_DIR / f"CanESM5/s{y-1}-r{m}i1p2f1/{realm}/{v}/gn/{version}/{v}_{realm}_CanESM5_dcppA-hindcast_s{y-1}-r{m}i1p2f1_gn_{y}01-{y+9}12.nc"
+            return (
+                DATA_DIR
+                / f"CanESM5/s{y-1}-r{m}i1p2f1/{realm}/{v}/gn/{version}/{v}_{realm}_CanESM5_dcppA-hindcast_s{y-1}-r{m}i1p2f1_gn_{y}01-{y+9}12.nc"
+            )
 
         @dask.delayed
         def _open_CanESM5_delayed(y, m, v):
@@ -251,7 +265,7 @@ class _open:
                     f"{DATA_DIR}/CanESM5_hist/r*i1p2f1/{realm}/{v}/gn/{version}/{v}_{realm}_CanESM5_historical_r*i1p2f1_gn_185001-201412.nc"
                 )
             )
-        
+
         @dask.delayed
         def _open_CanESM5_hist_delayed(f, v):
             ds = xr.open_dataset(f, chunks={})[v]
@@ -355,14 +369,14 @@ def generate_HadISST_grid_file():
     )
     grid.attrs = {}
     grid.to_netcdf(PROJECT_DIR / "data/raw/gridinfo/HadISST_grid.nc", mode="w")
-    
-    
+
+
 def prepare_dataset(config, save_dir):
     """
     Prepare a dataset according to a provided config file and save as netcdf
     """
     logger = logging.getLogger(__name__)
-    
+
     cfg = _load_config(config)
 
     # List of datasets that have open methods impletemented
@@ -400,7 +414,7 @@ def prepare_dataset(config, save_dir):
 
             if hasattr(_open, cfg["name"]):
                 ds = []
-                logger.info(f"Processing {cfg['name']}: {variable}")
+                logger.info(f"Processing {variable} from {cfg['name']}")
                 for realm, var in input_variables.items():
                     ds.append(getattr(_open, cfg["name"])(var, realm, preprocess))
                 ds = xr.merge(ds)
@@ -411,7 +425,7 @@ def prepare_dataset(config, save_dir):
 
             if "rename" in cfg:
                 ds = _maybe_rename(ds, cfg["rename"])
-            
+
             if "scale_variables" in cfg:
                 ds = _scale_variables(ds, cfg["scale_variables"])
 
@@ -424,8 +438,8 @@ def prepare_dataset(config, save_dir):
 
     else:
         raise ValueError(f"No variables were specified to prepare")
-        
-        
+
+
 def _start_dask_cluster():
     from dask.distributed import Client
     from dask_jobqueue import PBSCluster
@@ -448,20 +462,20 @@ def _start_dask_cluster():
         local_directory="$PBS_JOBFS",
         header_skip=["select"],
     )
-    
+
     cluster.scale(jobs=1)
     client = Client(cluster)
-    
+
     # Wait for workers
     client.wait_for_workers(n_workers=1)
-    
+
     return cluster, client
 
-    
+
 def main(configs, config_dir, save_dir):
     """
     Process raw data according to provided config file(s)
-    
+
     To add additional dataset:
         1. If data is on NCI, symlink the location of the data in ../data/raw
         2. Add a new, appropriately-named, method to prepare_data._open
@@ -469,57 +483,57 @@ def main(configs, config_dir, save_dir):
             the name of the new method in prepare_data._open
     """
     logger = logging.getLogger(__name__)
-    
+
     logger.info("Spinning up a dask cluster")
-    cluster, client = _start_dask_cluster()
-    logger.info(f"Dask daskboard link: {client.dashboard_link}")
-    
+    # cluster, client = _start_dask_cluster()
+    client = Client()
+
     logger.info("Generating grid files")
     generate_HadISST_grid_file()
     generate_CAFE_grid_files()
 
-    if 'all' in configs:
+    if "all" in configs:
         configs = glob.glob(f"{config_dir}/*")
         configs = [os.path.basename(c) for c in configs]
-    
+
     for config in configs:
         logger.info(f"Preparing raw data using {config}")
         prepare_dataset(f"{config_dir}/{config}", save_dir)
-        
+
     cluster.close()
     client.close()
-    
+
 
 if __name__ == "__main__":
-    log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    log_fmt = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     logging.basicConfig(level=logging.INFO, format=log_fmt)
-    
+
     parser = argparse.ArgumentParser(
-        description='Process raw dataset(s) according to provided config file(s)'
+        description="Process raw dataset(s) according to provided config file(s)"
     )
     parser.add_argument(
-        "configs", 
-        type=str, 
-        nargs='*', 
-        default=['all'],
-        help='Configuration files to process, defaults to all files in --config_dir'
+        "configs",
+        type=str,
+        nargs="*",
+        default=["all"],
+        help="Configuration files to process, defaults to all files in --config_dir",
     )
     parser.add_argument(
-        '--config_dir', 
-        type=str, 
+        "--config_dir",
+        type=str,
         default=f"{PROJECT_DIR}/data/config/",
-        help='Location of directory containing config file(s) to use, defaults to <project_dir>/data/config/'
+        help="Location of directory containing config file(s) to use, defaults to <project_dir>/data/config/",
     )
     parser.add_argument(
-        '--save_dir', 
-        type=str, 
+        "--save_dir",
+        type=str,
         default=f"{PROJECT_DIR}/data/processed/",
-        help='Location of directory to save processed data to, defaults to <project_dir>/data/processed/'
+        help="Location of directory to save processed data to, defaults to <project_dir>/data/processed/",
     )
-    
+
     args = parser.parse_args()
     configs = args.configs
     config_dir = args.config_dir
     save_dir = args.save_dir
-    
+
     main(configs, config_dir, save_dir)

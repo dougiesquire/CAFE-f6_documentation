@@ -1,6 +1,7 @@
 import xarray as xr
 
 from pathlib import Path
+
 PROJECT_DIR = Path(__file__).resolve().parents[1]
 
 
@@ -88,6 +89,7 @@ def rechunk(ds, chunks):
 
 def interpolate_to_grid_from_file(ds, file, add_area=True):
     import xesmf
+
     """
         Interpolate to a grid read from a file using xesmf
         file path should be relative to the project directory
@@ -100,7 +102,7 @@ def interpolate_to_grid_from_file(ds, file, add_area=True):
     """
     file = PROJECT_DIR / file
     ds_out = xr.open_dataset(file)
-    
+
     C = 1
     ds = ds.copy() + C
     regridder = xesmf.Regridder(ds, ds_out, "bilinear")
@@ -146,16 +148,18 @@ def coarsen_monthly_to_annual(ds, start_points=None, dim="time"):
     """
     if start_points is None:
         start_points = [None]
-        
+
     if isinstance(start_points, str):
         start_points = [start_points]
-        
+
     aux_coords = [c for c in ds.coords if dim in ds[c].dims]
     dss = []
     for start_point in start_points:
         dss.append(
             ds.sel({dim: slice(start_point, None)})
-            .coarsen({dim: 12}, boundary="trim", coord_func={d: "max" for d in aux_coords})
+            .coarsen(
+                {dim: 12}, boundary="trim", coord_func={d: "max" for d in aux_coords}
+            )
             .mean()
         )
     return xr.concat(dss, dim=dim).sortby(dim)

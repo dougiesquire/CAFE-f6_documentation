@@ -37,54 +37,54 @@ scale_variables:
   precip: 86400
 
 prepare:
-  t_ref:
-    uses:
-      atmos_isobaric_month:
-        - "t_ref"
-    preprocess:
-      truncate_latitudes:
-      add_CAFE_grid_info:
-    apply:
-      round_to_start_of_month:
-        dim: "time"
-      coarsen_monthly_to_annual:
-        start_points: ["1960-11-01", "1960-01-01"]
-        dim: "time"
-      rechunk:
-        chunks:  {"time": 20, "member": -1, "lat": -1, "lon": -1}
+#   t_ref:
+#     uses:
+#       atmos_isobaric_month:
+#         - "t_ref"
+#     preprocess:
+#       truncate_latitudes:
+#       add_CAFE_grid_info:
+#     apply:
+#       round_to_start_of_month:
+#         dim: "time"
+#       coarsen_monthly_to_annual:
+#         start_points: ["1960-11-01", "1960-01-01"]
+#         dim: "time"
+#       rechunk:
+#         chunks:  {"time": 20, "member": -1, "lat": -1, "lon": -1}
         
-  precip:
-    uses:
-      atmos_isobaric_month:
-        - "precip"
-    preprocess:
-      truncate_latitudes:
-      add_CAFE_grid_info:
-    apply:
-      round_to_start_of_month:
-        dim: "time"
-      coarsen_monthly_to_annual:
-        start_points: ["1960-11-01", "1960-01-01"]
-        dim: "time"
-      rechunk:
-        chunks:  {"time": 20, "member": -1, "lat": -1, "lon": -1}
+#   precip:
+#     uses:
+#       atmos_isobaric_month:
+#         - "precip"
+#     preprocess:
+#       truncate_latitudes:
+#       add_CAFE_grid_info:
+#     apply:
+#       round_to_start_of_month:
+#         dim: "time"
+#       coarsen_monthly_to_annual:
+#         start_points: ["1960-11-01", "1960-01-01"]
+#         dim: "time"
+#       rechunk:
+#         chunks:  {"time": 20, "member": -1, "lat": -1, "lon": -1}
       
-  sst:
-    uses:
-      ocean_month:
-        - "sst"
-    preprocess:
-      add_CAFE_grid_info:
-    apply:
-      round_to_start_of_month:
-        dim: "time"
-      coarsen_monthly_to_annual:
-        start_points: ["1960-11-01", "1960-01-01"]
-        dim: "time"
-      interpolate_to_grid_from_file:
-        file: "data/raw/gridinfo/HadISST_grid.nc"
-      rechunk:
-        chunks: {"time": 20, "member": -1, "lat": 90, "lon": 90}
+#   sst:
+#     uses:
+#       ocean_month:
+#         - "sst"
+#     preprocess:
+#       add_CAFE_grid_info:
+#     apply:
+#       round_to_start_of_month:
+#         dim: "time"
+#       coarsen_monthly_to_annual:
+#         start_points: ["1960-11-01", "1960-01-01"]
+#         dim: "time"
+#       interpolate_to_grid_from_file:
+#         file: "data/raw/gridinfo/HadISST_grid.nc"
+#       rechunk:
+#         chunks: {"time": 20, "member": -1, "lat": 90, "lon": 90}
         
   ohc300:
     uses:

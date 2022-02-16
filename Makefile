@@ -5,25 +5,23 @@
 #################################################################################
 
 PROJECT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
-BUCKET = [OPTIONAL] your-bucket-for-syncing-data (do not include 's3://')
 PROFILE = default
 PROJECT_NAME = Squire_2022_CAFE-f6
 PYTHON_INTERPRETER = python3
+ENV_NAME = cafe-f6_analysis
 
 ifeq (,$(shell which conda))
 HAS_CONDA=False
 else
 HAS_CONDA=True
+CONDA_DIR=$(shell conda info --base)
+ENV_DIR=$(CONDA_DIR)/envs/$(ENV_NAME)
+CONDA_ACTIVATE=source $$(conda info --base)/etc/profile.d/conda.sh ; conda activate ; conda activate
 endif
 
 #################################################################################
 # COMMANDS                                                                      #
 #################################################################################
-
-## Install Python Dependencies
-requirements: test_environment
-	$(PYTHON_INTERPRETER) -m pip install -U pip setuptools wheel
-	$(PYTHON_INTERPRETER) -m pip install -r requirements.txt
 
 ## Make Dataset
 data: requirements
@@ -36,45 +34,33 @@ clean:
 
 ## Lint using flake8
 lint:
-	flake8 src
+	($(CONDA_ACTIVATE) $(ENV_NAME) ; black src ; flake8 src)
 
-## Upload Data to S3
-sync_data_to_s3:
-ifeq (default,$(PROFILE))
-	aws s3 sync data/ s3://$(BUCKET)/data/
-else
-	aws s3 sync data/ s3://$(BUCKET)/data/ --profile $(PROFILE)
-endif
-
-## Download Data from S3
-sync_data_from_s3:
-ifeq (default,$(PROFILE))
-	aws s3 sync s3://$(BUCKET)/data/ data/
-else
-	aws s3 sync s3://$(BUCKET)/data/ data/ --profile $(PROFILE)
-endif
-
-## Set up python interpreter environment
+## Set up python environment
 create_environment:
 ifeq (True,$(HAS_CONDA))
-		@echo ">>> Detected conda, creating conda environment."
-ifeq (3,$(findstring 3,$(PYTHON_INTERPRETER)))
-	conda create --name $(PROJECT_NAME) python=3
+	@echo ">>> Detected conda, creating conda environment."
+ifneq ("$(wildcard $(ENV_DIR))","") # check if the directory is there
+	@echo ">>> Project environment already exists. Update using 'update_environment'"
 else
-	conda create --name $(PROJECT_NAME) python=2.7
+	conda env create -f environment.yml
 endif
-		@echo ">>> New conda env created. Activate with:\nsource activate $(PROJECT_NAME)"
 else
-	$(PYTHON_INTERPRETER) -m pip install -q virtualenv virtualenvwrapper
-	@echo ">>> Installing virtualenvwrapper if not already installed.\nMake sure the following lines are in shell startup file\n\
-	export WORKON_HOME=$$HOME/.virtualenvs\nexport PROJECT_HOME=$$HOME/Devel\nsource /usr/local/bin/virtualenvwrapper.sh\n"
-	@bash -c "source `which virtualenvwrapper.sh`;mkvirtualenv $(PROJECT_NAME) --python=$(PYTHON_INTERPRETER)"
-	@echo ">>> New virtualenv created. Activate with:\nworkon $(PROJECT_NAME)"
+	@echo ">>> This project uses conda to install the environment. Please install conda"
 endif
 
-## Test python environment is setup correctly
-test_environment:
-	$(PYTHON_INTERPRETER) test_environment.py
+## Update the python environment
+update_environment:
+ifeq (True,$(HAS_CONDA))
+	@echo ">>> Detected conda, updating conda environment."
+ifneq ("$(wildcard $(ENV_DIR))","") # check if the directory is there
+	conda env update --name $(ENV_NAME) --file environment.yml --prune
+else
+	@echo ">>> Project environment does not exist. Create using 'create_environment'"
+endif
+else
+        @echo ">>> This project uses conda to install the environment. Please install conda"
+endif
 
 #################################################################################
 # PROJECT RULES                                                                 #
