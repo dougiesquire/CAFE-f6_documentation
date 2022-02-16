@@ -1,0 +1,46 @@
+# Config file for specifying processing using src.prepare_data()
+# ==================================================================================
+
+# name: required
+#    The name of the dataset. Must match a method in src.prepare_data._open
+# rename: optional
+#    Translation between desired variable names and native variable names
+# scale_variables: optional
+#    Variable scale factors
+# prepare: required
+#    Output variables to prepare and save. Each variable can include the following
+#    uses: required
+#        List of input variables required to compute the output variable. For some 
+#        datasets, this should be further broken into subkeys indicating the realm 
+#        for each list of variables (e.g. ocean_month). Non-native variable names 
+#        can be provided when an appropriate `rename` key is also provided
+#    preprocess: optional
+#        Functions and kwargs from src.utils to be applied sequentially prior to 
+#        concatenation (for datasets comprised of multiple concatenated) and/or 
+#        prior to merging of variables from multiple realms into a single dataset.
+#        These are applied before the variables are renamed and rescaled.
+#    apply: optional
+#        Functions and kwargs from src.utils to be applied sequentially to opened 
+#        dataset. These are applied after the variables are renamed and rescaled
+
+name: "EN422"
+
+rename:
+  temp: "temperature"
+
+prepare:
+  ohc300:
+    uses:
+      - "temp"
+    apply:
+      round_to_start_of_month:
+        dim: "time"
+      force_to_Julian_calendar:
+      coarsen_monthly_to_annual:
+        start_points: ["1960-11-01", "1960-01-01"]
+        dim: "time"
+      calculate_ohc300:
+      interpolate_to_grid_from_file:
+        file: "data/raw/gridinfo/HadISST_grid.nc"
+      rechunk:
+        chunks:  {"time": -1, "lat": -1, "lon": -1}
