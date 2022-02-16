@@ -1,6 +1,8 @@
-# Helper functions for opening data in a common format
-
 import glob
+
+import logging
+
+import argparse
 
 import dask
 import xarray as xr
@@ -416,3 +418,53 @@ def prepare_dataset(config, save_dir):
 
     else:
         raise ValueError(f"No variables were specified to prepare")
+        
+        
+def main(configs, config_dir, save_dir):
+    """Prepare datasets according to provided config files"""
+    logger = logging.getLogger(__name__)
+    
+    generate_HadISST_grid_file()
+    generate_CAFE_grid_files()
+    
+    if 'all' in configs:
+        configs = 
+    
+    for config in configs:
+        logger.info(f"Processing raw data according to {config}")
+        prepare_dataset(f"{config_path}/{config}", save_dir)
+    
+
+if __name__ == "__main__":
+    log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    logging.basicConfig(level=logging.INFO, format=log_fmt)
+    
+    parser = argparse.ArgumentParser(
+        description='Prepare datasets according to provided config files'
+    )
+    parser.add_argument(
+        "configs", 
+        type=str, 
+        nargs='+', 
+        default=['all'],
+        help='Configuration files to process, defaults to all files in --config_dir'
+    )
+    parser.add_argument(
+        '--config_dir', 
+        type=str, 
+        default=f"{PROJECT_DIR}/config/",
+        help='Location of directory containing config file to use, defaults to <project_dir>/config/'
+    )
+    parser.add_argument(
+        '--save_dir', 
+        type=str, 
+        default=f"{PROJECT_DIR}/data/processed/",
+        help='Location of directory to save data to, defaults to <project_dir>/data/processed/'
+    )
+    
+    args = parser.parse_args()
+    configs = args.configs
+    config_dir = args.config_dir
+    save_dir = args.save_dir
+    
+    main(configs, config_dir, save_dir)
