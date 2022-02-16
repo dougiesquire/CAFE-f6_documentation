@@ -427,7 +427,7 @@ def _start_dask_cluster():
     from dask.distributed import Client
     from dask_jobqueue import PBSCluster
 
-    walltime = "02:00:00"
+    walltime = "04:00:00"
     cores = 48
     memory = "192GB"
     cluster = PBSCluster(
