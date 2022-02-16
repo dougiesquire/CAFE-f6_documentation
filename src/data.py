@@ -1,3 +1,5 @@
+import os
+
 import glob
 
 import logging
@@ -421,16 +423,18 @@ def prepare_dataset(config, save_dir):
         
         
 def main(configs, config_dir, save_dir):
-    """Prepare datasets according to provided config files"""
+    """Process raw dataset(s) according to provided config file(s)"""
     logger = logging.getLogger(__name__)
     
     generate_HadISST_grid_file()
     generate_CAFE_grid_files()
     
     if 'all' in configs:
-        configs = 
+        configs = glob.glob(f"{config_path}/*")
+        configs = [os.path.basename(c) for c in configs]
     
     for config in configs:
+        print(f"Processing raw data according to {config}")
         logger.info(f"Processing raw data according to {config}")
         prepare_dataset(f"{config_path}/{config}", save_dir)
     
@@ -440,7 +444,7 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format=log_fmt)
     
     parser = argparse.ArgumentParser(
-        description='Prepare datasets according to provided config files'
+        description='Process raw dataset(s) according to provided config file(s)'
     )
     parser.add_argument(
         "configs", 
@@ -452,14 +456,14 @@ if __name__ == "__main__":
     parser.add_argument(
         '--config_dir', 
         type=str, 
-        default=f"{PROJECT_DIR}/config/",
-        help='Location of directory containing config file to use, defaults to <project_dir>/config/'
+        default=f"{PROJECT_DIR}/data/config/",
+        help='Location of directory containing config file(s) to use, defaults to <project_dir>/data/config/'
     )
     parser.add_argument(
         '--save_dir', 
         type=str, 
         default=f"{PROJECT_DIR}/data/processed/",
-        help='Location of directory to save data to, defaults to <project_dir>/data/processed/'
+        help='Location of directory to save processed data to, defaults to <project_dir>/data/processed/'
     )
     
     args = parser.parse_args()
