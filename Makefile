@@ -27,7 +27,7 @@ define PREPARE_DATA_SCRIPT
 #PBS -l walltime=04:00:00
 #PBS -l mem=192gb
 #PBS -l ncpus=48
-#PBS -l jobfs=400GB
+#PBS -l jobfs=100GB
 #PBS -l wd
 #PBS -l storage=gdata/xv83+gdata/oi10
 #PBS -j oe
