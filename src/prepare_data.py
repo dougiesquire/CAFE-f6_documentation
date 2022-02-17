@@ -307,68 +307,74 @@ class _open:
             return ds
 
 
-def generate_CAFE_grid_files():
+def maybe_generate_CAFE_grid_files():
     """Generate files containing CAFE grids"""
     path = PROJECT_DIR / "data/raw/CAFE_hist/"
 
-    atmos = (
-        xr.open_zarr(f"{path}/atmos_hybrid_month.zarr.zip")
-        .isel(time=0, ensemble=0)
-        .drop(
-            [
-                "time",
-                "ensemble",
-                "average_DT",
-                "average_T1",
-                "average_T2",
-            ]
+    atmos_file = PROJECT_DIR / "data/raw/gridinfo/CAFE_atmos_grid.nc"
+    if not os.path.exists(atmos_file):
+        atmos = (
+            xr.open_zarr(f"{path}/atmos_hybrid_month.zarr.zip")
+            .isel(time=0, ensemble=0)
+            .drop(
+                [
+                    "time",
+                    "ensemble",
+                    "average_DT",
+                    "average_T1",
+                    "average_T2",
+                ]
+           )
+       )
+        atmos = utils.truncate_latitudes(atmos)
+        atmos_grid = xr.zeros_like(
+            atmos[["t_ref", "latb", "lonb"]].rename({"t_ref": "CAFE_atmos_grid"})
         )
-    )
-    atmos = utils.truncate_latitudes(atmos)
-    atmos_grid = xr.zeros_like(
-        atmos[["t_ref", "latb", "lonb"]].rename({"t_ref": "CAFE_atmos_grid"})
-    )
-    atmos_grid.attrs = {}
-    atmos_grid.attrs = {}
-    atmos_grid.to_netcdf(PROJECT_DIR / "data/raw/gridinfo/CAFE_atmos_grid.nc", mode="w")
+        atmos_grid.attrs = {}
+        atmos_grid.attrs = {}
+        atmos_grid.to_netcdf(atmos_file, mode="w")
+    
+    ocean_file = PROJECT_DIR / "data/raw/gridinfo/CAFE_ocean_grid.nc"
+    if not os.path.exists(ocean_file):
+        ocean = (
+            xr.open_zarr(f"{path}/ocean_month.zarr.zip")
+            .isel(time=0, ensemble=0)
+            .drop(
+                [
+                    "time",
+                    "ensemble",
+                    "average_DT",
+                    "average_T1",
+                    "average_T2",
+                ]
+            )
+       )
+        ocean_ut_grid = xr.zeros_like(
+            ocean[["u", "area_t", "geolat_t", "geolon_t", "st_edges_ocean"]].rename(
+                {"u": "CAFE_ocean_tu_grid"}
+            )
+        )
+        ocean_tu_grid = xr.zeros_like(
+            ocean[["wt", "area_t", "geolat_t", "geolon_t", "sw_edges_ocean"]].rename(
+                {"wt": "CAFE_ocean_ut_grid"}
+            )
+        )
+        ocean_grid = xr.merge([ocean_ut_grid, ocean_tu_grid])
+        ocean_grid.attrs = {}
+        ocean_grid.to_netcdf(ocean_file, mode="w")
 
-    ocean = (
-        xr.open_zarr(f"{path}/ocean_month.zarr.zip")
-        .isel(time=0, ensemble=0)
-        .drop(
-            [
-                "time",
-                "ensemble",
-                "average_DT",
-                "average_T1",
-                "average_T2",
-            ]
-        )
-    )
-    ocean_ut_grid = xr.zeros_like(
-        ocean[["u", "area_t", "geolat_t", "geolon_t", "st_edges_ocean"]].rename(
-            {"u": "CAFE_ocean_tu_grid"}
-        )
-    )
-    ocean_tu_grid = xr.zeros_like(
-        ocean[["wt", "area_t", "geolat_t", "geolon_t", "sw_edges_ocean"]].rename(
-            {"wt": "CAFE_ocean_ut_grid"}
-        )
-    )
-    ocean_grid = xr.merge([ocean_ut_grid, ocean_tu_grid])
-    ocean_grid.attrs = {}
-    ocean_grid.to_netcdf(PROJECT_DIR / "data/raw/gridinfo/CAFE_ocean_grid.nc", mode="w")
 
-
-def generate_HadISST_grid_file():
+def maybe_generate_HadISST_grid_file():
     """Generate file containing HadISST grid"""
-    path = PROJECT_DIR / "data/raw/HadISST/ocean_month.zarr"
-    had = xr.open_zarr(path)[["sst"]].isel(time=0).drop("time")
-    grid = xr.zeros_like(
-        had.rename({"sst": "HadISST_grid", "latitude": "lat", "longitude": "lon"})
-    )
-    grid.attrs = {}
-    grid.to_netcdf(PROJECT_DIR / "data/raw/gridinfo/HadISST_grid.nc", mode="w")
+    file = PROJECT_DIR / "data/raw/gridinfo/HadISST_grid.nc"
+    if not os.path.exists(file):
+        path = PROJECT_DIR / "data/raw/HadISST/ocean_month.zarr"
+        had = xr.open_zarr(path)[["sst"]].isel(time=0).drop("time")
+        grid = xr.zeros_like(
+            had.rename({"sst": "HadISST_grid", "latitude": "lat", "longitude": "lon"})
+        )
+        grid.attrs = {}
+        grid.to_netcdf(file, mode="w")
 
 
 def prepare_dataset(config, save_dir):
@@ -457,8 +463,8 @@ def main(configs, config_dir, save_dir):
     client.wait_for_workers(n_workers=1)
 
     logger.info("Generating grid files")
-    generate_HadISST_grid_file()
-    generate_CAFE_grid_files()
+    maybe_generate_HadISST_grid_file()
+    maybe_generate_CAFE_grid_files()
 
     if "all" in configs:
         configs = glob.glob(f"{config_dir}/*.yml")

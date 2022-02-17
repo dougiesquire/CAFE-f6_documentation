@@ -1,4 +1,4 @@
-.PHONY: clean data lint requirements sync_data_to_s3 sync_data_from_s3
+.PHONY: environment data clean lint
 
 #################################################################################
 # GLOBALS                                                                       #
@@ -7,7 +7,6 @@
 PROJECT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 PROFILE = default
 PROJECT_NAME = Squire_2022_CAFE-f6
-PYTHON_INTERPRETER = python
 ENV_NAME = cafe-f6_analysis
 NCI_PROJECT = xv83
 config = all
@@ -35,12 +34,26 @@ define PREPARE_DATA_SCRIPT
 
 conda activate $(ENV_NAME)
 echo "conda env: $$CONDA_DEFAULT_ENV"
-$(PYTHON_INTERPRETER) src/prepare_data.py $(config)
+python src/prepare_data.py $(config)
 endef
 
 #################################################################################
 # COMMANDS                                                                      #
 #################################################################################
+
+## Create the python environment or update it if it exists
+environment:
+ifeq (True,$(HAS_CONDA))
+	@echo ">>> Detected conda, creating conda environment."
+ifneq ("$(wildcard $(ENV_DIR))","") # check if the directory is there
+	@echo ">>> Project environment already exists, updating'"
+	conda env update --name $(ENV_NAME) --file environment.yml --prune
+else
+	conda env create -f environment.yml
+endif
+else
+	@echo ">>> This project uses conda to install the environment. Please install conda"
+endif
 
 ## Prepare datasets for analysis
 data:
@@ -59,20 +72,6 @@ clean:
 ## Lint using black and flake8
 lint:
 	($(CONDA_ACTIVATE) $(ENV_NAME) ; black src ; flake8 src)
-
-## Create the python environment or update it if it exists
-environment:
-ifeq (True,$(HAS_CONDA))
-	@echo ">>> Detected conda, creating conda environment."
-ifneq ("$(wildcard $(ENV_DIR))","") # check if the directory is there
-	@echo ">>> Project environment already exists, updating'"
-	conda env update --name $(ENV_NAME) --file environment.yml --prune
-else
-	conda env create -f environment.yml
-endif
-else
-	@echo ">>> This project uses conda to install the environment. Please install conda"
-endif
 
 #################################################################################
 # PROJECT RULES                                                                 #
