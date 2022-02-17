@@ -47,10 +47,13 @@ data:
 	($(CONDA_ACTIVATE) $(ENV_NAME) ; qsub make_$(config))
 	rm make_$(config)
 
-## Delete all compiled Python files
+## Delete unneeded Python files, dask-worker files and PBS output files
 clean:
 	find . -type f -name "*.py[co]" -delete
 	find . -type d -name "__pycache__" -delete
+	find . -type d -name "*.ipynb_checkpoints" -exec rm -rf {} +
+	find . -type d -name "dask-worker-space" -exec rm -rf {} +
+	find . -type f -name "*.o????????" -delete
 
 ## Lint using black and flake8
 lint:

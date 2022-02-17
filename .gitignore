@@ -96,3 +96,6 @@ data/*
 
 # MOM executable
 *.x
+
+# Dask files
+dask-worker-space/
