@@ -26,7 +26,7 @@ DATA_DIR = PROJECT_DIR / "data/raw"
 
 
 def _load_config(name):
-    """Load a config .yaml file for a specified dataset"""
+    """Load a config .yml file for a specified dataset"""
     with open(name, "r") as reader:
         return yaml.load(reader, Loader=yaml.SafeLoader)
 
@@ -69,7 +69,7 @@ def _scale_variables(ds, norm_dict):
 def _composite_function(function_dict):
     """
     Return a composite function of all functions specified in a processing
-        step of a config .yaml
+        step of a config .yml
     """
 
     def composite(*funcs):
@@ -453,14 +453,14 @@ def main(configs, config_dir, save_dir):
     logger = logging.getLogger(__name__)
 
     logger.info("Spinning up a dask cluster")
-    client = Client()
+    client = Client(n_workers=1)
 
     logger.info("Generating grid files")
     generate_HadISST_grid_file()
     generate_CAFE_grid_files()
 
     if "all" in configs:
-        configs = glob.glob(f"{config_dir}/*")
+        configs = glob.glob(f"{config_dir}/*.yml")
         configs = [os.path.basename(c) for c in configs]
 
     for config in configs:

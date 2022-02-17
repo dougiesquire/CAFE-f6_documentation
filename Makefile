@@ -7,7 +7,7 @@
 PROJECT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 PROFILE = default
 PROJECT_NAME = Squire_2022_CAFE-f6
-PYTHON_INTERPRETER = python3
+PYTHON_INTERPRETER = python
 ENV_NAME = cafe-f6_analysis
 NCI_PROJECT = xv83
 config = all
@@ -24,7 +24,6 @@ endif
 define PREPARE_DATA_SCRIPT
 #!/bin/bash -l
 #PBS -P $(NCI_PROJECT)
-##PBS -N $(config)
 #PBS -q normal
 #PBS -l walltime=04:00:00
 #PBS -l mem=192gb
@@ -34,6 +33,8 @@ define PREPARE_DATA_SCRIPT
 #PBS -l storage=gdata/xv83+gdata/oi10
 #PBS -j oe
 
+conda activate $(ENV_NAME)
+echo "conda env: $$CONDA_DEFAULT_ENV"
 $(PYTHON_INTERPRETER) src/prepare_data.py $(config)
 endef
 
@@ -44,7 +45,7 @@ endef
 ## Prepare datasets for analysis
 data:
 	$(file >make_$(config),$(PREPARE_DATA_SCRIPT))
-	($(CONDA_ACTIVATE) $(ENV_NAME) ; qsub make_$(config))
+	qsub make_$(config)
 	rm make_$(config)
 
 ## Delete unneeded Python files, dask-worker files and PBS output files
