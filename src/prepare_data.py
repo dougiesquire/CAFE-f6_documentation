@@ -454,6 +454,7 @@ def main(configs, config_dir, save_dir):
 
     logger.info("Spinning up a dask cluster")
     client = Client(n_workers=1)
+    client.wait_for_workers(n_workers=1)
 
     logger.info("Generating grid files")
     generate_HadISST_grid_file()
