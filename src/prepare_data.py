@@ -440,38 +440,6 @@ def prepare_dataset(config, save_dir):
         raise ValueError(f"No variables were specified to prepare")
 
 
-def _start_dask_cluster():
-    from dask.distributed import Client
-    from dask_jobqueue import PBSCluster
-
-    walltime = "04:00:00"
-    cores = 48
-    memory = "192GB"
-    cluster = PBSCluster(
-        processes=1,
-        walltime=str(walltime),
-        cores=cores,
-        memory=str(memory),
-        job_extra=[
-            "-l ncpus=" + str(cores),
-            "-l mem=" + str(memory),
-            "-P xv83",
-            "-l jobfs=100GB",
-            "-l storage=gdata/xv83+gdata/oi10",
-        ],
-        local_directory="$PBS_JOBFS",
-        header_skip=["select"],
-    )
-
-    cluster.scale(jobs=1)
-    client = Client(cluster)
-
-    # Wait for workers
-    client.wait_for_workers(n_workers=1)
-
-    return cluster, client
-
-
 def main(configs, config_dir, save_dir):
     """
     Process raw data according to provided config file(s)
@@ -485,7 +453,6 @@ def main(configs, config_dir, save_dir):
     logger = logging.getLogger(__name__)
 
     logger.info("Spinning up a dask cluster")
-    # cluster, client = _start_dask_cluster()
     client = Client()
 
     logger.info("Generating grid files")
@@ -500,7 +467,6 @@ def main(configs, config_dir, save_dir):
         logger.info(f"Preparing raw data using {config}")
         prepare_dataset(f"{config_dir}/{config}", save_dir)
 
-    cluster.close()
     client.close()
 
 

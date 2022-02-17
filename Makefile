@@ -9,6 +9,8 @@ PROFILE = default
 PROJECT_NAME = Squire_2022_CAFE-f6
 PYTHON_INTERPRETER = python3
 ENV_NAME = cafe-f6_analysis
+NCI_PROJECT = xv83
+config = all
 
 ifeq (,$(shell which conda))
 HAS_CONDA=False
@@ -19,47 +21,53 @@ ENV_DIR=$(CONDA_DIR)/envs/$(ENV_NAME)
 CONDA_ACTIVATE=source $$(conda info --base)/etc/profile.d/conda.sh ; conda activate ; conda activate
 endif
 
+define PREPARE_DATA_SCRIPT
+#!/bin/bash -l
+#PBS -P $(NCI_PROJECT)
+##PBS -N $(config)
+#PBS -q normal
+#PBS -l walltime=04:00:00
+#PBS -l mem=192gb
+#PBS -l ncpus=48
+#PBS -l jobfs=400GB
+#PBS -l wd
+#PBS -l storage=gdata/xv83+gdata/oi10
+#PBS -j oe
+
+$(PYTHON_INTERPRETER) src/prepare_data.py $(config)
+endef
+
 #################################################################################
 # COMMANDS                                                                      #
 #################################################################################
 
-## Make Dataset
-data: requirements
-	$(PYTHON_INTERPRETER) src/data/make_dataset.py data/raw data/processed
+## Prepare datasets for analysis
+data:
+	$(file >make_$(config),$(PREPARE_DATA_SCRIPT))
+	($(CONDA_ACTIVATE) $(ENV_NAME) ; qsub make_$(config))
+	rm make_$(config)
 
 ## Delete all compiled Python files
 clean:
 	find . -type f -name "*.py[co]" -delete
 	find . -type d -name "__pycache__" -delete
 
-## Lint using flake8
+## Lint using black and flake8
 lint:
 	($(CONDA_ACTIVATE) $(ENV_NAME) ; black src ; flake8 src)
 
-## Set up python environment
-create_environment:
+## Create the python environment or update it if it exists
+environment:
 ifeq (True,$(HAS_CONDA))
 	@echo ">>> Detected conda, creating conda environment."
 ifneq ("$(wildcard $(ENV_DIR))","") # check if the directory is there
-	@echo ">>> Project environment already exists. Update using 'update_environment'"
+	@echo ">>> Project environment already exists, updating'"
+	conda env update --name $(ENV_NAME) --file environment.yml --prune
 else
 	conda env create -f environment.yml
 endif
 else
 	@echo ">>> This project uses conda to install the environment. Please install conda"
-endif
-
-## Update the python environment
-update_environment:
-ifeq (True,$(HAS_CONDA))
-	@echo ">>> Detected conda, updating conda environment."
-ifneq ("$(wildcard $(ENV_DIR))","") # check if the directory is there
-	conda env update --name $(ENV_NAME) --file environment.yml --prune
-else
-	@echo ">>> Project environment does not exist. Create using 'create_environment'"
-endif
-else
-        @echo ">>> This project uses conda to install the environment. Please install conda"
 endif
 
 #################################################################################
