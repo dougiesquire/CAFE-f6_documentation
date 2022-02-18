@@ -475,9 +475,9 @@ def start_jobqueue_cluster():
     return client, cluster
 
     
-def main(configs, config_dir, save_dir):
+def main(config, config_dir, save_dir):
     """
-    Process raw data according to provided config file(s)
+    Process raw data according to a provided config file
 
     To add additional dataset:
         1. If data is on NCI, symlink the location of the data in ../data/raw
@@ -497,15 +497,8 @@ def main(configs, config_dir, save_dir):
     maybe_generate_HadISST_grid_file()
     maybe_generate_CAFE_grid_files()
 
-    if "all" in configs:
-        configs = glob.glob(f"{config_dir}/*.yml")
-        configs = [os.path.basename(c) for c in configs]
-
-    for config in configs:
-        logger.info(f"Preparing raw data using {config}")
-        prepare_dataset(f"{config_dir}/{config}", save_dir)
-
-    # client.close()
+    logger.info(f"Preparing raw data using {config}")
+    prepare_dataset(f"{config_dir}/{config}", save_dir)
 
 
 if __name__ == "__main__":
