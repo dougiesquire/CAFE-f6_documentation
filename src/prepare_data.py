@@ -446,6 +446,35 @@ def prepare_dataset(config, save_dir):
         raise ValueError(f"No variables were specified to prepare")
 
 
+def start_jobqueue_cluster():
+    """ Start a single-node dask-jobqueue cluster on Gadi """
+    from dask_jobqueue import PBSCluster
+
+    walltime = "04:00:00"
+    cores = 48
+    memory = "192GB"
+    cluster = PBSCluster(
+        processes=1,
+        walltime=str(walltime),
+        cores=cores,
+        memory=str(memory),
+        job_extra=[
+            "-l ncpus=" + str(cores),
+            "-l mem=" + str(memory),
+            "-P xv83",
+            "-l jobfs=100GB",
+            "-l storage=gdata/xv83+gdata/oi10",
+        ],
+        local_directory="$PBS_JOBFS",
+        header_skip=["select"],
+    )
+
+    cluster.scale(jobs=1)
+    client = Client(cluster)
+    
+    return client, cluster
+
+    
 def main(configs, config_dir, save_dir):
     """
     Process raw data according to provided config file(s)
@@ -460,7 +489,8 @@ def main(configs, config_dir, save_dir):
 
     logger.info("Spinning up a dask cluster")
     client = Client(n_workers=1)
-    client.wait_for_workers(n_workers=1)
+    # client, cluster = start_jobqueue_cluster()
+    # client.wait_for_workers(n_workers=1)
 
     logger.info("Generating grid files")
     maybe_generate_HadISST_grid_file()
@@ -474,7 +504,7 @@ def main(configs, config_dir, save_dir):
         logger.info(f"Preparing raw data using {config}")
         prepare_dataset(f"{config_dir}/{config}", save_dir)
 
-    client.close()
+    # client.close()
 
 
 if __name__ == "__main__":

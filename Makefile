@@ -7,7 +7,7 @@
 PROJECT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 PROFILE = default
 PROJECT_NAME = Squire_2022_CAFE-f6
-ENV_NAME = cafe-f6_analysis
+ENV_NAME = forecast_analysis
 NCI_PROJECT = xv83
 config = all
 
@@ -60,6 +60,11 @@ data:
 	$(file >make_$(config),$(PREPARE_DATA_SCRIPT))
 	qsub make_$(config)
 	rm make_$(config)
+
+## Prepare datasets for analysis
+#data:
+#($(CONDA_ACTIVATE) $(ENV_NAME) ; python src/prepare_data.py $(config))
+
 
 ## Delete unneeded Python files, dask-worker files and PBS output files
 clean:
