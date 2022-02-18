@@ -511,8 +511,6 @@ if __name__ == "__main__":
     parser.add_argument(
         "configs",
         type=str,
-        nargs="*",
-        default=["all"],
         help="Configuration files to process, defaults to all files in --config_dir",
     )
     parser.add_argument(
