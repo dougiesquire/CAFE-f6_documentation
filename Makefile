@@ -9,7 +9,7 @@ PROFILE = default
 PROJECT_NAME = Squire_2022_CAFE-f6
 ENV_NAME = forecast_analysis
 NCI_PROJECT = xv83
-config = all
+config = CAFE60v1.yml CAFEf5.yml CAFEf6.yml CAFE_hist.yml CanESM5_hist.yml CanESM5.yml EN422.yml HadISST.yml JRA55.yml
 
 ifeq (,$(shell which conda))
 HAS_CONDA=False
@@ -20,7 +20,7 @@ ENV_DIR=$(CONDA_DIR)/envs/$(ENV_NAME)
 CONDA_ACTIVATE=source $$(conda info --base)/etc/profile.d/conda.sh ; conda activate ; conda activate
 endif
 
-define PREPARE_DATA_SCRIPT
+define HEADER
 #!/bin/bash -l
 #PBS -P $(NCI_PROJECT)
 #PBS -q normal
@@ -34,7 +34,6 @@ define PREPARE_DATA_SCRIPT
 
 conda activate $(ENV_NAME)
 echo "conda env: $$CONDA_DEFAULT_ENV"
-python src/prepare_data.py $(config)
 endef
 
 #################################################################################
@@ -57,14 +56,8 @@ endif
 
 ## Prepare datasets for analysis
 data:
-	$(file >make_$(config),$(PREPARE_DATA_SCRIPT))
-	qsub make_$(config)
-	rm make_$(config)
-
-## Prepare datasets for analysis
-#data:
-#($(CONDA_ACTIVATE) $(ENV_NAME) ; python src/prepare_data.py $(config))
-
+	$(foreach c,$(config),$(file >make_$(c),$(HEADER)) $(file >>make_$(c),python src/prepare_data.py $(c)))
+	for c in $(config); do qsub make_$${c}; rm make_$${c}; done
 
 ## Delete unneeded Python files, dask-worker files and PBS output files
 clean:
