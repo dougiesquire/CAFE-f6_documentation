@@ -1,9 +1,9 @@
 import os
+import glob
+import tempfile
 from pathlib import Path
 
 import yaml
-
-import glob
 
 import logging
 import argparse
@@ -488,7 +488,8 @@ def main(configs, config_dir, save_dir):
     logger = logging.getLogger(__name__)
 
     logger.info("Spinning up a dask cluster")
-    client = Client(n_workers=1)
+    local_directory = tempfile.TemporaryDirectory()
+    client = Client(n_workers=1, local_directory=local_directory.name)
     # client, cluster = start_jobqueue_cluster()
     # client.wait_for_workers(n_workers=1)
 
