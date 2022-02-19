@@ -2,11 +2,11 @@ API
 ===
 
 ``prepare_data``
--------------
+----------------
 
-.. autofunction:: prepare_data
+.. automodule:: prepare_data
 
-``src``
--------------
+``utils``
+---------
 
-.. autofunction:: utils
+.. automodule:: utils
