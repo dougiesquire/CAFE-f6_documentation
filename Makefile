@@ -58,6 +58,10 @@ data:
 	$(foreach c,$(config),$(file >make_$(c),$(HEADER)) $(file >>make_$(c),python src/prepare_data.py $(c)))
 	for c in $(config); do qsub make_$${c}; rm make_$${c}; done
 
+## Build the documentation
+docs:
+	cd docs; make html
+
 ## Delete unneeded Python files, dask-worker files and PBS output files
 clean:
 	find . -type f -name "*.py[co]" -delete

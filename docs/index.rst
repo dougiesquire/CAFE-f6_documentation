@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-CAFE-f6_skill_assessment documentation!
+Documentation for CAFE-f6 skill assessment
 ==============================================
 
 Contents:
@@ -12,7 +12,7 @@ Contents:
    :maxdepth: 2
 
    getting-started
-   commands
+   data_preparation
 
 
 
