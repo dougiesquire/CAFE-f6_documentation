@@ -474,12 +474,12 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format=log_fmt)
 
     parser = argparse.ArgumentParser(
-        description="Process raw dataset(s) according to provided config file(s)"
+        description="Process a raw dataset according to a provided config file"
     )
     parser.add_argument(
-        "configs",
+        "config",
         type=str,
-        help="Configuration files to process, defaults to all files in --config_dir",
+        help="Configuration file to process",
     )
     parser.add_argument(
         "--config_dir",
@@ -495,8 +495,8 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-    configs = args.configs
+    config = args.config
     config_dir = args.config_dir
     save_dir = args.save_dir
 
-    main(configs, config_dir, save_dir)
+    main(config, config_dir, save_dir)
