@@ -66,4 +66,14 @@ To prepare a particular dataset, run:
 ```
 make data config=<name-of-config>
 ```
+This will submit a batch job to prepare all of the diagnositics specified in `data/config/<name-of-config>`. And output file (`make_<name-of-config>.o????????` for this batch job will be written to the current directory once this job is complete. Alternatively, users can process multiple datasets in multiple jobs with:
+```
+make data config="<name-of-config-1> <name-of-config-2>"
+```
+or process all available datasets with:
+```
+make data
+```
 
+Adding a new dataset for preparation
+====================================
