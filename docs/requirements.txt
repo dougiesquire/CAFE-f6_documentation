@@ -3,5 +3,6 @@ sphinx-autobuild
 numpydoc
 pyyaml
 dask
+distributed
 xarray
 
