@@ -75,3 +75,6 @@ make data
 
 ### Adding a new dataset for preparation
 There are a few steps to adding a new dataset.
+1. Symlink the location of the data in `../data/raw`. (This is really just to keep things tidy/easy-traceable.)
+2. Add a new, appropriately-named, method to `src/prepare_data._open`. Choose a name that uniquely identifies the dataset being added, e.g. "JRA55". 
+3. Prepare a config file for the new dataset. This can be named anything (although for clarity it's best to use the same name as the new method added in 1.), however, the 'name' key must match the name of the new method added in 1.. Functions for new required steps should be added to `src/utils.py`.
