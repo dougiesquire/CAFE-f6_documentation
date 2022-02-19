@@ -13,7 +13,7 @@ Contents:
 
    getting-started
    data_preparation
-
+   api
 
 
 Indices and tables
