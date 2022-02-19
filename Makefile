@@ -1,4 +1,4 @@
-.PHONY: environment data clean lint
+.PHONY: environment data docs clean lint
 
 #################################################################################
 # GLOBALS                                                                       #
@@ -60,7 +60,7 @@ data:
 
 ## Build the documentation
 docs:
-	cd docs; make html
+	cd docs && $(MAKE) clean && $(MAKE) html
 
 ## Delete unneeded Python files, dask-worker files and PBS output files
 clean:
