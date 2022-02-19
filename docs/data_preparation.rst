@@ -4,6 +4,7 @@ Data Preparation
 Steps for preparing the various datasets used in this project are specified in yaml files stored in `data/config`. Code for preparing data from a specified yaml file is in `src/prepare_data.py`:
 
 .. code-block:: console
+
    $ python src/prepare_data.py -h
    usage: prepare_data.py [-h] [--config_dir CONFIG_DIR] [--save_dir SAVE_DIR] config
 
@@ -21,16 +22,21 @@ Steps for preparing the various datasets used in this project are specified in y
                         <project_dir>/data/processed/
 
 To prepare a particular dataset, run:
+
 .. code-block:: console
+
    make data config=<name-of-config>
 
 This will submit a batch job to prepare all of the diagnositics specified in `data/config/<name-of-config>`. An output file (`make_<name-of-config>.o????????`) for this batch job will be written to the current directory once this job is complete. Alternatively, users can process multiple datasets in multiple jobs with:
 
 .. code-block:: console
+
    make data config="<name-of-config-1> <name-of-config-2>"
 
 or process all available datasets with:
+
 .. code-block:: console
+
    make data
 
 Adding a new dataset for preparation
