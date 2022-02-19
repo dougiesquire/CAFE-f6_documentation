@@ -324,8 +324,8 @@ def maybe_generate_CAFE_grid_files():
                     "average_T1",
                     "average_T2",
                 ]
-           )
-       )
+            )
+        )
         atmos = utils.truncate_latitudes(atmos)
         atmos_grid = xr.zeros_like(
             atmos[["t_ref", "latb", "lonb"]].rename({"t_ref": "CAFE_atmos_grid"})
@@ -333,7 +333,7 @@ def maybe_generate_CAFE_grid_files():
         atmos_grid.attrs = {}
         atmos_grid.attrs = {}
         atmos_grid.to_netcdf(atmos_file, mode="w")
-    
+
     ocean_file = PROJECT_DIR / "data/raw/gridinfo/CAFE_ocean_grid.nc"
     if not os.path.exists(ocean_file):
         ocean = (
@@ -348,7 +348,7 @@ def maybe_generate_CAFE_grid_files():
                     "average_T2",
                 ]
             )
-       )
+        )
         ocean_ut_grid = xr.zeros_like(
             ocean[["u", "area_t", "geolat_t", "geolon_t", "st_edges_ocean"]].rename(
                 {"u": "CAFE_ocean_tu_grid"}
@@ -446,35 +446,6 @@ def prepare_dataset(config, save_dir):
         raise ValueError(f"No variables were specified to prepare")
 
 
-def start_jobqueue_cluster():
-    """ Start a single-node dask-jobqueue cluster on Gadi """
-    from dask_jobqueue import PBSCluster
-
-    walltime = "04:00:00"
-    cores = 48
-    memory = "192GB"
-    cluster = PBSCluster(
-        processes=1,
-        walltime=str(walltime),
-        cores=cores,
-        memory=str(memory),
-        job_extra=[
-            "-l ncpus=" + str(cores),
-            "-l mem=" + str(memory),
-            "-P xv83",
-            "-l jobfs=100GB",
-            "-l storage=gdata/xv83+gdata/oi10",
-        ],
-        local_directory="$PBS_JOBFS",
-        header_skip=["select"],
-    )
-
-    cluster.scale(jobs=1)
-    client = Client(cluster)
-    
-    return client, cluster
-
-    
 def main(config, config_dir, save_dir):
     """
     Process raw data according to a provided config file
@@ -489,16 +460,13 @@ def main(config, config_dir, save_dir):
 
     logger.info("Spinning up a dask cluster")
     local_directory = tempfile.TemporaryDirectory()
-    client = Client(n_workers=1, local_directory=local_directory.name)
-    # client, cluster = start_jobqueue_cluster()
-    # client.wait_for_workers(n_workers=1)
+    with Client(n_workers=1, local_directory=local_directory.name) as client:
+        logger.info("Generating grid files")
+        maybe_generate_HadISST_grid_file()
+        maybe_generate_CAFE_grid_files()
 
-    logger.info("Generating grid files")
-    maybe_generate_HadISST_grid_file()
-    maybe_generate_CAFE_grid_files()
-
-    logger.info(f"Preparing raw data using {config}")
-    prepare_dataset(f"{config_dir}/{config}", save_dir)
+        logger.info(f"Preparing raw data using {config}")
+        prepare_dataset(f"{config_dir}/{config}", save_dir)
 
 
 if __name__ == "__main__":

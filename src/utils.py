@@ -1,5 +1,6 @@
 import xarray as xr
 
+import os
 from pathlib import Path
 
 PROJECT_DIR = Path(__file__).resolve().parents[1]
@@ -170,12 +171,14 @@ def gridarea_cdo(ds):
     Returns the area weights computed using cdo's gridarea function
     Note, this function writes ds to disk, so strip back ds to only what is needed
     """
-    import os
+    import uuid
     from cdo import Cdo
 
-    ds.to_netcdf("./in.nc")
-    Cdo().gridarea(input="./in.nc", output="./out.nc")
-    weights = xr.open_dataset("./out.nc").load()
-    os.remove("./in.nc")
-    os.remove("./out.nc")
+    infile = uuid.uuid4().hex
+    outfile = uuid.uuid4().hex
+    ds.to_netcdf(f"./{infile}.nc")
+    Cdo().gridarea(input=f"./{infile}.nc", output=f"./{outfile}.nc")
+    weights = xr.open_dataset(f"./{outfile}.nc").load()
+    os.remove(f"./{infile}.nc")
+    os.remove(f"./{outfile}.nc")
     return weights["cell_area"]
