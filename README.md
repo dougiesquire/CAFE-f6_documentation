@@ -29,7 +29,7 @@ Skill benchmarking of the CAFE-f6 decadal hindcast/forecast dataset. Read the do
     ├── environment.yml     <- The environment file for reproducing the conda analysis environment
     │
     ├── setup.py            <- makes project pip installable (pip install -e .) so src can be imported
-    └──src                 <- Source code for use in this project.
+    └──src                  <- Source code for use in this project.
         ├── __init__.py     <- Makes src a Python module
         │
         ├── prepare_data.py <- Codes for generating the processed data from the raw data

@@ -3,6 +3,7 @@ API
 
 ``prepare_data``
 ----------------
+Note this module has a command line interface, see ``python src/prepare_data.py -h``
 
 .. automodule:: src.prepare_data
    :members:
