@@ -470,7 +470,7 @@ def main(config, config_dir, save_dir):
 
     logger.info("Spinning up a dask cluster")
     local_directory = tempfile.TemporaryDirectory()
-    with Client(n_workers=1, local_directory=local_directory.name) as client:
+    with Client(processes=False, local_directory=local_directory.name) as client:
         logger.info("Generating grid files")
         maybe_generate_HadISST_grid_file()
         maybe_generate_CAFE_grid_files()
