@@ -3,8 +3,7 @@ Assessment of CAFE-f6 hindcasts/forecasts
 
 Skill benchmarking of the CAFE-f6 decadal hindcast/forecast dataset
 
-Project Organization
-------------
+## Project Organization
 
     ├── LICENSE
     ├── Makefile            <- Makefile with commands like `make data`
@@ -41,8 +40,7 @@ Project Organization
 
 --------
 
-Data Preparation
-----------------
+## Data Preparation
 Steps for preparing the various datasets used in this project are specified in yaml files stored in `data/config`. Code for preparing data from a specified yaml file is in `src/prepare_data.py`:
 ```
 $ python src/prepare_data.py -h
@@ -66,7 +64,7 @@ To prepare a particular dataset, run:
 ```
 make data config=<name-of-config>
 ```
-This will submit a batch job to prepare all of the diagnositics specified in `data/config/<name-of-config>`. And output file (`make_<name-of-config>.o????????` for this batch job will be written to the current directory once this job is complete. Alternatively, users can process multiple datasets in multiple jobs with:
+This will submit a batch job to prepare all of the diagnositics specified in `data/config/<name-of-config>`. An output file (`make_<name-of-config>.o????????`) for this batch job will be written to the current directory once this job is complete. Alternatively, users can process multiple datasets in multiple jobs with:
 ```
 make data config="<name-of-config-1> <name-of-config-2>"
 ```
@@ -75,5 +73,5 @@ or process all available datasets with:
 make data
 ```
 
-Adding a new dataset for preparation
-====================================
+### Adding a new dataset for preparation
+There are a few steps to adding a new dataset.
