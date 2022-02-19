@@ -3,8 +3,7 @@ Data Preparation
 
 Steps for preparing the various datasets used in this project are specified in yaml files stored in `data/config`. Code for preparing data from a specified yaml file is in `src/prepare_data.py`:
 
-.. code-block:: console
-
+::
    $ python src/prepare_data.py -h
    usage: prepare_data.py [-h] [--config_dir CONFIG_DIR] [--save_dir SAVE_DIR] config
 
