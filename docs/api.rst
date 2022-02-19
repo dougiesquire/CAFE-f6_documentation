@@ -4,9 +4,11 @@ API
 ``prepare_data``
 ----------------
 
-.. automodule:: prepare_data
+.. automodule:: src.prepare_data
+   :members:
 
 ``utils``
 ---------
 
-.. automodule:: utils
+.. automodule:: src.utils
+   :members:

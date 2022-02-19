@@ -379,7 +379,14 @@ def maybe_generate_HadISST_grid_file():
 
 def prepare_dataset(config, save_dir):
     """
-    Prepare a dataset according to a provided config file and save as netcdf
+    Prepare a dataset according to a provided config file and save as zarr
+    
+    Parameters
+    ----------
+    config : str
+        The name of the config file
+    save_dir : str
+        The directory to save to 
     """
     logger = logging.getLogger(__name__)
 
@@ -448,10 +455,21 @@ def prepare_dataset(config, save_dir):
 
 def main(config, config_dir, save_dir):
     """
-    Process raw data according to a provided config file
+    Spin up a dask cluster and process raw data according to a provided config file
 
+    Parameters
+    ----------
+    config : str
+        The name of the config file
+    config_dir : str
+        The directory containing the config file
+    save_dir : str
+        The directory to save to
+    
+    Notes
+    -----
     To add additional dataset:
-        1. If data is on NCI, symlink the location of the data in ../data/raw
+        1. Symlink the location of the data in ../data/raw
         2. Add a new, appropriately-named, method to prepare_data._open
         3. Prepare a config file for the new dataset, where the 'name' key matches
             the name of the new method in prepare_data._open
