@@ -3,20 +3,20 @@ Assessment of CAFE-f6 hindcasts/forecasts
 
 [![Documentation Status](https://readthedocs.org/projects/cafef6/badge/?version=latest)](https://cafef6.readthedocs.io/en/latest/?badge=latest)
 
-Skill benchmarking of the CAFE-f6 decadal hindcast/forecast dataset. Read the documentation `here <https://cafef6.readthedocs.io/en/latest/>`_
+Skill benchmarking of the CAFE-f6 decadal hindcast/forecast dataset. Read the documentation [here](https://cafef6.readthedocs.io/en/latest/)
 
 ## Project Organization
 
     ├── LICENSE
     ├── Makefile            <- Makefile with commands like `make data`
-    ├── README.md           <- The top-level README for developers using this project.
+    ├── README.md           
     ├── data
     │   ├── config          <- Configuration files for processing the raw data
     │   ├── processed       <- The postprocessed data
     │   ├── raw             <- The original, immutable data (or symlinks to them)
     │   └── testing         <- The data used while checking CAFE-f6 forecast reproducibility
     │
-    ├── docs                <- A default Sphinx project; see sphinx-doc.org for details
+    ├── docs                <- The Sphinx documentation
     │
     ├── notebooks           <- Jupyter notebooks containing analyses. Numbers are used for ordering
     │                          where appropriate
