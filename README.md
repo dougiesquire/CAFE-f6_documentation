@@ -29,16 +29,14 @@ Skill benchmarking of the CAFE-f6 decadal hindcast/forecast dataset
     ├── environment.yml     <- The environment file for reproducing the conda analysis environment
     │
     ├── setup.py            <- makes project pip installable (pip install -e .) so src can be imported
-    ├── src                 <- Source code for use in this project.
-    │   ├── __init__.py     <- Makes src a Python module
-    │   │
-    │   ├── prepare_data.py <- Codes for generating the processed data from the raw data
-    │   │
-    │   └── utils.py        <- Utility codes, including processing methods required to generate the 
-    │                          processed data
-    │
-    └── tox.ini            <- tox file with settings for running tox; see tox.readthedocs.io
-
+    └──src                 <- Source code for use in this project.
+        ├── __init__.py     <- Makes src a Python module
+        │
+        ├── prepare_data.py <- Codes for generating the processed data from the raw data
+        │
+        └── utils.py        <- Utility codes, including processing methods required to generate the 
+                               processed data
+     
 
 --------
 

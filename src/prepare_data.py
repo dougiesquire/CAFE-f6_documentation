@@ -471,7 +471,7 @@ def main(config, config_dir, save_dir):
     To add additional dataset:
         1. Symlink the location of the data in ../data/raw
         2. Add a new, appropriately-named, method to prepare_data._open
-        3. Prepare a config file for the new dataset, where the 'name' key matches
+        3. Prepare a config file for the new dataset, where the 'name' key matches 
             the name of the new method in prepare_data._open
     """
     logger = logging.getLogger(__name__)
