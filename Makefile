@@ -33,7 +33,6 @@ define HEADER
 #PBS -j oe
 
 conda activate $(ENV_NAME)
-echo "conda env: $$CONDA_DEFAULT_ENV"
 endef
 
 #################################################################################
