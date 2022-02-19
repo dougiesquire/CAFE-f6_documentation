@@ -7,7 +7,12 @@ formats: all
 
 python:
    version: 3.7
-   setup_py_install: true
+   install:
+    - method: pip
+      path: .
+      extra_requirements:
+        - all
+    - requirements: docs/requirements.txt
 
 submodules:
   include: all
