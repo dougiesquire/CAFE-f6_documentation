@@ -6,20 +6,7 @@
 Documentation for CAFE-f6 skill assessment
 ==============================================
 
-Welcome to the documentation for my project assessing CAFE-f6
-
-Contents
---------
-
-.. toctree::
-   :maxdepth: 2
-
-   getting-started
-   data_preparation
-   api
-
-Project organisation
---------------------
+Welcome to the documentation for my project assessing CAFE-f6. The project is organised as follows:
 
 ::
 
@@ -51,6 +38,16 @@ Project organisation
    │   └── utils.py        <- Utility codes, including functions processing data
    ├── LICENSE
    └── README.md
+
+Contents
+========
+
+.. toctree::
+   :maxdepth: 2
+
+   getting-started
+   data_preparation
+   api
 
 Indices and tables
 ==================
