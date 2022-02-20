@@ -32,23 +32,23 @@ Project organisation
    │
    ├── docs                <- The Sphinx documentation
    │
-   ├── notebooks           <- Jupyter notebooks containing analyses. Numbers are used for ordering
-   │                          where appropriate
+   ├── notebooks           <- Jupyter notebooks containing analyses. Numbers are used for
+   │                          ordering where appropriate
    │
    ├── references          <- Data dictionaries, manuals, and all other explanatory materials.
    │
    ├── reports             <- Generated analysis as HTML, PDF, LaTeX, etc.
    │   └── figures         <- Generated graphics and figures to be used in reporting
    │
-   ├── environment.yml     <- The environment file for reproducing the conda analysis environment
+   ├── environment.yml     <- yaml file for reproducing the conda analysis environment
    │
-   ├── setup.py            <- makes project pip installable (pip install -e .) so src can be imported
-   ├── src                  <- Source code for use in this project.
+   ├── setup.py            <- makes src pip installable (pip install -e .)
+   ├── src                 <- Source code for use in this project.
    │   ├── __init__.py     <- Makes src a Python module
    │   │
    │   ├── prepare_data.py <- Codes for generating the processed data from the raw data
    │   │
-   │   └── utils.py        <- Utility codes, including methods for the generation of the processed data
+   │   └── utils.py        <- Utility codes, including functions processing data
    ├── LICENSE
    └── README.md
 
