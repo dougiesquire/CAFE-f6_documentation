@@ -192,48 +192,54 @@ class _open:
         else:
             return ds
 
-    def CanESM5(variables, realm, preprocess):
-        """Open CanESM5 dcppA-hindcast variables from specified realm"""
+    def _dcppA_hindcast(model, variant_id, grid, variables, realm, years, members, version="*"):
+        """Open dcppA-hindcast variables from specified monthly realm"""
 
-        def _CanESM5_file(y, m, v):
-            version = "v20190429"
-            return (
-                DATA_DIR
-                / f"CanESM5/s{y-1}-r{m}i1p2f1/{realm}/{v}/gn/{version}/{v}_{realm}_CanESM5_dcppA-hindcast_s{y-1}-r{m}i1p2f1_gn_{y}01-{y+9}12.nc"
+        def _dcpp_file(y, m, v):
+            file = sorted(
+                glob.glob(
+                f"{DATA_DIR}/{model}/s????-r{m}{variant_id}/{realm}/{v}/{grid}/{version}/{v}_{realm}_{model}_dcppA-hindcast_s????-r{m}{variant_id}_{grid}_{y}??-??????.nc"
+                )
             )
+            if len(file) == 1:
+                return file[0]
+            elif: len(file) == 0:
+                raise ValueError("No files found")
+            else:
+                raise ValueError("More than one file matches the pattern")
 
         @dask.delayed
-        def _open_CanESM5_delayed(y, m, v):
-            file = _CanESM5_file(y, m, v)
+        def _open_dcpp_delayed(y, m, v):
+            file = _dcpp_file(y, m, v)
             ds = xr.open_dataset(file, chunks={})[v]
             return ds
 
-        def _open_CanESM5(y, m, v, d0):
-            var_data = _open_CanESM5_delayed(y, m, v).data
+        def _open_dcpp(y, m, v, d0):
+            var_data = _open_dcpp_delayed(y, m, v).data
             return dask.array.from_delayed(var_data, d0.shape, d0.dtype)
-
-        years = range(1981, 2018)  # CanESM5 ocean files end in 2017
-        members = range(1, 40 + 1)
 
         ds = []
         for v in variables:
-            f0 = _CanESM5_file(years[0], members[0], v)
-            d0 = utils.convert_time_to_lead(xr.open_dataset(f0, chunks={}))[v]
-
+            f0 = _dcpp_file(years[0], members[0], v)
+            ds0 = xr.open_dataset(f0, chunks={})
+            ds0 = utils.convert_time_to_lead(ds0)
+            ds0 = utils.round_to_start_of_month(ds0, dim="init")  
+            d0 = ds0[v]
+            
             delayed = []
             for y in years:
                 delayed.append(
                     dask.array.stack(
-                        [_open_CanESM5(y, m, v, d0) for m in members], axis=0
+                        [_open_dcpp(y, m, v, d0) for m in members], axis=0
                     )
                 )
             delayed = dask.array.stack(delayed, axis=0)
 
             init = xr.cftime_range(
-                str(years[0]), str(years[-1]), freq="YS", calendar="julian"
+                start=ds0.init.item(), periods=len(years), freq="12MS", calendar="julian"
             )
             time = [
-                xr.cftime_range(i, periods=120, freq="MS", calendar="julian")
+                xr.cftime_range(i, periods=ds0.sizes["lead"], freq="MS", calendar="julian")
                 for i in init
             ]
             ds.append(
@@ -249,7 +255,47 @@ class _open:
                     attrs=d0.attrs,
                 ).to_dataset(name=v)
             )
-        ds = xr.merge(ds).compute()
+        return xr.merge(ds)#.compute()
+        
+    def CanESM5(variables, realm, preprocess):
+        """Open CanESM5 dcppA-hindcast variables from specified monthly realm"""
+        model = "CanESM5"
+        variant_id = "i1p2f1"
+        grid = "gr"
+        years = range(1981, 2017 + 1)  # CanESM5 ocean files end in 2017
+        members = range(1, 40 + 1)
+        version = "v20190429"
+        ds = _open._dcppA_hindcast(
+            model, 
+            variant_id, 
+            grid,
+            variables, 
+            realm, 
+            years, 
+            members, 
+            version)
+        if preprocess is not None:
+            return preprocess(ds)
+        else:
+            return ds
+        
+    def EC_Earth3(variables, realm, preprocess):
+        """Open EC-Earth3 dcppA-hindcast variables from specified monthly realm"""
+        model = "EC-Earth3"
+        variant_id = "i1p1f1"
+        grid = "gr"
+        years = range(1981, 2017 + 1)  # CESM1 ocean files end in 2017
+        members = range(1, 40 + 1)
+        version = "*"
+        ds = _open._dcppA_hindcast(
+            model, 
+            variant_id, 
+            grid,
+            variables, 
+            realm, 
+            years, 
+            members, 
+            version)
         if preprocess is not None:
             return preprocess(ds)
         else:
