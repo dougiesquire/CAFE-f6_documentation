@@ -196,10 +196,17 @@ class _open:
         """Open CMIP6 dcppA-hindcast variables from specified monthly realm"""
 
         def _dcpp_file(y, m, v):
-            pattern = f"{DATA_DIR}/{model}/s{y}-r{m}{variant_id}/{realm}/{v}/{grid}/{version}/{v}_{realm}_{model}_dcppA-hindcast_s{y}-r{m}{variant_id}_{grid}_*.nc"
-            files = sorted(glob.glob(pattern))
+            path = f"{DATA_DIR}/{model}/s{y}-r{m}{variant_id}/{realm}/{v}/{grid}"
+            if version == "latest":
+                versions = sorted(glob.glob(f"{path}/v????????"))
+                path = versions[-1]
+            else:
+                path = f"{path}/{version}"
+            
+            file_pattern = f"{v}_{realm}_{model}_dcppA-hindcast_s{y}-r{m}{variant_id}_{grid}_*.nc"
+            files = sorted(glob.glob(f"{path}/{file_pattern}"))
             if len(files) == 0:
-                raise ValueError(f"No files found for {pattern}")
+                raise ValueError(f"No files found for {path}/{file_pattern}")
             else:
                 return files
 
@@ -330,13 +337,24 @@ class _open:
             return ds
 
     def _cmip6_historical(model, variant_id, grid, variables, realm, members, version):
-        """Open CMIP6 historical variables from specified realm"""
+        """
+        Open CMIP6 historical variables from specified realm
+        
+        Can specify version='latest' but this is slower as it has to search each 
+        directory for the latest version
+        """
 
         def _hist_files(m, v):
-            pattern = f"{DATA_DIR}/{model}_hist/r{m}{variant_id}/{realm}/{v}/{grid}/{version}/{v}_{realm}_{model}_historical_r*{variant_id}_{grid}_*.nc"
-            files = sorted(glob.glob(pattern))
+            path = f"{DATA_DIR}/{model}_hist/r{m}{variant_id}/{realm}/{v}/{grid}"
+            if version == "latest":
+                versions = sorted(glob.glob(f"{path}/v????????"))
+                path = versions[-1]
+            else:
+                path = f"{path}/{version}"
+            file_pattern = f"{v}_{realm}_{model}_historical_r*{variant_id}_{grid}_*.nc"
+            files = sorted(glob.glob(f"{path}/{file_pattern}"))
             if len(files) == 0:
-                raise ValueError(f"No files found for {pattern}")
+                raise ValueError(f"No files found for {path}/{file_pattern}")
             else:
                 return files
 
@@ -404,8 +422,13 @@ class _open:
         model = "EC-Earth3"
         variant_id = "i1p1f1"
         grid = "gn" if realm == "Omon" else "gr"
-        members = range(1, 10 + 1)
-        version = "v20200918" if realm == "Omon" else "v20200310"
+        # Member 3 has screwy lats that can't be readily concatenated
+        # Members 11, 13, 15 start in 1849
+        # Members 101-150 only span 197001-201412
+        members = (
+            [1,2,4,6,7,9,10,12,14] + list(range(16, 26))
+        ) 
+        version = "latest"
         ds = _open._cmip6_historical(
             model, 
             variant_id, 
