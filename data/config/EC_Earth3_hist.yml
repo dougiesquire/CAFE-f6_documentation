@@ -23,7 +23,7 @@
 #        Functions and kwargs from src.utils to be applied sequentially to opened 
 #        dataset. These are applied after the variables are renamed and rescaled
 
-name: "CanESM5_hist"
+name: "EC_Earth3_hist"
 
 rename:
   t_ref: "tas"
