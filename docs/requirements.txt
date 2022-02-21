@@ -5,4 +5,5 @@ pyyaml
 dask
 distributed
 xarray
+pydata-sphinx-theme
 
