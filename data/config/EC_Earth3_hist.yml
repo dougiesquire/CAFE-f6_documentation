@@ -82,6 +82,6 @@ prepare:
         dim: "time"
       force_to_Julian_calendar:
       interpolate_to_grid_from_file:
-        file: "data/raw/gridinfo/HadISST_grid.nc"
+        file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
       rechunk:
         chunks:  {"time": -1, "member": -1, "lat": 90, "lon": 90}

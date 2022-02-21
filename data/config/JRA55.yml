@@ -33,7 +33,7 @@ rename:
 prepare:
   t_ref:
     uses:
-      surface_month_cafe-grid:
+      surface_month:
         - "t_ref"
     apply:
       force_to_Julian_calendar:
@@ -41,12 +41,14 @@ prepare:
       coarsen_monthly_to_annual:
         start_points: ["1960-11-01", "1960-01-01"]
         dim: "time"
+      interpolate_to_grid_from_file:
+        file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
       rechunk:
         chunks:  {"time": -1, "lat": -1, "lon": -1}
         
   precip:
     uses:
-      surface_month_cafe-grid:
+      surface_month:
         - "precip"
     apply:
       force_to_Julian_calendar:
@@ -54,5 +56,7 @@ prepare:
       coarsen_monthly_to_annual:
         start_points: ["1960-11-01", "1960-01-01"]
         dim: "time"
+      interpolate_to_grid_from_file:
+        file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
       rechunk:
         chunks:  {"time": -1, "lat": -1, "lon": -1}
