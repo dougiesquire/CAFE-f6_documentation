@@ -11,7 +11,7 @@ ENV_NAME = forecast_analysis
 NCI_PROJECT = xv83
 RAW_DATA_DIR = ./data/raw/
 
-config = CAFE60v1.yml CAFEf5.yml CAFEf6.yml CAFE_hist.yml CanESM5_hist.yml CanESM5.yml EC_Earth3.yml EN422.yml HadISST.yml JRA55.yml
+config = CAFE60v1.yml CAFEf5.yml CAFEf6.yml CAFE_hist.yml CanESM5_hist.yml CanESM5.yml EC_Earth3.yml EC_Earth3_hist.yml EN422.yml HadISST.yml JRA55.yml
 
 ifeq (,$(shell which conda))
 HAS_CONDA=False
@@ -69,8 +69,8 @@ data:
 	ln -sfn /g/data/xv83/reanalyses/EN.4.2.2/ $(RAW_DATA_DIR)/EN.4.2.2
 	ln -sfn /g/data/xv83/reanalyses/HadISST/ $(RAW_DATA_DIR)/HadISST
 	ln -sfn /g/data/xv83/reanalyses/JRA55/ $(RAW_DATA_DIR)/JRA55	
-##$(foreach c,$(config),$(file >make_$(c),$(HEADER)) $(file >>make_$(c),python src/prepare_data.py $(c)))
-##for c in $(config); do qsub make_$${c}; rm make_$${c}; done
+	$(foreach c,$(config),$(file >make_$(c),$(HEADER)) $(file >>make_$(c),python src/prepare_data.py $(c)))
+	for c in $(config); do qsub make_$${c}; rm make_$${c}; done
 
 ## Build the documentation
 docs:

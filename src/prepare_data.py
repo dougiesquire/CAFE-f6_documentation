@@ -192,25 +192,24 @@ class _open:
         else:
             return ds
 
-    def _dcppA_hindcast(model, variant_id, grid, variables, realm, years, members, version="*"):
-        """Open dcppA-hindcast variables from specified monthly realm"""
+    def _cmip6_dcppA_hindcast(model, variant_id, grid, variables, realm, years, members, version):
+        """Open CMIP6 dcppA-hindcast variables from specified monthly realm"""
 
         def _dcpp_file(y, m, v):
             pattern = f"{DATA_DIR}/{model}/s{y}-r{m}{variant_id}/{realm}/{v}/{grid}/{version}/{v}_{realm}_{model}_dcppA-hindcast_s{y}-r{m}{variant_id}_{grid}_*.nc"
-            file = sorted(glob.glob(pattern))
-            if len(file) == 0:
+            files = sorted(glob.glob(pattern))
+            if len(files) == 0:
                 raise ValueError(f"No files found for {pattern}")
             else:
-                return file
+                return files
 
         @dask.delayed
         def _open_dcpp_delayed(y, m, v):
             files = _dcpp_file(y, m, v)
-            ds = xr.concat(
+            return xr.concat(
                 [xr.open_dataset(f, chunks={}, use_cftime=True) for f in files],
                 dim="time"
             )[v]
-            return ds
 
         def _open_dcpp(y, m, v, d0):
             var_data = _open_dcpp_delayed(y, m, v).data
@@ -219,7 +218,6 @@ class _open:
         ds = []
         for v in variables:
             f0 = _dcpp_file(years[0], members[0], v)
-            ds0 = xr.open_mfdataset(f0, chunks={}, use_cftime=True, parallel=False)
             ds0 = xr.concat(
                 [xr.open_dataset(f, chunks={}, use_cftime=True) for f in f0],
                 dim = "time"
@@ -270,7 +268,7 @@ class _open:
         years = range(1980, 2016 + 1)
         members = range(1, 40 + 1)
         version = "v20190429"
-        ds = _open._dcppA_hindcast(
+        ds = _open._cmip6_dcppA_hindcast(
             model, 
             variant_id, 
             grid,
@@ -284,37 +282,40 @@ class _open:
         else:
             return ds
         
-    def CESM1(variables, realm, preprocess):
-        """Open CESM1-1-CAM5-CMIP5 dcppA-hindcast variables from specified monthly realm"""
-        model = "CESM1-1-CAM5-CMIP5"
-        variant_id = "i1p1f1"
-        grid = "gr" if realm == "Omon" else "gn"
-        years = range(1981, 2017 + 1)  # CESM1 ocean files end in 2017
-        members = range(1, 40 + 1)
-        version = "v20191016" if realm == "Omon" else "v20191007"
-        ds = _open._dcppA_hindcast(
-            model, 
-            variant_id, 
-            grid,
-            variables, 
-            realm, 
-            years, 
-            members, 
-            version)
-        if preprocess is not None:
-            return preprocess(ds)
-        else:
-            return ds
+#     def CESM1(variables, realm, preprocess):
+#         """
+#         NOT CURRENTLY USED
+#         Open CESM1-1-CAM5-CMIP5 dcppA-hindcast variables from specified monthly realm
+#         """
+#         model = "CESM1-1-CAM5-CMIP5"
+#         variant_id = "i1p1f1"
+#         grid = "gr" if realm == "Omon" else "gn"
+#         years = range(1981, 2017 + 1)  # CESM1 ocean files end in 2017
+#         members = range(1, 40 + 1)
+#         version = "v20191016" if realm == "Omon" else "v20191007"
+#         ds = _open._cmip6_dcppA_hindcast(
+#             model, 
+#             variant_id, 
+#             grid,
+#             variables, 
+#             realm, 
+#             years, 
+#             members, 
+#             version)
+#         if preprocess is not None:
+#             return preprocess(ds)
+#         else:
+#             return ds
         
     def EC_Earth3(variables, realm, preprocess):
         """Open EC-Earth3 dcppA-hindcast variables from specified monthly realm"""
         model = "EC-Earth3"
         variant_id = "i1p1f1"
         grid = "gr"
-        years = range(1981, 2018 + 1)  # CESM1 ocean files end in 2017
+        years = range(1981, 2018 + 1)
         members = range(1, 10 + 1)
         version = "v2020121?"
-        ds = _open._dcppA_hindcast(
+        ds = _open._cmip6_dcppA_hindcast(
             model, 
             variant_id, 
             grid,
@@ -328,37 +329,39 @@ class _open:
         else:
             return ds
 
-    def CanESM5_hist(variables, realm, preprocess):
-        """Open CanESM5 historical variables from specified realm"""
+    def _cmip6_historical(model, variant_id, grid, variables, realm, members, version):
+        """Open CMIP6 historical variables from specified realm"""
 
-        def _CanESM5_hist_files(v):
-            version = "v20190429"
-            return sorted(
-                glob.glob(
-                    f"{DATA_DIR}/CanESM5_hist/r*i1p2f1/{realm}/{v}/gn/{version}/{v}_{realm}_CanESM5_historical_r*i1p2f1_gn_185001-201412.nc"
-                )
-            )
+        def _hist_files(m, v):
+            pattern = f"{DATA_DIR}/{model}_hist/r{m}{variant_id}/{realm}/{v}/{grid}/{version}/{v}_{realm}_{model}_historical_r*{variant_id}_{grid}_*.nc"
+            files = sorted(glob.glob(pattern))
+            if len(files) == 0:
+                raise ValueError(f"No files found for {pattern}")
+            else:
+                return files
 
         @dask.delayed
-        def _open_CanESM5_hist_delayed(f, v):
-            ds = xr.open_dataset(f, chunks={})[v]
-            return ds
+        def _open_hist_delayed(m, v):
+            files = _hist_files(m, v)
+            return xr.concat(
+                [xr.open_dataset(f, chunks={}, use_cftime=True) for f in files],
+                dim="time"
+            )[v]
 
-        def _open_CanESM5_hist(f, v):
-            var_data = _open_CanESM5_hist_delayed(f, v).data
+        def _open_hist(m, v):
+            var_data = _open_hist_delayed(m, v).data
             return dask.array.from_delayed(var_data, d0.shape, d0.dtype)
 
         ds = []
-        members = range(1, 40 + 1)
         for v in variables:
-            files = _CanESM5_hist_files(v)
-            d0 = xr.open_dataset(
-                files[0],
-                chunks={},
+            f0 = _hist_files(members[0], v)
+            d0 = xr.concat(
+                [xr.open_dataset(f, chunks={}, use_cftime=True) for f in f0],
+                dim = "time"
             )[v]
 
             delayed = dask.array.stack(
-                [_open_CanESM5_hist(f, v) for f in files], axis=0
+                [_open_hist(m, v) for m in members], axis=0
             )
 
             ds.append(
@@ -373,12 +376,49 @@ class _open:
                 ).to_dataset(name=v)
             )
 
-        ds = xr.merge(ds).compute()
+        return xr.merge(ds).compute()
+        
+    def CanESM5_hist(variables, realm, preprocess):
+        """Open CanESM5 historical variables from specified realm"""
+        model = "CanESM5"
+        variant_id = "i1p2f1"
+        grid = "gn"
+        members = range(1, 40 + 1)
+        version = "v20190429"
+        ds = _open._cmip6_historical(
+            model, 
+            variant_id, 
+            grid,
+            variables, 
+            realm,
+            members, 
+            version)
         if preprocess is not None:
             return preprocess(ds)
         else:
             return ds
-
+        
+        
+    def EC_Earth3_hist(variables, realm, preprocess):
+        """Open EC-Earth3 historical variables from specified realm"""
+        model = "EC-Earth3"
+        variant_id = "i1p1f1"
+        grid = "gn" if realm == "Omon" else "gr"
+        members = range(1, 10 + 1)
+        version = "v20200918" if realm == "Omon" else "v20200310"
+        ds = _open._cmip6_historical(
+            model, 
+            variant_id, 
+            grid,
+            variables, 
+            realm, 
+            members, 
+            version)
+        if preprocess is not None:
+            return preprocess(ds)
+        else:
+            return ds
+        
 
 def maybe_generate_CAFE_grid_files():
     """Generate files containing CAFE grids"""
