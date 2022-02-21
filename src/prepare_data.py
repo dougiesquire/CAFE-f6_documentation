@@ -196,22 +196,20 @@ class _open:
         """Open dcppA-hindcast variables from specified monthly realm"""
 
         def _dcpp_file(y, m, v):
-            file = sorted(
-                glob.glob(
-                f"{DATA_DIR}/{model}/s????-r{m}{variant_id}/{realm}/{v}/{grid}/{version}/{v}_{realm}_{model}_dcppA-hindcast_s????-r{m}{variant_id}_{grid}_{y}??-??????.nc"
-                )
-            )
-            if len(file) == 1:
-                return file[0]
-            elif: len(file) == 0:
-                raise ValueError("No files found")
+            pattern = f"{DATA_DIR}/{model}/s{y}-r{m}{variant_id}/{realm}/{v}/{grid}/{version}/{v}_{realm}_{model}_dcppA-hindcast_s{y}-r{m}{variant_id}_{grid}_*.nc"
+            file = sorted(glob.glob(pattern))
+            if len(file) == 0:
+                raise ValueError(f"No files found for {pattern}")
             else:
-                raise ValueError("More than one file matches the pattern")
+                return file
 
         @dask.delayed
         def _open_dcpp_delayed(y, m, v):
-            file = _dcpp_file(y, m, v)
-            ds = xr.open_dataset(file, chunks={})[v]
+            files = _dcpp_file(y, m, v)
+            ds = xr.concat(
+                [xr.open_dataset(f, chunks={}, use_cftime=True) for f in files],
+                dim="time"
+            )[v]
             return ds
 
         def _open_dcpp(y, m, v, d0):
@@ -221,7 +219,11 @@ class _open:
         ds = []
         for v in variables:
             f0 = _dcpp_file(years[0], members[0], v)
-            ds0 = xr.open_dataset(f0, chunks={})
+            ds0 = xr.open_mfdataset(f0, chunks={}, use_cftime=True, parallel=False)
+            ds0 = xr.concat(
+                [xr.open_dataset(f, chunks={}, use_cftime=True) for f in f0],
+                dim = "time"
+            )
             ds0 = utils.convert_time_to_lead(ds0)
             ds0 = utils.round_to_start_of_month(ds0, dim="init")  
             d0 = ds0[v]
@@ -236,7 +238,10 @@ class _open:
             delayed = dask.array.stack(delayed, axis=0)
 
             init = xr.cftime_range(
-                start=ds0.init.item(), periods=len(years), freq="12MS", calendar="julian"
+                ds0.init.dt.strftime("%Y-%m-%d").item(), # Already rounded to start of month
+                periods=len(years), 
+                freq="12MS", 
+                calendar="julian"
             )
             time = [
                 xr.cftime_range(i, periods=ds0.sizes["lead"], freq="MS", calendar="julian")
@@ -255,16 +260,38 @@ class _open:
                     attrs=d0.attrs,
                 ).to_dataset(name=v)
             )
-        return xr.merge(ds)#.compute()
+        return xr.merge(ds).compute()
         
     def CanESM5(variables, realm, preprocess):
         """Open CanESM5 dcppA-hindcast variables from specified monthly realm"""
         model = "CanESM5"
         variant_id = "i1p2f1"
-        grid = "gr"
-        years = range(1981, 2017 + 1)  # CanESM5 ocean files end in 2017
+        grid = "gn"
+        years = range(1980, 2016 + 1)
         members = range(1, 40 + 1)
         version = "v20190429"
+        ds = _open._dcppA_hindcast(
+            model, 
+            variant_id, 
+            grid,
+            variables, 
+            realm, 
+            years, 
+            members, 
+            version)
+        if preprocess is not None:
+            return preprocess(ds)
+        else:
+            return ds
+        
+    def CESM1(variables, realm, preprocess):
+        """Open CESM1-1-CAM5-CMIP5 dcppA-hindcast variables from specified monthly realm"""
+        model = "CESM1-1-CAM5-CMIP5"
+        variant_id = "i1p1f1"
+        grid = "gr" if realm == "Omon" else "gn"
+        years = range(1981, 2017 + 1)  # CESM1 ocean files end in 2017
+        members = range(1, 40 + 1)
+        version = "v20191016" if realm == "Omon" else "v20191007"
         ds = _open._dcppA_hindcast(
             model, 
             variant_id, 
@@ -284,9 +311,9 @@ class _open:
         model = "EC-Earth3"
         variant_id = "i1p1f1"
         grid = "gr"
-        years = range(1981, 2017 + 1)  # CESM1 ocean files end in 2017
-        members = range(1, 40 + 1)
-        version = "*"
+        years = range(1981, 2018 + 1)  # CESM1 ocean files end in 2017
+        members = range(1, 10 + 1)
+        version = "v2020121?"
         ds = _open._dcppA_hindcast(
             model, 
             variant_id, 

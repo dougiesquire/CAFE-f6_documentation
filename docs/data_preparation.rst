@@ -43,7 +43,7 @@ Adding a new dataset for preparation
 ------------------------------------
 There are a few steps to adding a new dataset.
 
-#. Symlink the location of the data in ``data/raw``. (This is really just to keep things tidy/easily-traceable.)
+#. Add a step to the 'data' trigger within ``Makefile`` symlinking the location of the data in ``data/raw``. (This is really just to keep things tidy/easily-traceable.)
 #. Add a new, appropriately-named, method to ``src/prepare_data._open``. Choose a name that uniquely identifies the dataset being added, e.g. "JRA55".
 #. Prepare a config file for the new dataset. This file can be named anything, however, the 'name' key must match the name of the new method added in 2. Functions for executing new steps should be added to ``src/utils.py``.
-#. Add the new config file to the list of default configs to process in ``Makefile``
+#. Add the new config file to the list of default configs to process (variable ``configs``) in ``Makefile``

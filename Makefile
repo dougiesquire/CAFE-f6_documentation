@@ -9,7 +9,9 @@ PROFILE = default
 PROJECT_NAME = Squire_2022_CAFE-f6
 ENV_NAME = forecast_analysis
 NCI_PROJECT = xv83
-config = CAFE60v1.yml CAFEf5.yml CAFEf6.yml CAFE_hist.yml CanESM5_hist.yml CanESM5.yml EN422.yml HadISST.yml JRA55.yml
+RAW_DATA_DIR = ./data/raw/
+
+config = CAFE60v1.yml CAFEf5.yml CAFEf6.yml CAFE_hist.yml CanESM5_hist.yml CanESM5.yml EC_Earth3.yml EN422.yml HadISST.yml JRA55.yml
 
 ifeq (,$(shell which conda))
 HAS_CONDA=False
@@ -55,8 +57,20 @@ endif
 
 ## Prepare datasets for analysis
 data:
-	$(foreach c,$(config),$(file >make_$(c),$(HEADER)) $(file >>make_$(c),python src/prepare_data.py $(c)))
-	for c in $(config); do qsub make_$${c}; rm make_$${c}; done
+	ln -sfn /g/data/xv83/dcfp/CAFE60v1/ $(RAW_DATA_DIR)/CAFE60v1
+	ln -sfn /g/data/xv83/users/ds0092/data/CAFE/historical/WIP/c5-d60-pX-ctrl-19601101/ZARR/ $(RAW_DATA_DIR)/CAFE_ctrl
+	ln -sfn /g/data/xv83/dcfp/CAFE-f5/ $(RAW_DATA_DIR)/CAFEf5
+	ln -sfn /g/data/xv83/dcfp/CAFE-f6/ $(RAW_DATA_DIR)/CAFEf6
+	ln -sfn /g/data/xv83/users/ds0092/data/CAFE/historical/WIP/c5-d60-pX-hist-19601101/ZARR/ $(RAW_DATA_DIR)/CAFE_hist
+	ln -sfn /g/data/oi10/replicas/CMIP6/DCPP/CCCma/CanESM5/dcppA-hindcast/ $(RAW_DATA_DIR)/CanESM5
+	ln -sfn /g/data/oi10/replicas/CMIP6/CMIP/CCCma/CanESM5/historical/ $(RAW_DATA_DIR)/CanESM5_hist
+	ln -sfn /g/data/oi10/replicas/CMIP6/DCPP/EC-Earth-Consortium/EC-Earth3/dcppA-hindcast $(RAW_DATA_DIR)/EC-Earth3
+	ln -sfn /g/data/oi10/replicas/CMIP6/CMIP/EC-Earth-Consortium/EC-Earth3/historical $(RAW_DATA_DIR)/EC-Earth3_hist
+	ln -sfn /g/data/xv83/reanalyses/EN.4.2.2/ $(RAW_DATA_DIR)/EN.4.2.2
+	ln -sfn /g/data/xv83/reanalyses/HadISST/ $(RAW_DATA_DIR)/HadISST
+	ln -sfn /g/data/xv83/reanalyses/JRA55/ $(RAW_DATA_DIR)/JRA55	
+##$(foreach c,$(config),$(file >make_$(c),$(HEADER)) $(file >>make_$(c),python src/prepare_data.py $(c)))
+##for c in $(config); do qsub make_$${c}; rm make_$${c}; done
 
 ## Build the documentation
 docs:
