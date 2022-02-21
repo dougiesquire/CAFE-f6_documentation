@@ -88,7 +88,7 @@ def rechunk(ds, chunks):
     return ds.chunk(chunks)
 
 
-def interpolate_to_grid_from_file(ds, file, add_area=True):
+def interpolate_to_grid_from_file(ds, file, add_area=True, ignore_degenerate=True):
     import xesmf
 
     """
@@ -106,7 +106,9 @@ def interpolate_to_grid_from_file(ds, file, add_area=True):
 
     C = 1
     ds = ds.copy() + C
-    regridder = xesmf.Regridder(ds, ds_out, "bilinear")
+    regridder = xesmf.Regridder(
+        ds, ds_out, "bilinear", ignore_degenerate=ignore_degenerate
+    )
     ds = regridder(ds)
     ds = ds.where(ds != 0.0) - C
     if add_area:

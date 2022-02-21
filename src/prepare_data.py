@@ -92,6 +92,7 @@ class _open:
     Class containing the dataset-specific code for opening each available dataset
     """
 
+    @staticmethod
     def JRA55(variables, realm, preprocess):
         """Open JRA55 variables from specified realm"""
         file = DATA_DIR / f"JRA55/{realm}.zarr.zip"
@@ -106,6 +107,7 @@ class _open:
         else:
             return ds
 
+    @staticmethod
     def HadISST(variables, realm, preprocess):
         """Open HadISST variables from specified realm"""
         file = DATA_DIR / f"HadISST/{realm}.zarr"
@@ -121,6 +123,7 @@ class _open:
         else:
             return ds
 
+    @staticmethod
     def EN422(variables, _, preprocess):
         """Open EN.4.2.2 variables"""
         files = sorted(glob.glob(f"{DATA_DIR}/EN.4.2.2/*.nc"))
@@ -134,6 +137,7 @@ class _open:
         else:
             return ds
 
+    @staticmethod
     def CAFEf6(variables, realm, preprocess):
         """Open CAFE-f6 variables from specified realm applying preprocess prior to
         concanenating forecasts
@@ -150,6 +154,7 @@ class _open:
             parallel=True,
         )[variables]
 
+    @staticmethod
     def CAFEf5(variables, realm, preprocess):
         """Open CAFE-f5 variables from specified realm, including appending first
         10 members of CAFE-f6 for 2020 forecast
@@ -161,6 +166,7 @@ class _open:
         else:
             return ds
 
+    @staticmethod
     def CAFE60v1(variables, realm, preprocess):
         """Open CAFE60v1 variables from specified realm"""
         file = DATA_DIR / f"CAFE60v1/{realm}.zarr.zip"
@@ -170,6 +176,7 @@ class _open:
         else:
             return ds
 
+    @staticmethod
     def CAFE_hist(variables, realm, preprocess):
         """Open CAFE historical run variables from specified realm"""
         hist_file = DATA_DIR / f"CAFE_hist/{realm}.zarr.zip"
@@ -192,18 +199,26 @@ class _open:
         else:
             return ds
 
-    def _cmip6_dcppA_hindcast(model, variant_id, grid, variables, realm, years, members, version):
+    @staticmethod
+    def _cmip6_dcppA_hindcast(
+        model, variant_id, grid, variables, realm, years, members, version
+    ):
         """Open CMIP6 dcppA-hindcast variables from specified monthly realm"""
 
         def _dcpp_file(y, m, v):
             path = f"{DATA_DIR}/{model}/s{y}-r{m}{variant_id}/{realm}/{v}/{grid}"
             if version == "latest":
                 versions = sorted(glob.glob(f"{path}/v????????"))
-                path = versions[-1]
+                if len(versions) == 0:
+                    raise ValueError(f"No versions found for {path}")
+                else:
+                    path = versions[-1]
             else:
                 path = f"{path}/{version}"
-            
-            file_pattern = f"{v}_{realm}_{model}_dcppA-hindcast_s{y}-r{m}{variant_id}_{grid}_*.nc"
+
+            file_pattern = (
+                f"{v}_{realm}_{model}_dcppA-hindcast_s{y}-r{m}{variant_id}_{grid}_*.nc"
+            )
             files = sorted(glob.glob(f"{path}/{file_pattern}"))
             if len(files) == 0:
                 raise ValueError(f"No files found for {path}/{file_pattern}")
@@ -215,7 +230,7 @@ class _open:
             files = _dcpp_file(y, m, v)
             return xr.concat(
                 [xr.open_dataset(f, chunks={}, use_cftime=True) for f in files],
-                dim="time"
+                dim="time",
             )[v]
 
         def _open_dcpp(y, m, v, d0):
@@ -226,30 +241,31 @@ class _open:
         for v in variables:
             f0 = _dcpp_file(years[0], members[0], v)
             ds0 = xr.concat(
-                [xr.open_dataset(f, chunks={}, use_cftime=True) for f in f0],
-                dim = "time"
+                [xr.open_dataset(f, chunks={}, use_cftime=True) for f in f0], dim="time"
             )
             ds0 = utils.convert_time_to_lead(ds0)
-            ds0 = utils.round_to_start_of_month(ds0, dim="init")  
+            ds0 = utils.round_to_start_of_month(ds0, dim="init")
             d0 = ds0[v]
-            
+
             delayed = []
             for y in years:
                 delayed.append(
-                    dask.array.stack(
-                        [_open_dcpp(y, m, v, d0) for m in members], axis=0
-                    )
+                    dask.array.stack([_open_dcpp(y, m, v, d0) for m in members], axis=0)
                 )
             delayed = dask.array.stack(delayed, axis=0)
 
             init = xr.cftime_range(
-                ds0.init.dt.strftime("%Y-%m-%d").item(), # Already rounded to start of month
-                periods=len(years), 
-                freq="12MS", 
-                calendar="julian"
+                ds0.init.dt.strftime(
+                    "%Y-%m-%d"
+                ).item(),  # Already rounded to start of month
+                periods=len(years),
+                freq="12MS",
+                calendar="julian",
             )
             time = [
-                xr.cftime_range(i, periods=ds0.sizes["lead"], freq="MS", calendar="julian")
+                xr.cftime_range(
+                    i, periods=ds0.sizes["lead"], freq="MS", calendar="julian"
+                )
                 for i in init
             ]
             ds.append(
@@ -266,7 +282,8 @@ class _open:
                 ).to_dataset(name=v)
             )
         return xr.merge(ds).compute()
-        
+
+    @staticmethod
     def CanESM5(variables, realm, preprocess):
         """Open CanESM5 dcppA-hindcast variables from specified monthly realm"""
         model = "CanESM5"
@@ -276,44 +293,14 @@ class _open:
         members = range(1, 40 + 1)
         version = "v20190429"
         ds = _open._cmip6_dcppA_hindcast(
-            model, 
-            variant_id, 
-            grid,
-            variables, 
-            realm, 
-            years, 
-            members, 
-            version)
+            model, variant_id, grid, variables, realm, years, members, version
+        )
         if preprocess is not None:
             return preprocess(ds)
         else:
             return ds
-        
-#     def CESM1(variables, realm, preprocess):
-#         """
-#         NOT CURRENTLY USED
-#         Open CESM1-1-CAM5-CMIP5 dcppA-hindcast variables from specified monthly realm
-#         """
-#         model = "CESM1-1-CAM5-CMIP5"
-#         variant_id = "i1p1f1"
-#         grid = "gr" if realm == "Omon" else "gn"
-#         years = range(1981, 2017 + 1)  # CESM1 ocean files end in 2017
-#         members = range(1, 40 + 1)
-#         version = "v20191016" if realm == "Omon" else "v20191007"
-#         ds = _open._cmip6_dcppA_hindcast(
-#             model, 
-#             variant_id, 
-#             grid,
-#             variables, 
-#             realm, 
-#             years, 
-#             members, 
-#             version)
-#         if preprocess is not None:
-#             return preprocess(ds)
-#         else:
-#             return ds
-        
+
+    @staticmethod
     def EC_Earth3(variables, realm, preprocess):
         """Open EC-Earth3 dcppA-hindcast variables from specified monthly realm"""
         model = "EC-Earth3"
@@ -323,24 +310,44 @@ class _open:
         members = range(1, 10 + 1)
         version = "v2020121?"
         ds = _open._cmip6_dcppA_hindcast(
-            model, 
-            variant_id, 
-            grid,
-            variables, 
-            realm, 
-            years, 
-            members, 
-            version)
+            model, variant_id, grid, variables, realm, years, members, version
+        )
         if preprocess is not None:
             return preprocess(ds)
         else:
             return ds
 
+    #     def CESM1(variables, realm, preprocess):
+    #         """
+    #         NOT CURRENTLY USED
+    #         Open CESM1-1-CAM5-CMIP5 dcppA-hindcast variables from specified monthly realm
+    #         """
+    #         model = "CESM1-1-CAM5-CMIP5"
+    #         variant_id = "i1p1f1"
+    #         grid = "gr" if realm == "Omon" else "gn"
+    #         years = range(1981, 2017 + 1)  # CESM1 ocean files end in 2017
+    #         members = range(1, 40 + 1)
+    #         version = "v20191016" if realm == "Omon" else "v20191007"
+    #         ds = _open._cmip6_dcppA_hindcast(
+    #             model,
+    #             variant_id,
+    #             grid,
+    #             variables,
+    #             realm,
+    #             years,
+    #             members,
+    #             version)
+    #         if preprocess is not None:
+    #             return preprocess(ds)
+    #         else:
+    #             return ds
+
+    @staticmethod
     def _cmip6_historical(model, variant_id, grid, variables, realm, members, version):
         """
         Open CMIP6 historical variables from specified realm
-        
-        Can specify version='latest' but this is slower as it has to search each 
+
+        Can specify version='latest' but this is slower as it has to search each
         directory for the latest version
         """
 
@@ -348,7 +355,10 @@ class _open:
             path = f"{DATA_DIR}/{model}_hist/r{m}{variant_id}/{realm}/{v}/{grid}"
             if version == "latest":
                 versions = sorted(glob.glob(f"{path}/v????????"))
-                path = versions[-1]
+                if len(versions) == 0:
+                    raise ValueError(f"No versions found for {path}")
+                else:
+                    path = versions[-1]
             else:
                 path = f"{path}/{version}"
             file_pattern = f"{v}_{realm}_{model}_historical_r*{variant_id}_{grid}_*.nc"
@@ -363,7 +373,7 @@ class _open:
             files = _hist_files(m, v)
             return xr.concat(
                 [xr.open_dataset(f, chunks={}, use_cftime=True) for f in files],
-                dim="time"
+                dim="time",
             )[v]
 
         def _open_hist(m, v):
@@ -374,13 +384,10 @@ class _open:
         for v in variables:
             f0 = _hist_files(members[0], v)
             d0 = xr.concat(
-                [xr.open_dataset(f, chunks={}, use_cftime=True) for f in f0],
-                dim = "time"
+                [xr.open_dataset(f, chunks={}, use_cftime=True) for f in f0], dim="time"
             )[v]
 
-            delayed = dask.array.stack(
-                [_open_hist(m, v) for m in members], axis=0
-            )
+            delayed = dask.array.stack([_open_hist(m, v) for m in members], axis=0)
 
             ds.append(
                 xr.DataArray(
@@ -395,7 +402,8 @@ class _open:
             )
 
         return xr.merge(ds).compute()
-        
+
+    @staticmethod
     def CanESM5_hist(variables, realm, preprocess):
         """Open CanESM5 historical variables from specified realm"""
         model = "CanESM5"
@@ -404,19 +412,14 @@ class _open:
         members = range(1, 40 + 1)
         version = "v20190429"
         ds = _open._cmip6_historical(
-            model, 
-            variant_id, 
-            grid,
-            variables, 
-            realm,
-            members, 
-            version)
+            model, variant_id, grid, variables, realm, members, version
+        )
         if preprocess is not None:
             return preprocess(ds)
         else:
             return ds
-        
-        
+
+    @staticmethod
     def EC_Earth3_hist(variables, realm, preprocess):
         """Open EC-Earth3 historical variables from specified realm"""
         model = "EC-Earth3"
@@ -424,24 +427,18 @@ class _open:
         grid = "gn" if realm == "Omon" else "gr"
         # Member 3 has screwy lats that can't be readily concatenated
         # Members 11, 13, 15 start in 1849
+        # Member 19 has very few variables replicated for Omon
         # Members 101-150 only span 197001-201412
-        members = (
-            [1,2,4,6,7,9,10,12,14] + list(range(16, 26))
-        ) 
+        members = [1, 2, 4, 6, 7, 9, 10, 12, 14, 16, 17, 18] + list(range(20, 26))
         version = "latest"
         ds = _open._cmip6_historical(
-            model, 
-            variant_id, 
-            grid,
-            variables, 
-            realm, 
-            members, 
-            version)
+            model, variant_id, grid, variables, realm, members, version
+        )
         if preprocess is not None:
             return preprocess(ds)
         else:
             return ds
-        
+
 
 def maybe_generate_CAFE_grid_files():
     """Generate files containing CAFE grids"""
@@ -513,16 +510,20 @@ def maybe_generate_HadISST_grid_file():
         grid.to_netcdf(file, mode="w")
 
 
-def prepare_dataset(config, save_dir):
+def prepare_dataset(config, save_dir, save=True):
     """
-    Prepare a dataset according to a provided config file and save as zarr
-    
+    Prepare a dataset according to a provided config file
+
     Parameters
     ----------
     config : str
         The name of the config file
     save_dir : str
-        The directory to save to 
+        The directory to save to
+    save : boolean, optional
+        If True (default), save the prepared dataset in zarr format to save_dir. If
+        False, return an xarray Dataset containing the prepared data. The latter is
+        useful for debugging
     """
     logger = logging.getLogger(__name__)
 
@@ -581,9 +582,12 @@ def prepare_dataset(config, save_dir):
             if "apply" in output_variables[variable]:
                 ds = _composite_function(output_variables[variable]["apply"])(ds)
 
-            for var in ds.data_vars:
-                ds[var].encoding = {}
-            ds.to_zarr(f"{save_dir}/{cfg['name']}.{variable}.zarr", mode="w")
+            if save:
+                for var in ds.data_vars:
+                    ds[var].encoding = {}
+                ds.to_zarr(f"{save_dir}/{cfg['name']}.{variable}.zarr", mode="w")
+            else:
+                return ds
 
     else:
         raise ValueError(f"No variables were specified to prepare")
@@ -591,7 +595,7 @@ def prepare_dataset(config, save_dir):
 
 def main(config, config_dir, save_dir):
     """
-    Spin up a dask cluster and process raw data according to a provided config file
+    Spin up a dask cluster and process and save raw data according to a provided config file
 
     Parameters
     ----------
