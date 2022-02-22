@@ -5,8 +5,9 @@
 #    The name of the dataset. Must match a method in src.prepare_data._open
 # rename: optional
 #    Translation between desired variable names and native variable names
-# scale_variables: optional
-#    Variable scale factors
+# convert: optional
+#    Convert variable units. Currently variables can recieve a "multiply_by" and/or 
+#    "add" key that are executed in the order they are provided
 # prepare: required
 #    Output variables to prepare and save. Each variable can include the following
 #    uses: required
@@ -18,10 +19,10 @@
 #        Functions and kwargs from src.utils to be applied sequentially prior to 
 #        concatenation (for datasets comprised of multiple concatenated) and/or 
 #        prior to merging of variables from multiple realms into a single dataset.
-#        These are applied before the variables are renamed and rescaled.
+#        These are applied before the variables are renamed and converted.
 #    apply: optional
 #        Functions and kwargs from src.utils to be applied sequentially to opened 
-#        dataset. These are applied after the variables are renamed and rescaled
+#        dataset. These are applied after the variables are renamed and converted.
 
 name: "GPCP"
 

@@ -56,14 +56,23 @@ def _maybe_rename(ds, rename):
     return ds
 
 
-def _scale_variables(ds, norm_dict):
+def _convert_variables(ds, norm_dict):
     """
-    Rescale variables in a dataset according to provided dictionary
+    Convert variables in a dataset according to provided dictionary
     """
+    ds_c = ds.copy()
     for v in norm_dict.keys():
-        if v in ds:
-            ds[v] = float(norm_dict[v]) * ds[v]
-    return ds
+        if v in ds_c:
+            for op, val in norm_dict[v].items():
+                if op == "multiply_by":
+                    ds_c[v] *= float(val)
+                    if "units" in ds_c[v].attrs:
+                        ds_c[v].attrs["units"] = f"{val} * {ds_c[v].attrs['units']}"
+                if op == "add":
+                    ds_c[v] += float(val)
+                    if "units" in ds_c[v].attrs:
+                        ds_c[v].attrs["units"] = f"{ds_c[v].attrs['units']} + {val}"
+    return ds_c
 
 
 def _composite_function(function_dict):
@@ -591,8 +600,8 @@ def prepare_dataset(config, save_dir, save=True):
             if "rename" in cfg:
                 ds = _maybe_rename(ds, cfg["rename"])
 
-            if "scale_variables" in cfg:
-                ds = _scale_variables(ds, cfg["scale_variables"])
+            if "convert" in cfg:
+                ds = _convert_variables(ds, cfg["convert"])
 
             if "apply" in output_variables[variable]:
                 ds = _composite_function(output_variables[variable]["apply"])(ds)
