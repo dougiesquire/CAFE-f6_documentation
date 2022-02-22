@@ -35,7 +35,7 @@ Welcome to the documentation for my project assessing CAFE-f6. The project is or
    │   │
    │   ├── prepare_data.py <- Codes for generating the processed data from the raw data
    │   │
-   │   └── utils.py        <- Utility codes, including functions processing data
+   │   └── utils.py        <- Utility codes, including functions for processing data
    ├── LICENSE
    └── README.md
 
