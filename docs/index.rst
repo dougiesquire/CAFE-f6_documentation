@@ -46,7 +46,6 @@ Contents
    :maxdepth: 2
 
    getting_started
-   known_issues
    data_preparation
    notebooks
    api
