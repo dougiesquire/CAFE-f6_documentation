@@ -19,7 +19,7 @@ from src import utils
 
 
 dask.config.set(**{"array.slicing.split_large_chunks": False})
-
+xr.set_options(keep_attrs=True)
 
 PROJECT_DIR = Path(__file__).resolve().parents[1]
 DATA_DIR = PROJECT_DIR / "data/raw"
@@ -521,7 +521,7 @@ def prepare_dataset(config, save_dir, save=True):
     save_dir : str
         The directory to save to
     save : boolean, optional
-        If True (default), save the prepared dataset in zarr format to save_dir. If
+        If True (default), save the prepared dataset(s) in zarr format to save_dir. If
         False, return an xarray Dataset containing the prepared data. The latter is
         useful for debugging
     """
@@ -543,6 +543,7 @@ def prepare_dataset(config, save_dir, save=True):
         )
 
     if "prepare" in cfg:
+        prepared = []
         # Loop over output variables
         output_variables = cfg["prepare"]
         for variable in output_variables.keys():
@@ -582,12 +583,13 @@ def prepare_dataset(config, save_dir, save=True):
             if "apply" in output_variables[variable]:
                 ds = _composite_function(output_variables[variable]["apply"])(ds)
 
+            prepared.append(ds)
             if save:
                 for var in ds.data_vars:
                     ds[var].encoding = {}
                 ds.to_zarr(f"{save_dir}/{cfg['name']}.{variable}.zarr", mode="w")
-            else:
-                return ds
+                
+        return prepared
 
     else:
         raise ValueError(f"No variables were specified to prepare")

@@ -29,6 +29,8 @@ rename:
   t_ref: "TMP_GDS0_HTGL"
   precip: "TPRAT_GDS0_SFC"
   time: "initial_time0_hours"
+  lat: "g0_lat_1"
+  lon: "g0_lon_2"
 
 prepare:
   t_ref:

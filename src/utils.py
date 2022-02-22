@@ -103,19 +103,27 @@ def interpolate_to_grid_from_file(ds, file, add_area=True, ignore_degenerate=Tru
     """
     file = PROJECT_DIR / file
     ds_out = xr.open_dataset(file)
-
+    
     C = 1
-    ds = ds.copy() + C
+    ds_rg = ds.copy() + C
     regridder = xesmf.Regridder(
-        ds, ds_out, "bilinear", ignore_degenerate=ignore_degenerate
+        ds_rg, ds_out, "bilinear", ignore_degenerate=ignore_degenerate
     )
-    ds = regridder(ds)
-    ds = ds.where(ds != 0.0) - C
+    ds_rg = regridder(ds_rg)
+    ds_rg = ds_rg.where(ds_rg != 0.0) - C
+    
+    # Add back in attributes:
+    for v in ds_rg.data_vars:
+        ds_rg[v].attrs = ds[v].attrs
+    
     if add_area:
-        area = gridarea_cdo(ds_out)
-        return ds.assign_coords({"area": area})
+        if "area" in ds_out:
+            area = ds_out["area"]
+        else:
+            area = gridarea_cdo(ds_out)
+        return ds_rg.assign_coords({"area": area})
     else:
-        return ds
+        return ds_rg
 
 
 def force_to_Julian_calendar(ds):
