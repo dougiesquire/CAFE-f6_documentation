@@ -1,0 +1,20 @@
+2022-02-23 07:16:05,422 - __main__ - INFO - Spinning up a dask cluster
+2022-02-23 07:16:13,326 - __main__ - INFO - Generating grid files
+2022-02-23 07:16:13,328 - __main__ - INFO - Preparing raw data using CAFEf6.yml
+2022-02-23 07:16:13,350 - __main__ - INFO - Processing t_ref from CAFEf6
+2022-02-23 07:16:49,335 - __main__ - INFO - Processing precip from CAFEf6
+2022-02-23 07:17:38,106 - __main__ - INFO - Processing sst from CAFEf6
+2022-02-23 07:20:22,069 - __main__ - INFO - Processing ohc300 from CAFEf6
+
+======================================================================================
+                  Resource Usage on 2022-02-23 09:20:13:
+   Job Id:             35676887.gadi-pbs
+   Project:            xv83
+   Exit Status:        0
+   Service Units:      199.63
+   NCPUs Requested:    48                     NCPUs Used: 48              
+                                           CPU Time Used: 07:45:56                                   
+   Memory Requested:   192.0GB               Memory Used: 117.71GB        
+   Walltime requested: 04:00:00            Walltime Used: 02:04:46        
+   JobFS requested:    100.0GB                JobFS used: 0B              
+======================================================================================
