@@ -7,3 +7,4 @@ distributed
 xarray
 pydata-sphinx-theme
 nbsphinx
+pandoc
