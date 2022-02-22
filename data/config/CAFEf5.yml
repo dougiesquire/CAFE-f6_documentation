@@ -62,6 +62,7 @@ prepare:
       truncate_latitudes:
       add_CAFE_grid_info:
     apply:
+      normalise_by_days_in_month:
       coarsen_monthly_to_annual:
         dim: "lead"
       round_to_start_of_month:

@@ -57,6 +57,7 @@ prepare:
       atmos_isobaric_month:
         - "precip"
     preprocess:
+      normalise_by_days_in_month:
       convert_time_to_lead:
       truncate_latitudes:
       coarsen_monthly_to_annual:

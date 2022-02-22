@@ -56,6 +56,7 @@ prepare:
       atmos_isobaric_month:
         - "precip"
     apply:
+      normalise_by_days_in_month:
       truncate_latitudes:
       round_to_start_of_month:
         dim: "time"

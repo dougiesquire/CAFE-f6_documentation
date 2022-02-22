@@ -136,6 +136,20 @@ class _open:
             return preprocess(ds)
         else:
             return ds
+        
+    @staticmethod
+    def GPCP(variables, _, preprocess):
+        """Open GPCP v2.3 variables"""
+        files = sorted(glob.glob(f"{DATA_DIR}/GPCP/????/*.nc"))
+        ds = xr.open_mfdataset(
+            files,
+            parallel=True,
+            use_cftime=True,
+        )[variables]
+        if preprocess is not None:
+            return preprocess(ds)
+        else:
+            return ds
 
     @staticmethod
     def CAFEf6(variables, realm, preprocess):
@@ -497,17 +511,17 @@ def maybe_generate_CAFE_grid_files():
         ocean_grid.to_netcdf(ocean_file, mode="w")
 
 
-def maybe_generate_HadISST_grid_file():
-    """Generate file containing HadISST grid"""
-    file = PROJECT_DIR / "data/raw/gridinfo/HadISST_grid.nc"
-    if not os.path.exists(file):
-        path = PROJECT_DIR / "data/raw/HadISST/ocean_month.zarr"
-        had = xr.open_zarr(path)[["sst"]].isel(time=0).drop("time")
-        grid = xr.zeros_like(
-            had.rename({"sst": "HadISST_grid", "latitude": "lat", "longitude": "lon"})
-        )
-        grid.attrs = {}
-        grid.to_netcdf(file, mode="w")
+# def maybe_generate_HadISST_grid_file():
+#     """Generate file containing HadISST grid"""
+#     file = PROJECT_DIR / "data/raw/gridinfo/HadISST_grid.nc"
+#     if not os.path.exists(file):
+#         path = PROJECT_DIR / "data/raw/HadISST/ocean_month.zarr"
+#         had = xr.open_zarr(path)[["sst"]].isel(time=0).drop("time")
+#         grid = xr.zeros_like(
+#             had.rename({"sst": "HadISST_grid", "latitude": "lat", "longitude": "lon"})
+#         )
+#         grid.attrs = {}
+#         grid.to_netcdf(file, mode="w")
 
 
 def prepare_dataset(config, save_dir, save=True):
@@ -588,7 +602,7 @@ def prepare_dataset(config, save_dir, save=True):
                 for var in ds.data_vars:
                     ds[var].encoding = {}
                 ds.to_zarr(f"{save_dir}/{cfg['name']}.{variable}.zarr", mode="w")
-                
+
         return prepared
 
     else:
@@ -614,7 +628,6 @@ def main(config, config_dir, save_dir):
     local_directory = tempfile.TemporaryDirectory()
     with Client(processes=False, local_directory=local_directory.name) as client:
         logger.info("Generating grid files")
-        maybe_generate_HadISST_grid_file()
         maybe_generate_CAFE_grid_files()
 
         logger.info(f"Preparing raw data using {config}")

@@ -52,6 +52,11 @@ def add_CAFE_grid_info(ds):
     return ds
 
 
+def normalise_by_days_in_month(ds):
+    """Normalise input array by the number of days in each month"""
+    return ds / ds["time"].dt.days_in_month
+
+
 def convert_time_to_lead(ds, time_dim="time", init_dim="init", lead_dim="lead"):
     """Return provided array with time dimension converted to lead time dimension
     and time added as additional coordinate
@@ -103,7 +108,7 @@ def interpolate_to_grid_from_file(ds, file, add_area=True, ignore_degenerate=Tru
     """
     file = PROJECT_DIR / file
     ds_out = xr.open_dataset(file)
-    
+
     C = 1
     ds_rg = ds.copy() + C
     regridder = xesmf.Regridder(
@@ -111,11 +116,11 @@ def interpolate_to_grid_from_file(ds, file, add_area=True, ignore_degenerate=Tru
     )
     ds_rg = regridder(ds_rg)
     ds_rg = ds_rg.where(ds_rg != 0.0) - C
-    
+
     # Add back in attributes:
     for v in ds_rg.data_vars:
         ds_rg[v].attrs = ds[v].attrs
-    
+
     if add_area:
         if "area" in ds_out:
             area = ds_out["area"]

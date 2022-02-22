@@ -63,6 +63,7 @@ prepare:
     apply:
       round_to_start_of_month:
         dim: "time"
+      normalise_by_days_in_month:
       coarsen_monthly_to_annual:
         start_points: ["1960-11-01", "1960-01-01"]
         dim: "time"

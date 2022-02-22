@@ -23,37 +23,18 @@
 #        Functions and kwargs from src.utils to be applied sequentially to opened 
 #        dataset. These are applied after the variables are renamed and rescaled
 
-name: "JRA55"
+name: "GPCP"
 
 rename:
-  t_ref: "TMP_GDS0_HTGL"
-  precip: "TPRAT_GDS0_SFC"
-  time: "initial_time0_hours"
-  lat: "g0_lat_1"
-  lon: "g0_lon_2"
+  lat: "latitude"
+  lon: "longitude"
 
 prepare:
-  t_ref:
-    uses:
-      surface_month:
-        - "t_ref"
-    apply:
-      force_to_Julian_calendar:
-      coarsen_monthly_to_annual:
-        start_points: ["1960-11-01", "1960-01-01"]
-        dim: "time"
-      interpolate_to_grid_from_file:
-        file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
-      rechunk:
-        chunks:  {"time": -1, "lat": -1, "lon": -1}
-        
   precip:
     uses:
-      surface_month:
-        - "precip"
+      - "precip"
     apply:
       force_to_Julian_calendar:
-      normalise_by_days_in_month:
       coarsen_monthly_to_annual:
         start_points: ["1960-11-01", "1960-01-01"]
         dim: "time"
