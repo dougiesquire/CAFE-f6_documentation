@@ -36,7 +36,7 @@ prepare:
     apply:
       force_to_Julian_calendar:
       coarsen_monthly_to_annual:
-        start_points: ["1960-11-01", "1960-01-01"]
+        start_points: ["1979-11-01", "1979-01-01"]
         dim: "time"
       interpolate_to_grid_from_file:
         file: "data/raw/gridinfo/CAFE_atmos_grid.nc"

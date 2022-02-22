@@ -45,7 +45,8 @@ Contents
 .. toctree::
    :maxdepth: 2
 
-   getting-started
+   getting_started
+   known_issues
    data_preparation
    api
 

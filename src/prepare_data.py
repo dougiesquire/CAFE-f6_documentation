@@ -136,7 +136,7 @@ class _open:
             return preprocess(ds)
         else:
             return ds
-        
+
     @staticmethod
     def GPCP(variables, _, preprocess):
         """Open GPCP v2.3 variables"""

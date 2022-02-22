@@ -6,12 +6,11 @@ from pathlib import Path
 PROJECT_DIR = Path(__file__).resolve().parents[1]
 
 
-def calculate_ohc300(temp, depth_dim="depth"):
+def calculate_ohc300(temp, depth_dim="depth", var_name="temp"):
     """
     Calculate the ocean heat content above 300m
 
-    The input DataArray or Dataset is assumed to have the variable
-    name "temp" and is assumed to be in Kelvin
+    The input DataArray or Dataset is assumed to be in Kelvin
     """
     rho0 = 1035.000  # [kg/m^3]
     Cp0 = 3989.245  # [J/kg/K]
@@ -19,7 +18,11 @@ def calculate_ohc300(temp, depth_dim="depth"):
     ocean_mask = temp.isel({depth_dim: 0}, drop=True).notnull()
     temp300 = temp.where(temp[depth_dim] <= 300, drop=True).fillna(0)
     ohc300 = rho0 * Cp0 * temp300.integrate(depth_dim)
-    return ohc300.where(ocean_mask).rename({"temp": "ohc300"})
+    ohc300 = ohc300.where(ocean_mask).rename({var_name: "ohc300"})
+    ohc300["ohc300"].attrs = dict(
+        long_name="Ocean heat content above 300m", units="J/m^2"
+    )
+    return ohc300
 
 
 def add_CAFE_grid_info(ds):
