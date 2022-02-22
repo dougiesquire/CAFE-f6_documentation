@@ -1,0 +1,7 @@
+Notebooks
+=========
+
+.. toctree::
+    :maxdepth: 1
+
+    notebooks/exploratory/bias_correct_CAFE-f6.ipynb

@@ -45,11 +45,13 @@ Contents
 .. toctree::
    :maxdepth: 2
 
+   notebooks_link
    getting_started
    known_issues
    data_preparation
+   notebooks
    api
-
+   
 Indices and tables
 ==================
 

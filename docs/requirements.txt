@@ -6,4 +6,4 @@ dask
 distributed
 xarray
 pydata-sphinx-theme
-
+nbsphinx
