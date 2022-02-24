@@ -1,9 +1,9 @@
 #!/bin/bash
 
-CURRENT="/home/599/ds0092/src/mom_cafe/exec/gadi.nci.org.au/CM2M/fms_CM2M.x"
+CURRENT="../data/testing/reference_exectuable/fms_CM2M.x"
 
 # Get forecast executables in chronological order
-execs=( `ls -tr ../../data/raw/c5-d60-pX-f6-????????/c5-d60-pX-f6-????????-base/*/*/*/CAFE/forecasts/f6/WIP/c5-d60-pX-f6-????????/MOM/fms_CM2M.x` )
+execs=( `ls -tr ../../data/testing/c5-d60-pX-f6-????????/c5-d60-pX-f6-????????-base/*/*/*/CAFE/forecasts/f6/WIP/c5-d60-pX-f6-????????/MOM/fms_CM2M.x` )
 
 for exec in ${execs[@]}; do
 	DIFF=$(diff ${CURRENT} ${exec})
