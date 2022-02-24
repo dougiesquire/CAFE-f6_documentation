@@ -8,7 +8,7 @@
 #PBS -l wd
 #PBS -j oe
 
-years=( $(seq 1981 1 2020))
+years=( $(seq 2011 1 2020))
 months=( 05 11 )
 
 for year in ${years[@]}; do
