@@ -58,7 +58,7 @@ endif
 
 ## Prepare datasets for analysis
 data:
-	mkdir -p $(TEST_DATA_DIR)
+	mkdir -p $(TEST_DATA_DIR)/reference_exectuable
 	ln -sfn /home/599/ds0092/src/mom_cafe/exec/gadi.nci.org.au/CM2M/fms_CM2M.x $(TEST_DATA_DIR)/reference_exectuable/fms_CM2M.x
 	ln -sfn /g/data/xv83/dcfp/CAFE60v1/ $(RAW_DATA_DIR)/CAFE60v1
 	ln -sfn /g/data/xv83/users/ds0092/data/CAFE/historical/WIP/c5-d60-pX-ctrl-19601101/ZARR/ $(RAW_DATA_DIR)/CAFE_ctrl
