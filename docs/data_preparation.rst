@@ -1,55 +1,58 @@
 Data Preparation
 ================
 
-Steps for preparing the various datasets used in this project are specified in yaml files stored in ``data/config``. Here is an example config yaml file for preparing annual precipitation for the CanESM5 CMIP6 DCPP submissions:
+Steps for preparing the various datasets used in this project are specified in yaml files stored in ``data/config``. Here is an example config yaml file for preparing annual precipitation and the anomlaies for the CAFE-f6 hindcasts/forecasts:
 
 .. code-block:: yaml
 
-   # name: required
-   #    The name of the dataset. Must match a method in src.prepare_data._open
-   # prepare: required
-   #    Output variables to prepare and save. Each variable can include the following
-   #    identifier: required
-   #        Unique identifier for the output variable being processed. This will be
-   #        used to save this diagnostics as: {name}.{identifier}.zarr.
-   #    uses: required
-   #        List of input variables required to compute the output variable. For some
-   #        datasets, this should be further broken into subkeys indicating the realm
-   #        for each list of variables (e.g. ocean_month). Alternatively, users can
-   #        provide the identifier of a previously prepared dataset by entering
-   #        `prepared: <identifier>`.
-   #    preprocess: optional
-   #        Functions and kwargs from src.utils to be applied sequentially prior to
-   #        concatenation (for datasets comprised of multiple concatenated) and/or
-   #        prior to merging of variables from multiple realms into a single dataset.
-   #        These are applied before the variables are renamed and converted.
-   #    apply: optional
-   #        Functions and kwargs from src.utils to be applied sequentially to opened
-   #        dataset. These are applied after the variables are renamed and converted.
-
-   name: "CanESM5"
+   name: "CAFEf6"                       # <- The name of the dataset. This must match
+                                        #    the name of a corresponding method in
+                                        #    src.prepare_data._open
 
    prepare:
-     precip:
-       identifier: "precip.annual.full"
-       uses:
-         Amon:
-           - "pr"
-       apply:
-         rename:
-           names:
-             pr: "precip"
+     precip.annual.full:                # <- Unique identifier for the output variable
+                                        #    being processed. This will be used to save
+                                        #    the variable as {name}.{identifier}.zarr
+       name: "precip"                   # <- The name of the output variable being
+                                        #    prepared
+       uses:                            # <- List of input variables required to compute
+         atmos_isobaric_month:          #    the output variable. For some datasets this
+           - "precip"                   #    should be futher broken down into subkeys
+                                        #    indicating the realm for each list of
+                                        #    variables (e.g. atmos_isobaric_month).
+                                        #    Users can also provide the identifier of a
+                                        #    previously prepared variable using:
+                                        #      uses:
+                                        #        prepared:
+                                        #          - <identifier> 
+       preprocess:                      # <- Functions and kwargs from src.utils to be
+         normalise_by_days_in_month:    #    applied sequentially prior to concatenation
+         convert_time_to_lead:          #    (for datasets comprised of multiple
+         truncate_latitudes:            #    concatenated files) and/or prior to merging
+         coarsen_monthly_to_annual:     #    input variables from multiple realms where 
+           dim: "lead"                  #    more than one are specified
+       apply:                           # <- Functions and kwargs from src.utils to be
+         rename:                        #    applied sequentially to the opened (and
+           names:                       #    (concatenated/merge, where appropriate)
+             ensemble: "member"         #    dataset
          convert:
            conversion:
              precip:
                multiply_by: 86400
-         coarsen_monthly_to_annual:
-           dim: "lead"
-         interpolate_to_grid_from_file:
-           file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
+         round_to_start_of_month:
+           dim: ["init", "time"]
          rechunk:
            chunks: {"init": -1, "lead": 1, "member": -1, "lat": -1, "lon": -1}
-   
+
+     precip.annual.anom_1991-2020:
+       name: "precip"
+       uses:
+         prepared:
+           - "precip.annual.full"
+       apply:
+         anomalise:
+           clim_period: ["1991-01-01", "2020-12-31"]
+
 Code for preparing data from a specified yaml file is in ``src/prepare_data.py``:
 
 .. code-block:: console
