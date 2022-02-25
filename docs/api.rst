@@ -13,3 +13,9 @@ Note this module has a command line interface, see ``python src/prepare_data.py 
 
 .. automodule:: src.utils
    :members:
+
+``plot``
+---------
+
+.. automodule:: src.plot
+   :members:

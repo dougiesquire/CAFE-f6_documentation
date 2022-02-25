@@ -25,11 +25,6 @@ PROJECT_DIR = Path(__file__).resolve().parents[1]
 DATA_DIR = PROJECT_DIR / "data/raw"
 
 
-# def _load_config(name):
-#     """Load a config .yml file for a specified dataset"""
-#     with open(name, "r") as reader:
-#         return yaml.load(reader, Loader=yaml.SafeLoader)
-    
 def _load_config(name):
     """
     Load a config .yml file for a specified dataset allowing for duplicate keys
@@ -63,21 +58,6 @@ def _load_config(name):
     
     with open(name, "r") as reader:
         return yaml.load(reader, PreserveDuplicatesLoader)
-
-
-# def _maybe_translate_variables(variables, translation_dict):
-#     """
-#     Translate variables using provided dictionary where possible
-#     """
-#     translated_variables = {}
-#     for realm, var in variables.items():
-#         translated_variables[realm] = []
-#         for v in var:
-#             try:
-#                 translated_variables[realm].append(translation_dict[v])
-#             except KeyError:
-#                 translated_variables[realm].append(v)
-#     return translated_variables
 
 
 def _composite_function(function_dict):

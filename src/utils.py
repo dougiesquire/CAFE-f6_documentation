@@ -11,6 +11,15 @@ def calculate_ohc300(temp, depth_dim="depth", var_name="temp"):
     Calculate the ocean heat content above 300m
 
     The input DataArray or Dataset is assumed to be in Kelvin
+    
+    Parameters
+    ----------
+    temp : xarray Dataset
+        Array of temperature values in Kelvin
+    depth_dim : str, optional
+        The name of the depth dimension
+    var_name : str, optional
+        The name of the temperature variable in temp
     """
     rho0 = 1035.000  # [kg/m^3]
     Cp0 = 3989.245  # [J/kg/K]
@@ -26,6 +35,14 @@ def calculate_ohc300(temp, depth_dim="depth", var_name="temp"):
 
 
 def add_CAFE_grid_info(ds):
+    """
+    Add CAFE grid info to a CAFE dataset that doesn't already have it
+    
+    Parameters
+    ----------
+    ds : xarray Dataset
+        The dataset to add grid info to
+    """
     atmos_file = PROJECT_DIR / "data/raw/gridinfo/CAFE_atmos_grid.nc"
     ocean_file = PROJECT_DIR / "data/raw/gridinfo/CAFE_ocean_grid.nc"
     atmos_grid = xr.open_dataset(atmos_file)
@@ -56,13 +73,32 @@ def add_CAFE_grid_info(ds):
 
 
 def normalise_by_days_in_month(ds):
-    """Normalise input array by the number of days in each month"""
+    """
+    Normalise input array by the number of days in each month
+    
+    Parameters
+    ----------
+    ds : xarray Dataset
+        The array to normalise
+    """
     return ds / ds["time"].dt.days_in_month
 
 
 def convert_time_to_lead(ds, time_dim="time", init_dim="init", lead_dim="lead"):
-    """Return provided array with time dimension converted to lead time dimension
+    """
+    Return provided array with time dimension converted to lead time dimension
     and time added as additional coordinate
+    
+    Parameters
+    ----------
+    ds : xarray Dataset
+        A dataset with a time dimension
+    time_dim : str, optional
+        The name of the time dimension
+    init_dim : str, optional
+        The name of the initial date dimension in the output
+    lead_dim : str, optional
+        The name of the lead time dimension in the output
     """
     init_date = ds[time_dim].time[0].item()
     lead_time = range(len(ds[time_dim]))
@@ -79,11 +115,21 @@ def convert_time_to_lead(ds, time_dim="time", init_dim="init", lead_dim="lead"):
     return dataset
 
 
-def truncate_latitudes(ds, dp=10):
-    """Return provided array with latitudes truncated to specified dp.
+def truncate_latitudes(ds, dp=10, lat_dim="lat"):
+    """
+    Return provided array with latitudes truncated to specified dp.
 
     This is necessary due to precision differences from running forecasts on
     different systems
+    
+    Parameters
+    ----------
+    ds : xarray Dataset
+        A dataset with a latitude dimension
+    dp : int, optional
+        The number of decimal places to truncate at
+    lat_dim : str, optional
+        The name of the latitude dimension
     """
     for dim in ds.dims:
         if "lat" in dim:
@@ -92,13 +138,29 @@ def truncate_latitudes(ds, dp=10):
 
 
 def rechunk(ds, chunks):
-    """Rechunk dataset"""
+    """
+    Rechunk a dataset
+    
+    Parameters
+    ----------
+    ds : xarray Dataset
+        A dataset to be rechunked
+    chunks : dict
+        Dictionary of {dim: chunksize}
+    """
     return ds.chunk(chunks)
 
 
 def rename(ds, names):
     """
     Rename all variables etc that have an entry in names
+    
+    Parameters
+    ----------
+    ds : xarray Dataset
+        A dataset to be renamed
+    names : dict
+        Dictionary of {old_name: new_name}
     """
     for k, v in names.items():
         if k in ds:
@@ -109,6 +171,15 @@ def rename(ds, names):
 def convert(ds, conversion):
     """
     Convert variables in a dataset according to provided dictionary
+    
+    Parameters
+    ----------
+    ds : xarray Dataset
+        A dataset to be converted
+    conversion : dict
+        Dictionary of {variable: oper} where oper is a dictionary
+        specifying the operation and the value. Current possible
+        operations are 'multiply_by' and 'add'.
     """
     ds_c = ds.copy()
     for v in conversion.keys():
@@ -171,14 +242,26 @@ def interpolate_to_grid_from_file(ds, file, add_area=True, ignore_degenerate=Tru
     import xesmf
 
     """
-        Interpolate to a grid read from a file using xesmf
-        file path should be relative to the project directory
-        
-        Note, xESMF puts zeros where there is no data to interpolate. Here we
-        add an offset to ensure no zeros, mask zeros, and then remove offset
-        This hack will potentially do funny things for interpolation methods 
-        more complicated than bilinear.
-        See https://github.com/JiaweiZhuang/xESMF/issues/15
+    Interpolate to a grid read from a file using xesmf
+    file path should be relative to the project directory
+
+    Note, xESMF puts zeros where there is no data to interpolate. Here we
+    add an offset to ensure no zeros, mask zeros, and then remove offset
+    This hack will potentially do funny things for interpolation methods 
+    more complicated than bilinear.
+    See https://github.com/JiaweiZhuang/xESMF/issues/15
+    
+    Parameters
+    ----------
+    ds : xarray Dataset
+        The data to interpolate
+    file : str
+        Path to a file with the grid to interpolate to
+    add_area : bool, optional
+        If True (default) add a coordinate for the cell areas
+    ignore_degenerate : bool, optional
+        If True ESMF will ignore degenerate cells when carrying out
+        the interpolation
     """
     file = PROJECT_DIR / file
     ds_out = xr.open_dataset(file)
@@ -205,11 +288,20 @@ def interpolate_to_grid_from_file(ds, file, add_area=True, ignore_degenerate=Tru
         return ds_rg
 
 
-def force_to_Julian_calendar(ds):
-    """Force calendar of time dimension to Julian"""
+def force_to_Julian_calendar(ds, time_dim="time"):
+    """
+    Hard force calendar of time dimension to Julian
+    
+    Parameters
+    ----------
+    ds : xarray Dataset
+        A dataset with a time dimension
+    time_dim : str
+        The name of the time dimension
+    """
     return ds.assign_coords(
         {
-            "time": xr.cftime_range(
+            time_dim: xr.cftime_range(
                 start=ds.time[0].item().strftime(),
                 end=ds.time[-1].item().strftime(),
                 freq=xr.infer_freq(ds.time),
@@ -220,8 +312,16 @@ def force_to_Julian_calendar(ds):
 
 
 def round_to_start_of_month(ds, dim):
-    """Return provided array with specified time dimension rounded to the start of
+    """
+    Return provided array with specified time dimension rounded to the start of
     the month
+    
+    Parameters
+    ----------
+    ds : xarray Dataset
+        The dataset with a dimension(s) to round
+    dim : str
+        The name of the dimensions to round
     """
     from xarray.coding.cftime_offsets import MonthBegin
 
@@ -233,8 +333,20 @@ def round_to_start_of_month(ds, dim):
 
 
 def coarsen_monthly_to_annual(ds, start_points=None, dim="time"):
-    """Coarsen monthly data to annual, applying 'max' to all relevant coords and
+    """
+    Coarsen monthly data to annual, applying 'max' to all relevant coords and
     optionally starting at a particular time point in the array
+    
+    Parameters
+    ----------
+    ds : xarray Dataset
+        The dataset to coarsen
+    start_points : str or list of str
+        Value(s) of coordinate `dim` to start the coarsening from. If these fall
+        outside the range of the coordinate, coarsening starts at the beginning 
+        of the array
+    dim : str, optional
+        The name of the dimension to coarsen along
     """
     if start_points is None:
         start_points = [None]
@@ -259,6 +371,11 @@ def gridarea_cdo(ds):
     """
     Returns the area weights computed using cdo's gridarea function
     Note, this function writes ds to disk, so strip back ds to only what is needed
+    
+    Parameters
+    ----------
+    ds : xarray Dataset
+        The dataset to passed to cdo gridarea
     """
     import uuid
     from cdo import Cdo
