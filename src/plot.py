@@ -23,7 +23,7 @@ def hindcasts(hcsts, obsvs=None, hists=None, shade=False):
         Dictionary of historical runs to plot with the format {"name": hist},
         where hist is an xarray.Dataset with dimension "time"
     shade : bool, optional
-        If True, shade background according to change in bias correction in 
+        If True, shade background according to change in bias correction in
         CAFE60v1
     """
 
@@ -76,7 +76,9 @@ def hindcasts(hcsts, obsvs=None, hists=None, shade=False):
         for name, obsv in obsvs.items():
             line = next(linecycler)
             for a, var in enumerate(hcst.data_vars):
-                axs[a].plot(obsv.time, obsv[var], color="black", label=name, linestyle=line)
+                axs[a].plot(
+                    obsv.time, obsv[var], color="black", label=name, linestyle=line
+                )
 
     # Plot the historical runs
     if hists is not None:
@@ -84,7 +86,9 @@ def hindcasts(hcsts, obsvs=None, hists=None, shade=False):
         for name, hist in hists.items():
             line = next(linecycler)
             for a, var in enumerate(hist.data_vars):
-                axs[a].plot(hist.time, hist[var], color="grey", label=name, linestyle=line)
+                axs[a].plot(
+                    hist.time, hist[var], color="grey", label=name, linestyle=line
+                )
 
     # Format plots
     ticks = xr.cftime_range(start=xlim[0], end=xlim[-1], freq="2AS", calendar="julian")

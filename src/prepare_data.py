@@ -54,8 +54,10 @@ def _load_config(name):
             val = self.construct_object(value_node, deep=True)
             data.append((key, val))
 
-    PreserveDuplicatesLoader.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, map_constructor)
-    
+    PreserveDuplicatesLoader.add_constructor(
+        yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, map_constructor
+    )
+
     with open(name, "r") as reader:
         return yaml.load(reader, PreserveDuplicatesLoader)
 
@@ -554,12 +556,12 @@ def prepare_dataset(config, save_dir, save=True):
         prepared = []
         # Loop over output variables
         output_variables = cfg["prepare"]
-        
-        # Convert dictionary into a list of tuples. This is to 
+
+        # Convert dictionary into a list of tuples. This is to
         # allow for duplicates in cfg["prepare"]
         if isinstance(output_variables, dict):
             output_variables = list(output_variables.items())
-        
+
         for variable, params in output_variables:
             identifier = params["identifier"]
             input_variables = params["uses"]
@@ -576,7 +578,12 @@ def prepare_dataset(config, save_dir, save=True):
             ds = []
             for realm, var in input_variables.items():
                 if realm == "prepared":
-                    ds.append(xr.merge(xr.open_zarr(f"{save_dir}/{cfg['name']}.{v}.zarr") for v in var))
+                    ds.append(
+                        xr.merge(
+                            xr.open_zarr(f"{save_dir}/{cfg['name']}.{v}.zarr")
+                            for v in var
+                        )
+                    )
                 else:
                     if hasattr(_open, cfg["name"]):
                         ds.append(getattr(_open, cfg["name"])(var, realm, preprocess))

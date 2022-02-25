@@ -5,6 +5,8 @@ pyyaml
 dask
 distributed
 xarray
+cftime
+matplotlib
 pydata-sphinx-theme
 nbsphinx
 pandoc

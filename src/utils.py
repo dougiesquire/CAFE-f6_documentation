@@ -11,7 +11,7 @@ def calculate_ohc300(temp, depth_dim="depth", var_name="temp"):
     Calculate the ocean heat content above 300m
 
     The input DataArray or Dataset is assumed to be in Kelvin
-    
+
     Parameters
     ----------
     temp : xarray Dataset
@@ -37,7 +37,7 @@ def calculate_ohc300(temp, depth_dim="depth", var_name="temp"):
 def add_CAFE_grid_info(ds):
     """
     Add CAFE grid info to a CAFE dataset that doesn't already have it
-    
+
     Parameters
     ----------
     ds : xarray Dataset
@@ -75,7 +75,7 @@ def add_CAFE_grid_info(ds):
 def normalise_by_days_in_month(ds):
     """
     Normalise input array by the number of days in each month
-    
+
     Parameters
     ----------
     ds : xarray Dataset
@@ -88,7 +88,7 @@ def convert_time_to_lead(ds, time_dim="time", init_dim="init", lead_dim="lead"):
     """
     Return provided array with time dimension converted to lead time dimension
     and time added as additional coordinate
-    
+
     Parameters
     ----------
     ds : xarray Dataset
@@ -121,7 +121,7 @@ def truncate_latitudes(ds, dp=10, lat_dim="lat"):
 
     This is necessary due to precision differences from running forecasts on
     different systems
-    
+
     Parameters
     ----------
     ds : xarray Dataset
@@ -140,7 +140,7 @@ def truncate_latitudes(ds, dp=10, lat_dim="lat"):
 def rechunk(ds, chunks):
     """
     Rechunk a dataset
-    
+
     Parameters
     ----------
     ds : xarray Dataset
@@ -154,7 +154,7 @@ def rechunk(ds, chunks):
 def rename(ds, names):
     """
     Rename all variables etc that have an entry in names
-    
+
     Parameters
     ----------
     ds : xarray Dataset
@@ -171,7 +171,7 @@ def rename(ds, names):
 def convert(ds, conversion):
     """
     Convert variables in a dataset according to provided dictionary
-    
+
     Parameters
     ----------
     ds : xarray Dataset
@@ -204,13 +204,13 @@ def anomalise(ds, clim_period):
     ----------
     ds : xarray Dataset
         The data to anomalise
-    clim_period: iterable
+    clim_period : iterable
         Size 2 iterable containing strings indicating the start and end dates
         of the climatological period
     """
     # Ensure time is computed
     ds = ds.assign_coords({"time": ds["time"].compute()})
-    
+
     calendar = ds.time.values.flat[0].calendar
     clim_period = xr.cftime_range(
         clim_period[0],
@@ -291,7 +291,7 @@ def interpolate_to_grid_from_file(ds, file, add_area=True, ignore_degenerate=Tru
 def force_to_Julian_calendar(ds, time_dim="time"):
     """
     Hard force calendar of time dimension to Julian
-    
+
     Parameters
     ----------
     ds : xarray Dataset
@@ -315,7 +315,7 @@ def round_to_start_of_month(ds, dim):
     """
     Return provided array with specified time dimension rounded to the start of
     the month
-    
+
     Parameters
     ----------
     ds : xarray Dataset
@@ -336,14 +336,14 @@ def coarsen_monthly_to_annual(ds, start_points=None, dim="time"):
     """
     Coarsen monthly data to annual, applying 'max' to all relevant coords and
     optionally starting at a particular time point in the array
-    
+
     Parameters
     ----------
     ds : xarray Dataset
         The dataset to coarsen
     start_points : str or list of str
         Value(s) of coordinate `dim` to start the coarsening from. If these fall
-        outside the range of the coordinate, coarsening starts at the beginning 
+        outside the range of the coordinate, coarsening starts at the beginning
         of the array
     dim : str, optional
         The name of the dimension to coarsen along
@@ -371,7 +371,7 @@ def gridarea_cdo(ds):
     """
     Returns the area weights computed using cdo's gridarea function
     Note, this function writes ds to disk, so strip back ds to only what is needed
-    
+
     Parameters
     ----------
     ds : xarray Dataset
