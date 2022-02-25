@@ -63,6 +63,7 @@ prepare:
         chunks: {"init": -1, "lead": 1, "member": -1, "lat": -1, "lon": -1}
       
   sst:
+    identifier: "sst.annual.full"
     uses:
       Omon:
         - "tos"
