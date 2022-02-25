@@ -3,18 +3,17 @@
 
 # name: required
 #    The name of the dataset. Must match a method in src.prepare_data._open
-# rename: optional
-#    Translation between desired variable names and native variable names
-# convert: optional
-#    Convert variable units. Currently variables can recieve a "multiply_by" and/or 
-#    "add" key that are executed in the order they are provided
 # prepare: required
 #    Output variables to prepare and save. Each variable can include the following
+#    identifier: required
+#        Unique identifier for the output variable being processed. This will be 
+#        used to save this diagnostics as: {name}.{identifier}.zarr.
 #    uses: required
 #        List of input variables required to compute the output variable. For some 
 #        datasets, this should be further broken into subkeys indicating the realm 
-#        for each list of variables (e.g. ocean_month). Non-native variable names 
-#        can be provided when an appropriate `rename` key is also provided
+#        for each list of variables (e.g. ocean_month). Alternatively, users can
+#        provide the identifier of a previously prepared dataset by entering
+#        `prepared: <identifier>`.
 #    preprocess: optional
 #        Functions and kwargs from src.utils to be applied sequentially prior to 
 #        concatenation (for datasets comprised of multiple concatenated) and/or 
@@ -26,29 +25,18 @@
 
 name: "CAFE60v1"
 
-rename:
-  member: "ensemble"
-  x: "xt_ocean"
-  y: "yt_ocean"
-  depth: "st_ocean"
-  lon: "geolon_t"
-  lat: "geolat_t"
-  
-convert:
-  precip: 
-    multiply_by: 86400
-  temp:
-    add: 273.15
-
 prepare:
   t_ref:
+    identifier: "t_ref.annual.full"
     uses:
       atmos_isobaric_month:
         - "t_ref"
-    preprocess:
+    apply:
       truncate_latitudes:
       add_CAFE_grid_info:
-    apply:
+      rename:
+        names: 
+          ensemble: "member"
       round_to_start_of_month:
         dim: "time"
       coarsen_monthly_to_annual:
@@ -58,13 +46,20 @@ prepare:
         chunks:  {"time": 20, "member": -1, "lat": -1, "lon": -1}
         
   precip:
+    identifier: "precip.annual.full"
     uses:
       atmos_isobaric_month:
         - "precip"
-    preprocess:
+    apply:
       truncate_latitudes:
       add_CAFE_grid_info:
-    apply:
+      rename:
+        names:
+          ensemble: "member"
+      convert:
+        conversion:
+          precip:
+            multiply_by: 86400
       round_to_start_of_month:
         dim: "time"
       normalise_by_days_in_month:
@@ -75,12 +70,19 @@ prepare:
         chunks:  {"time": 20, "member": -1, "lat": -1, "lon": -1}
       
   sst:
+    identifier: "sst.annual.full"
     uses:
       ocean_month:
         - "sst"
-    preprocess:
-      add_CAFE_grid_info:
     apply:
+      add_CAFE_grid_info:
+      rename:
+        names:
+          ensemble: "member"
+          xt_ocean: "x"
+          yt_ocean: "y"
+          geolon_t: "lon"
+          geolat_t: "lat"
       round_to_start_of_month:
         dim: "time"
       coarsen_monthly_to_annual:
@@ -92,12 +94,24 @@ prepare:
         chunks: {"time": 20, "member": -1, "lat": 90, "lon": 90}
         
   ohc300:
+    identifier: "ohc300.annual.full"
     uses:
       ocean_month:
         - "temp"
-    preprocess:
-      add_CAFE_grid_info:
     apply:
+      add_CAFE_grid_info:
+      rename:
+        names:
+          ensemble: "member"
+          xt_ocean: "x"
+          yt_ocean: "y"
+          st_ocean: "depth"
+          geolon_t: "lon"
+          geolat_t: "lat"
+      convert:
+        conversion:
+          temp:
+            add: 273.15
       round_to_start_of_month:
         dim: "time"
       coarsen_monthly_to_annual:
@@ -108,3 +122,40 @@ prepare:
         file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
       rechunk:
         chunks: {"time": 20, "member": -1, "lat": 90, "lon": 90}
+
+  # Prepare anomalies from prepared datasets
+  t_ref:
+    identifier: "t_ref.annual.anom_1991-2020"
+    uses:
+      prepared:
+        - "t_ref.annual.full"
+    apply:
+      anomalise:
+        clim_period: ["1991-01-01", "2020-12-31"]
+        
+  precip:
+    identifier: "precip.annual.anom_1991-2020"
+    uses:
+      prepared:
+        - "precip.annual.full"
+    apply:
+      anomalise:
+        clim_period: ["1991-01-01", "2020-12-31"]
+        
+  sst:
+    identifier: "sst.annual.anom_1991-2020"
+    uses:
+      prepared:
+        - "sst.annual.full"
+    apply:
+      anomalise:
+        clim_period: ["1991-01-01", "2020-12-31"]
+        
+  ohc300:
+    identifier: "ohc300.annual.anom_1991-2020"
+    uses:
+      prepared:
+        - "ohc300.annual.full"
+    apply:
+      anomalise:
+        clim_period: ["1991-01-01", "2020-12-31"]

@@ -25,54 +25,59 @@ PROJECT_DIR = Path(__file__).resolve().parents[1]
 DATA_DIR = PROJECT_DIR / "data/raw"
 
 
+# def _load_config(name):
+#     """Load a config .yml file for a specified dataset"""
+#     with open(name, "r") as reader:
+#         return yaml.load(reader, Loader=yaml.SafeLoader)
+    
 def _load_config(name):
-    """Load a config .yml file for a specified dataset"""
+    """
+    Load a config .yml file for a specified dataset allowing for duplicate keys
+    """
+    # Built from https://stackoverflow.com/questions/44904290/getting-duplicate-keys-in-yaml-using-python
+    class PreserveDuplicatesLoader(yaml.loader.Loader):
+        pass
+
+    def map_constructor(self, node):
+        # test if there are duplicate node keys
+        keys = set()
+        for key_node, value_node in node.value:
+            key = self.construct_object(key_node, deep=True)
+            if key in keys:
+                break
+            keys.add(key)
+        else:
+            data = {}  # type: Dict[Any, Any]
+            yield data
+            value = self.construct_mapping(node)
+            data.update(value)
+            return
+        data = []
+        yield data
+        for key_node, value_node in node.value:
+            key = self.construct_object(key_node, deep=True)
+            val = self.construct_object(value_node, deep=True)
+            data.append((key, val))
+
+    PreserveDuplicatesLoader.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, map_constructor)
+    
     with open(name, "r") as reader:
-        return yaml.load(reader, Loader=yaml.SafeLoader)
+        return yaml.load(reader, PreserveDuplicatesLoader)
 
 
-def _maybe_translate_variables(variables, translation_dict):
-    """
-    Translate variables using provided dictionary where possible
-    """
-    translated_variables = {}
-    for realm, var in variables.items():
-        translated_variables[realm] = []
-        for v in var:
-            try:
-                translated_variables[realm].append(translation_dict[v])
-            except KeyError:
-                translated_variables[realm].append(v)
-    return translated_variables
-
-
-def _maybe_rename(ds, rename):
-    """
-    Rename all variables etc that have an entry in rename
-    """
-    for k, v in rename.items():
-        if v in ds:
-            ds = ds.rename({v: k})
-    return ds
-
-
-def _convert_variables(ds, norm_dict):
-    """
-    Convert variables in a dataset according to provided dictionary
-    """
-    ds_c = ds.copy()
-    for v in norm_dict.keys():
-        if v in ds_c:
-            for op, val in norm_dict[v].items():
-                if op == "multiply_by":
-                    ds_c[v] *= float(val)
-                    if "units" in ds_c[v].attrs:
-                        ds_c[v].attrs["units"] = f"{val} * {ds_c[v].attrs['units']}"
-                if op == "add":
-                    ds_c[v] += float(val)
-                    if "units" in ds_c[v].attrs:
-                        ds_c[v].attrs["units"] = f"{ds_c[v].attrs['units']} + {val}"
-    return ds_c
+# def _maybe_translate_variables(variables, translation_dict):
+#     """
+#     Translate variables using provided dictionary where possible
+#     """
+#     translated_variables = {}
+#     for realm, var in variables.items():
+#         translated_variables[realm] = []
+#         for v in var:
+#             try:
+#                 translated_variables[realm].append(translation_dict[v])
+#             except KeyError:
+#                 translated_variables[realm].append(v)
+#     return translated_variables
 
 
 def _composite_function(function_dict):
@@ -569,48 +574,46 @@ def prepare_dataset(config, save_dir, save=True):
         prepared = []
         # Loop over output variables
         output_variables = cfg["prepare"]
-        for variable in output_variables.keys():
-            input_variables = output_variables[variable]["uses"]
+        
+        # Convert dictionary into a list of tuples. This is to 
+        # allow for duplicates in cfg["prepare"]
+        if isinstance(output_variables, dict):
+            output_variables = list(output_variables.items())
+        
+        for variable, params in output_variables:
+            identifier = params["identifier"]
+            input_variables = params["uses"]
             if isinstance(input_variables, list):
                 input_variables = {None: input_variables}
 
-            if "rename" in cfg:
-                input_variables = _maybe_translate_variables(
-                    input_variables, cfg["rename"]
-                )
-
-            if "preprocess" in output_variables[variable]:
-                preprocess = _composite_function(
-                    output_variables[variable]["preprocess"]
-                )
+            # Build composite preprocess function
+            if "preprocess" in params:
+                preprocess = _composite_function(params["preprocess"])
             else:
                 preprocess = None
 
-            if hasattr(_open, cfg["name"]):
-                ds = []
-                logger.info(f"Processing {variable} from {cfg['name']}")
-                for realm, var in input_variables.items():
-                    ds.append(getattr(_open, cfg["name"])(var, realm, preprocess))
-                ds = xr.merge(ds)
-            else:
-                raise ValueError(
-                    f"There is no method available to open '{cfg['name']}'. Please ensure that the 'name' entry in the config file matches an existing method in src.data._open, or add a new method for this data. Available methods are {methods}"
-                )
+            logger.info(f"Processing {variable} from {cfg['name']}")
+            ds = []
+            for realm, var in input_variables.items():
+                if realm == "prepared":
+                    ds.append(xr.merge(xr.open_zarr(f"{save_dir}/{cfg['name']}.{v}.zarr") for v in var))
+                else:
+                    if hasattr(_open, cfg["name"]):
+                        ds.append(getattr(_open, cfg["name"])(var, realm, preprocess))
+                    else:
+                        raise ValueError(
+                            f"There is no method available to open '{cfg['name']}'. Please ensure that the 'name' entry in the config file matches an existing method in src.data._open, or add a new method for this data. Available methods are {methods}"
+                        )
+            ds = xr.merge(ds)
 
-            if "rename" in cfg:
-                ds = _maybe_rename(ds, cfg["rename"])
-
-            if "convert" in cfg:
-                ds = _convert_variables(ds, cfg["convert"])
-
-            if "apply" in output_variables[variable]:
-                ds = _composite_function(output_variables[variable]["apply"])(ds)
+            if "apply" in params:
+                ds = _composite_function(params["apply"])(ds)
 
             prepared.append(ds)
             if save:
                 for var in ds.data_vars:
                     ds[var].encoding = {}
-                ds.to_zarr(f"{save_dir}/{cfg['name']}.{variable}.zarr", mode="w")
+                ds.to_zarr(f"{save_dir}/{cfg['name']}.{identifier}.zarr", mode="w")
 
         return prepared
 

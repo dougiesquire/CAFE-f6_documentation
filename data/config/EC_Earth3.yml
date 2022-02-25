@@ -3,18 +3,17 @@
 
 # name: required
 #    The name of the dataset. Must match a method in src.prepare_data._open
-# rename: optional
-#    Translation between desired variable names and native variable names
-# convert: optional
-#    Convert variable units. Currently variables can recieve a "multiply_by" and/or 
-#    "add" key that are executed in the order they are provided
 # prepare: required
 #    Output variables to prepare and save. Each variable can include the following
+#    identifier: required
+#        Unique identifier for the output variable being processed. This will be 
+#        used to save this diagnostics as: {name}.{identifier}.zarr.
 #    uses: required
 #        List of input variables required to compute the output variable. For some 
 #        datasets, this should be further broken into subkeys indicating the realm 
-#        for each list of variables (e.g. ocean_month). Non-native variable names 
-#        can be provided when an appropriate `rename` key is also provided
+#        for each list of variables (e.g. ocean_month). Alternatively, users can
+#        provide the identifier of a previously prepared dataset by entering
+#        `prepared: <identifier>`.
 #    preprocess: optional
 #        Functions and kwargs from src.utils to be applied sequentially prior to 
 #        concatenation (for datasets comprised of multiple concatenated) and/or 
@@ -26,21 +25,16 @@
 
 name: "EC_Earth3"
 
-rename:
-  t_ref: "tas"
-  precip: "pr"
-  sst: "tos"
-  
-convert:
-  precip: 
-    multiply_by: 86400
-
 prepare:
   t_ref:
+    identifier: "t_ref.annual.full"
     uses:
       Amon:
-        - "t_ref"
+        - "tas"
     apply:
+      rename:
+        names: 
+          tas: "t_ref"
       coarsen_monthly_to_annual:
         dim: "lead"
       interpolate_to_grid_from_file:
@@ -49,10 +43,18 @@ prepare:
         chunks: {"init": -1, "lead": 1, "member": -1, "lat": -1, "lon": -1}
         
   precip:
+    identifier: "precip.annual.full"
     uses:
       Amon:
-        - "precip"
+        - "pr"
     apply:
+      rename:
+        names: 
+          pr: "precip"
+      convert:
+        conversion:
+          precip:
+            multiply_by: 86400
       coarsen_monthly_to_annual:
         dim: "lead"
       interpolate_to_grid_from_file:
@@ -63,11 +65,42 @@ prepare:
   sst:
     uses:
       Omon:
-        - "sst"
+        - "tos"
     apply:
+      rename:
+        names: 
+          tos: "sst"
       coarsen_monthly_to_annual:
         dim: "lead"
       interpolate_to_grid_from_file:
         file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
       rechunk:
         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 90, "lon": 90}
+        
+  # Prepare anomalies from prepared datasets
+  t_ref:
+    identifier: "t_ref.annual.anom_1991-2020"
+    uses:
+      prepared:
+        - "t_ref.annual.full"
+    apply:
+      anomalise:
+        clim_period: ["1991-01-01", "2020-12-31"]
+        
+  precip:
+    identifier: "precip.annual.anom_1991-2020"
+    uses:
+      prepared:
+        - "precip.annual.full"
+    apply:
+      anomalise:
+        clim_period: ["1991-01-01", "2020-12-31"]
+        
+  sst:
+    identifier: "sst.annual.anom_1991-2020"
+    uses:
+      prepared:
+        - "sst.annual.full"
+    apply:
+      anomalise:
+        clim_period: ["1991-01-01", "2020-12-31"]

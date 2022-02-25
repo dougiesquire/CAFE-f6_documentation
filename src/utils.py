@@ -96,6 +96,77 @@ def rechunk(ds, chunks):
     return ds.chunk(chunks)
 
 
+def rename(ds, names):
+    """
+    Rename all variables etc that have an entry in names
+    """
+    for k, v in names.items():
+        if k in ds:
+            ds = ds.rename({k: v})
+    return ds
+
+
+def convert(ds, conversion):
+    """
+    Convert variables in a dataset according to provided dictionary
+    """
+    ds_c = ds.copy()
+    for v in conversion.keys():
+        if v in ds_c:
+            for op, val in conversion[v].items():
+                if op == "multiply_by":
+                    ds_c[v] *= float(val)
+                    if "units" in ds_c[v].attrs:
+                        ds_c[v].attrs["units"] = f"{val} * {ds_c[v].attrs['units']}"
+                if op == "add":
+                    ds_c[v] += float(val)
+                    if "units" in ds_c[v].attrs:
+                        ds_c[v].attrs["units"] = f"{ds_c[v].attrs['units']} + {val}"
+    return ds_c
+
+
+def anomalise(ds, clim_period):
+    """
+    Returns the anomalies of ds relative to its climatology over clim_period
+
+    Parameters
+    ----------
+    ds : xarray Dataset
+        The data to anomalise
+    clim_period: iterable
+        Size 2 iterable containing strings indicating the start and end dates
+        of the climatological period
+    """
+    # Ensure time is computed
+    ds = ds.assign_coords({"time": ds["time"].compute()})
+    
+    calendar = ds.time.values.flat[0].calendar
+    clim_period = xr.cftime_range(
+        clim_period[0],
+        clim_period[-1],
+        periods=2,
+        freq=None,
+        calendar=calendar,
+    )
+    if ("init" in ds.dims) & ("lead" in ds.dims):
+        if "member" in ds.dims:
+            mean_dims = ["init", "member"]
+        else:
+            mean_dims = "init"
+        mask = (ds.time >= clim_period[0]) & (ds.time <= clim_period[1])
+        clim = ds.where(mask).groupby("init.month").mean(mean_dims)
+        return ds.groupby("init.month") - clim
+    elif "time" in ds.dims:
+        clim = (
+            ds.sel(time=slice(clim_period[0], clim_period[1]))
+            .groupby("time.month")
+            .mean("time")
+        )
+        return ds.groupby("time.month") - clim
+    else:
+        raise ValueError("I don't know how to compute the anomalies for this data")
+
+
 def interpolate_to_grid_from_file(ds, file, add_area=True, ignore_degenerate=True):
     import xesmf
 
