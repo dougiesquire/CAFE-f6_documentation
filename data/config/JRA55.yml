@@ -75,6 +75,8 @@ prepare:
     apply:
       anomalise:
         clim_period: ["1991-01-01", "2020-12-31"]
+      rechunk:
+        chunks:  {"time": -1, "lat": -1, "lon": -1}
         
   precip.annual.anom_1991-2020:
     uses:
@@ -83,3 +85,5 @@ prepare:
     apply:
       anomalise:
         clim_period: ["1991-01-01", "2020-12-31"]
+      rechunk:
+        chunks:  {"time": -1, "lat": -1, "lon": -1}

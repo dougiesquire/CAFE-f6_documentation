@@ -1,0 +1,28 @@
+2022-02-26 11:13:37,303 - __main__ - INFO - Spinning up a dask cluster
+2022-02-26 11:13:38,549 - __main__ - INFO - Generating grid files
+2022-02-26 11:13:38,550 - __main__ - INFO - Preparing raw data using JRA55.yml
+2022-02-26 11:13:38,570 - __main__ - INFO - Processing t_ref.annual.full from JRA55
+/g/data/xv83/users/ds0092/software/miniconda3/envs/forecast_analysis/lib/python3.9/site-packages/xarray/core/indexing.py:1228: PerformanceWarning: Slicing with an out-of-order index is generating 61 times more chunks
+  return self.array[key]
+2022-02-26 11:13:45,139 - __main__ - INFO - Processing precip.annual.full from JRA55
+/g/data/xv83/users/ds0092/software/miniconda3/envs/forecast_analysis/lib/python3.9/site-packages/xarray/core/indexing.py:1228: PerformanceWarning: Slicing with an out-of-order index is generating 61 times more chunks
+  return self.array[key]
+2022-02-26 11:13:46,775 - __main__ - INFO - Processing t_ref.annual.anom_1991-2020 from JRA55
+/g/data/xv83/users/ds0092/software/miniconda3/envs/forecast_analysis/lib/python3.9/site-packages/xarray/core/indexing.py:1228: PerformanceWarning: Slicing with an out-of-order index is generating 61 times more chunks
+  return self.array[key]
+2022-02-26 11:13:47,201 - __main__ - INFO - Processing precip.annual.anom_1991-2020 from JRA55
+/g/data/xv83/users/ds0092/software/miniconda3/envs/forecast_analysis/lib/python3.9/site-packages/xarray/core/indexing.py:1228: PerformanceWarning: Slicing with an out-of-order index is generating 61 times more chunks
+  return self.array[key]
+
+======================================================================================
+                  Resource Usage on 2022-02-26 11:13:50:
+   Job Id:             35873070.gadi-pbs
+   Project:            xv83
+   Exit Status:        0
+   Service Units:      0.64
+   NCPUs Requested:    48                     NCPUs Used: 48              
+                                           CPU Time Used: 00:00:17                                   
+   Memory Requested:   192.0GB               Memory Used: 1.72GB          
+   Walltime requested: 04:00:00            Walltime Used: 00:00:24        
+   JobFS requested:    100.0GB                JobFS used: 0B              
+======================================================================================

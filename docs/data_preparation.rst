@@ -49,6 +49,8 @@ Steps for preparing the various datasets used in this project are specified in y
        apply:
          anomalise:
            clim_period: ["1991-01-01", "2020-12-31"]
+         rechunk:
+           chunks: {"init": -1, "lead": 1, "member": -1, "lat": -1, "lon": -1}
 
 Code for preparing data from a specified yaml file is in ``src/prepare_data.py``:
 

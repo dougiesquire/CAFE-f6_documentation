@@ -130,6 +130,8 @@ prepare:
     apply:
       anomalise:
         clim_period: ["1991-01-01", "2020-12-31"]
+      rechunk:
+        chunks:  {"init": -1, "lead": 1, "member": -1, "lat": -1, "lon": -1}
         
   precip.annual.anom_1991-2020:
     uses:
@@ -138,6 +140,8 @@ prepare:
     apply:
       anomalise:
         clim_period: ["1991-01-01", "2020-12-31"]
+      rechunk:
+        chunks:  {"init": -1, "lead": 1, "member": -1, "lat": -1, "lon": -1}
         
   sst.annual.anom_1991-2020:
     uses:
@@ -146,6 +150,8 @@ prepare:
     apply:
       anomalise:
         clim_period: ["1991-01-01", "2020-12-31"]
+      rechunk:
+        chunks: {"init": -1, "lead": 1, "member": -1, "lat": 90, "lon": 90}
         
   ohc300.annual.anom_1991-2020:
     uses:
@@ -154,3 +160,5 @@ prepare:
     apply:
       anomalise:
         clim_period: ["1991-01-01", "2020-12-31"]
+      rechunk:
+        chunks: {"init": -1, "lead": 1, "member": -1, "lat": 90, "lon": 90}
