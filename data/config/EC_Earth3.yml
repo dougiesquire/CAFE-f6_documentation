@@ -3,31 +3,31 @@
 
 # name: required
 #    The name of the dataset. Must match a method in src.prepare_data._open
+#
 # prepare: required
-#    Output variables to prepare and save. Each variable can include the following
-#    identifier: required
-#        Unique identifier for the output variable being processed. This will be 
-#        used to save this diagnostics as: {name}.{identifier}.zarr.
+#    List of unique identifiers for output variables to prepare and save. This will 
+#    be used to save the prepared output variable(s) as {name}.{identifier}.zarr. 
+#    Each identifier can include the following:
+#
 #    uses: required
-#        List of input variables required to compute the output variable. For some 
-#        datasets, this should be further broken into subkeys indicating the realm 
-#        for each list of variables (e.g. ocean_month). Alternatively, users can
-#        provide the identifier of a previously prepared dataset by entering
+#        List of input variables required to compute the output variable(s). For 
+#        some datasets, this should be further broken into subkeys indicating the 
+#        realm for each list of variables (e.g. ocean_month). Alternatively, users 
+#        can provide the identifier of a previously prepared dataset by entering
 #        `prepared: <identifier>`.
 #    preprocess: optional
 #        Functions and kwargs from src.utils to be applied sequentially prior to 
-#        concatenation (for datasets comprised of multiple concatenated) and/or 
-#        prior to merging of variables from multiple realms into a single dataset.
-#        These are applied before the variables are renamed and converted.
+#        concatenation (for datasets comprised of multiple concatenated files) 
+#        and/or prior to merging input variables from multiple realms where more 
+#        than one are specified.
 #    apply: optional
 #        Functions and kwargs from src.utils to be applied sequentially to opened 
-#        dataset. These are applied after the variables are renamed and converted.
+#        (and concatenated/merge, where appropriate) dataset.
 
 name: "EC_Earth3"
 
 prepare:
-  t_ref:
-    identifier: "t_ref.annual.full"
+  t_ref.annual.full:
     uses:
       Amon:
         - "tas"
@@ -42,8 +42,7 @@ prepare:
       rechunk:
         chunks: {"init": -1, "lead": 1, "member": -1, "lat": -1, "lon": -1}
         
-  precip:
-    identifier: "precip.annual.full"
+  precip.annual.full:
     uses:
       Amon:
         - "pr"
@@ -62,8 +61,7 @@ prepare:
       rechunk:
         chunks: {"init": -1, "lead": 1, "member": -1, "lat": -1, "lon": -1}
       
-  sst:
-    identifier: "sst.annual.full"
+  sst.annual.full:
     uses:
       Omon:
         - "tos"
@@ -79,8 +77,7 @@ prepare:
         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 90, "lon": 90}
         
   # Prepare anomalies from prepared datasets
-  t_ref:
-    identifier: "t_ref.annual.anom_1991-2020"
+  t_ref.annual.anom_1991-2020:
     uses:
       prepared:
         - "t_ref.annual.full"
@@ -88,8 +85,7 @@ prepare:
       anomalise:
         clim_period: ["1991-01-01", "2020-12-31"]
         
-  precip:
-    identifier: "precip.annual.anom_1991-2020"
+  precip.annual.anom_1991-2020:
     uses:
       prepared:
         - "precip.annual.full"
@@ -97,8 +93,7 @@ prepare:
       anomalise:
         clim_period: ["1991-01-01", "2020-12-31"]
         
-  sst:
-    identifier: "sst.annual.anom_1991-2020"
+  sst.annual.anom_1991-2020:
     uses:
       prepared:
         - "sst.annual.full"

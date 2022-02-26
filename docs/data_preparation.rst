@@ -13,8 +13,6 @@ Steps for preparing the various datasets used in this project are specified in y
      precip.annual.full:                # <- Unique identifier for the output variable
                                         #    being processed. This will be used to save
                                         #    the variable as {name}.{identifier}.zarr
-       name: "precip"                   # <- The name of the output variable being
-                                        #    prepared
        uses:                            # <- List of input variables required to compute
          atmos_isobaric_month:          #    the output variable. For some datasets this
            - "precip"                   #    should be futher broken down into subkeys
@@ -33,7 +31,7 @@ Steps for preparing the various datasets used in this project are specified in y
            dim: "lead"                  #    more than one are specified
        apply:                           # <- Functions and kwargs from src.utils to be
          rename:                        #    applied sequentially to the opened (and
-           names:                       #    (concatenated/merge, where appropriate)
+           names:                       #    concatenated/merge, where appropriate)
              ensemble: "member"         #    dataset
          convert:
            conversion:
@@ -45,7 +43,6 @@ Steps for preparing the various datasets used in this project are specified in y
            chunks: {"init": -1, "lead": 1, "member": -1, "lat": -1, "lon": -1}
 
      precip.annual.anom_1991-2020:
-       name: "precip"
        uses:
          prepared:
            - "precip.annual.full"

@@ -26,40 +26,9 @@ DATA_DIR = PROJECT_DIR / "data/raw"
 
 
 def _load_config(name):
-    """
-    Load a config .yml file for a specified dataset allowing for duplicate keys
-    """
-    # Built from https://stackoverflow.com/questions/44904290/getting-duplicate-keys-in-yaml-using-python
-    class PreserveDuplicatesLoader(yaml.loader.Loader):
-        pass
-
-    def map_constructor(self, node):
-        # test if there are duplicate node keys
-        keys = set()
-        for key_node, value_node in node.value:
-            key = self.construct_object(key_node, deep=True)
-            if key in keys:
-                break
-            keys.add(key)
-        else:
-            data = {}  # type: Dict[Any, Any]
-            yield data
-            value = self.construct_mapping(node)
-            data.update(value)
-            return
-        data = []
-        yield data
-        for key_node, value_node in node.value:
-            key = self.construct_object(key_node, deep=True)
-            val = self.construct_object(value_node, deep=True)
-            data.append((key, val))
-
-    PreserveDuplicatesLoader.add_constructor(
-        yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, map_constructor
-    )
-
+    """Load a config .yml file for a specified dataset"""
     with open(name, "r") as reader:
-        return yaml.load(reader, PreserveDuplicatesLoader)
+        return yaml.load(reader, Loader=yaml.SafeLoader)
 
 
 def _composite_function(function_dict):
@@ -554,16 +523,8 @@ def prepare_dataset(config, save_dir, save=True):
 
     if "prepare" in cfg:
         prepared = []
-        # Loop over output variables
-        output_variables = cfg["prepare"]
 
-        # Convert dictionary into a list of tuples. This is to
-        # allow for duplicates in cfg["prepare"]
-        if isinstance(output_variables, dict):
-            output_variables = list(output_variables.items())
-
-        for variable, params in output_variables:
-            identifier = params["identifier"]
+        for identifier, params in cfg["prepare"].items():
             input_variables = params["uses"]
             if isinstance(input_variables, list):
                 input_variables = {None: input_variables}
@@ -574,7 +535,7 @@ def prepare_dataset(config, save_dir, save=True):
             else:
                 preprocess = None
 
-            logger.info(f"Processing {variable} from {cfg['name']}")
+            logger.info(f"Processing {identifier} from {cfg['name']}")
             ds = []
             for realm, var in input_variables.items():
                 if realm == "prepared":
