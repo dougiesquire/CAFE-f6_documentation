@@ -84,7 +84,7 @@ def normalise_by_days_in_month(ds):
     return ds / ds["time"].dt.days_in_month
 
 
-def convert_time_to_lead(ds, time_dim="time", init_dim="init", lead_dim="lead"):
+def convert_time_to_lead(ds, time_dim="time", time_freq=None, init_dim="init", lead_dim="lead"):
     """
     Return provided array with time dimension converted to lead time dimension
     and time added as additional coordinate
@@ -95,12 +95,17 @@ def convert_time_to_lead(ds, time_dim="time", init_dim="init", lead_dim="lead"):
         A dataset with a time dimension
     time_dim : str, optional
         The name of the time dimension
+    time_freq : str, optional
+        The frequency of the time dimension. If not provided, will try to use xr.infer_freq to
+        determine the frequency. This is only used to add a freq attr to the lead time coordinate
     init_dim : str, optional
         The name of the initial date dimension in the output
     lead_dim : str, optional
         The name of the lead time dimension in the output
     """
-    init_date = ds[time_dim].time[0].item()
+    init_date = ds[time_dim][0].item()
+    if time_freq is None:
+        time_freq = xr.infer_freq(ds[time_dim])
     lead_time = range(len(ds[time_dim]))
     time_coord = (
         ds[time_dim]
@@ -112,6 +117,7 @@ def convert_time_to_lead(ds, time_dim="time", init_dim="init", lead_dim="lead"):
         {lead_dim: lead_time, init_dim: [init_date]}
     )
     dataset = dataset.assign_coords({time_dim: time_coord})
+    dataset[lead_dim].attrs["freq"] = time_freq
     return dataset
 
 
@@ -149,6 +155,28 @@ def rechunk(ds, chunks):
         Dictionary of {dim: chunksize}
     """
     return ds.chunk(chunks)
+
+
+def add_attrs(ds, attrs, variable=None):
+    """
+    Add attributes to a dataset
+
+    Parameters
+    ----------
+    ds : xarray Dataset
+        The data to add attributes to
+    attrs : dict
+        The attributes to add
+    variable : str, optional
+        The name of the variable or coordinate to add the attributes to.
+        If None, the attributes will be added as global attributes
+    """
+
+    if variable is None:
+        ds.attrs = attrs
+    else:
+        ds[variable].attrs = attrs
+    return ds
 
 
 def rename(ds, names):
@@ -269,9 +297,12 @@ def interpolate_to_grid_from_file(ds, file, add_area=True, ignore_degenerate=Tru
     C = 1
     ds_rg = ds.copy() + C
     regridder = xesmf.Regridder(
-        ds_rg, ds_out, "bilinear", ignore_degenerate=ignore_degenerate
+        ds_rg, 
+        ds_out, 
+        "bilinear", 
+        ignore_degenerate=ignore_degenerate, 
     )
-    ds_rg = regridder(ds_rg)
+    ds_rg = regridder(ds_rg, keep_attrs=True)
     ds_rg = ds_rg.where(ds_rg != 0.0) - C
 
     # Add back in attributes:

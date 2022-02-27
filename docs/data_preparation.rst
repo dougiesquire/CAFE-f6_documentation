@@ -40,7 +40,7 @@ Steps for preparing the various datasets used in this project are specified in y
          round_to_start_of_month:
            dim: ["init", "time"]
          rechunk:
-           chunks: {"init": -1, "lead": 1, "member": -1, "lat": -1, "lon": -1}
+           chunks: {"init": -1, "lead": 2, "member": -1, "lat": 45, "lon": 72}
 
      precip.annual.anom_1991-2020:
        uses:
@@ -50,7 +50,7 @@ Steps for preparing the various datasets used in this project are specified in y
          anomalise:
            clim_period: ["1991-01-01", "2020-12-31"]
          rechunk:
-           chunks: {"init": -1, "lead": 1, "member": -1, "lat": -1, "lon": -1}
+           chunks: {"init": -1, "lead": 2, "member": -1, "lat": 45, "lon": 72}
 
 Code for preparing data from a specified yaml file is in ``src/prepare_data.py``:
 

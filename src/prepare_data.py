@@ -222,7 +222,7 @@ class _open:
             ds0 = xr.concat(
                 [xr.open_dataset(f, chunks={}, use_cftime=True) for f in f0], dim="time"
             )
-            ds0 = utils.convert_time_to_lead(ds0)
+            ds0 = utils.convert_time_to_lead(ds0, time_freq="months")
             ds0 = utils.round_to_start_of_month(ds0, dim="init")
             d0 = ds0[v]
 
@@ -260,7 +260,7 @@ class _open:
                     attrs=d0.attrs,
                 ).to_dataset(name=v)
             )
-        return xr.merge(ds).compute()
+        return xr.merge(ds)# .compute()
 
     @staticmethod
     def CanESM5(variables, realm, preprocess):
@@ -561,7 +561,7 @@ def prepare_dataset(config, save_dir, save=True):
             if save:
                 for var in ds.data_vars:
                     ds[var].encoding = {}
-                ds.to_zarr(f"{save_dir}/{cfg['name']}.{identifier}.zarr", mode="w")
+                ds.unify_chunks().to_zarr(f"{save_dir}/{cfg['name']}.{identifier}.zarr", mode="w")
 
         return prepared
 

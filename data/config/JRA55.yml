@@ -45,7 +45,7 @@ prepare:
       interpolate_to_grid_from_file:
         file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
       rechunk:
-        chunks:  {"time": -1, "lat": -1, "lon": -1}
+        chunks: {"time": -1, "lat": 45, "lon": 72}
         
   precip.annual.full:
     uses:
@@ -65,7 +65,7 @@ prepare:
       interpolate_to_grid_from_file:
         file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
       rechunk:
-        chunks:  {"time": -1, "lat": -1, "lon": -1}
+        chunks: {"time": -1, "lat": 45, "lon": 72}
         
   # Prepare anomalies from prepared datasets
   t_ref.annual.anom_1991-2020:
@@ -76,7 +76,7 @@ prepare:
       anomalise:
         clim_period: ["1991-01-01", "2020-12-31"]
       rechunk:
-        chunks:  {"time": -1, "lat": -1, "lon": -1}
+        chunks: {"time": -1, "lat": 45, "lon": 72}
         
   precip.annual.anom_1991-2020:
     uses:
@@ -86,4 +86,4 @@ prepare:
       anomalise:
         clim_period: ["1991-01-01", "2020-12-31"]
       rechunk:
-        chunks:  {"time": -1, "lat": -1, "lon": -1}
+        chunks: {"time": -1, "lat": 45, "lon": 72}

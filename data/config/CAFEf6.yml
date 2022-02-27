@@ -33,6 +33,7 @@ prepare:
         - "t_ref"
     preprocess:
       convert_time_to_lead:
+        time_freq: "months"
       truncate_latitudes:
       coarsen_monthly_to_annual:
         dim: "lead"
@@ -43,7 +44,7 @@ prepare:
       round_to_start_of_month:
         dim: ["init", "time"]
       rechunk:
-        chunks:  {"init": -1, "lead": 1, "member": -1, "lat": -1, "lon": -1}
+        chunks: {"init": -1, "lead": 2, "member": -1, "lat": 45, "lon": 72}
         
   precip.annual.full:
     uses:
@@ -52,6 +53,7 @@ prepare:
     preprocess:
       normalise_by_days_in_month:
       convert_time_to_lead:
+        time_freq: "months"
       truncate_latitudes:
       coarsen_monthly_to_annual:
         dim: "lead"
@@ -66,7 +68,7 @@ prepare:
       round_to_start_of_month:
         dim: ["init", "time"]
       rechunk:
-        chunks: {"init": -1, "lead": 1, "member": -1, "lat": -1, "lon": -1}
+        chunks: {"init": -1, "lead": 2, "member": -1, "lat": 45, "lon": 72}
         
   sst.annual.full:
     uses:
@@ -74,6 +76,7 @@ prepare:
         - "sst"
     preprocess:
       convert_time_to_lead:
+        time_freq: "months"
       coarsen_monthly_to_annual:
         dim: "lead"
     apply:
@@ -89,7 +92,7 @@ prepare:
       interpolate_to_grid_from_file:
         file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
       rechunk:
-        chunks: {"init": -1, "lead": 1, "member": -1, "lat": 90, "lon": 90}
+        chunks: {"init": -1, "lead": 2, "member": -1, "lat": 45, "lon": 72}
         
   ohc300.annual.full:
     uses:
@@ -97,6 +100,7 @@ prepare:
         - "temp"
     preprocess:
       convert_time_to_lead:
+        time_freq: "months"
       coarsen_monthly_to_annual:
         dim: "lead"
     apply:
@@ -120,7 +124,7 @@ prepare:
       interpolate_to_grid_from_file:
         file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
       rechunk:
-        chunks: {"init": -1, "lead": 1, "member": -1, "lat": 90, "lon": 90}
+        chunks: {"init": -1, "lead": 2, "member": -1, "lat": 45, "lon": 72}
         
   # Prepare anomalies from prepared datasets
   t_ref.annual.anom_1991-2020:
@@ -131,7 +135,7 @@ prepare:
       anomalise:
         clim_period: ["1991-01-01", "2020-12-31"]
       rechunk:
-        chunks:  {"init": -1, "lead": 1, "member": -1, "lat": -1, "lon": -1}
+        chunks: {"init": -1, "lead": 2, "member": -1, "lat": 45, "lon": 72}
         
   precip.annual.anom_1991-2020:
     uses:
@@ -141,7 +145,7 @@ prepare:
       anomalise:
         clim_period: ["1991-01-01", "2020-12-31"]
       rechunk:
-        chunks:  {"init": -1, "lead": 1, "member": -1, "lat": -1, "lon": -1}
+        chunks: {"init": -1, "lead": 2, "member": -1, "lat": 45, "lon": 72}
         
   sst.annual.anom_1991-2020:
     uses:
@@ -151,7 +155,7 @@ prepare:
       anomalise:
         clim_period: ["1991-01-01", "2020-12-31"]
       rechunk:
-        chunks: {"init": -1, "lead": 1, "member": -1, "lat": 90, "lon": 90}
+        chunks: {"init": -1, "lead": 2, "member": -1, "lat": 45, "lon": 72}
         
   ohc300.annual.anom_1991-2020:
     uses:
@@ -161,4 +165,4 @@ prepare:
       anomalise:
         clim_period: ["1991-01-01", "2020-12-31"]
       rechunk:
-        chunks: {"init": -1, "lead": 1, "member": -1, "lat": 90, "lon": 90}
+        chunks: {"init": -1, "lead": 2, "member": -1, "lat": 45, "lon": 72}
