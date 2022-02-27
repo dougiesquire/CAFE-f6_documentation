@@ -27,7 +27,7 @@
 name: "HadISST"
 
 prepare:
-  sst.annual.full:
+  annual.full.sst:
     uses:
       ocean_month:
         - "sst"
@@ -48,10 +48,10 @@ prepare:
         chunks: {"time": -1, "lat": 45, "lon": 72}
         
   # Prepare anomalies from prepared datasets
-  sst.annual.anom_1991-2020:
+  annual.anom_1991-2020.sst:
     uses:
       prepared:
-        - "sst.annual.full"
+        - "annual.full.sst"
     apply:
       anomalise:
         clim_period: ["1991-01-01", "2020-12-31"]

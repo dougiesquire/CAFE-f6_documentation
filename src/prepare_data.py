@@ -260,7 +260,7 @@ class _open:
                     attrs=d0.attrs,
                 ).to_dataset(name=v)
             )
-        return xr.merge(ds)# .compute()
+        return xr.merge(ds).compute()
 
     @staticmethod
     def CanESM5(variables, realm, preprocess):
@@ -268,7 +268,7 @@ class _open:
         model = "CanESM5"
         variant_id = "i1p2f1"
         grid = "gn"
-        years = range(1980, 2016 + 1)
+        years = range(1960, 2016 + 1)
         members = range(1, 40 + 1)
         version = "v20190429"
         ds = _open._cmip6_dcppA_hindcast(
@@ -285,7 +285,7 @@ class _open:
         model = "EC-Earth3"
         variant_id = "i1p1f1"
         grid = "gr"
-        years = range(1981, 2018 + 1)
+        years = range(1960, 2018 + 1)
         members = range(1, 10 + 1)
         version = "v2020121?"
         ds = _open._cmip6_dcppA_hindcast(
@@ -559,9 +559,10 @@ def prepare_dataset(config, save_dir, save=True):
 
             prepared.append(ds)
             if save:
-                for var in ds.data_vars:
+                ds = ds.unify_chunks()
+                for var in ds.variables:
                     ds[var].encoding = {}
-                ds.unify_chunks().to_zarr(f"{save_dir}/{cfg['name']}.{identifier}.zarr", mode="w")
+                ds.to_zarr(f"{save_dir}/{cfg['name']}.{identifier}.zarr", mode="w")
 
         return prepared
 

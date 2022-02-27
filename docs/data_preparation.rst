@@ -10,7 +10,7 @@ Steps for preparing the various datasets used in this project are specified in y
                                         #    src.prepare_data._open
 
    prepare:
-     precip.annual.full:                # <- Unique identifier for the output variable
+     annual.full.precip:                # <- Unique identifier for the output variable
                                         #    being processed. This will be used to save
                                         #    the variable as {name}.{identifier}.zarr
        uses:                            # <- List of input variables required to compute
@@ -42,10 +42,10 @@ Steps for preparing the various datasets used in this project are specified in y
          rechunk:
            chunks: {"init": -1, "lead": 2, "member": -1, "lat": 45, "lon": 72}
 
-     precip.annual.anom_1991-2020:
+     annual.anom_1991-2020.precip:
        uses:
          prepared:
-           - "precip.annual.full"
+           - "annual.full.precip"
        apply:
          anomalise:
            clim_period: ["1991-01-01", "2020-12-31"]

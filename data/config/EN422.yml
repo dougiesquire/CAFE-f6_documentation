@@ -27,7 +27,7 @@
 name: "EN422"
 
 prepare:
-  ohc300.annual.full:
+  annual.full.ohc300:
     uses:
       - "temperature"
     apply:
@@ -47,10 +47,10 @@ prepare:
         chunks: {"time": -1, "lat": 45, "lon": 72}
         
   # Prepare anomalies from prepared datasets      
-  ohc300.annual.anom_1991-2020:
+  annual.anom_1991-2020.ohc300:
     uses:
       prepared:
-        - "ohc300.annual.full"
+        - "annual.full.ohc300"
     apply:
       anomalise:
         clim_period: ["1991-01-01", "2020-12-31"]

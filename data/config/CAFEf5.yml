@@ -27,7 +27,7 @@
 name: "CAFEf5"
 
 prepare:
-  t_ref.annual.full:
+  annual.full.t_ref:
     uses:
       atmos_isobaric_month:
         - "t_ref"
@@ -49,7 +49,7 @@ prepare:
       rechunk:
         chunks: {"init": -1, "lead": -1, "member": -1, "lat": 45, "lon": 72}
         
-  precip.annual.full:
+  annual.full.precip:
     uses:
       atmos_isobaric_month:
         - "precip"
@@ -75,7 +75,7 @@ prepare:
       rechunk:
         chunks: {"init": -1, "lead": -1, "member": -1, "lat": 45, "lon": 72}
         
-  sst.annual.full:
+  annual.full.sst:
     uses:
       ocean_month:
         - "sst"
@@ -101,7 +101,7 @@ prepare:
       rechunk:
         chunks: {"init": -1, "lead": -1, "member": -1, "lat": 45, "lon": 72}
         
-  ohc300.annual.full:
+  annual.full.ohc300:
     uses:
       ocean_month:
         - "temp"
@@ -134,40 +134,40 @@ prepare:
         chunks: {"init": -1, "lead": -1, "member": -1, "lat": 45, "lon": 72}
         
   # Prepare anomalies from prepared datasets
-  t_ref.annual.anom_1991-2020:
+  annual.anom_1991-2020.t_ref:
     uses:
       prepared:
-        - "t_ref.annual.full"
+        - "annual.full.t_ref"
     apply:
       anomalise:
         clim_period: ["1991-01-01", "2020-12-31"]
       rechunk:
         chunks: {"init": -1, "lead": -1, "member": -1, "lat": 45, "lon": 72}
         
-  precip.annual.anom_1991-2020:
+  annual.anom_1991-2020.precip:
     uses:
       prepared:
-        - "precip.annual.full"
+        - "annual.full.precip"
     apply:
       anomalise:
         clim_period: ["1991-01-01", "2020-12-31"]
       rechunk:
         chunks: {"init": -1, "lead": -1, "member": -1, "lat": 45, "lon": 72}
         
-  sst.annual.anom_1991-2020:
+  annual.anom_1991-2020.sst:
     uses:
       prepared:
-        - "sst.annual.full"
+        - "annual.full.sst"
     apply:
       anomalise:
         clim_period: ["1991-01-01", "2020-12-31"]
       rechunk:
         chunks: {"init": -1, "lead": -1, "member": -1, "lat": 45, "lon": 72}
         
-  ohc300.annual.anom_1991-2020:
+  annual.anom_1991-2020.ohc300:
     uses:
       prepared:
-        - "ohc300.annual.full"
+        - "annual.full.ohc300"
     apply:
       anomalise:
         clim_period: ["1991-01-01", "2020-12-31"]

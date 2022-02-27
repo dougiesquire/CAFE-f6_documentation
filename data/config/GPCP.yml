@@ -27,7 +27,7 @@
 name: "GPCP"
 
 prepare:
-  precip.annual.full:
+  annual.full.precip:
     uses:
       - "precip"
     apply:
@@ -45,10 +45,10 @@ prepare:
         chunks: {"time": -1, "lat": 45, "lon": 72}
         
   # Prepare anomalies from prepared datasets
-  precip.annual.anom_1991-2020:
+  annual.anom_1991-2020.precip:
     uses:
       prepared:
-        - "precip.annual.full"
+        - "annual.full.precip"
     apply:
       anomalise:
         clim_period: ["1991-01-01", "2020-12-31"]
