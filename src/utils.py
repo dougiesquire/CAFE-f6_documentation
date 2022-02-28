@@ -3,7 +3,16 @@ import xarray as xr
 import os
 from pathlib import Path
 
+import yaml
+
+
 PROJECT_DIR = Path(__file__).resolve().parents[1]
+
+
+def load_config(name):
+    """Load a config .yml file for a specified dataset"""
+    with open(name, "r") as reader:
+        return yaml.load(reader, Loader=yaml.SafeLoader)
 
 
 def calculate_ohc300(temp, depth_dim="depth", var_name="temp"):
@@ -84,7 +93,9 @@ def normalise_by_days_in_month(ds):
     return ds / ds["time"].dt.days_in_month
 
 
-def convert_time_to_lead(ds, time_dim="time", time_freq=None, init_dim="init", lead_dim="lead"):
+def convert_time_to_lead(
+    ds, time_dim="time", time_freq=None, init_dim="init", lead_dim="lead"
+):
     """
     Return provided array with time dimension converted to lead time dimension
     and time added as additional coordinate
@@ -117,7 +128,7 @@ def convert_time_to_lead(ds, time_dim="time", time_freq=None, init_dim="init", l
         {lead_dim: lead_time, init_dim: [init_date]}
     )
     dataset = dataset.assign_coords({time_dim: time_coord})
-    dataset[lead_dim].attrs["freq"] = time_freq
+    dataset[lead_dim].attrs["units"] = time_freq
     return dataset
 
 
@@ -254,14 +265,14 @@ def anomalise(ds, clim_period):
             mean_dims = "init"
         mask = (ds.time >= clim_period[0]) & (ds.time <= clim_period[1])
         clim = ds.where(mask).groupby("init.month").mean(mean_dims)
-        return ds.groupby("init.month") - clim
+        return (ds.groupby("init.month") - clim).drop("month")
     elif "time" in ds.dims:
         clim = (
             ds.sel(time=slice(clim_period[0], clim_period[1]))
             .groupby("time.month")
             .mean("time")
         )
-        return ds.groupby("time.month") - clim
+        return (ds.groupby("time.month") - clim).drop("month")
     else:
         raise ValueError("I don't know how to compute the anomalies for this data")
 
@@ -297,10 +308,10 @@ def interpolate_to_grid_from_file(ds, file, add_area=True, ignore_degenerate=Tru
     C = 1
     ds_rg = ds.copy() + C
     regridder = xesmf.Regridder(
-        ds_rg, 
-        ds_out, 
-        "bilinear", 
-        ignore_degenerate=ignore_degenerate, 
+        ds_rg,
+        ds_out,
+        "bilinear",
+        ignore_degenerate=ignore_degenerate,
     )
     ds_rg = regridder(ds_rg, keep_attrs=True)
     ds_rg = ds_rg.where(ds_rg != 0.0) - C

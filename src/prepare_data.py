@@ -3,8 +3,6 @@ import glob
 import tempfile
 from pathlib import Path
 
-import yaml
-
 import logging
 import argparse
 
@@ -23,12 +21,6 @@ xr.set_options(keep_attrs=True)
 
 PROJECT_DIR = Path(__file__).resolve().parents[1]
 DATA_DIR = PROJECT_DIR / "data/raw"
-
-
-def _load_config(name):
-    """Load a config .yml file for a specified dataset"""
-    with open(name, "r") as reader:
-        return yaml.load(reader, Loader=yaml.SafeLoader)
 
 
 def _composite_function(function_dict):
@@ -421,9 +413,9 @@ class _open:
 
 def maybe_generate_CAFE_grid_files():
     """Generate files containing CAFE grids"""
-    path = PROJECT_DIR / "data/raw/CAFE_hist/"
+    path = DATA_DIR / "CAFE_hist/"
 
-    atmos_file = PROJECT_DIR / "data/raw/gridinfo/CAFE_atmos_grid.nc"
+    atmos_file = DATA_DIR / "gridinfo/CAFE_atmos_grid.nc"
     if not os.path.exists(atmos_file):
         atmos = (
             xr.open_zarr(f"{path}/atmos_hybrid_month.zarr.zip")
@@ -446,7 +438,7 @@ def maybe_generate_CAFE_grid_files():
         atmos_grid.attrs = {}
         atmos_grid.to_netcdf(atmos_file, mode="w")
 
-    ocean_file = PROJECT_DIR / "data/raw/gridinfo/CAFE_ocean_grid.nc"
+    ocean_file = DATA_DIR / "gridinfo/CAFE_ocean_grid.nc"
     if not os.path.exists(ocean_file):
         ocean = (
             xr.open_zarr(f"{path}/ocean_month.zarr.zip")
@@ -478,9 +470,9 @@ def maybe_generate_CAFE_grid_files():
 
 # def maybe_generate_HadISST_grid_file():
 #     """Generate file containing HadISST grid"""
-#     file = PROJECT_DIR / "data/raw/gridinfo/HadISST_grid.nc"
+#     file = DATA_DIR / "gridinfo/HadISST_grid.nc"
 #     if not os.path.exists(file):
-#         path = PROJECT_DIR / "data/raw/HadISST/ocean_month.zarr"
+#         path = DATA_DIR / "HadISST/ocean_month.zarr"
 #         had = xr.open_zarr(path)[["sst"]].isel(time=0).drop("time")
 #         grid = xr.zeros_like(
 #             had.rename({"sst": "HadISST_grid", "latitude": "lat", "longitude": "lon"})
@@ -506,7 +498,7 @@ def prepare_dataset(config, save_dir, save=True):
     """
     logger = logging.getLogger(__name__)
 
-    cfg = _load_config(config)
+    cfg = utils.load_config(config)
 
     # List of datasets that have open methods impletemented
     methods = [
@@ -610,8 +602,8 @@ if __name__ == "__main__":
     parser.add_argument(
         "--config_dir",
         type=str,
-        default=f"{PROJECT_DIR}/data/config/",
-        help="Location of directory containing config file(s) to use, defaults to <project_dir>/data/config/",
+        default=f"{PROJECT_DIR}/config/data",
+        help="Location of directory containing config file(s) to use, defaults to <project_dir>/config/data",
     )
     parser.add_argument(
         "--save_dir",

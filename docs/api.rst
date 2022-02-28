@@ -8,6 +8,13 @@ Note this module has a command line interface, see ``python src/prepare_data.py 
 .. automodule:: src.prepare_data
    :members:
 
+``assess_skill``
+----------------
+Note this module has a command line interface, see ``python src/assess_skill.py -h``
+
+.. automodule:: src.assess_skill
+   :members:
+
 ``utils``
 ---------
 
@@ -15,7 +22,7 @@ Note this module has a command line interface, see ``python src/prepare_data.py 
    :members:
 
 ``plot``
----------
+--------
 
 .. automodule:: src.plot
    :members:

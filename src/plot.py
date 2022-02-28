@@ -60,7 +60,8 @@ def hindcasts(hcsts, obsvs=None, hists=None, shade=False):
             hcst_time = "time"
         elif "valid_time" in hcst:
             hcst_time = "valid_time"
-        else: raise ValueError("I can't work out the time variable in hcsts")
+        else:
+            raise ValueError("I can't work out the time variable in hcsts")
         color = getattr(cm, next(colormapcycler))(np.linspace(0, 0.9, len(hcst.init)))
         for a, var in enumerate(hcst.data_vars):
             for idx, (i, c) in enumerate(zip(hcst[var].init, color)):
@@ -70,7 +71,9 @@ def hindcasts(hcsts, obsvs=None, hists=None, shade=False):
                     label = "_nolabel_"
 
                 h = hcst[var].sel(init=i)
-                axs[a].plot(h[hcst_time][0], h[0], color=c, marker="o", label="_nolabel_")
+                axs[a].plot(
+                    h[hcst_time][0], h[0], color=c, marker="o", label="_nolabel_"
+                )
                 axs[a].plot(h[hcst_time], h, color=c, linestyle="-", label=label)
     xlim = (hcst[hcst_time].min().item(), hcst[hcst_time].max().item())
 

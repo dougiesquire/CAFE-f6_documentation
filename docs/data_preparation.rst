@@ -1,7 +1,7 @@
 Data Preparation
 ================
 
-Steps for preparing the various datasets used in this project are specified in yaml files stored in ``data/config``. Here is an example config yaml file for preparing annual precipitation and its anomalies for the CAFE-f6 hindcasts/forecasts:
+Steps for preparing the various datasets used in this project are specified in yaml files stored in ``config/data``. Here is an example config yaml file for preparing annual precipitation and its anomalies for the CAFE-f6 hindcasts/forecasts:
 
 .. code-block:: yaml
 
@@ -68,7 +68,7 @@ Code for preparing data from a specified yaml file is in ``src/prepare_data.py``
      -h, --help            show this help message and exit
      --config_dir CONFIG_DIR
                            Location of directory containing config file(s) to use,
-                           defaults to <project_dir>/data/config/
+                           defaults to <project_dir>/config/data/
      --save_dir SAVE_DIR   Location of directory to save processed data to, defaults to
                         <project_dir>/data/processed/
 
@@ -78,7 +78,7 @@ To prepare a particular dataset, run:
 
    make data config=<name-of-config>
 
-This will submit a batch job to prepare all of the diagnositics specified in ``data/config/<name-of-config>``. An output file (named ``make_<name-of-config>.o????????``) for this batch job will be written to the current directory once this job is complete. Alternatively, users can process multiple datasets in multiple jobs with:
+This will submit a batch job to prepare all of the diagnositics specified in ``config/data/<name-of-config>``. An output file (named ``make_<name-of-config>.o????????``) for this batch job will be written to the current directory once this job is complete. Alternatively, users can process multiple datasets in multiple jobs with:
 
 .. code-block:: console
 
