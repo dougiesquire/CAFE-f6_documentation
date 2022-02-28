@@ -602,8 +602,8 @@ if __name__ == "__main__":
     parser.add_argument(
         "--config_dir",
         type=str,
-        default=f"{PROJECT_DIR}/config/data",
-        help="Location of directory containing config file(s) to use, defaults to <project_dir>/config/data",
+        default=f"{PROJECT_DIR}/config/prepare_data",
+        help="Location of directory containing config file(s) to use, defaults to <project_dir>/config/prepare_data",
     )
     parser.add_argument(
         "--save_dir",
