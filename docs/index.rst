@@ -12,10 +12,13 @@ Welcome to the documentation for my project assessing CAFE-f6. The project is or
 
    ├── Makefile            <- Makefile with commands like `make data`
    ├── data
-   │   ├── config          <- Configuration files for processing the raw data
    │   ├── processed       <- The postprocessed data
+   │   ├── skill           <- Skill assessment of processed data
    │   ├── raw             <- The original, immutable data (or symlinks to them)
    │   └── testing         <- The data used while checking CAFE-f6 forecast reproducibility
+   ├── config
+   │   ├── data            <- Configuration files for processing the raw data
+   │   └── skill           <- Configuration files for skill assessment of processed data
    │
    ├── docs                <- The Sphinx documentation
    │
@@ -34,10 +37,11 @@ Welcome to the documentation for my project assessing CAFE-f6. The project is or
    ├── setup.py            <- makes src pip installable (pip install -e .)
    ├── src                 <- Source code for use in this project.
    │   ├── __init__.py     <- Makes src a Python module
-   │   │
+   │   ├── assess_skill.py <- Codes for assessing the skill of the processed data
    │   ├── prepare_data.py <- Codes for generating the processed data from the raw data
-   │   │
+   │   ├── plot.py         <- Plotting codes
    │   └── utils.py        <- Utility codes, including functions for processing data
+   │
    ├── LICENSE
    └── README.md
 
