@@ -18,8 +18,8 @@ Welcome to the documentation for my project assessing CAFE-f6. The project is or
    │   └── testing         <- The data used while checking CAFE-f6 forecast reproducibility
    │
    ├── config
-   │   ├── data            <- Configuration files for processing the raw data
-   │   └── skill           <- Configuration files for skill assessment of processed data
+   │   ├── prepare_data    <- Configuration files for processing the raw data
+   │   └── verify          <- Configuration files for skill assessment of processed data
    │
    ├── docs                <- The Sphinx documentation
    │
