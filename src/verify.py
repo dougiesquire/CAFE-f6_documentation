@@ -13,7 +13,7 @@ PROJECT_DIR = Path(__file__).resolve().parents[1]
 DATA_DIR = PROJECT_DIR / "data/processed"
 
 
-def assess_skill(config, save_dir, save=True):
+def verify(config, save_dir, save=True):
     """
     Prepare a skill metric according to a provided config file
 

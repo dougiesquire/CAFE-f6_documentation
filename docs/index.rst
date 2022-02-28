@@ -38,8 +38,8 @@ Welcome to the documentation for my project assessing CAFE-f6. The project is or
    ├── setup.py            <- makes src pip installable (pip install -e .)
    ├── src                 <- Source code for use in this project.
    │   ├── __init__.py     <- Makes src a Python module
-   │   ├── assess_skill.py <- Codes for assessing the skill of the processed data
    │   ├── prepare_data.py <- Codes for generating the processed data from the raw data
+   │   ├── verify.py       <- Codes for assessing the skill of the processed data
    │   ├── plot.py         <- Plotting codes
    │   └── utils.py        <- Utility codes, including functions for processing data
    │
