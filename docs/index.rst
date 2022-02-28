@@ -16,6 +16,7 @@ Welcome to the documentation for my project assessing CAFE-f6. The project is or
    │   ├── skill           <- Skill assessment of processed data
    │   ├── raw             <- The original, immutable data (or symlinks to them)
    │   └── testing         <- The data used while checking CAFE-f6 forecast reproducibility
+   │
    ├── config
    │   ├── data            <- Configuration files for processing the raw data
    │   └── skill           <- Configuration files for skill assessment of processed data
