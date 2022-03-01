@@ -14,12 +14,13 @@
 #        Name of collection in data/processed containing uninitialised simulations.
 #    apply: optional
 #        Functions and kwargs from src.utils to be applied sequentially to the 
-#        input data
+#        input data. Can be applied to all provided datasets using the key `all:`,
+#        or to individual datasets using, for example, `hindcasts: <functions>`
 #    verify: required
 #        arguments to be passed to climpred.HindcastEnsemble.verify()
 
 prepare:
-  CanESM5.JRA55.annual.anom_1991-2020.sst.r_XY:
+  CanESM5.HadISST.annual.anom_1991-2020.sst.rXY_XU:
     hindcasts: CanESM5.annual.anom_1991-2020.sst
     observations: HadISST.annual.anom_1991-2020.sst
     simulations: CanESM5_hist.annual.anom_1991-2020.sst
@@ -30,3 +31,14 @@ prepare:
       alignment: "same_verifs"
       reference: "uninitialized"
 
+  CanESM5.HadISST.annual.anom_1991-2020.sst.rYU:
+    hindcasts: CanESM5.annual.anom_1991-2020.sst
+    observations: CanESM5_hist.annual.anom_1991-2020.sst
+    apply:
+      observations:
+        ensemble_mean:
+    verify:
+      metric: "pearson_r"
+      comparison: "e2o"
+      dim: ["init"]
+      alignment: "same_verifs"

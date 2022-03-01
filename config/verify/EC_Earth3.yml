@@ -20,20 +20,20 @@
 #        arguments to be passed to climpred.HindcastEnsemble.verify()
 
 prepare:
-  CAFEf6.HadISST.annual.anom_1991-2020.sst.rXY_XU:
-    hindcasts: CAFEf6.annual.anom_1991-2020.sst
+  EC_Earth3.HadISST.annual.anom_1991-2020.sst.rXY_XU:
+    hindcasts: EC_Earth3.annual.anom_1991-2020.sst
     observations: HadISST.annual.anom_1991-2020.sst
-    simulations: CAFE_hist.annual.anom_1991-2020.sst
+    simulations: EC_Earth3_hist.annual.anom_1991-2020.sst
     verify:
       metric: "pearson_r"
       comparison: "e2o"
       dim: ["init"]
       alignment: "same_verifs"
       reference: "uninitialized"
-      
-  CAFEf6.HadISST.annual.anom_1991-2020.sst.rYU:
-    hindcasts: CAFEf6.annual.anom_1991-2020.sst
-    observations: CAFE_hist.annual.anom_1991-2020.sst
+
+  EC_Earth3.HadISST.annual.anom_1991-2020.sst.rYU:
+    hindcasts: EC_Earth3.annual.anom_1991-2020.sst
+    observations: EC_Earth3_hist.annual.anom_1991-2020.sst
     apply:
       observations:
         ensemble_mean:
@@ -42,4 +42,3 @@ prepare:
       comparison: "e2o"
       dim: ["init"]
       alignment: "same_verifs"
-

@@ -1,18 +1,55 @@
 import xarray as xr
 
 import os
+import sys
 from pathlib import Path
 
 import yaml
+
+from functools import reduce, partial
 
 
 PROJECT_DIR = Path(__file__).resolve().parents[1]
 
 
 def load_config(name):
-    """Load a config .yml file for a specified dataset"""
+    """
+    Load a config .yml file for a specified dataset
+    
+    Parameters
+    ----------
+    name : str
+        The path to the config file to load
+    """
     with open(name, "r") as reader:
         return yaml.load(reader, Loader=yaml.SafeLoader)
+
+
+def composite_function(function_dict):
+    """
+    Return a composite function of all functions and kwargs specified in a 
+    provided dictionary
+    
+    Parameters
+    ----------
+    function_dict : dict
+        Dictionary with functions in this module to composite as keys and 
+        kwargs as values
+    """
+
+    def composite(*funcs):
+        def compose(f, g):
+            return lambda x: g(f(x))
+
+        return reduce(compose, funcs, lambda x: x)
+
+    funcs = []
+    for fn in function_dict.keys():
+        kws = function_dict[fn]
+        kws = {} if kws is None else kws
+        funcs.append(partial(getattr(sys.modules[__name__], fn), **kws)) # getattr(utils, fn)
+
+    return composite(*funcs)
 
 
 def calculate_ohc300(temp, depth_dim="depth", var_name="temp"):
@@ -43,6 +80,19 @@ def calculate_ohc300(temp, depth_dim="depth", var_name="temp"):
     return ohc300
 
 
+def ensemble_mean(ds, ensemble_dim="member"):
+    """ Return the ensemble mean of the input array
+    
+    Parameters
+    ----------
+    ds : xarray Dataset
+        Array to take the ensemble mean of
+    ensemble_dim : str, optional
+        The name of the ensemble dimension
+    """
+    return ds.mean(ensemble_dim)
+
+    
 def add_CAFE_grid_info(ds):
     """
     Add CAFE grid info to a CAFE dataset that doesn't already have it

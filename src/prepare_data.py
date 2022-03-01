@@ -11,8 +11,6 @@ from dask.distributed import Client
 
 import xarray as xr
 
-from functools import reduce, partial
-
 from src import utils
 
 
@@ -21,27 +19,6 @@ xr.set_options(keep_attrs=True)
 
 PROJECT_DIR = Path(__file__).resolve().parents[1]
 DATA_DIR = PROJECT_DIR / "data/raw"
-
-
-def _composite_function(function_dict):
-    """
-    Return a composite function of all functions specified in a processing
-        step of a config .yml
-    """
-
-    def composite(*funcs):
-        def compose(f, g):
-            return lambda x: g(f(x))
-
-        return reduce(compose, funcs, lambda x: x)
-
-    funcs = []
-    for fn in function_dict.keys():
-        kws = function_dict[fn]
-        kws = {} if kws is None else kws
-        funcs.append(partial(getattr(utils, fn), **kws))
-
-    return composite(*funcs)
 
 
 class _open:
@@ -523,7 +500,7 @@ def prepare_dataset(config, save_dir, save=True):
 
             # Build composite preprocess function
             if "preprocess" in params:
-                preprocess = _composite_function(params["preprocess"])
+                preprocess = utils.composite_function(params["preprocess"])
             else:
                 preprocess = None
 
@@ -547,7 +524,7 @@ def prepare_dataset(config, save_dir, save=True):
             ds = xr.merge(ds)
 
             if "apply" in params:
-                ds = _composite_function(params["apply"])(ds)
+                ds = utils.composite_function(params["apply"])(ds)
 
             prepared.append(ds)
             if save:
