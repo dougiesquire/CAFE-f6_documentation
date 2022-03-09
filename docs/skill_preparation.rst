@@ -7,30 +7,30 @@ Steps for calculating skill metrics from a set of prepared datasets are also spe
 
    prepare:
      CAFEf6.HadISST.annual.anom_1991-2020.sst.ri:         # <- Unique identifier for the
-                                                               metric being calculated.
-                                                               This will be used to save
-                                                               the metric.
+                                                          #    metric being calculated.
+                                                          #    This will be used to save
+                                                          #    the metric.
        hindcasts: CAFEf6.annual.anom_1991-2020.sst        # <- The name of the prepared
-                                                               hindcast data to verify.
+                                                          #    hindcast data to verify.
        observations: HadISST.annual.anom_1991-2020.sst    # <- The name of the prepared
-                                                               observation data to verify
-                                                               against.
+                                                          #    observation data to verify
+                                                          #    against.
        simulations: CAFEf6_hist.annual.anom_1991-2020.sst # <- The name of the prepared
-                                                               historical data to use as
-                                                               a baseline.
+                                                          #    historical data to use as
+                                                          #    a baseline.
        verify:                                             
          metric: "acc_initialised"                        # <- The name of the metric. A
-                                                               corresponding method must
-                                                               exist in src.verify.
+                                                          #    corresponding method must
+                                                          #    exist in src.verify.
          significance: True                               # <- Whether or not to block
-                                                               boostrap for significant
-                                                               points using method from
-                                                               Goddard et al. (2013)
+                                                          #    boostrap for significant
+                                                          #    points using method from
+                                                          #    Goddard et al. (2013)
          transform: "Fisher_z"                            # <- Transform to apply when
-                                                               determining significant
-                                                               points
+                                                          #    determining significant
+                                                          #    points
          alpha: 0.1                                       # <- Confidence level for
-                                                               assigning significance
+                                                          #    assigning significance
 
 Code for preparing a skill metric from a specified yaml file is in ``src/verify.py``:
 
