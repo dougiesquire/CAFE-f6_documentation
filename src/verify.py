@@ -94,7 +94,14 @@ def msss(hcst, obsv, ref):
 # Transforms
 # ===============================================
 def Fisher_z(ds):
-    """Return the Fisher-z transformation of ds"""
+    """
+    Return the Fisher-z transformation of ds
+
+    Parameters
+    ----------
+    ds : xarray Dataset
+        The data to apply the Fisher-z transformation to
+    """
     return np.arctanh(ds)
 
 
@@ -357,7 +364,7 @@ def iterative_blocked_bootstrap(*objects, blocks, n_iterations):
 # ===============================================
 
 
-def calculate_metric_from_timeseries(
+def _calculate_metric_from_timeseries(
     *timeseries,
     metric,
     metric_kwargs,
@@ -489,7 +496,7 @@ def calculate_metric(
     if transform is not None:
         transform = getattr(sys.modules[__name__], transform)
 
-    skill = calculate_metric_from_timeseries(
+    skill = _calculate_metric_from_timeseries(
         hindcast_verif_times,
         *references_verif_times,
         metric=metric,
