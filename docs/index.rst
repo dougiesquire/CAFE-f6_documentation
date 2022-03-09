@@ -54,6 +54,7 @@ Contents
 
    getting_started
    data_preparation
+   skill_preparation
    notebooks
    api
    

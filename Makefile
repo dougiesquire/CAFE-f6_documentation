@@ -80,13 +80,13 @@ data:
 	ln -sfn /g/data/xv83/reanalyses/HadISST/ $(RAW_DATA_DIR)/HadISST
 	ln -sfn /g/data/xv83/reanalyses/JRA55/ $(RAW_DATA_DIR)/JRA55	
 	ln -sfn /g/data/ua8/Precipitation/GPCP/mon/v2-3/ $(RAW_DATA_DIR)/GPCP
-	$(foreach c,$(config),$(file >prepare_data_$(c),$(HEADER)) $(file >>prepare_data_$(c),python src/prepare_data.py $(c)))
-	for c in $(config); do qsub prepare_data_$${c}; rm prepare_data_$${c}; done
+	$(foreach c,$(config),$(file >data_$(c),$(HEADER)) $(file >>data_$(c),python src/data.py $(c)))
+	for c in $(config); do qsub data_$${c}; rm data_$${c}; done
 
 ## Prepare datasets for analysis
 skill:
-	$(foreach c,$(config),$(file >verify_$(c),$(HEADER)) $(file >>verify_$(c),python src/verify.py $(c)))
-	for c in $(config); do qsub verify_$${c}; rm verify_$${c}; done
+	$(foreach c,$(config),$(file >skill_$(c),$(HEADER)) $(file >>skill_$(c),python src/skill.py $(c)))
+	for c in $(config); do qsub skill_$${c}; rm skill_$${c}; done
 
 ## Build the documentation
 docs:
