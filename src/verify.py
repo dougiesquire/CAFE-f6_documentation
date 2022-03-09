@@ -199,7 +199,7 @@ def _expand_n_nested_random_indices(indices):
 
 def _iterative_blocked_bootstrap(*objects, blocks, n_iterations):
     """
-    Repeatedly bootstrap the provided array across the specified dimension(s) and
+    Repeatedly bootstrap the provided arrays across the specified dimension(s) and
     stack the new arrays along a new "iteration" dimension. The boostrapping is
     done in a nested manner. I.e. bootstrap the first provided dimension, then for
     each bootstrapped sample along that dimenion, bootstrap the second provided
@@ -214,7 +214,7 @@ def _iterative_blocked_bootstrap(*objects, blocks, n_iterations):
     Parameters
     ----------
     objects : iterable of Datasets
-        The data to bootstrap. Multiple datasets can be passes to be bootstrapped
+        The data to bootstrap. Multiple datasets can be passed to be bootstrapped
         in the same way. Where multiple datasets are passed, all datasets need not
         contain all bootstrapped dimensions. However, because of the bootstrapping
         is applied in a nested manner, the dimensions in all input objects must also
@@ -296,7 +296,7 @@ def _iterative_blocked_bootstrap(*objects, blocks, n_iterations):
 
 def iterative_blocked_bootstrap(*objects, blocks, n_iterations):
     """
-    Repeatedly bootstrap the provided array across the specified dimension(s) and
+    Repeatedly bootstrap the provided arrays across the specified dimension(s) and
     stack the new arrays along a new "iteration" dimension. The boostrapping is
     done in a nested manner. I.e. bootstrap the first provided dimension, then for
     each bootstrapped sample along that dimenion, bootstrap the second provided
@@ -305,7 +305,7 @@ def iterative_blocked_bootstrap(*objects, blocks, n_iterations):
     Parameters
     ----------
     objects : iterable of Datasets
-        The data to bootstrap. Multiple datasets can be passes to be bootstrapped
+        The data to bootstrap. Multiple datasets can be passed to be bootstrapped
         in the same way. Where multiple datasets are passed, all datasets need not
         contain all bootstrapped dimensions. However, because of the bootstrapping
         is applied in a nested manner, the dimensions in all input objects must also
