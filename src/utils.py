@@ -1,12 +1,12 @@
-import xarray as xr
-
 import os
 import sys
 from pathlib import Path
 
+from functools import reduce, partial
+
 import yaml
 
-from functools import reduce, partial
+import xarray as xr
 
 
 PROJECT_DIR = Path(__file__).resolve().parents[1]
@@ -480,3 +480,32 @@ def gridarea_cdo(ds):
     os.remove(f"./{infile}.nc")
     os.remove(f"./{outfile}.nc")
     return weights["cell_area"]
+
+
+def max_chunk_size_MB(ds):
+    """
+    Get the max chunk size in a dataset
+    """
+
+    def size_of_chunk(chunks, itemsize):
+        """
+        Returns size of chunk in MB given dictionary of chunk sizes
+        """
+        N = 1
+        for value in chunks:
+            if not isinstance(value, int):
+                value = max(value)
+            N = N * value
+        return itemsize * N / 1024**2
+
+    chunks = []
+    for var in ds.data_vars:
+        da = ds[var]
+        chunk = da.chunks
+        itemsize = da.data.itemsize
+        if chunk is None:
+            # numpy array
+            chunks.append((da.data.size * itemsize) / 1024**2)
+        else:
+            chunks.append(size_of_chunk(chunk, itemsize))
+    return max(chunks)

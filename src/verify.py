@@ -1,19 +1,498 @@
+import sys
 from pathlib import Path
+
+import math
+
+from collections import OrderedDict
+
+from itertools import chain, islice, cycle
 
 import logging
 import argparse
 
+import dask
+
+import numpy as np
+
 import xarray as xr
+import xskillscore as xs
 
 from src import utils
 
-import climpred
-from climpred import HindcastEnsemble
 
+N_BOOTSTRAP_ITERATIONS = 1000
 
 PROJECT_DIR = Path(__file__).resolve().parents[1]
 DATA_DIR = PROJECT_DIR / "data/processed"
 
+dask.config.set(**{"array.slicing.split_large_chunks": False})
+
+# Metrics
+# ===============================================
+
+def acc(hcst, obsv):
+    """
+    Return the anomaly cross correlation between two timeseries
+
+    Parameters
+    ----------
+    hcst : xarray Dataset
+        The forecast timeseries
+    obsv : xarray Dataset
+        The observed timeseries
+    """
+
+    return xs.pearson_r(hcst.mean("member"), obsv, dim="time")
+
+
+def acc_initialised(hcst, obsv, hist):
+    """
+    Return the initialised component of anomaly cross correlation between
+    a forecast and observations
+
+    Parameters
+    ----------
+    hcst : xarray Dataset
+        The forecast timeseries
+    obsv : xarray Dataset
+        The observed timeseries
+    hist : xarray Dataset
+        The historical simulation timeseries
+    """
+    rXY = xs.pearson_r(hcst.mean("member"), obsv, dim="time")
+    rXU = xs.pearson_r(obsv, hist.mean("member"), dim="time")
+    rYU = xs.pearson_r(hcst.mean("member"), hist.mean("member"), dim="time")
+    θ = xr.where(rYU < 0, 0, 1, keep_attrs=False)
+    ru = θ * rXU * rYU
+    return rXY - ru
+
+
+def msss(hcst, obsv, ref):
+    """
+    Return the mean squared skill score between a forecast and observations
+    relative to a reference dataset
+
+    Parameters
+    ----------
+    hcst : xarray Dataset
+        The forecast timeseries
+    obsv : xarray Dataset
+        The observed timeseries
+    ref : xarray Dataset
+        The reference timeseries
+    """
+    if "member" in ref.dims:
+        ref = ref.mean("member")
+    num = xs.mse(hcst.mean("member"), obsv, dim="time")
+    den = xs.mse(ref, obsv, dim="time")
+    return 1 - num / den
+
+
+# Transforms
+# ===============================================
+def Fisher_z(ds):
+    """ Return the Fisher-z transformation of ds """
+    return np.arctanh(ds)
+
+
+# Bootstrapping
+# ===============================================
+
+def _get_blocked_random_indices(shape, block_axis, block_size):
+    """
+    Return indices to randomly sample an axis of an array in consecutive
+    (cyclic) blocks
+    """
+
+    def _random_blocks(length, block):
+        """
+        Indices to randomly sample blocks in a cyclic manner along an axis of a
+        specified length
+        """
+        if block == length:
+            return list(range(length))
+        else:
+            repeats = math.ceil(length / block)
+            return list(
+                chain.from_iterable(
+                    islice(cycle(range(length)), s, s + block)
+                    for s in np.random.randint(0, length, repeats)
+                )
+            )[:length]
+
+    if block_size == 1:
+        return np.random.randint(
+            0,
+            shape[block_axis],
+            shape,
+        )
+    else:
+        non_block_shapes = [s for i, s in enumerate(shape) if i != block_axis]
+        return np.moveaxis(
+            np.stack(
+                [
+                    _random_blocks(shape[block_axis], block_size)
+                    for _ in range(np.prod(non_block_shapes))
+                ],
+                axis=-1,
+            ).reshape([shape[block_axis]] + non_block_shapes),
+            0,
+            block_axis,
+        )
+
+
+def _n_nested_blocked_random_indices(sizes, n_iterations):
+    """
+    Returns indices to randomly resample blocks of an array (with replacement) in
+    a nested manner many times. Here, "nested" resampling means to randomly resample
+    the first dimension, then for each randomly sampled element along that dimension,
+    randomly resample the second dimension, then for each randomly sampled element
+    along that dimension, randomly resample the third dimension etc.
+
+    Parameters
+    ----------
+    sizes : OrderedDict
+        Dictionary with {names: (sizes, blocks)} of the dimensions to resample
+    n_iterations : int
+        The number of times to repeat the random resampling
+    """
+
+    shape = [s[0] for s in sizes.values()]
+    indices = OrderedDict()
+    for ax, (key, (_, block)) in enumerate(sizes.items()):
+        indices[key] = _get_blocked_random_indices(
+            shape[: ax + 1] + [n_iterations], ax, block
+        )
+    return indices
+
+
+def _expand_n_nested_random_indices(indices):
+    """
+    Expand the dimensions of the nested input arrays so that they can be broadcast
+    and return a tuple that can be directly indexed
+
+    Parameters
+    ----------
+    indices : list of numpy arrays
+        List of numpy arrays of sequentially increasing dimension as output by the
+        function `_n_nested_blocked_random_indices`. The last axis on all inputs is
+        assumed to correspond to the iteration axis
+    """
+    broadcast_ndim = indices[-1].ndim
+    broadcast_indices = []
+    for i, ind in enumerate(indices):
+        expand_axes = list(range(i + 1, broadcast_ndim - 1))
+        broadcast_indices.append(np.expand_dims(ind, axis=expand_axes))
+    return (..., *tuple(broadcast_indices))
+
+
+def _iterative_blocked_bootstrap(*objects, blocks, n_iterations):
+    """
+    Repeatedly bootstrap the provided array across the specified dimension(s) and
+    stack the new arrays along a new "iteration" dimension. The boostrapping is
+    done in a nested manner. I.e. bootstrap the first provided dimension, then for
+    each bootstrapped sample along that dimenion, bootstrap the second provided
+    dimension, then for each bootstrapped sample along that dimenion...
+
+    Note, this function expands out the iteration dimension inside a universal
+    function. However, this can generate very large chunks (it multiplies chunk size
+    by the number of iterations) and it falls over for large numbers of iterations
+    for reasons I don't understand. It is thus best to apply this function in blocks
+    using `iterative_blocked_bootstrap`
+
+    Parameters
+    ----------
+    objects : iterable of Datasets
+        The data to bootstrap. Multiple datasets can be passes to be bootstrapped
+        in the same way. Where multiple datasets are passed, all datasets need not
+        contain all bootstrapped dimensions. However, because of the bootstrapping
+        is applied in a nested manner, the dimensions in all input objects must also
+        be nested. E.g., for `dim=['d1','d2','d3']` an object with dimensions 'd1'
+        and 'd2' is valid but an object with only dimension 'd2' is not.
+    blocks : dict
+        Dictionary of the dimension(s) to bootstrap and the block sizes to use along
+        each dimension: {dim: blocksize}.
+    n_iterations : int
+        The number of times to repeat the bootstrapping
+    """
+
+    def _bootstrap(*arrays, indices):
+        """Bootstrap the array(s) using the provided indices"""
+        bootstrapped = [array[ind] for array, ind in zip(arrays, indices)]
+        if len(bootstrapped) == 1:
+            return bootstrapped[0]
+        else:
+            return tuple(bootstrapped)
+
+    dim = list(blocks.keys())
+    if isinstance(dim, str):
+        dim = [dim]
+
+    # Get the sizes of the bootstrap dimensions
+    sizes = None
+    for obj in objects:
+        try:
+            sizes = OrderedDict({d: (obj.sizes[d], b) for d, b in blocks.items()})
+            break
+        except KeyError:
+            pass
+    if sizes is None:
+        raise ValueError("At least one input object must contain all dimensions in dim")
+
+    # Generate the random indices first so that we can be sure that each dask chunk
+    # uses the same indices. Note, I tried using random.seed() to achieve this but it
+    # was flaky. These are the indices to bootstrap all objects.
+    nested_indices = _n_nested_blocked_random_indices(sizes, n_iterations)
+
+    # Need to expand the indices for broadcasting for each object separately
+    # as each object may have different dimensions
+    indices = []
+    input_core_dims = []
+    for obj in objects:
+        available_dims = [d for d in dim if d in obj.dims]
+        indices_to_expand = [nested_indices[key] for key in available_dims]
+
+        # Check that dimensions are nested
+        ndims = [i.ndim for i in indices_to_expand]
+        if ndims != list(range(2, len(ndims) + 2)):  # Start at 2 due to iteration dim
+            raise ValueError("The dimensions of all inputs must be nested")
+
+        indices.append(_expand_n_nested_random_indices(indices_to_expand))
+        input_core_dims.append(available_dims)
+
+    # Loop over objects because they may have non-matching dimensions and
+    # we don't want to broadcast them as this will unnecessarily increase
+    # chunk size for dask arrays
+    result = []
+    for obj, ind, core_dims in zip(objects, indices, input_core_dims):
+        result.append(
+            xr.apply_ufunc(
+                _bootstrap,
+                obj,
+                kwargs=dict(
+                    indices=[ind],
+                ),
+                input_core_dims=[core_dims],
+                output_core_dims=[core_dims + ["iteration"]],
+                dask="parallelized",
+                dask_gufunc_kwargs=dict(output_sizes={"iteration": n_iterations}),
+                output_dtypes=[np.float32],
+            )
+        )
+
+    return tuple(result)
+
+
+def iterative_blocked_bootstrap(*objects, blocks, n_iterations):
+    """
+    Repeatedly bootstrap the provided array across the specified dimension(s) and
+    stack the new arrays along a new "iteration" dimension. The boostrapping is
+    done in a nested manner. I.e. bootstrap the first provided dimension, then for
+    each bootstrapped sample along that dimenion, bootstrap the second provided
+    dimension, then for each bootstrapped sample along that dimenion...
+
+    Parameters
+    ----------
+    objects : iterable of Datasets
+        The data to bootstrap. Multiple datasets can be passes to be bootstrapped
+        in the same way. Where multiple datasets are passed, all datasets need not
+        contain all bootstrapped dimensions. However, because of the bootstrapping
+        is applied in a nested manner, the dimensions in all input objects must also
+        be nested. E.g., for `dim=['d1','d2','d3']` an object with dimensions 'd1'
+        and 'd2' is valid but an object with only dimension 'd2' is not.
+    blocks : dict
+        Dictionary of the dimension(s) to bootstrap and the block sizes to use along
+        each dimension: {dim: blocksize}.
+    n_iterations : int
+        The number of times to repeat the bootstrapping
+    """
+    # The fastest way to perform the iterations is to expand out the iteration
+    # dimension inside the universal function (see _iterative_bootstrap).
+    # However, this can generate very large chunks (it multiplies chunk size by
+    # the number of iterations) and it falls over for large numbers of iterations
+    # for reasons I don't understand. Thus here we loop over blocks of iterations
+    # to generate the total number of iterations.
+
+    # Choose iteration blocks to limit chunk size on dask arrays
+    if objects[0].chunks:  # TO DO: this is not a very good check that input is dask array
+        MAX_CHUNK_SIZE_MB = 200
+        ds_max_chunk_size_MB = max([utils.max_chunk_size_MB(obj) for obj in objects])
+        blocksize = int(MAX_CHUNK_SIZE_MB / ds_max_chunk_size_MB)
+        if blocksize > n_iterations:
+            blocksize = n_iterations
+        if blocksize < 1:
+            blocksize = 1
+    else:
+        blocksize = n_iterations
+
+    bootstraps = []
+    for _ in range(blocksize, n_iterations + 1, blocksize):
+        bootstraps.append(
+            _iterative_blocked_bootstrap(
+                *objects, blocks=blocks, n_iterations=blocksize
+            )
+        )
+
+    leftover = n_iterations % blocksize
+    if leftover:
+        bootstraps.append(
+            _iterative_blocked_bootstrap(*objects, blocks=blocks, n_iterations=leftover)
+        )
+
+    return tuple(
+        [
+            xr.concat(b, dim="iteration", coords="minimal", compat="override")
+            for b in zip(*bootstraps)
+        ]
+    )
+
+
+# Skill score calculation
+# ===============================================
+
+def calculate_metric_from_timeseries(
+    *timeseries,
+    metric,
+    metric_kwargs,
+    significance=True,
+    transform=None,
+    alpha=0.1,
+):
+    """
+    Calculate a skill metric from the provided timeseries
+
+    Statistical significance at 1-alpha is
+    identified at all points where the sample skill metric is positive (negative) and
+    the fraction of transformed values in the bootstrapped distribution below (above)
+    no_skill_value--defining the p-values--is less than or equal to alpha.)
+    """
+    skill_metric = metric(*timeseries, **metric_kwargs)
+
+    if significance:
+        bootstrapped_metric = metric(
+            *iterative_blocked_bootstrap(
+                *timeseries,
+                blocks={"time": 5, "member": 1},
+                n_iterations=N_BOOTSTRAP_ITERATIONS,
+            ),
+            **metric_kwargs,
+        )
+
+        no_skill = 0
+        if transform:
+            no_skill = transform(no_skill)
+            skill_metric = transform(skill_metric)
+            bootstrapped_metric = transform(bootstrapped_metric)
+
+        pos_signif = (
+            xr.where(bootstrapped_metric < no_skill, 1, 0).mean("iteration") <= alpha
+        ) & (skill_metric > no_skill)
+        neg_signif = (
+            xr.where(bootstrapped_metric > no_skill, 1, 0).mean("iteration") <= alpha
+        ) & (skill_metric < no_skill)
+
+        significance = pos_signif | neg_signif
+        significance = significance.rename(
+            {n: f"{n}_signif" for n in significance.data_vars}
+        )
+        skill_metric = xr.merge((skill_metric, significance))
+
+    return skill_metric
+
+
+def calculate_metric(
+    hindcast,
+    *references,
+    metric,
+    metric_kwargs={},
+    significance=False,
+    transform=None,
+    alpha=0.05,
+):
+    """
+    Calculate a skill metric for a set of hindcasts over a common set of
+    verification dates at all leads
+
+    Parameters
+    ----------
+    hindcast : xarray Dataset
+        The hindcast data to verify. Must have "init" and "lead" dimensions
+    references : xarray Dataset(s)
+        The data to verify against. Multiple datasets can be provided for skill
+        metrics that require it, e.g. metrics that use both the observations
+        and the historical simulations
+    metric : str
+        The name of the metric to apply to apply to the timeseries. Will look 
+        for function in src.verify.
+    metric_kwargs : dict
+        kwargs to pass to the function `metric`
+    significance : boolean, optional
+        If True, also return a mask indicating points where skill estimates are
+        significant using the non-parametric bootstrapping approach of Goddard
+        et al. (2013).
+    transform : function, optional
+        Transform to apply prior to estimating significant points
+    alpha : float, optional
+        The level [0,1] to apply sigificance at. Statistical significance at
+        1-alpha is identified at all points where the sample skill metric is
+        positive (negative) and the fraction of transformed values in the
+        bootstrapped distribution below (above) zero--defining the p-values
+        --is less than or equal to alpha.)
+    """
+
+    def _common_set_of_verif_times(hcst, *refs):
+        """Get the common set of verification times available at all leads"""
+        hcst_times = hcst.time.compute()
+        if len(refs) > 1:
+            valid_times = xr.align(*[ref.time for ref in refs])[0].values
+        else:
+            valid_times = refs[0].time.values
+        times = [i for i in valid_times if (i == hcst_times).any("init").all("lead")]
+        if not times:
+            raise ValueError(
+                "I could not find a common set of verification dates at all leads"
+            )
+        return times
+
+    def _reindex_hindcast(hindcast):
+        """
+        Reindex hindcast dataset that is indexed by initial date and lead time
+        to be indexed by target date and lead time
+        """
+        result = []
+        for lead in hindcast["lead"]:
+            hcst = hindcast.sel({"lead": lead}).swap_dims({"init": "time"})
+            result.append(hcst)
+        return xr.concat(result, dim="lead")
+
+    verif_times = _common_set_of_verif_times(hindcast, *references)
+    references_verif_times = [ref.sel(time=verif_times) for ref in references]
+    hindcast_verif_times = _reindex_hindcast(hindcast).sel(time=verif_times)
+    
+    # Look for metric and transform in this module
+    metric = getattr(sys.modules[__name__], metric)
+    if transform is not None:
+        transform = getattr(sys.modules[__name__], transform)
+
+    skill = calculate_metric_from_timeseries(
+        hindcast_verif_times,
+        *references_verif_times,
+        metric=metric,
+        metric_kwargs=metric_kwargs,
+        significance=significance,
+        transform=transform,
+        alpha=alpha,
+    )
+
+    # Add verification period to attributes
+    skill.attrs["verification period start"] = f"{verif_times[0]}"
+    skill.attrs["verification period end"] = f"{verif_times[-1]}"
+    
+    return skill
+
+
+# Command line interface
+# ===============================================
 
 def verify(config, save_dir, save=True):
     """
@@ -46,42 +525,30 @@ def verify(config, save_dir, save=True):
                         params["apply"]["simulations"] = params["apply"]["all"]
             else: params["apply"] = []
             
-            hcst = xr.open_zarr(f"{DATA_DIR}/{params['hindcasts']}.zarr").unify_chunks()
-            hcst = hcst.drop("time")  # time will be added by climpred
+            hindcast = xr.open_zarr(f"{DATA_DIR}/{params['hindcasts']}.zarr").unify_chunks()
             if "hindcasts" in params["apply"]:
-                hcst = utils.composite_function(params["apply"]["hindcasts"])(hcst)
-            hindcast = HindcastEnsemble(hcst)
+                hindcast = utils.composite_function(params["apply"]["hindcasts"])(hindcast)
 
-            obsv = xr.open_zarr(
+            observations = xr.open_zarr(
                 f"{DATA_DIR}/{params['observations']}.zarr"
             ).unify_chunks()
             if "observations" in params["apply"]:
-                obsv = utils.composite_function(params["apply"]["observations"])(obsv)
-            hindcast = hindcast.add_observations(obsv)
+                observations = utils.composite_function(params["apply"]["observations"])(observations)
+            references = [observations]
 
             if "simulations" in params:
-                hist = xr.open_zarr(
+                historical = xr.open_zarr(
                     f"{DATA_DIR}/{params['simulations']}.zarr"
                 ).unify_chunks()
                 if "simulations" in params["apply"]:
-                    hist = utils.composite_function(params["apply"]["simulations"])(hist)
-                hindcast = hindcast.add_uninitialized(hist)
+                    historical = utils.composite_function(params["apply"]["simulations"])(historical)
+                references.append(historical)
                     
-            ds = hindcast.verify(**params["verify"])
-            
-            # Add the verification period to the attributes if convenient
-            if "alignment" in params["verify"]:
-                if params["verify"]["alignment"] == "same_verifs":
-                    verif_dates = climpred.alignment.return_inits_and_verif_dates(
-                        hcst.rename({"init": "time"}),
-                        obsv, 
-                        alignment=params["verify"]["alignment"])[1]
-                    # Confirm all leads are have the same verif dates
-                    verif_dates = [v for v in verif_dates.values()]
-                    verif_dates_0 = verif_dates[0]
-                    assert all([all(v == verif_dates_0) for v in verif_dates])
-                    ds.attrs["verification period start"] = f"{verif_dates_0[0]}"
-                    ds.attrs["verification period end"] = f"{verif_dates_0[-1]}"
+            ds = calculate_metric(
+                hindcast,
+                *references,
+                **params["verify"]
+            )
                              
             prepared.append(ds)
             if save:
@@ -109,9 +576,12 @@ def main(config, config_dir, save_dir):
         The directory to save to
     """
     logger = logging.getLogger(__name__)
-
-    logger.info(f"Preparing skill metrics using {config}")
-    verify(f"{config_dir}/{config}", save_dir)
+    
+    logger.info("Spinning up a dask cluster")
+    local_directory = tempfile.TemporaryDirectory()
+    with Client(processes=False, local_directory=local_directory.name) as client:
+        logger.info(f"Preparing skill metrics using {config}")
+        verify(f"{config_dir}/{config}", save_dir)
 
 
 if __name__ == "__main__":

@@ -44,7 +44,7 @@ prepare:
       interpolate_to_grid_from_file:
         file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
       rechunk:
-        chunks: {"time": -1, "lat": 45, "lon": 72}
+        chunks: {"time": -1, "lat": 10, "lon": 12}
         
   # Prepare anomalies from prepared datasets      
   annual.anom_1991-2020.ohc300:
@@ -55,4 +55,4 @@ prepare:
       anomalise:
         clim_period: ["1991-01-01", "2020-12-31"]
       rechunk:
-        chunks: {"time": -1, "lat": 45, "lon": 72}
+        chunks: {"time": -1, "lat": 10, "lon": 12}

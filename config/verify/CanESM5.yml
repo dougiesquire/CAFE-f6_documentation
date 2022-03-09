@@ -17,28 +17,24 @@
 #        input data. Can be applied to all provided datasets using the key `all:`,
 #        or to individual datasets using, for example, `hindcasts: <functions>`
 #    verify: required
-#        arguments to be passed to climpred.HindcastEnsemble.verify()
+#        Arguments to be passed to src.verify.calculate_metric
 
 prepare:
-  CanESM5.HadISST.annual.anom_1991-2020.sst.rXY_XU:
+  CanESM5.HadISST.annual.anom_1991-2020.sst.rXY:
+    hindcasts: CanESM5.annual.anom_1991-2020.sst
+    observations: HadISST.annual.anom_1991-2020.sst
+    verify:
+      metric: "acc"
+      significance: True
+      transform: "Fisher_z"
+      alpha: 0.1
+
+  CanESM5.HadISST.annual.anom_1991-2020.sst.ri:
     hindcasts: CanESM5.annual.anom_1991-2020.sst
     observations: HadISST.annual.anom_1991-2020.sst
     simulations: CanESM5_hist.annual.anom_1991-2020.sst
     verify:
-      metric: "pearson_r"
-      comparison: "e2o"
-      dim: ["init"]
-      alignment: "same_verifs"
-      reference: "uninitialized"
-
-  CanESM5.HadISST.annual.anom_1991-2020.sst.rYU:
-    hindcasts: CanESM5.annual.anom_1991-2020.sst
-    observations: CanESM5_hist.annual.anom_1991-2020.sst
-    apply:
-      observations:
-        ensemble_mean:
-    verify:
-      metric: "pearson_r"
-      comparison: "e2o"
-      dim: ["init"]
-      alignment: "same_verifs"
+      metric: "acc_initialised"
+      significance: True
+      transform: "Fisher_z"
+      alpha: 0.1
