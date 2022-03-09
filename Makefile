@@ -12,7 +12,8 @@ NCI_PROJECT = xv83
 RAW_DATA_DIR = ./data/raw/
 TEST_DATA_DIR = ./data/testing/
 
-config = CAFE60v1.yml CAFEf5.yml CAFEf6.yml CAFE_hist.yml CanESM5_hist.yml CanESM5.yml EC_Earth3.yml EC_Earth3_hist.yml EN422.yml GPCP.yml HadISST.yml JRA55.yml
+data_config = CAFE60v1.yml CAFEf5.yml CAFEf6.yml CAFE_hist.yml CanESM5_hist.yml CanESM5.yml EC_Earth3.yml EC_Earth3_hist.yml EN422.yml GPCP.yml HadISST.yml JRA55.yml
+skill_config = CanESM5.yml
 
 ifeq (,$(shell which conda))
 HAS_CONDA=False
@@ -23,10 +24,16 @@ ENV_DIR=$(CONDA_DIR)/envs/$(ENV_NAME)
 CONDA_ACTIVATE=source $$(conda info --base)/etc/profile.d/conda.sh ; conda activate ; conda activate
 endif
 
+ifeq ($(MAKECMDGOALS),data)
+config=$(data_config)
+else ifeq ($(MAKECMDGOALS),skill)
+config=$(skill_config)
+endif
+
 define HEADER
 #!/bin/bash -l
 #PBS -P $(NCI_PROJECT)
-#PBS -q normal
+#PBS -q express
 #PBS -l walltime=04:00:00
 #PBS -l mem=192gb
 #PBS -l ncpus=48
@@ -73,8 +80,13 @@ data:
 	ln -sfn /g/data/xv83/reanalyses/HadISST/ $(RAW_DATA_DIR)/HadISST
 	ln -sfn /g/data/xv83/reanalyses/JRA55/ $(RAW_DATA_DIR)/JRA55	
 	ln -sfn /g/data/ua8/Precipitation/GPCP/mon/v2-3/ $(RAW_DATA_DIR)/GPCP
-	$(foreach c,$(config),$(file >make_$(c),$(HEADER)) $(file >>make_$(c),python src/prepare_data.py $(c)))
-	for c in $(config); do qsub make_$${c}; rm make_$${c}; done
+	$(foreach c,$(config),$(file >prepare_data_$(c),$(HEADER)) $(file >>prepare_data_$(c),python src/prepare_data.py $(c)))
+	for c in $(config); do qsub prepare_data_$${c}; rm prepare_data_$${c}; done
+
+## Prepare datasets for analysis
+skill:
+	$(foreach c,$(config),$(file >verify_$(c),$(HEADER)) $(file >>verify_$(c),python src/verify.py $(c)))
+	for c in $(config); do qsub verify_$${c}; rm verify_$${c}; done
 
 ## Build the documentation
 docs:

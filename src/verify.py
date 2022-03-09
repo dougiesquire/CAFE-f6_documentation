@@ -464,10 +464,15 @@ def calculate_metric(
             hcst = hindcast.sel({"lead": lead}).swap_dims({"init": "time"})
             result.append(hcst)
         return xr.concat(result, dim="lead")
+    
+    logger = logging.getLogger(__name__)
 
     verif_times = _common_set_of_verif_times(hindcast, *references)
     references_verif_times = [ref.sel(time=verif_times) for ref in references]
     hindcast_verif_times = _reindex_hindcast(hindcast).sel(time=verif_times)
+    
+    verif_period = (verif_times[0].strftime("%Y-%m-%d"), verif_times[-1].strftime("%Y-%m-%d"))
+    logger.info(f"Performing verification over {verif_period[0]} - {verif_period[-1]}")
     
     # Look for metric and transform in this module
     metric = getattr(sys.modules[__name__], metric)
@@ -485,8 +490,8 @@ def calculate_metric(
     )
 
     # Add verification period to attributes
-    skill.attrs["verification period start"] = f"{verif_times[0]}"
-    skill.attrs["verification period end"] = f"{verif_times[-1]}"
+    skill.attrs["verification period start"] = f"{verif_period[0]}"
+    skill.attrs["verification period end"] = f"{verif_period[-1]}"
     
     return skill
 
@@ -510,7 +515,7 @@ def verify(config, save_dir, save=True):
         useful for debugging
     """
     logger = logging.getLogger(__name__)
-
+    
     cfg = utils.load_config(config)
 
     if "prepare" in cfg:
@@ -544,6 +549,7 @@ def verify(config, save_dir, save=True):
                     historical = utils.composite_function(params["apply"]["simulations"])(historical)
                 references.append(historical)
                     
+            logger.info(f"Processing {identifier}")
             ds = calculate_metric(
                 hindcast,
                 *references,
