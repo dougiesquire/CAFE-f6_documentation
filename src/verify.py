@@ -1,4 +1,5 @@
 import sys
+import tempfile
 from pathlib import Path
 
 import math
@@ -29,6 +30,7 @@ dask.config.set(**{"array.slicing.split_large_chunks": False})
 
 # Metrics
 # ===============================================
+
 
 def acc(hcst, obsv):
     """
@@ -91,12 +93,13 @@ def msss(hcst, obsv, ref):
 # Transforms
 # ===============================================
 def Fisher_z(ds):
-    """ Return the Fisher-z transformation of ds """
+    """Return the Fisher-z transformation of ds"""
     return np.arctanh(ds)
 
 
 # Bootstrapping
 # ===============================================
+
 
 def _get_blocked_random_indices(shape, block_axis, block_size):
     """
@@ -314,7 +317,9 @@ def iterative_blocked_bootstrap(*objects, blocks, n_iterations):
     # to generate the total number of iterations.
 
     # Choose iteration blocks to limit chunk size on dask arrays
-    if objects[0].chunks:  # TO DO: this is not a very good check that input is dask array
+    if objects[
+        0
+    ].chunks:  # TO DO: this is not a very good check that input is dask array
         MAX_CHUNK_SIZE_MB = 200
         ds_max_chunk_size_MB = max([utils.max_chunk_size_MB(obj) for obj in objects])
         blocksize = int(MAX_CHUNK_SIZE_MB / ds_max_chunk_size_MB)
@@ -349,6 +354,7 @@ def iterative_blocked_bootstrap(*objects, blocks, n_iterations):
 
 # Skill score calculation
 # ===============================================
+
 
 def calculate_metric_from_timeseries(
     *timeseries,
@@ -422,7 +428,7 @@ def calculate_metric(
         metrics that require it, e.g. metrics that use both the observations
         and the historical simulations
     metric : str
-        The name of the metric to apply to apply to the timeseries. Will look 
+        The name of the metric to apply to apply to the timeseries. Will look
         for function in src.verify.
     metric_kwargs : dict
         kwargs to pass to the function `metric`
@@ -464,16 +470,19 @@ def calculate_metric(
             hcst = hindcast.sel({"lead": lead}).swap_dims({"init": "time"})
             result.append(hcst)
         return xr.concat(result, dim="lead")
-    
+
     logger = logging.getLogger(__name__)
 
     verif_times = _common_set_of_verif_times(hindcast, *references)
     references_verif_times = [ref.sel(time=verif_times) for ref in references]
     hindcast_verif_times = _reindex_hindcast(hindcast).sel(time=verif_times)
-    
-    verif_period = (verif_times[0].strftime("%Y-%m-%d"), verif_times[-1].strftime("%Y-%m-%d"))
+
+    verif_period = (
+        verif_times[0].strftime("%Y-%m-%d"),
+        verif_times[-1].strftime("%Y-%m-%d"),
+    )
     logger.info(f"Performing verification over {verif_period[0]} - {verif_period[-1]}")
-    
+
     # Look for metric and transform in this module
     metric = getattr(sys.modules[__name__], metric)
     if transform is not None:
@@ -492,12 +501,13 @@ def calculate_metric(
     # Add verification period to attributes
     skill.attrs["verification period start"] = f"{verif_period[0]}"
     skill.attrs["verification period end"] = f"{verif_period[-1]}"
-    
+
     return skill
 
 
 # Command line interface
 # ===============================================
+
 
 def verify(config, save_dir, save=True):
     """
@@ -515,7 +525,7 @@ def verify(config, save_dir, save=True):
         useful for debugging
     """
     logger = logging.getLogger(__name__)
-    
+
     cfg = utils.load_config(config)
 
     if "prepare" in cfg:
@@ -528,17 +538,24 @@ def verify(config, save_dir, save=True):
                     params["apply"]["observations"] = params["apply"]["all"]
                     if "simulations" in params:
                         params["apply"]["simulations"] = params["apply"]["all"]
-            else: params["apply"] = []
-            
-            hindcast = xr.open_zarr(f"{DATA_DIR}/{params['hindcasts']}.zarr").unify_chunks()
+            else:
+                params["apply"] = []
+
+            hindcast = xr.open_zarr(
+                f"{DATA_DIR}/{params['hindcasts']}.zarr"
+            ).unify_chunks()
             if "hindcasts" in params["apply"]:
-                hindcast = utils.composite_function(params["apply"]["hindcasts"])(hindcast)
+                hindcast = utils.composite_function(params["apply"]["hindcasts"])(
+                    hindcast
+                )
 
             observations = xr.open_zarr(
                 f"{DATA_DIR}/{params['observations']}.zarr"
             ).unify_chunks()
             if "observations" in params["apply"]:
-                observations = utils.composite_function(params["apply"]["observations"])(observations)
+                observations = utils.composite_function(
+                    params["apply"]["observations"]
+                )(observations)
             references = [observations]
 
             if "simulations" in params:
@@ -546,16 +563,14 @@ def verify(config, save_dir, save=True):
                     f"{DATA_DIR}/{params['simulations']}.zarr"
                 ).unify_chunks()
                 if "simulations" in params["apply"]:
-                    historical = utils.composite_function(params["apply"]["simulations"])(historical)
+                    historical = utils.composite_function(
+                        params["apply"]["simulations"]
+                    )(historical)
                 references.append(historical)
-                    
+
             logger.info(f"Processing {identifier}")
-            ds = calculate_metric(
-                hindcast,
-                *references,
-                **params["verify"]
-            )
-                             
+            ds = calculate_metric(hindcast, *references, **params["verify"])
+
             prepared.append(ds)
             if save:
                 ds = ds.chunk("auto").unify_chunks()
@@ -582,7 +597,7 @@ def main(config, config_dir, save_dir):
         The directory to save to
     """
     logger = logging.getLogger(__name__)
-    
+
     logger.info("Spinning up a dask cluster")
     local_directory = tempfile.TemporaryDirectory()
     with Client(processes=False, local_directory=local_directory.name) as client:

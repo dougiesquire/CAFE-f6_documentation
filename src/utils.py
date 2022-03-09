@@ -1,5 +1,6 @@
 import os
 import sys
+import tempfile
 from pathlib import Path
 
 from functools import reduce, partial
@@ -15,7 +16,7 @@ PROJECT_DIR = Path(__file__).resolve().parents[1]
 def load_config(name):
     """
     Load a config .yml file for a specified dataset
-    
+
     Parameters
     ----------
     name : str
@@ -27,13 +28,13 @@ def load_config(name):
 
 def composite_function(function_dict):
     """
-    Return a composite function of all functions and kwargs specified in a 
+    Return a composite function of all functions and kwargs specified in a
     provided dictionary
-    
+
     Parameters
     ----------
     function_dict : dict
-        Dictionary with functions in this module to composite as keys and 
+        Dictionary with functions in this module to composite as keys and
         kwargs as values
     """
 
@@ -47,7 +48,9 @@ def composite_function(function_dict):
     for fn in function_dict.keys():
         kws = function_dict[fn]
         kws = {} if kws is None else kws
-        funcs.append(partial(getattr(sys.modules[__name__], fn), **kws)) # getattr(utils, fn)
+        funcs.append(
+            partial(getattr(sys.modules[__name__], fn), **kws)
+        )  # getattr(utils, fn)
 
     return composite(*funcs)
 
@@ -81,8 +84,8 @@ def calculate_ohc300(temp, depth_dim="depth", var_name="temp"):
 
 
 def ensemble_mean(ds, ensemble_dim="member"):
-    """ Return the ensemble mean of the input array
-    
+    """Return the ensemble mean of the input array
+
     Parameters
     ----------
     ds : xarray Dataset
@@ -92,7 +95,7 @@ def ensemble_mean(ds, ensemble_dim="member"):
     """
     return ds.mean(ensemble_dim)
 
-    
+
 def add_CAFE_grid_info(ds):
     """
     Add CAFE grid info to a CAFE dataset that doesn't already have it

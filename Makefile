@@ -85,7 +85,7 @@ data:
 
 ## Prepare datasets for analysis
 skill:
-	$(foreach c,$(config),$(file >skill_$(c),$(HEADER)) $(file >>skill_$(c),python src/skill.py $(c)))
+	$(foreach c,$(config),$(file >skill_$(c),$(HEADER)) $(file >>skill_$(c),python src/verify.py $(c)))
 	for c in $(config); do qsub skill_$${c}; rm skill_$${c}; done
 
 ## Build the documentation

@@ -24,6 +24,7 @@ DATA_DIR = PROJECT_DIR / "data/raw"
 # Dataset-specific opening code
 # ===============================================
 
+
 class _open:
     """
     Class containing the dataset-specific code for opening each available dataset
@@ -394,6 +395,7 @@ class _open:
 # Preparation
 # ===============================================
 
+
 def maybe_generate_CAFE_grid_files():
     """Generate files containing CAFE grids"""
     path = DATA_DIR / "CAFE_hist/"
@@ -466,6 +468,7 @@ def maybe_generate_CAFE_grid_files():
 
 # Command line interface
 # ===============================================
+
 
 def prepare_dataset(config, save_dir, save=True):
     """

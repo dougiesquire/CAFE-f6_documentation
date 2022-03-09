@@ -8,11 +8,11 @@ Note this module has a command line interface, see ``python src/prepare_data.py 
 .. automodule:: src.prepare_data
    :members:
 
-``assess_skill``
+``verify``
 ----------------
-Note this module has a command line interface, see ``python src/assess_skill.py -h``
+Note this module has a command line interface, see ``python src/verify.py -h``
 
-.. automodule:: src.assess_skill
+.. automodule:: src.verify
    :members:
 
 ``utils``
