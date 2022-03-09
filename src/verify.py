@@ -12,6 +12,7 @@ import logging
 import argparse
 
 import dask
+from dask.distributed import Client
 
 import numpy as np
 
