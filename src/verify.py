@@ -455,7 +455,11 @@ def calculate_metric(
     """
 
     def _common_set_of_verif_times(hcst, *refs):
-        """Get the common set of verification times available at all leads"""
+        """
+        Get the common set of verification times available at all leads
+        
+        Stolen from climpred.alignment._same_verifs_alignment
+        """
         hcst_times = hcst.time.compute()
         if len(refs) > 1:
             valid_times = xr.align(*[ref.time for ref in refs])[0].values

@@ -20,27 +20,19 @@
 #        Arguments to be passed to src.verify.calculate_metric
 
 prepare:
-  CanESM5.HadISST.annual.anom_1985-2014.sst.rXY_1985-2014:
-    hindcasts: CanESM5.annual.anom_1985-2014.sst
-    observations: HadISST.annual.anom_1985-2014.sst
-    apply:
-      all:
-        mask_period:
-          period: ["1985-01-01", "2014-12-31"]
+  CAFEf6.HadISST.annual.anom_1991-2020.sst.rXY_1991-2020:
+    hindcasts: CAFEf6.annual.anom_1991-2020.sst
+    observations: HadISST.annual.anom_1991-2020.sst
     verify:
       metric: "acc"
       significance: True
       transform: "Fisher_z"
       alpha: 0.1
 
-  CanESM5.HadISST.annual.anom_1985-2014.sst.ri_1985-2014:
-    hindcasts: CanESM5.annual.anom_1985-2014.sst
-    observations: HadISST.annual.anom_1985-2014.sst
-    simulations: CanESM5_hist.annual.anom_1985-2014.sst
-    apply:
-      all:
-        mask_period:
-          period: ["1985-01-01", "2014-12-31"]
+  CAFEf6.HadISST.annual.anom_1991-2020.sst.ri_1991-2020:
+    hindcasts: CAFEf6.annual.anom_1991-2020.sst
+    observations: HadISST.annual.anom_1991-2020.sst
+    simulations: CAFE_hist.annual.anom_1991-2020.sst
     verify:
       metric: "acc_initialised"
       significance: True

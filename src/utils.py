@@ -288,6 +288,39 @@ def convert(ds, conversion):
     return ds_c
 
 
+def mask_period(ds, period):
+    """
+    Mask times outside of a specified period
+
+    Parameters
+    ----------
+    ds : xarray Dataset
+        The data to mask
+    period : iterable
+        Size 2 iterable containing strings indicating the start and end dates
+        of the period to retain
+    """
+    # Ensure time is computed
+    ds = ds.assign_coords({"time": ds["time"].compute()})
+
+    calendar = ds.time.values.flat[0].calendar
+    period = xr.cftime_range(
+        period[0],
+        period[-1],
+        periods=2,
+        freq=None,
+        calendar=calendar,
+    )
+
+    if ("init" in ds.dims) & ("lead" in ds.dims):
+        mask = (ds.time >= period[0]) & (ds.time <= period[1])
+        return ds.where(mask, drop=True)
+    elif "time" in ds.dims:
+        return ds.sel(time=slice(period[0], period[1]))
+    else:
+        raise ValueError("I don't know how to mask the time period for this data")
+
+
 def anomalise(ds, clim_period):
     """
     Returns the anomalies of ds relative to its climatology over clim_period
@@ -300,34 +333,22 @@ def anomalise(ds, clim_period):
         Size 2 iterable containing strings indicating the start and end dates
         of the climatological period
     """
-    # Ensure time is computed
-    ds = ds.assign_coords({"time": ds["time"].compute()})
+    ds_period = mask_period(ds, clim_period)
 
-    calendar = ds.time.values.flat[0].calendar
-    clim_period = xr.cftime_range(
-        clim_period[0],
-        clim_period[-1],
-        periods=2,
-        freq=None,
-        calendar=calendar,
-    )
-    if ("init" in ds.dims) & ("lead" in ds.dims):
-        if "member" in ds.dims:
-            mean_dims = ["init", "member"]
-        else:
-            mean_dims = "init"
-        mask = (ds.time >= clim_period[0]) & (ds.time <= clim_period[1])
-        clim = ds.where(mask).groupby("init.month").mean(mean_dims)
-        return (ds.groupby("init.month") - clim).drop("month")
-    elif "time" in ds.dims:
-        clim = (
-            ds.sel(time=slice(clim_period[0], clim_period[1]))
-            .groupby("time.month")
-            .mean("time")
-        )
-        return (ds.groupby("time.month") - clim).drop("month")
+    if "time" in ds.dims:
+        groupby_dim = "time"
+    elif "init" in ds.dims:
+        groupby_dim = "init"
     else:
         raise ValueError("I don't know how to compute the anomalies for this data")
+
+    if "member" in ds.dims:
+        mean_dim = [groupby_dim, "member"]
+    else:
+        mean_dim = groupby_dim
+
+    clim = ds_period.groupby(f"{groupby_dim}.month").mean(mean_dim)
+    return (ds.groupby(f"{groupby_dim}.month") - clim).drop("month")
 
 
 def interpolate_to_grid_from_file(ds, file, add_area=True, ignore_degenerate=True):

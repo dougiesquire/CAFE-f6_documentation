@@ -80,7 +80,7 @@ data:
 	ln -sfn /g/data/xv83/reanalyses/HadISST/ $(RAW_DATA_DIR)/HadISST
 	ln -sfn /g/data/xv83/reanalyses/JRA55/ $(RAW_DATA_DIR)/JRA55	
 	ln -sfn /g/data/ua8/Precipitation/GPCP/mon/v2-3/ $(RAW_DATA_DIR)/GPCP
-	$(foreach c,$(config),$(file >data_$(c),$(HEADER)) $(file >>data_$(c),python src/data.py $(c)))
+	$(foreach c,$(config),$(file >data_$(c),$(HEADER)) $(file >>data_$(c),python src/prepare_data.py $(c)))
 	for c in $(config); do qsub data_$${c}; rm data_$${c}; done
 
 ## Prepare datasets for analysis

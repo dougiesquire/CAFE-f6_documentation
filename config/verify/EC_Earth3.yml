@@ -20,8 +20,8 @@
 #        Arguments to be passed to src.verify.calculate_metric
 
 prepare:
-  CanESM5.HadISST.annual.anom_1985-2014.sst.rXY_1985-2014:
-    hindcasts: CanESM5.annual.anom_1985-2014.sst
+  EC_Earth3.HadISST.annual.anom_1985-2014.sst.rXY_1985-2014:
+    hindcasts: EC_Earth3.annual.anom_1985-2014.sst
     observations: HadISST.annual.anom_1985-2014.sst
     apply:
       all:
@@ -33,10 +33,10 @@ prepare:
       transform: "Fisher_z"
       alpha: 0.1
 
-  CanESM5.HadISST.annual.anom_1985-2014.sst.ri_1985-2014:
-    hindcasts: CanESM5.annual.anom_1985-2014.sst
+  EC_Earth3.HadISST.annual.anom_1985-2014.sst.ri_1985-2014:
+    hindcasts: EC_Earth3.annual.anom_1985-2014.sst
     observations: HadISST.annual.anom_1985-2014.sst
-    simulations: CanESM5_hist.annual.anom_1985-2014.sst
+    simulations: EC_Earth3_hist.annual.anom_1985-2014.sst
     apply:
       all:
         mask_period:

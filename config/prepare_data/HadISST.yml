@@ -57,3 +57,13 @@ prepare:
         clim_period: ["1991-01-01", "2020-12-31"]
       rechunk:
         chunks: {"time": -1, "lat": 10, "lon": 12}
+        
+  annual.anom_1985-2014.sst:
+    uses:
+      prepared:
+        - "annual.full.sst"
+    apply:
+      anomalise:
+        clim_period: ["1985-01-01", "2014-12-31"]
+      rechunk:
+        chunks: {"time": -1, "lat": 10, "lon": 12}

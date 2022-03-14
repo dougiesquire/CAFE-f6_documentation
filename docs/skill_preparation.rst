@@ -15,7 +15,7 @@ Steps for calculating skill metrics from a set of prepared datasets are also spe
        observations: HadISST.annual.anom_1991-2020.sst    # <- The name of the prepared
                                                           #    observation data to verify
                                                           #    against.
-       simulations: CAFEf6_hist.annual.anom_1991-2020.sst # <- The name of the prepared
+       simulations: CAFE_hist.annual.anom_1991-2020.sst   # <- The name of the prepared
                                                           #    historical data to use as
                                                           #    a baseline.
        verify:                                             

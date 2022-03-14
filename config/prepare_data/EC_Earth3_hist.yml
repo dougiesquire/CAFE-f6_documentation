@@ -38,7 +38,7 @@ prepare:
       round_to_start_of_month:
         dim: "time"
       coarsen_monthly_to_annual:
-        start_points: ["1960-01-01"]
+        start_points: ["1960-11-01"]
         dim: "time"
       force_to_Julian_calendar:
       interpolate_to_grid_from_file:
@@ -61,7 +61,7 @@ prepare:
       round_to_start_of_month:
         dim: "time"
       coarsen_monthly_to_annual:
-        start_points: ["1960-01-01"]
+        start_points: ["1960-11-01"]
         dim: "time"
       force_to_Julian_calendar:
       interpolate_to_grid_from_file:
@@ -84,7 +84,7 @@ prepare:
       round_to_start_of_month:
         dim: "time"
       coarsen_monthly_to_annual:
-        start_points: ["1960-01-01"]
+        start_points: ["1960-11-01"]
         dim: "time"
       force_to_Julian_calendar:
       interpolate_to_grid_from_file:
@@ -93,32 +93,32 @@ prepare:
         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
 
   # Prepare anomalies from prepared datasets
-  annual.anom_1991-2020.t_ref:
+  annual.anom_1985-2014.t_ref:
     uses:
       prepared:
         - "annual.full.t_ref"
     apply:
       anomalise:
-        clim_period: ["1991-01-01", "2020-12-31"]
+        clim_period: ["1985-01-01", "2014-12-31"]
       rechunk:
         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
         
-  annual.anom_1991-2020.precip:
+  annual.anom_1985-2014.precip:
     uses:
       prepared:
         - "annual.full.precip"
     apply:
       anomalise:
-        clim_period: ["1991-01-01", "2020-12-31"]
+        clim_period: ["1985-01-01", "2014-12-31"]
       rechunk:
         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
         
-  annual.anom_1991-2020.sst:
+  annual.anom_1985-2014.sst:
     uses:
       prepared:
         - "annual.full.sst"
     apply:
       anomalise:
-        clim_period: ["1991-01-01", "2020-12-31"]
+        clim_period: ["1985-01-01", "2014-12-31"]
       rechunk:
         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
