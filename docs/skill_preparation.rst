@@ -74,6 +74,6 @@ Adding a new skill metric
 -------------------------
 There are a few steps to adding a new skill metric.
 
-#. Prepare a config file for the new metric or add the metric to an existing config file. Note that the file can be named anything you like. However, a function with the same name as any skill metrics specified in the config file must be implemented in `src.verify`. These functions should operate on timeseries and should be verbosely named.
+#. Prepare a config file for the new metric or add the metric to an existing config file. Note that the file can be named anything you like. However, a function with the same name as any skill metrics specified in the config file must be implemented in ``src.verify``. These functions should operate on timeseries and should be verbosely named.
 #. If you made a new config file, add it to the list of default configs to process (variable ``skill_config``) in ``Makefile``
 
