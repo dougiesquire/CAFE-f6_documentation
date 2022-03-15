@@ -20,56 +20,65 @@
 #        Arguments to be passed to src.verify.calculate_metric
 
 prepare:
-  CanESM5.HadISST.annual.anom_1985-2014.sst.rXY_1985-2014:
-    hindcasts: CanESM5.annual.anom_1985-2014.sst
-    observations: HadISST.annual.anom_1985-2014.sst
-    apply:
-      all:
-        mask_period:
-          period: ["1985-01-01", "2014-12-31"]
-    verify:
-      metric: "acc"
-      significance: True
-      transform: "Fisher_z"
-      alpha: 0.05
+#   CanESM5.HadISST.annual.anom_1985-2014.sst.rXY_1985-2014:
+#     hindcasts: CanESM5.annual.anom_1985-2014.sst
+#     observations: HadISST.annual.anom_1985-2014.sst
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "acc"
+#       significance: True
+#       transform: "Fisher_z"
+#       alpha: 0.05
       
-  CanESM5.HadISST.4-year.anom_1985-2014.sst.rXY_1985-2014:
+#   CanESM5.HadISST.4-year.anom_1985-2014.sst.rXY_1985-2014:
+#     hindcasts: CanESM5.4-year.anom_1985-2014.sst
+#     observations: HadISST.4-year.anom_1985-2014.sst
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "acc"
+#       significance: True
+#       transform: "Fisher_z"
+#       alpha: 0.05
+      
+  CanESM5.HadISST.4-year.anom_1985-2014.sst.rXY_1969-2020:
     hindcasts: CanESM5.4-year.anom_1985-2014.sst
     observations: HadISST.4-year.anom_1985-2014.sst
-    apply:
-      all:
-        mask_period:
-          period: ["1985-01-01", "2014-12-31"]
     verify:
       metric: "acc"
       significance: True
       transform: "Fisher_z"
       alpha: 0.05
 
-  CanESM5.HadISST.annual.anom_1985-2014.sst.ri_1985-2014:
-    hindcasts: CanESM5.annual.anom_1985-2014.sst
-    observations: HadISST.annual.anom_1985-2014.sst
-    simulations: CanESM5_hist.annual.anom_1985-2014.sst
-    apply:
-      all:
-        mask_period:
-          period: ["1985-01-01", "2014-12-31"]
-    verify:
-      metric: "acc_initialised"
-      significance: True
-      transform: "Fisher_z"
-      alpha: 0.05
+#   CanESM5.HadISST.annual.anom_1985-2014.sst.ri_1985-2014:
+#     hindcasts: CanESM5.annual.anom_1985-2014.sst
+#     observations: HadISST.annual.anom_1985-2014.sst
+#     simulations: CanESM5_hist.annual.anom_1985-2014.sst
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "acc_initialised"
+#       significance: True
+#       transform: "Fisher_z"
+#       alpha: 0.05
       
-  CanESM5.HadISST.4-year.anom_1985-2014.sst.ri_1985-2014:
-    hindcasts: CanESM5.4-year.anom_1985-2014.sst
-    observations: HadISST.4-year.anom_1985-2014.sst
-    simulations: CanESM5_hist.4-year.anom_1985-2014.sst
-    apply:
-      all:
-        mask_period:
-          period: ["1985-01-01", "2014-12-31"]
-    verify:
-      metric: "acc_initialised"
-      significance: True
-      transform: "Fisher_z"
-      alpha: 0.05
+#   CanESM5.HadISST.4-year.anom_1985-2014.sst.ri_1985-2014:
+#     hindcasts: CanESM5.4-year.anom_1985-2014.sst
+#     observations: HadISST.4-year.anom_1985-2014.sst
+#     simulations: CanESM5_hist.4-year.anom_1985-2014.sst
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "acc_initialised"
+#       significance: True
+#       transform: "Fisher_z"
+#       alpha: 0.05

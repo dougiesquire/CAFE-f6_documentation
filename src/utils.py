@@ -115,7 +115,7 @@ def add_CAFE_grid_info(ds):
     ocean_u = ["area_u", "geolat_c", "geolon_c"]
 
     if ("lat" in ds.dims) | ("lon" in ds.dims):
-        ds = ds.assign_coords(atmos_grid.coords)
+        ds = ds.assign_coords(atmos_grid[atmos].coords)
 
     if ("xt_ocean" in ds.dims) | ("yt_ocean" in ds.dims):
         if "st_ocean" in ds.dims:

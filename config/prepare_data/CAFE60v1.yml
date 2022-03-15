@@ -290,7 +290,7 @@ prepare:
       rechunk:
         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
         
-  annual-Noc.anom_1991-2020.sst:
+  annual-Nov.anom_1991-2020.sst:
     uses:
       prepared:
         - "annual-Nov.full.sst"

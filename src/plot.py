@@ -135,7 +135,7 @@ def hindcasts(hcsts, obsvs=None, hists=None, shade=False):
 
 
 def skill_maps(
-    fields, variable, vrange, headings=None, group_rows_by=1, figsize=(15, 9)
+    fields, variable, vrange, headings=None, group_rows_by=1, figsize=(15, 10)
 ):
     """
     Plot panels of skill score maps
@@ -151,7 +151,7 @@ def skill_maps(
     figsize : iterable of length 2
         The total size of the figure
     """
-    
+
     def _get_verif_period(ds):
         """Return a string of the verification period for a skill metric"""
 
@@ -177,7 +177,7 @@ def skill_maps(
     elif n_columns == 1:
         axs = [[ax] for ax in axs]
 
-    cmap = cm.get_cmap("RdBu_r", 10)
+    cmap = cm.get_cmap("RdBu_r", 12)
 
     for r, c in itertools.product(range(n_rows), range(n_columns)):
         ax = axs[r][c]
@@ -203,12 +203,17 @@ def skill_maps(
             hatches=[None, "///", None],
             transform=ccrs.PlateCarree(),
         )
-        
+
         if headings is not None:
             ax.set_title(headings[r][c])
-            
+
         title = ax.get_title()
         ax.set_title(f"{title} | {_get_verif_period(skill)}")
 
     fig.tight_layout()
+
+    fig.subplots_adjust(bottom=0.15)
+    cbar_ax = fig.add_axes([0.1, 0.1, 0.8, 0.015])
+    fig.colorbar(p, cax=cbar_ax, orientation="horizontal")
+
     return fig
