@@ -33,7 +33,7 @@ endif
 define HEADER
 #!/bin/bash -l
 #PBS -P $(NCI_PROJECT)
-#PBS -q normal
+#PBS -q express
 #PBS -l walltime=04:00:00
 #PBS -l mem=192gb
 #PBS -l ncpus=48

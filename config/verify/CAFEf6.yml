@@ -27,7 +27,7 @@ prepare:
       metric: "acc"
       significance: True
       transform: "Fisher_z"
-      alpha: 0.1
+      alpha: 0.05
 
   CAFEf6.HadISST.annual.anom_1991-2020.sst.ri_1991-2020:
     hindcasts: CAFEf6.annual.anom_1991-2020.sst
@@ -37,4 +37,4 @@ prepare:
       metric: "acc_initialised"
       significance: True
       transform: "Fisher_z"
-      alpha: 0.1
+      alpha: 0.05

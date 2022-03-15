@@ -110,7 +110,7 @@ def add_CAFE_grid_info(ds):
     atmos_grid = xr.open_dataset(atmos_file)
     ocean_grid = xr.open_dataset(ocean_file)
 
-    atmos = ["area", "latb", "lonb", "zsurf"]
+    atmos = ["area", "zsurf"] # "latb", "lonb"
     ocean_t = ["area_t", "geolat_t", "geolon_t"]
     ocean_u = ["area_u", "geolat_c", "geolon_c"]
 
@@ -448,15 +448,47 @@ def round_to_start_of_month(ds, dim):
     return ds
 
 
-def coarsen_monthly_to_annual(ds, start_points=None, dim="time"):
+def coarsen(ds, window_size, start_points=None, dim="time"):
     """
-    Coarsen monthly data to annual, applying 'max' to all relevant coords and
-    optionally starting at a particular time point in the array
+    Coarsen data, applying 'max' to all relevant coords and optionally starting 
+    at a particular time point in the array
 
     Parameters
     ----------
     ds : xarray Dataset
         The dataset to coarsen
+    start_points : list
+        Value(s) of coordinate `dim` to start the coarsening from. If these fall
+        outside the range of the coordinate, coarsening starts at the beginning
+        of the array
+    dim : str, optional
+        The name of the dimension to coarsen along
+    """
+    if start_points is None:
+        start_points = [None]
+
+    aux_coords = [c for c in ds.coords if dim in ds[c].dims]
+    dss = []
+    for start_point in start_points:
+        dss.append(
+            ds.sel({dim: slice(start_point, None)})
+            .coarsen(
+                {dim: window_size}, boundary="trim", coord_func={d: "max" for d in aux_coords}
+            )
+            .mean()
+        )
+    return xr.concat(dss, dim=dim).sortby(dim)
+
+
+def rolling_mean(ds, window_size, start_points=None, dim="time"):
+    """
+    Apply a rolling mean to the data, applying 'max' to all relevant coords and optionally starting
+    at a particular time point in the array
+
+    Parameters
+    ----------
+    ds : xarray Dataset
+        The dataset to apply the rolling mean to
     start_points : str or list of str
         Value(s) of coordinate `dim` to start the coarsening from. If these fall
         outside the range of the coordinate, coarsening starts at the beginning
@@ -467,19 +499,19 @@ def coarsen_monthly_to_annual(ds, start_points=None, dim="time"):
     if start_points is None:
         start_points = [None]
 
-    if isinstance(start_points, str):
-        start_points = [start_points]
-
-    aux_coords = [c for c in ds.coords if dim in ds[c].dims]
     dss = []
     for start_point in start_points:
-        dss.append(
+        rolling_mean = (
             ds.sel({dim: slice(start_point, None)})
-            .coarsen(
-                {dim: 12}, boundary="trim", coord_func={d: "max" for d in aux_coords}
+            .rolling(
+                {dim: window_size},
+                min_periods=window_size,
+                center=False,
             )
             .mean()
         )
+
+        dss.append(rolling_mean.where(rolling_mean.notnull(), drop=True))
     return xr.concat(dss, dim=dim).sortby(dim)
 
 

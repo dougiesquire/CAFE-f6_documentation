@@ -38,7 +38,8 @@ prepare:
       truncate_latitudes:
       round_to_start_of_month:
         dim: "time"
-      coarsen_monthly_to_annual:
+      coarsen:
+        window_size: 12
         start_points: ["1960-11-01"]
         dim: "time"
       rechunk:
@@ -60,7 +61,8 @@ prepare:
       round_to_start_of_month:
         dim: "time"
       normalise_by_days_in_month:
-      coarsen_monthly_to_annual:
+      coarsen:
+        window_size: 12
         start_points: ["1960-11-01"]
         dim: "time"
       rechunk:
@@ -80,7 +82,8 @@ prepare:
           geolat_t: "lat"
       round_to_start_of_month:
         dim: "time"
-      coarsen_monthly_to_annual:
+      coarsen:
+        window_size: 12
         start_points: ["1960-11-01"]
         dim: "time"
       interpolate_to_grid_from_file:
@@ -107,7 +110,8 @@ prepare:
             add: 273.15
       round_to_start_of_month:
         dim: "time"
-      coarsen_monthly_to_annual:
+      coarsen:
+        window_size: 12
         start_points: ["1960-11-01"]
         dim: "time"
       calculate_ohc300:
@@ -156,3 +160,45 @@ prepare:
         clim_period: ["1991-01-01", "2020-12-31"]
       rechunk:
         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
+        
+  # Prepare 4-year-averages from prepared datasets
+  4-year.anom_1991-2020.t_ref:
+    uses:
+      prepared:
+        - "annual.anom_1991-2020.t_ref"
+    apply:
+      rolling_mean:
+        window_size: 4
+      rechunk:
+        chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
+        
+  4-year.anom_1991-2020.precip:
+    uses:
+      prepared:
+        - "annual.anom_1991-2020.precip"
+    apply:
+      rolling_mean:
+        window_size: 4
+      rechunk:
+        chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
+        
+  4-year.anom_1991-2020.sst:
+    uses:
+      prepared:
+        - "annual.anom_1991-2020.sst"
+    apply:
+      rolling_mean:
+        window_size: 4
+      rechunk:
+        chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
+        
+  4-year.anom_1991-2020.ohc300:
+    uses:
+      prepared:
+        - "annual.anom_1991-2020.ohc300"
+    apply:
+      rolling_mean:
+        window_size: 4
+      rechunk:
+        chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
+        

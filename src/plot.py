@@ -1,9 +1,20 @@
+import itertools
+
 import cftime
 
 import numpy as np
 import xarray as xr
 
+import matplotlib.cm as cm
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
+import matplotlib.gridspec as gridspec
+
+import cartopy
+import cartopy.crs as ccrs
+
+cartopy.config["pre_existing_data_dir"] = "../../data/cartopy-data"
+cartopy.config["data_dir"] = "../../data/cartopy-data"
 
 
 def hindcasts(hcsts, obsvs=None, hists=None, shade=False):
@@ -120,4 +131,84 @@ def hindcasts(hcsts, obsvs=None, hists=None, shade=False):
     plt.tight_layout()
     fig.patch.set_facecolor("w")
 
+    return fig
+
+
+def skill_maps(
+    fields, variable, vrange, headings=None, group_rows_by=1, figsize=(15, 9)
+):
+    """
+    Plot panels of skill score maps
+
+    Parameters
+    ----------
+    fields : list
+        List of size n_rows x n_coloumns containing the fields to plot
+    variable : str
+        The name of the variable
+    vrange : iterable of length 2
+        The vmin and vmax values for all panels
+    figsize : iterable of length 2
+        The total size of the figure
+    """
+    
+    def _get_verif_period(ds):
+        """Return a string of the verification period for a skill metric"""
+
+        return (
+            f"{ds.attrs['verification period start'][:4]}-"
+            f"{ds.attrs['verification period end'][:4]}"
+        )
+
+    fig = plt.figure(figsize=figsize)
+    n_rows = len(fields)
+    n_columns = len(fields[0])
+    axs = fig.subplots(
+        n_rows,
+        n_columns,
+        sharex=True,
+        sharey=True,
+        subplot_kw=dict(projection=ccrs.PlateCarree(180)),
+    )
+    if n_rows == 1:
+        axs = [axs]
+        if n_columns == 1:
+            axs = [axs]
+    elif n_columns == 1:
+        axs = [[ax] for ax in axs]
+
+    cmap = cm.get_cmap("RdBu_r", 10)
+
+    for r, c in itertools.product(range(n_rows), range(n_columns)):
+        ax = axs[r][c]
+
+        skill = fields[r][c]
+        lon = skill.lon.values
+        lat = skill.lat.values
+        p = skill[variable].plot(
+            ax=ax,
+            transform=ccrs.PlateCarree(),
+            vmin=vrange[0],
+            vmax=vrange[1],
+            cmap=cmap,
+            add_colorbar=False,
+        )
+        p.axes.coastlines(color=[0.2, 0.2, 0.2], linewidth=0.75)
+        ax.contourf(
+            lon,
+            lat,
+            1 * skill[f"sst_signif"],
+            [0, 0.5, 1],
+            colors="none",
+            hatches=[None, "///", None],
+            transform=ccrs.PlateCarree(),
+        )
+        
+        if headings is not None:
+            ax.set_title(headings[r][c])
+            
+        title = ax.get_title()
+        ax.set_title(f"{title} | {_get_verif_period(skill)}")
+
+    fig.tight_layout()
     return fig
