@@ -13,7 +13,7 @@ RAW_DATA_DIR = ./data/raw/
 TEST_DATA_DIR = ./data/testing/
 
 data_config = CAFE60v1.yml CAFEf5.yml CAFEf6.yml CAFE_hist.yml CanESM5_hist.yml CanESM5.yml EC_Earth3.yml EC_Earth3_hist.yml EN422.yml GPCP.yml HadISST.yml JRA55.yml
-skill_config = CanESM5.yml
+skill_config = CAFEf6.yml CanESM5.yml EC_Earth3.yml
 
 ifeq (,$(shell which conda))
 HAS_CONDA=False

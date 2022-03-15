@@ -380,10 +380,10 @@ def _calculate_metric_from_timeseries(
     the fraction of transformed values in the bootstrapped distribution below (above)
     no_skill_value--defining the p-values--is less than or equal to alpha.)
     """
-    skill_metric = metric(*timeseries, **metric_kwargs)
+    skill = metric(*timeseries, **metric_kwargs)
 
     if significance:
-        bootstrapped_metric = metric(
+        bootstrapped_skill = metric(
             *iterative_blocked_bootstrap(
                 *timeseries,
                 blocks={"time": 5, "member": 1},
@@ -393,25 +393,26 @@ def _calculate_metric_from_timeseries(
         )
 
         no_skill = 0
+        sample_skill = skill.copy()
         if transform:
             no_skill = transform(no_skill)
-            skill_metric = transform(skill_metric)
-            bootstrapped_metric = transform(bootstrapped_metric)
+            sample_skill = transform(sample_skill)
+            bootstrapped_skill = transform(bootstrapped_skill)
 
         pos_signif = (
-            xr.where(bootstrapped_metric < no_skill, 1, 0).mean("iteration") <= alpha
-        ) & (skill_metric > no_skill)
+            xr.where(bootstrapped_skill < no_skill, 1, 0).mean("iteration") <= alpha
+        ) & (sample_skill > no_skill)
         neg_signif = (
-            xr.where(bootstrapped_metric > no_skill, 1, 0).mean("iteration") <= alpha
-        ) & (skill_metric < no_skill)
+            xr.where(bootstrapped_skill > no_skill, 1, 0).mean("iteration") <= alpha
+        ) & (sample_skill < no_skill)
 
         significance = pos_signif | neg_signif
         significance = significance.rename(
             {n: f"{n}_signif" for n in significance.data_vars}
         )
-        skill_metric = xr.merge((skill_metric, significance))
+        skill = xr.merge((skill, significance))
 
-    return skill_metric
+    return skill
 
 
 def calculate_metric(
