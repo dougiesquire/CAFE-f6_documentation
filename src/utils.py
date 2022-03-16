@@ -7,6 +7,7 @@ from functools import reduce, partial
 
 import yaml
 
+import numpy as np
 import xarray as xr
 
 
@@ -75,6 +76,10 @@ def calculate_ohc300(temp, depth_dim="depth", var_name="temp"):
 
     ocean_mask = temp.isel({depth_dim: 0}, drop=True).notnull()
     temp300 = temp.where(temp[depth_dim] <= 300, drop=True).fillna(0)
+
+    # Cast depth coord as float32 to avoid promotion to float64
+    temp300 = temp300.assign_coords({depth_dim: temp300[depth_dim].astype(np.float32)})
+
     ohc300 = rho0 * Cp0 * temp300.integrate(depth_dim)
     ohc300 = ohc300.where(ocean_mask).rename({var_name: "ohc300"})
     ohc300["ohc300"].attrs = dict(
@@ -143,7 +148,7 @@ def normalise_by_days_in_month(ds):
     ds : xarray Dataset
         The array to normalise
     """
-    # Cast days as float32 to avoid generating float64 output
+    # Cast days as float32 to avoid promotion to float64
     return ds / ds["time"].dt.days_in_month.astype(np.float32)
 
 
