@@ -93,7 +93,7 @@ def msss(hcst, obsv, ref):
 
 def crpss(hcst, obsv, ref):
     """
-    Return the Continuous rank probability skill score between a forecast and 
+    Return the Continuous rank probability skill score between a forecast and
     observations relative to a reference dataset
 
     Parameters
@@ -112,6 +112,8 @@ def crpss(hcst, obsv, ref):
 
 # Transforms
 # ===============================================
+
+
 def Fisher_z(ds):
     """
     Return the Fisher-z transformation of ds
@@ -477,7 +479,7 @@ def calculate_metric(
     def _common_set_of_verif_times(hcst, *refs):
         """
         Get the common set of verification times available at all leads
-        
+
         Stolen from climpred.alignment._same_verifs_alignment
         """
         hcst_times = hcst.time.compute()

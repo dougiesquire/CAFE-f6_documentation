@@ -136,7 +136,7 @@ def hindcasts(hcsts, obsvs=None, hists=None, shade=False):
 
 
 def skill_maps(
-    fields, variable, vrange, headings=None, group_rows_by=1, figsize=(15, 10)
+    fields, variable, vrange, headings=None, group_rows_by=1, figsize=(15, 15)
 ):
     """
     Plot panels of skill score maps
@@ -178,7 +178,7 @@ def skill_maps(
     elif n_columns == 1:
         axs = [[ax] for ax in axs]
 
-    cmap = cm.get_cmap("RdBu_r", 12)
+    cmap = cm.get_cmap("PiYG", 12)
 
     for r, c in itertools.product(range(n_rows), range(n_columns)):
         ax = axs[r][c]
@@ -214,10 +214,10 @@ def skill_maps(
     fig.tight_layout()
 
     # Colorbar with fixed physical height
-    h = [Size.Fixed(figsize[0]/12), Size.Fixed(figsize[0]-figsize[0]/6)]
+    h = [Size.Fixed(figsize[0] / 12), Size.Fixed(figsize[0] - figsize[0] / 6)]
     v = [Size.Fixed(0), Size.Fixed(0.15)]
     divider = Divider(fig, (0, 0, 1, 1), h, v, aspect=False)
-#     fig.subplots_adjust(bottom=0.1)
+    #     fig.subplots_adjust(bottom=0.1)
     cbar_ax = fig.add_axes(
         divider.get_position(), axes_locator=divider.new_locator(nx=1, ny=1)
     )

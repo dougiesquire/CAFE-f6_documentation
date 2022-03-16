@@ -110,7 +110,7 @@ def add_CAFE_grid_info(ds):
     atmos_grid = xr.open_dataset(atmos_file)
     ocean_grid = xr.open_dataset(ocean_file)
 
-    atmos = ["area", "zsurf"] # "latb", "lonb"
+    atmos = ["area", "zsurf"]  # "latb", "lonb"
     ocean_t = ["area_t", "geolat_t", "geolon_t"]
     ocean_u = ["area_u", "geolat_c", "geolon_c"]
 
@@ -143,7 +143,8 @@ def normalise_by_days_in_month(ds):
     ds : xarray Dataset
         The array to normalise
     """
-    return ds / ds["time"].dt.days_in_month
+    # Cast days as float32 to avoid generating float64 output
+    return ds / ds["time"].dt.days_in_month.astype(np.float32)
 
 
 def convert_time_to_lead(
@@ -160,8 +161,9 @@ def convert_time_to_lead(
     time_dim : str, optional
         The name of the time dimension
     time_freq : str, optional
-        The frequency of the time dimension. If not provided, will try to use xr.infer_freq to
-        determine the frequency. This is only used to add a freq attr to the lead time coordinate
+        The frequency of the time dimension. If not provided, will try to use
+        xr.infer_freq to determine the frequency. This is only used to add a
+        freq attr to the lead time coordinate
     init_dim : str, optional
         The name of the initial date dimension in the output
     lead_dim : str, optional
@@ -450,7 +452,7 @@ def round_to_start_of_month(ds, dim):
 
 def coarsen(ds, window_size, start_points=None, dim="time"):
     """
-    Coarsen data, applying 'max' to all relevant coords and optionally starting 
+    Coarsen data, applying 'max' to all relevant coords and optionally starting
     at a particular time point in the array
 
     Parameters
@@ -473,7 +475,9 @@ def coarsen(ds, window_size, start_points=None, dim="time"):
         dss.append(
             ds.sel({dim: slice(start_point, None)})
             .coarsen(
-                {dim: window_size}, boundary="trim", coord_func={d: "max" for d in aux_coords}
+                {dim: window_size},
+                boundary="trim",
+                coord_func={d: "max" for d in aux_coords},
             )
             .mean()
         )
