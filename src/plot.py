@@ -9,6 +9,7 @@ import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import matplotlib.gridspec as gridspec
+from mpl_toolkits.axes_grid1 import Divider, Size
 
 import cartopy
 import cartopy.crs as ccrs
@@ -197,7 +198,7 @@ def skill_maps(
         ax.contourf(
             lon,
             lat,
-            1 * skill[f"sst_signif"],
+            1 * skill[f"{variable}_signif"],
             [0, 0.5, 1],
             colors="none",
             hatches=[None, "///", None],
@@ -212,8 +213,14 @@ def skill_maps(
 
     fig.tight_layout()
 
-    fig.subplots_adjust(bottom=0.15)
-    cbar_ax = fig.add_axes([0.1, 0.1, 0.8, 0.015])
+    # Colorbar with fixed physical height
+    h = [Size.Fixed(figsize[0]/12), Size.Fixed(figsize[0]-figsize[0]/6)]
+    v = [Size.Fixed(0), Size.Fixed(0.15)]
+    divider = Divider(fig, (0, 0, 1, 1), h, v, aspect=False)
+#     fig.subplots_adjust(bottom=0.1)
+    cbar_ax = fig.add_axes(
+        divider.get_position(), axes_locator=divider.new_locator(nx=1, ny=1)
+    )
     fig.colorbar(p, cax=cbar_ax, orientation="horizontal")
 
     return fig
