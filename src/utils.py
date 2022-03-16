@@ -118,17 +118,17 @@ def add_CAFE_grid_info(ds):
         ds = ds.assign_coords(atmos_grid[atmos].coords)
 
     if ("xt_ocean" in ds.dims) | ("yt_ocean" in ds.dims):
-        if "st_ocean" in ds.dims:
-            ocean_t += ["st_edges_ocean"]
-        if "sw_ocean" in ds.dims:
-            ocean_t += ["sw_edges_ocean"]
+        # if "st_ocean" in ds.dims:
+        #     ocean_t += ["st_edges_ocean"]
+        # if "sw_ocean" in ds.dims:
+        #     ocean_t += ["sw_edges_ocean"]
         ds = ds.assign_coords(ocean_grid[ocean_t].coords)
 
     if ("xu_ocean" in ds.dims) | ("yu_ocean" in ds.dims):
-        if "st_ocean" in ds.dims:
-            ocean_t += ["st_edges_ocean"]
-        if "sw_ocean" in ds.dims:
-            ocean_t += ["sw_edges_ocean"]
+        # if "st_ocean" in ds.dims:
+        #     ocean_t += ["st_edges_ocean"]
+        # if "sw_ocean" in ds.dims:
+        #     ocean_t += ["sw_edges_ocean"]
         ds = ds.assign_coords(ocean_grid[ocean_u].coords)
 
     return ds

@@ -1,0 +1,193 @@
+2022-03-16 11:27:18,009 - __main__ - INFO - Spinning up a dask cluster
+2022-03-16 11:27:18,784 - __main__ - INFO - Preparing skill metrics using EC_Earth3_t_ref.yml
+2022-03-16 11:27:19,628 - __main__ - INFO - Processing EC_Earth3.JRA55.annual.anom_1985-2014.t_ref.rXY_1985-2014
+2022-03-16 11:27:19,767 - __main__ - INFO - Performing verification over 1985-10-01 - 2014-10-01
+2022-03-16 11:28:25,880 - __main__ - INFO - Processing EC_Earth3.JRA55.4-year.anom_1985-2014.t_ref.rXY_1985-2014
+2022-03-16 11:28:25,918 - __main__ - INFO - Performing verification over 1985-10-01 - 2014-10-01
+2022-03-16 11:28:41,276 - __main__ - INFO - Processing EC_Earth3.JRA55.annual.anom_1985-2014.t_ref.ri_1985-2014
+2022-03-16 11:28:41,418 - __main__ - INFO - Performing verification over 1985-10-01 - 2014-10-01
+2022-03-16 11:30:45,623 - __main__ - INFO - Processing EC_Earth3.JRA55.4-year.anom_1985-2014.t_ref.ri_1985-2014
+2022-03-16 11:30:45,672 - __main__ - INFO - Performing verification over 1985-10-01 - 2014-10-01
+2022-03-16 11:31:52,914 - __main__ - INFO - Processing EC_Earth3.JRA55.annual.anom_1985-2014.t_ref.MSSS_1985-2014
+2022-03-16 11:31:53,038 - __main__ - INFO - Performing verification over 1985-10-01 - 2014-10-01
+2022-03-16 11:33:22,425 - __main__ - INFO - Processing EC_Earth3.JRA55.4-year.anom_1985-2014.t_ref.MSSS_1985-2014
+2022-03-16 11:33:22,456 - __main__ - INFO - Performing verification over 1985-10-01 - 2014-10-01
+2022-03-16 11:34:05,917 - __main__ - INFO - Processing EC_Earth3.JRA55.annual.anom_1985-2014.t_ref.CRPSS_1985-2014
+2022-03-16 11:34:06,043 - __main__ - INFO - Performing verification over 1985-10-01 - 2014-10-01
+2022-03-16 11:35:57,423 - __main__ - INFO - Processing EC_Earth3.JRA55.4-year.anom_1985-2014.t_ref.CRPSS_1985-2014
+2022-03-16 11:35:57,455 - __main__ - INFO - Performing verification over 1985-10-01 - 2014-10-01
+distributed.worker - WARNING - Compute Failed
+Function:  subgraph_callable-963021c2-9a7a-4fd1-bebf-71449fc4
+args:      (array([[[[[-3.50425720e-01, -2.31128693e-01,  5.91537476e-01, ...,
+           -5.10578156e-01, -1.56536102e-01,  2.51907349e-01],
+          [ 6.88095093e-02,  1.35944366e-01,  3.37574005e-01, ...,
+            4.37927246e-03,  2.29343414e-01,  2.51907349e-01],
+          [ 3.00689697e-01,  3.00689697e-01,  3.62491608e-01, ...,
+           -1.29623413e-01,  6.86912537e-02,  2.92716980e-01],
+          ...,
+          [-9.10110474e-02, -1.17298126e-01,  6.85634613e-01, ...,
+            2.45872498e-01,  2.37728119e-01,  1.64230347e-01],
+          [ 6.88095093e-02, -1.17298126e-01,  4.83379364e-01, ...,
+            2.45872498e-01, -2.63664246e-01,  2.18448639e-01],
+          [-2.31128693e-01, -3.04283142e-01,  6.57424927e-02, ...,
+           -5.10578156e-01,  6.76345825e-02,  4.05056000e-01]],
+
+         [[-4.59442139e-01,  9.84458923e-02, -2.21412659e-01, ...,
+           -1.33777618e-01, -1.86233521e-02,  1.14650726e-01],
+          [-5.69267273e-02,  2.44487762e-01,  7.85274506e-01, ...,
+     
+kwargs:    {}
+Exception: "ValueError('operands could not be broadcast together with shapes (11,12,30,18,192) (11,12,30,10,192) () ')"
+
+distributed.worker - WARNING - Compute Failed
+Function:  subgraph_callable-963021c2-9a7a-4fd1-bebf-71449fc4
+args:      (array([[[[[ 4.82769012e-01, -1.22467041e-01, -1.70860291e-01, ...,
+           -3.62228394e-01, -5.34706116e-01, -4.18632507e-01],
+          [ 4.82769012e-01,  6.81800842e-02, -1.13723755e-01, ...,
+            1.57115936e-01, -2.19379425e-01, -6.61735535e-02],
+          [ 4.83379364e-01, -3.57944489e-01, -4.54715729e-01, ...,
+           -2.20657349e-01, -1.91463470e-01,  1.85169220e-01],
+          ...,
+          [ 3.62491608e-01, -4.45064545e-01,  4.03839111e-01, ...,
+           -3.57429504e-01, -5.34706116e-01, -2.19379425e-01],
+          [ 4.82769012e-01, -3.57944489e-01,  1.18358612e-01, ...,
+           -2.71591187e-01, -4.18632507e-01, -2.04277039e-02],
+          [ 5.91537476e-01, -3.35365295e-01,  6.42967224e-02, ...,
+           -3.62228394e-01, -2.19379425e-01, -3.45142365e-01]],
+
+         [[ 2.62516022e-01, -5.46142578e-01,  1.04904175e-03, ...,
+           -3.04283142e-01,  6.81800842e-02, -4.71702576e-01],
+          [ 7.85274506e-01, -2.44434357e-01, -2.24983215e-01, ...,
+     
+kwargs:    {}
+Exception: "ValueError('operands could not be broadcast together with shapes (11,12,30,18,404) (11,12,30,10,404) () ')"
+
+distributed.worker - WARNING - Compute Failed
+Function:  subgraph_callable-963021c2-9a7a-4fd1-bebf-71449fc4
+args:      (array([[[[[ 3.85723114e-01, -1.92375183e-01, -5.22804260e-02, ...,
+           -3.62228394e-01,  4.53033447e-02, -7.32040405e-02],
+          [-2.27252960e-01,  3.50978851e-01,  2.62516022e-01, ...,
+            3.64295959e-01, -5.24944305e-01, -7.32040405e-02],
+          [ 1.64230347e-01,  2.23426819e-02,  5.28636932e-01, ...,
+           -8.93573761e-01, -3.52130890e-01, -3.05576324e-01],
+          ...,
+          [ 2.51907349e-01, -1.92375183e-01,  5.57712555e-01, ...,
+            4.36634064e-01, -1.81072235e-01, -5.34702301e-01],
+          [ 2.18448639e-01, -1.22416687e+00, -2.21412659e-01, ...,
+           -3.57429504e-01, -3.52130890e-01, -3.05576324e-01],
+          [ 2.92716980e-01, -3.63750458e-01, -2.21412659e-01, ...,
+           -3.57429504e-01, -3.54759216e-01, -7.32040405e-02]],
+
+         [[-7.63816833e-02, -8.19664001e-02, -5.39405823e-01, ...,
+           -1.17298126e-01, -3.43151093e-01,  1.77848816e-01],
+          [ 2.02610016e-01, -8.19664001e-02, -8.18634033e-02, ...,
+     
+kwargs:    {}
+Exception: "ValueError('operands could not be broadcast together with shapes (11,12,30,18,404) (11,12,30,10,404) () ')"
+
+distributed.worker - WARNING - Compute Failed
+Function:  subgraph_callable-963021c2-9a7a-4fd1-bebf-71449fc4
+args:      (array([[[[[ 3.91712189e-01, -5.91316223e-02, -4.26216125e-02, ...,
+           -6.36344910e-01,  2.19921112e-01,  3.47938538e-02],
+          [-2.61520386e-01,  3.48728180e-01,  3.49357605e-01, ...,
+            1.68537140e-01, -3.96099091e-01,  3.47938538e-02],
+          [-3.49964142e-01,  2.90821075e-01,  4.33006287e-01, ...,
+           -5.91049194e-01, -6.66046143e-02, -4.52270508e-01],
+          ...,
+          [ 2.01919556e-01, -5.91316223e-02,  3.73001099e-01, ...,
+            4.42581177e-02, -1.42574310e-01, -3.57784271e-01],
+          [-8.33129883e-02, -1.37504578e+00, -3.67126465e-02, ...,
+           -6.00208282e-01, -6.66046143e-02, -4.52270508e-01],
+          [ 1.66461945e-01, -4.02160645e-01, -3.67126465e-02, ...,
+           -6.00208282e-01, -5.21869659e-01,  3.47938538e-02]],
+
+         [[-1.40445709e-01, -3.12168121e-01,  4.95147705e-03, ...,
+           -4.78477478e-02, -9.63184357e-01, -3.01288605e-01],
+          [-5.02471924e-02, -3.12168121e-01, -1.44958496e-01, ...,
+     
+kwargs:    {}
+Exception: "ValueError('operands could not be broadcast together with shapes (11,12,30,18,404) (11,12,30,10,404) () ')"
+
+distributed.worker - WARNING - Compute Failed
+Function:  subgraph_callable-963021c2-9a7a-4fd1-bebf-71449fc4
+args:      (array([[[[[-3.40515137e-01, -5.12241364e-01,  8.00689697e-01, ...,
+           -5.96164703e-01,  5.45883179e-02,  2.01919556e-01],
+          [ 2.54497528e-01,  2.08641052e-01,  2.15133667e-01, ...,
+           -6.19239807e-02,  4.79232788e-01,  2.01919556e-01],
+          [ 2.33417511e-01,  2.33417511e-01,  3.23333740e-02, ...,
+           -3.09661865e-01,  1.88262939e-01,  1.66461945e-01],
+          ...,
+          [-4.33349609e-01, -4.78477478e-02,  8.36982727e-01, ...,
+            4.92160797e-01,  1.78604126e-01, -3.49964142e-01],
+          [ 2.54497528e-01, -4.78477478e-02,  3.40026855e-01, ...,
+            4.92160797e-01, -2.84416199e-01, -8.33129883e-02],
+          [-5.12241364e-01, -2.54489899e-01,  3.42128754e-01, ...,
+           -5.96164703e-01, -1.43611908e-01,  5.52574158e-01]],
+
+         [[-4.93389130e-01, -1.06487274e-01, -3.67126465e-02, ...,
+            7.47299194e-03,  1.22154236e-01, -3.05332184e-01],
+          [-1.48887634e-02,  3.92295837e-01,  1.05049896e+00, ...,
+     
+kwargs:    {}
+Exception: "ValueError('operands could not be broadcast together with shapes (11,12,30,18,192) (11,12,30,10,192) () ')"
+
+Traceback (most recent call last):
+  File "/g/data/xv83/users/ds0092/active_projects/Squire_2022_CAFE-f6/src/verify.py", line 670, in <module>
+    main(config, config_dir, save_dir)
+  File "/g/data/xv83/users/ds0092/active_projects/Squire_2022_CAFE-f6/src/verify.py", line 637, in main
+    verify(f"{config_dir}/{config}", save_dir)
+  File "/g/data/xv83/users/ds0092/active_projects/Squire_2022_CAFE-f6/src/verify.py", line 611, in verify
+    ds.to_zarr(f"{save_dir}/{identifier}.zarr", mode="w")
+  File "/g/data/xv83/users/ds0092/software/miniconda3/envs/forecast_analysis/lib/python3.9/site-packages/xarray/core/dataset.py", line 2035, in to_zarr
+    return to_zarr(
+  File "/g/data/xv83/users/ds0092/software/miniconda3/envs/forecast_analysis/lib/python3.9/site-packages/xarray/backends/api.py", line 1432, in to_zarr
+    writes = writer.sync(compute=compute)
+  File "/g/data/xv83/users/ds0092/software/miniconda3/envs/forecast_analysis/lib/python3.9/site-packages/xarray/backends/common.py", line 166, in sync
+    delayed_store = da.store(
+  File "/g/data/xv83/users/ds0092/software/miniconda3/envs/forecast_analysis/lib/python3.9/site-packages/dask/array/core.py", line 1163, in store
+    compute_as_if_collection(Array, store_dsk, map_keys, **kwargs)
+  File "/g/data/xv83/users/ds0092/software/miniconda3/envs/forecast_analysis/lib/python3.9/site-packages/dask/base.py", line 317, in compute_as_if_collection
+    return schedule(dsk2, keys, **kwargs)
+  File "/g/data/xv83/users/ds0092/software/miniconda3/envs/forecast_analysis/lib/python3.9/site-packages/distributed/client.py", line 2994, in get
+    results = self.gather(packed, asynchronous=asynchronous, direct=direct)
+  File "/g/data/xv83/users/ds0092/software/miniconda3/envs/forecast_analysis/lib/python3.9/site-packages/distributed/client.py", line 2146, in gather
+    return self.sync(
+  File "/g/data/xv83/users/ds0092/software/miniconda3/envs/forecast_analysis/lib/python3.9/site-packages/distributed/utils.py", line 309, in sync
+    return sync(
+  File "/g/data/xv83/users/ds0092/software/miniconda3/envs/forecast_analysis/lib/python3.9/site-packages/distributed/utils.py", line 376, in sync
+    raise exc.with_traceback(tb)
+  File "/g/data/xv83/users/ds0092/software/miniconda3/envs/forecast_analysis/lib/python3.9/site-packages/distributed/utils.py", line 349, in f
+    result = yield future
+  File "/g/data/xv83/users/ds0092/software/miniconda3/envs/forecast_analysis/lib/python3.9/site-packages/tornado/gen.py", line 762, in run
+    value = future.result()
+  File "/g/data/xv83/users/ds0092/software/miniconda3/envs/forecast_analysis/lib/python3.9/site-packages/distributed/client.py", line 2009, in _gather
+    raise exception.with_traceback(traceback)
+  File "/g/data/xv83/users/ds0092/software/miniconda3/envs/forecast_analysis/lib/python3.9/site-packages/dask/optimization.py", line 969, in __call__
+    return core.get(self.dsk, self.outkey, dict(zip(self.inkeys, args)))
+  File "/g/data/xv83/users/ds0092/software/miniconda3/envs/forecast_analysis/lib/python3.9/site-packages/dask/core.py", line 149, in get
+    result = _execute_task(task, cache)
+  File "/g/data/xv83/users/ds0092/software/miniconda3/envs/forecast_analysis/lib/python3.9/site-packages/dask/core.py", line 119, in _execute_task
+    return func(*(_execute_task(a, cache) for a in args))
+  File "/g/data/xv83/users/ds0092/software/miniconda3/envs/forecast_analysis/lib/python3.9/site-packages/dask/core.py", line 119, in <genexpr>
+    return func(*(_execute_task(a, cache) for a in args))
+  File "/g/data/xv83/users/ds0092/software/miniconda3/envs/forecast_analysis/lib/python3.9/site-packages/dask/core.py", line 113, in _execute_task
+    return [_execute_task(a, cache) for a in arg]
+  File "/g/data/xv83/users/ds0092/software/miniconda3/envs/forecast_analysis/lib/python3.9/site-packages/dask/core.py", line 113, in <listcomp>
+    return [_execute_task(a, cache) for a in arg]
+  File "/g/data/xv83/users/ds0092/software/miniconda3/envs/forecast_analysis/lib/python3.9/site-packages/dask/core.py", line 119, in _execute_task
+    return func(*(_execute_task(a, cache) for a in args))
+  File "<__array_function__ internals>", line 5, in where
+ValueError: operands could not be broadcast together with shapes (11,12,30,18,192) (11,12,30,10,192) () 
+
+======================================================================================
+                  Resource Usage on 2022-03-16 11:36:38:
+   Job Id:             36743057.gadi-pbs
+   Project:            xv83
+   Exit Status:        1
+   Service Units:      45.04
+   NCPUs Requested:    48                     NCPUs Used: 48              
+                                           CPU Time Used: 01:07:10                                   
+   Memory Requested:   192.0GB               Memory Used: 28.71GB         
+   Walltime requested: 04:00:00            Walltime Used: 00:09:23        
+   JobFS requested:    100.0GB                JobFS used: 0B              
+======================================================================================

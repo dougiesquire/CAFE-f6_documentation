@@ -1,0 +1,31 @@
+2022-03-16 11:27:18,077 - __main__ - INFO - Spinning up a dask cluster
+2022-03-16 11:27:22,030 - __main__ - INFO - Preparing skill metrics using CanESM5_t_ref.yml
+2022-03-16 11:27:22,881 - __main__ - INFO - Processing CanESM5.JRA55.annual.anom_1985-2014.t_ref.rXY_1985-2014
+2022-03-16 11:27:22,994 - __main__ - INFO - Performing verification over 1985-12-01 - 2014-12-01
+2022-03-16 11:29:28,003 - __main__ - INFO - Processing CanESM5.JRA55.4-year.anom_1985-2014.t_ref.rXY_1985-2014
+2022-03-16 11:29:28,041 - __main__ - INFO - Performing verification over 1985-12-01 - 2014-12-01
+2022-03-16 11:30:13,021 - __main__ - INFO - Processing CanESM5.JRA55.annual.anom_1985-2014.t_ref.ri_1985-2014
+2022-03-16 11:30:13,192 - __main__ - INFO - Performing verification over 1985-12-01 - 2014-12-01
+2022-03-16 11:33:08,176 - __main__ - INFO - Processing CanESM5.JRA55.4-year.anom_1985-2014.t_ref.ri_1985-2014
+2022-03-16 11:33:08,222 - __main__ - INFO - Performing verification over 1985-12-01 - 2014-12-01
+2022-03-16 11:35:01,957 - __main__ - INFO - Processing CanESM5.JRA55.annual.anom_1985-2014.t_ref.MSSS_1985-2014
+2022-03-16 11:35:02,072 - __main__ - INFO - Performing verification over 1985-12-01 - 2014-12-01
+2022-03-16 11:37:19,251 - __main__ - INFO - Processing CanESM5.JRA55.4-year.anom_1985-2014.t_ref.MSSS_1985-2014
+2022-03-16 11:37:19,281 - __main__ - INFO - Performing verification over 1985-12-01 - 2014-12-01
+2022-03-16 11:38:36,288 - __main__ - INFO - Processing CanESM5.JRA55.annual.anom_1985-2014.t_ref.CRPSS_1985-2014
+2022-03-16 11:38:36,408 - __main__ - INFO - Performing verification over 1985-12-01 - 2014-12-01
+2022-03-16 11:42:44,206 - __main__ - INFO - Processing CanESM5.JRA55.4-year.anom_1985-2014.t_ref.CRPSS_1985-2014
+2022-03-16 11:42:44,298 - __main__ - INFO - Performing verification over 1985-12-01 - 2014-12-01
+
+======================================================================================
+                  Resource Usage on 2022-03-16 11:45:06:
+   Job Id:             36743054.gadi-pbs
+   Project:            xv83
+   Exit Status:        0
+   Service Units:      88.32
+   NCPUs Requested:    48                     NCPUs Used: 48              
+                                           CPU Time Used: 04:29:15                                   
+   Memory Requested:   192.0GB               Memory Used: 60.02GB         
+   Walltime requested: 04:00:00            Walltime Used: 00:18:24        
+   JobFS requested:    100.0GB                JobFS used: 0B              
+======================================================================================

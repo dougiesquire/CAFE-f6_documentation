@@ -1,0 +1,127 @@
+# Config file for specifying skill assessment using src.verify()
+# ==================================================================================
+
+# prepare: required
+#    List of unique identifiers for skill metrics to prepare and save. This will 
+#    be used to save the prepared skill metric as {identifier}.zarr. Each identifier 
+#    can include the following:
+#
+#    hindcasts: required
+#        Name of collection in data/processed containing the hindcasts to assess. 
+#    observations: optional
+#        Name of collection in data/processed containing the observations.
+#    simulations: optional
+#        Name of collection in data/processed containing uninitialised simulations.
+#    apply: optional
+#        Functions and kwargs from src.utils to be applied sequentially to the 
+#        input data. Can be applied to all provided datasets using the key `all:`,
+#        or to individual datasets using, for example, `hindcasts: <functions>`
+#    verify: required
+#        Arguments to be passed to src.verify.calculate_metric
+
+prepare:
+  EC_Earth3.JRA55.annual.anom_1985-2014.t_ref.rXY_1985-2014:
+    hindcasts: EC_Earth3.annual.anom_1985-2014.t_ref
+    observations: JRA55.annual.anom_1985-2014.t_ref
+    apply:
+      all:
+        mask_period:
+          period: ["1985-01-01", "2014-12-31"]
+    verify:
+      metric: "acc"
+      significance: True
+      transform: "Fisher_z"
+      alpha: 0.05
+      
+  EC_Earth3.JRA55.4-year.anom_1985-2014.t_ref.rXY_1985-2014:
+    hindcasts: EC_Earth3.4-year.anom_1985-2014.t_ref
+    observations: JRA55.4-year.anom_1985-2014.t_ref
+    apply:
+      all:
+        mask_period:
+          period: ["1985-01-01", "2014-12-31"]
+    verify:
+      metric: "acc"
+      significance: True
+      transform: "Fisher_z"
+      alpha: 0.05
+
+  EC_Earth3.JRA55.annual.anom_1985-2014.t_ref.ri_1985-2014:
+    hindcasts: EC_Earth3.annual.anom_1985-2014.t_ref
+    observations: JRA55.annual.anom_1985-2014.t_ref
+    simulations: EC_Earth3_hist.annual.anom_1985-2014.t_ref
+    apply:
+      all:
+        mask_period:
+          period: ["1985-01-01", "2014-12-31"]
+    verify:
+      metric: "acc_initialised"
+      significance: True
+      transform: "Fisher_z"
+      alpha: 0.05
+      
+  EC_Earth3.JRA55.4-year.anom_1985-2014.t_ref.ri_1985-2014:
+    hindcasts: EC_Earth3.4-year.anom_1985-2014.t_ref
+    observations: JRA55.4-year.anom_1985-2014.t_ref
+    simulations: EC_Earth3_hist.4-year.anom_1985-2014.t_ref
+    apply:
+      all:
+        mask_period:
+          period: ["1985-01-01", "2014-12-31"]
+    verify:
+      metric: "acc_initialised"
+      significance: True
+      transform: "Fisher_z"
+      alpha: 0.05
+
+  EC_Earth3.JRA55.annual.anom_1985-2014.t_ref.MSSS_1985-2014:
+    hindcasts: EC_Earth3.annual.anom_1985-2014.t_ref
+    observations: JRA55.annual.anom_1985-2014.t_ref
+    simulations: EC_Earth3_hist.annual.anom_1985-2014.t_ref
+    apply:
+      all:
+        mask_period:
+          period: ["1985-01-01", "2014-12-31"]
+    verify:
+      metric: "msss"
+      significance: True
+      alpha: 0.05
+      
+  EC_Earth3.JRA55.4-year.anom_1985-2014.t_ref.MSSS_1985-2014:
+    hindcasts: EC_Earth3.4-year.anom_1985-2014.t_ref
+    observations: JRA55.4-year.anom_1985-2014.t_ref
+    simulations: EC_Earth3_hist.4-year.anom_1985-2014.t_ref
+    apply:
+      all:
+        mask_period:
+          period: ["1985-01-01", "2014-12-31"]
+    verify:
+      metric: "msss"
+      significance: True
+      alpha: 0.05
+      
+  EC_Earth3.JRA55.annual.anom_1985-2014.t_ref.CRPSS_1985-2014:
+    hindcasts: EC_Earth3.annual.anom_1985-2014.t_ref
+    observations: JRA55.annual.anom_1985-2014.t_ref
+    simulations: EC_Earth3_hist.annual.anom_1985-2014.t_ref
+    apply:
+      all:
+        mask_period:
+          period: ["1985-01-01", "2014-12-31"]
+    verify:
+      metric: "crpss"
+      significance: True
+      alpha: 0.05
+      
+  EC_Earth3.JRA55.4-year.anom_1985-2014.t_ref.CRPSS_1985-2014:
+    hindcasts: EC_Earth3.4-year.anom_1985-2014.t_ref
+    observations: JRA55.4-year.anom_1985-2014.t_ref
+    simulations: EC_Earth3_hist.4-year.anom_1985-2014.t_ref
+    apply:
+      all:
+        mask_period:
+          period: ["1985-01-01", "2014-12-31"]
+    verify:
+      metric: "crpss"
+      significance: True
+      alpha: 0.05

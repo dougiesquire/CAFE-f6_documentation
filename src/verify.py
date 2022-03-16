@@ -91,6 +91,25 @@ def msss(hcst, obsv, ref):
     return 1 - num / den
 
 
+def crpss(hcst, obsv, ref):
+    """
+    Return the Continuous rank probability skill score between a forecast and 
+    observations relative to a reference dataset
+
+    Parameters
+    ----------
+    hcst : xarray Dataset
+        The forecast timeseries
+    obsv : xarray Dataset
+        The observed timeseries
+    ref : xarray Dataset
+        The reference timeseries
+    """
+    num = xs.crps_ensemble(obsv, hcst, dim="time")
+    den = xs.crps_ensemble(obsv, ref, dim="time")
+    return 1 - num / den
+
+
 # Transforms
 # ===============================================
 def Fisher_z(ds):

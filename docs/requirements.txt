@@ -6,7 +6,7 @@ dask
 distributed
 xarray
 cftime
-climpred
+xskillscore
 matplotlib
 pydata-sphinx-theme
 nbsphinx

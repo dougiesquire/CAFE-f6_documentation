@@ -1,0 +1,31 @@
+2022-03-16 11:41:51,496 - __main__ - INFO - Spinning up a dask cluster
+2022-03-16 11:41:54,051 - __main__ - INFO - Preparing skill metrics using CanESM5_precip.yml
+2022-03-16 11:41:55,004 - __main__ - INFO - Processing CanESM5.GPCP.annual.anom_1985-2014.precip.rXY_1985-2014
+2022-03-16 11:41:55,163 - __main__ - INFO - Performing verification over 1985-12-01 - 2014-12-01
+2022-03-16 11:43:59,329 - __main__ - INFO - Processing CanESM5.GPCP.4-year.anom_1985-2014.precip.rXY_1985-2014
+2022-03-16 11:43:59,366 - __main__ - INFO - Performing verification over 1985-12-01 - 2014-12-01
+2022-03-16 11:44:40,212 - __main__ - INFO - Processing CanESM5.GPCP.annual.anom_1985-2014.precip.ri_1985-2014
+2022-03-16 11:44:40,338 - __main__ - INFO - Performing verification over 1985-12-01 - 2014-12-01
+2022-03-16 11:47:37,464 - __main__ - INFO - Processing CanESM5.GPCP.4-year.anom_1985-2014.precip.ri_1985-2014
+2022-03-16 11:47:37,507 - __main__ - INFO - Performing verification over 1985-12-01 - 2014-12-01
+2022-03-16 11:50:12,087 - __main__ - INFO - Processing CanESM5.GPCP.annual.anom_1985-2014.precip.MSSS_1985-2014
+2022-03-16 11:50:12,202 - __main__ - INFO - Performing verification over 1985-12-01 - 2014-12-01
+2022-03-16 11:52:25,944 - __main__ - INFO - Processing CanESM5.GPCP.4-year.anom_1985-2014.precip.MSSS_1985-2014
+2022-03-16 11:52:25,980 - __main__ - INFO - Performing verification over 1985-12-01 - 2014-12-01
+2022-03-16 11:54:13,018 - __main__ - INFO - Processing CanESM5.GPCP.annual.anom_1985-2014.precip.CRPSS_1985-2014
+2022-03-16 11:54:13,137 - __main__ - INFO - Performing verification over 1985-12-01 - 2014-12-01
+2022-03-16 11:58:48,849 - __main__ - INFO - Processing CanESM5.GPCP.4-year.anom_1985-2014.precip.CRPSS_1985-2014
+2022-03-16 11:58:48,889 - __main__ - INFO - Performing verification over 1985-12-01 - 2014-12-01
+
+======================================================================================
+                  Resource Usage on 2022-03-16 12:01:40:
+   Job Id:             36744089.gadi-pbs
+   Project:            xv83
+   Exit Status:        0
+   Service Units:      97.36
+   NCPUs Requested:    48                     NCPUs Used: 48              
+                                           CPU Time Used: 05:04:11                                   
+   Memory Requested:   192.0GB               Memory Used: 69.47GB         
+   Walltime requested: 04:00:00            Walltime Used: 00:20:17        
+   JobFS requested:    100.0GB                JobFS used: 0B              
+======================================================================================
