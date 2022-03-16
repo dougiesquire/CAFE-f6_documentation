@@ -26,7 +26,6 @@
 
 name: "HadISST"
 
-# Do Jan and Nov annual means separately so can easily calculate multi-annual means
 prepare:
   annual-Jan.full.sst:
     uses:
