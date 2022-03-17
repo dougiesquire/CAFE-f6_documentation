@@ -632,7 +632,7 @@ def rolling_mean(ds, window_size, start_points=None, dim="time"):
             .mean()
         )
 
-        dss.append(rolling_mean.where(rolling_mean.notnull(), drop=True))
+        dss.append(test_rolling.dropna(dim=dim, how="all"))
     return xr.concat(dss, dim=dim).sortby(dim)
 
 
