@@ -110,42 +110,39 @@ prepare:
 #       rechunk:
 #         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
         
-#   # Prepare 4-year-averages from prepared datasets
-#   4-year.anom_1985-2014.t_ref:
-#     uses:
-#       prepared:
-#         - "annual.anom_1985-2014.t_ref"
-#     apply:
-#       coarsen:
-#         window_size: 4 
-#         start_points: [23,]
-#         dim: "lead"
-#       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+  # Prepare 4-year-averages from prepared datasets
+  4-year.anom_1985-2014.t_ref:
+    uses:
+      prepared:
+        - "annual.anom_1985-2014.t_ref"
+    apply:
+      rolling_mean:
+        window_size: 4 
+        dim: "lead"
+      rechunk:
+        chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
         
-#   4-year.anom_1985-2014.precip:
-#     uses:
-#       prepared:
-#         - "annual.anom_1985-2014.precip"
-#     apply:
-#       coarsen:
-#         window_size: 4 
-#         start_points: [23,]
-#         dim: "lead"
-#       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+  4-year.anom_1985-2014.precip:
+    uses:
+      prepared:
+        - "annual.anom_1985-2014.precip"
+    apply:
+      rolling_mean:
+        window_size: 4 
+        dim: "lead"
+      rechunk:
+        chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
         
-#   4-year.anom_1985-2014.sst:
-#     uses:
-#       prepared:
-#         - "annual.anom_1985-2014.sst"
-#     apply:
-#       coarsen:
-#         window_size: 4 
-#         start_points: [23,]
-#         dim: "lead"
-#       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+  4-year.anom_1985-2014.sst:
+    uses:
+      prepared:
+        - "annual.anom_1985-2014.sst"
+    apply:
+      rolling_mean:
+        window_size: 4 
+        dim: "lead"
+      rechunk:
+        chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
 
   # Prepare AMV, IPO from prepared datasets
   4-year.anom_1985-2014.amv:
