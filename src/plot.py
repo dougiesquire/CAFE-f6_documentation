@@ -1,4 +1,5 @@
 import itertools
+from pathlib import Path
 
 import cftime
 
@@ -14,8 +15,10 @@ from mpl_toolkits.axes_grid1 import Divider, Size
 import cartopy
 import cartopy.crs as ccrs
 
-cartopy.config["pre_existing_data_dir"] = "../../data/cartopy-data"
-cartopy.config["data_dir"] = "../../data/cartopy-data"
+PROJECT_DIR = Path(__file__).resolve().parents[1]
+
+cartopy.config["pre_existing_data_dir"] = PROJECT_DIR / "data/cartopy-data"
+cartopy.config["data_dir"] = PROJECT_DIR / "data/cartopy-data"
 
 
 def hindcasts(hcsts, obsvs=None, hists=None, shade=False):
