@@ -189,10 +189,8 @@ def calculate_ohc300(temp, depth_dim="depth", temp_name="temp"):
     ocean_mask = temp.isel({depth_dim: 0}, drop=True).notnull()
     temp300 = temp.where(temp[depth_dim] <= 300, drop=True).fillna(0)
 
-    # Cast depth coord as float32 to avoid promotion to float64
-    temp300 = temp300.assign_coords({depth_dim: temp300[depth_dim].astype(np.float32)})
-
-    ohc300 = rho0 * Cp0 * temp300.integrate(depth_dim)
+    # Cast as float64 since big numbers
+    ohc300 = rho0 * Cp0 * temp300.integrate(depth_dim).astype(np.float64)
     ohc300 = ohc300.where(ocean_mask).rename({temp_name: "ohc300"})
     ohc300["ohc300"].attrs = dict(
         long_name="Ocean heat content above 300m", units="J/m^2"
