@@ -630,8 +630,11 @@ def rolling_mean(ds, window_size, start_points=None, dim="time"):
             .mean()
         )
 
-        dss.append(test_rolling.dropna(dim=dim, how="all"))
-    return xr.concat(dss, dim=dim).sortby(dim)
+        dss.append(rolling_mean.dropna(dim=dim, how="all"))
+    result = xr.concat(dss, dim=dim).sortby(dim)
+
+    # For reasons I don't understand, rolling sometimes promotes float32 to float64
+    return xr.merge([result[var].astype(ds[var].dtype) for var in ds.data_vars])
 
 
 def gridarea_cdo(ds):
