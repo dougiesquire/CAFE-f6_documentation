@@ -56,7 +56,119 @@ def composite_function(function_dict):
     return composite(*funcs)
 
 
-def calculate_ohc300(temp, depth_dim="depth", var_name="temp"):
+def get_lon_lat_box(ds, box, lon_dim="lon", lat_dim="lat"):
+    """
+    Return a region specified by a range of longitudes and latitudes.
+
+    Assumes data are on a regular grid.
+
+    Parameters
+    ----------
+    ds : xarray Dataset or DataArray
+        The data to subset
+    box : iterable
+        Iterable with the following elements in this order:
+        [lon_lower, lon_upper, lat_lower, lat_upper]
+    lon_dim : str, optional
+        The name of the longitude dimension
+    lat_dim : str, optional
+        The name of the latitude dimension
+    """
+    return ds.sel({lon_dim: slice(box[0], box[1]), lat_dim: slice(box[2], box[3])})
+
+
+def get_lon_lat_average(ds, box, lon_dim="lon", lat_dim="lat"):
+    """
+    Return the average over a region specified by a range of longitudes and latitudes.
+
+    Assumes data are on a regular grid.
+
+    Parameters
+    ----------
+    ds : xarray Dataset or DataArray
+        The data to subset and average. Assumed to include an "area" Variable
+    box : iterable
+        Iterable with the following elements in this order:
+        [lon_lower, lon_upper, lat_lower, lat_upper]
+    lon_dim : str, optional
+        The name of the longitude dimension
+    lat_dim : str, optional
+        The name of the latitude dimension
+    """
+    return (
+        get_lon_lat_box(ds, box, lon_dim, lat_dim)
+        .weighted(ds["area"])
+        .mean([lon_dim, lat_dim])
+    )
+
+
+def calculate_amv(sst_anom, sst_name="sst"):
+    """
+    Calculate the Atlantic Multi-decadal Variability (AMV)--also known as the Atlantic
+    Multi-decadal Oscillation (AMO)--according to Trenberth and Shea (2006). The AMV
+    is calculated as the spatial average of SST anomalies over the North Atlantic
+    (Equator–60∘ N and 80–0∘ W) minus the spatial average of SST anomalies averaged from
+    60∘ S to 60∘ N.
+
+    Longitude is assumed to range from 0-360 deg.
+
+    Note typically the SST anomalies are smoothed in time using a 10-year moving average
+    (Goldenberg et al., 2001; Enfield et al., 2001), a low-pass filter (Trenberth and Shea
+    2006) or a 4-year temporal average (Bilbao at al., 2021).
+
+    Parameters
+    ----------
+    sst_anom : xarray Dataset
+        Array of sst anomalies
+    sst_name : str, optional
+        The name of the sst variable in sst_anom
+    """
+
+    north_atlantic_box = [280, 360, 0, 60]
+    global_box = [0, 360, -60, 60]
+
+    amv = get_lon_lat_average(sst_anom, north_atlantic_box) - get_lon_lat_average(
+        sst_anom, global_box
+    )
+    amv = amv.rename({sst_name: "amv"})
+    amv["amv"].attrs = dict(
+        long_name="Atlantic multi-decadal variability", units="degC"
+    )
+    return amv
+
+
+def calculate_ipo(sst_anom, sst_name="sst"):
+    """
+    Calculate the tripolar pacific index for the Interdecadal Pacific Oscillation (IPO)
+    following Henley et al (2015). The IPO is calculated as the average of SST anomalies
+    over the central equatorial Pacific (region 2: 10∘ S–10∘ N, 170∘ E–90∘ W) minus the
+    average of the SST anomalies in the northwestern (region 1: 25–45∘ N, 140∘ E–145∘ W)
+    and southwestern Pacific (region 3: 50–15∘ S, 150∘ E–160∘ W).
+
+    Longitude is assumed to range from 0-360 deg.
+
+    Note typically the IPO index is smoothed in time using a 13-year Chebyshev low-pass
+    filter (Henley et al., 2015) or by first applying a 4-year temporal average to the
+    sst anomalies (Bilbao at al., 2021).
+    """
+    region_1 = [140, 215, 25, 45]
+    region_2 = [170, 270, -10, 10]
+    region_3 = [150, 200, -50, -15]
+
+    ipo = (
+        get_lon_lat_average(sst_anom, region_2)
+        - (
+            get_lon_lat_average(sst_anom, region_1)
+            + get_lon_lat_average(sst_anom, region_3)
+        )
+        / 2
+    )
+    ipo = ipo.rename({sst_name: "ipo"})
+    ipo["ipo"].attrs = dict(long_name="Interdecadal Pacific Oscillation", units="degC")
+    return ipo
+
+
+def calculate_ohc300(temp, depth_dim="depth", temp_name="temp"):
     """
     Calculate the ocean heat content above 300m
 
@@ -68,7 +180,7 @@ def calculate_ohc300(temp, depth_dim="depth", var_name="temp"):
         Array of temperature values in Kelvin
     depth_dim : str, optional
         The name of the depth dimension
-    var_name : str, optional
+    temp_name : str, optional
         The name of the temperature variable in temp
     """
     rho0 = 1035.000  # [kg/m^3]
@@ -81,7 +193,7 @@ def calculate_ohc300(temp, depth_dim="depth", var_name="temp"):
     temp300 = temp300.assign_coords({depth_dim: temp300[depth_dim].astype(np.float32)})
 
     ohc300 = rho0 * Cp0 * temp300.integrate(depth_dim)
-    ohc300 = ohc300.where(ocean_mask).rename({var_name: "ohc300"})
+    ohc300 = ohc300.where(ocean_mask).rename({temp_name: "ohc300"})
     ohc300["ohc300"].attrs = dict(
         long_name="Ocean heat content above 300m", units="J/m^2"
     )

@@ -27,430 +27,449 @@
 name: "CAFE60v1"
 
 prepare:
-  annual-Jan.full.t_ref:
-    uses:
-      atmos_isobaric_month:
-        - "t_ref"
-    apply:
-      truncate_latitudes:
-      add_CAFE_grid_info:
-      rename:
-        names: 
-          ensemble: "member"
-      round_to_start_of_month:
-        dim: "time"
-      coarsen:
-        window_size: 12
-        start_points: ["1960-01-01"]
-        dim: "time"
-      rechunk:
-        chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
+#   annual-Jan.full.t_ref:
+#     uses:
+#       atmos_isobaric_month:
+#         - "t_ref"
+#     apply:
+#       truncate_latitudes:
+#       add_CAFE_grid_info:
+#       rename:
+#         names: 
+#           ensemble: "member"
+#       round_to_start_of_month:
+#         dim: "time"
+#       coarsen:
+#         window_size: 12
+#         start_points: ["1960-01-01"]
+#         dim: "time"
+#       rechunk:
+#         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
         
-  annual-Nov.full.t_ref:
-    uses:
-      atmos_isobaric_month:
-        - "t_ref"
-    apply:
-      truncate_latitudes:
-      add_CAFE_grid_info:
-      rename:
-        names: 
-          ensemble: "member"
-      round_to_start_of_month:
-        dim: "time"
-      coarsen:
-        window_size: 12
-        start_points: ["1960-11-01"]
-        dim: "time"
-      rechunk:
-        chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
+#   annual-Nov.full.t_ref:
+#     uses:
+#       atmos_isobaric_month:
+#         - "t_ref"
+#     apply:
+#       truncate_latitudes:
+#       add_CAFE_grid_info:
+#       rename:
+#         names: 
+#           ensemble: "member"
+#       round_to_start_of_month:
+#         dim: "time"
+#       coarsen:
+#         window_size: 12
+#         start_points: ["1960-11-01"]
+#         dim: "time"
+#       rechunk:
+#         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
         
-  annual-Jan.full.precip:
-    uses:
-      atmos_isobaric_month:
-        - "precip"
-    apply:
-      truncate_latitudes:
-      add_CAFE_grid_info:
-      rename:
-        names:
-          ensemble: "member"
-      convert:
-        conversion:
-          precip:
-            multiply_by: 86400
-      round_to_start_of_month:
-        dim: "time"
-      normalise_by_days_in_month:
-      coarsen:
-        window_size: 12
-        start_points: ["1960-01-01"]
-        dim: "time"
-      rechunk:
-        chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
+#   annual-Jan.full.precip:
+#     uses:
+#       atmos_isobaric_month:
+#         - "precip"
+#     apply:
+#       truncate_latitudes:
+#       add_CAFE_grid_info:
+#       rename:
+#         names:
+#           ensemble: "member"
+#       convert:
+#         conversion:
+#           precip:
+#             multiply_by: 86400
+#       round_to_start_of_month:
+#         dim: "time"
+#       normalise_by_days_in_month:
+#       coarsen:
+#         window_size: 12
+#         start_points: ["1960-01-01"]
+#         dim: "time"
+#       rechunk:
+#         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
         
-  annual-Nov.full.precip:
-    uses:
-      atmos_isobaric_month:
-        - "precip"
-    apply:
-      truncate_latitudes:
-      add_CAFE_grid_info:
-      rename:
-        names:
-          ensemble: "member"
-      convert:
-        conversion:
-          precip:
-            multiply_by: 86400
-      round_to_start_of_month:
-        dim: "time"
-      normalise_by_days_in_month:
-      coarsen:
-        window_size: 12
-        start_points: ["1960-11-01"]
-        dim: "time"
-      rechunk:
-        chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
+#   annual-Nov.full.precip:
+#     uses:
+#       atmos_isobaric_month:
+#         - "precip"
+#     apply:
+#       truncate_latitudes:
+#       add_CAFE_grid_info:
+#       rename:
+#         names:
+#           ensemble: "member"
+#       convert:
+#         conversion:
+#           precip:
+#             multiply_by: 86400
+#       round_to_start_of_month:
+#         dim: "time"
+#       normalise_by_days_in_month:
+#       coarsen:
+#         window_size: 12
+#         start_points: ["1960-11-01"]
+#         dim: "time"
+#       rechunk:
+#         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
       
-  annual-Jan.full.sst:
-    uses:
-      ocean_month:
-        - "sst"
-    apply:
-      add_CAFE_grid_info:
-      rename:
-        names:
-          ensemble: "member"
-          xt_ocean: "x"
-          yt_ocean: "y"
-          geolon_t: "lon"
-          geolat_t: "lat"
-      round_to_start_of_month:
-        dim: "time"
-      coarsen:
-        window_size: 12
-        start_points: ["1960-01-01"]
-        dim: "time"
-      interpolate_to_grid_from_file:
-        file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
-      rechunk:
-        chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
+#   annual-Jan.full.sst:
+#     uses:
+#       ocean_month:
+#         - "sst"
+#     apply:
+#       add_CAFE_grid_info:
+#       rename:
+#         names:
+#           ensemble: "member"
+#           xt_ocean: "x"
+#           yt_ocean: "y"
+#           geolon_t: "lon"
+#           geolat_t: "lat"
+#       round_to_start_of_month:
+#         dim: "time"
+#       coarsen:
+#         window_size: 12
+#         start_points: ["1960-01-01"]
+#         dim: "time"
+#       interpolate_to_grid_from_file:
+#         file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
+#       rechunk:
+#         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
         
-  annual-Nov.full.sst:
-    uses:
-      ocean_month:
-        - "sst"
-    apply:
-      add_CAFE_grid_info:
-      rename:
-        names:
-          ensemble: "member"
-          xt_ocean: "x"
-          yt_ocean: "y"
-          geolon_t: "lon"
-          geolat_t: "lat"
-      round_to_start_of_month:
-        dim: "time"
-      coarsen:
-        window_size: 12
-        start_points: ["1960-11-01"]
-        dim: "time"
-      interpolate_to_grid_from_file:
-        file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
-      rechunk:
-        chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
+#   annual-Nov.full.sst:
+#     uses:
+#       ocean_month:
+#         - "sst"
+#     apply:
+#       add_CAFE_grid_info:
+#       rename:
+#         names:
+#           ensemble: "member"
+#           xt_ocean: "x"
+#           yt_ocean: "y"
+#           geolon_t: "lon"
+#           geolat_t: "lat"
+#       round_to_start_of_month:
+#         dim: "time"
+#       coarsen:
+#         window_size: 12
+#         start_points: ["1960-11-01"]
+#         dim: "time"
+#       interpolate_to_grid_from_file:
+#         file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
+#       rechunk:
+#         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
         
-  annual-Jan.full.ohc300:
-    uses:
-      ocean_month:
-        - "temp"
-    apply:
-      add_CAFE_grid_info:
-      rename:
-        names:
-          ensemble: "member"
-          xt_ocean: "x"
-          yt_ocean: "y"
-          st_ocean: "depth"
-          geolon_t: "lon"
-          geolat_t: "lat"
-      convert:
-        conversion:
-          temp:
-            add: 273.15
-      round_to_start_of_month:
-        dim: "time"
-      coarsen:
-        window_size: 12
-        start_points: ["1960-01-01"]
-        dim: "time"
-      calculate_ohc300:
-      interpolate_to_grid_from_file:
-        file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
-      rechunk:
-        chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
+#   annual-Jan.full.ohc300:
+#     uses:
+#       ocean_month:
+#         - "temp"
+#     apply:
+#       add_CAFE_grid_info:
+#       rename:
+#         names:
+#           ensemble: "member"
+#           xt_ocean: "x"
+#           yt_ocean: "y"
+#           st_ocean: "depth"
+#           geolon_t: "lon"
+#           geolat_t: "lat"
+#       convert:
+#         conversion:
+#           temp:
+#             add: 273.15
+#       round_to_start_of_month:
+#         dim: "time"
+#       coarsen:
+#         window_size: 12
+#         start_points: ["1960-01-01"]
+#         dim: "time"
+#       calculate_ohc300:
+#       interpolate_to_grid_from_file:
+#         file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
+#       rechunk:
+#         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
         
-  annual-Nov.full.ohc300:
-    uses:
-      ocean_month:
-        - "temp"
-    apply:
-      add_CAFE_grid_info:
-      rename:
-        names:
-          ensemble: "member"
-          xt_ocean: "x"
-          yt_ocean: "y"
-          st_ocean: "depth"
-          geolon_t: "lon"
-          geolat_t: "lat"
-      convert:
-        conversion:
-          temp:
-            add: 273.15
-      round_to_start_of_month:
-        dim: "time"
-      coarsen:
-        window_size: 12
-        start_points: ["1960-11-01"]
-        dim: "time"
-      calculate_ohc300:
-      interpolate_to_grid_from_file:
-        file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
-      rechunk:
-        chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
+#   annual-Nov.full.ohc300:
+#     uses:
+#       ocean_month:
+#         - "temp"
+#     apply:
+#       add_CAFE_grid_info:
+#       rename:
+#         names:
+#           ensemble: "member"
+#           xt_ocean: "x"
+#           yt_ocean: "y"
+#           st_ocean: "depth"
+#           geolon_t: "lon"
+#           geolat_t: "lat"
+#       convert:
+#         conversion:
+#           temp:
+#             add: 273.15
+#       round_to_start_of_month:
+#         dim: "time"
+#       coarsen:
+#         window_size: 12
+#         start_points: ["1960-11-01"]
+#         dim: "time"
+#       calculate_ohc300:
+#       interpolate_to_grid_from_file:
+#         file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
+#       rechunk:
+#         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
 
-  # Prepare anomalies from prepared datasets
-  annual-Jan.anom_1991-2020.t_ref:
-    uses:
-      prepared:
-        - "annual-Jan.full.t_ref"
-    apply:
-      anomalise:
-        clim_period: ["1991-01-01", "2020-12-31"]
-      rechunk:
-        chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
+#   # Prepare anomalies from prepared datasets
+#   annual-Jan.anom_1991-2020.t_ref:
+#     uses:
+#       prepared:
+#         - "annual-Jan.full.t_ref"
+#     apply:
+#       anomalise:
+#         clim_period: ["1991-01-01", "2020-12-31"]
+#       rechunk:
+#         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
     
-  annual-Nov.anom_1991-2020.t_ref:
-    uses:
-      prepared:
-        - "annual-Nov.full.t_ref"
-    apply:
-      anomalise:
-        clim_period: ["1991-01-01", "2020-12-31"]
-      rechunk:
-        chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
+#   annual-Nov.anom_1991-2020.t_ref:
+#     uses:
+#       prepared:
+#         - "annual-Nov.full.t_ref"
+#     apply:
+#       anomalise:
+#         clim_period: ["1991-01-01", "2020-12-31"]
+#       rechunk:
+#         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
         
-  annual.anom_1991-2020.t_ref:
-    uses:
-      prepared:
-        - "annual-Jan.anom_1991-2020.t_ref"
-        - "annual-Nov.anom_1991-2020.t_ref"
-    apply:
-      rechunk:
-        chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
+#   annual.anom_1991-2020.t_ref:
+#     uses:
+#       prepared:
+#         - "annual-Jan.anom_1991-2020.t_ref"
+#         - "annual-Nov.anom_1991-2020.t_ref"
+#     apply:
+#       rechunk:
+#         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
         
-  annual-Jan.anom_1991-2020.precip:
-    uses:
-      prepared:
-        - "annual-Jan.full.precip"
-    apply:
-      anomalise:
-        clim_period: ["1991-01-01", "2020-12-31"]
-      rechunk:
-        chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
+#   annual-Jan.anom_1991-2020.precip:
+#     uses:
+#       prepared:
+#         - "annual-Jan.full.precip"
+#     apply:
+#       anomalise:
+#         clim_period: ["1991-01-01", "2020-12-31"]
+#       rechunk:
+#         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
         
-  annual-Nov.anom_1991-2020.precip:
-    uses:
-      prepared:
-        - "annual-Nov.full.precip"
-    apply:
-      anomalise:
-        clim_period: ["1991-01-01", "2020-12-31"]
-      rechunk:
-        chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
+#   annual-Nov.anom_1991-2020.precip:
+#     uses:
+#       prepared:
+#         - "annual-Nov.full.precip"
+#     apply:
+#       anomalise:
+#         clim_period: ["1991-01-01", "2020-12-31"]
+#       rechunk:
+#         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
         
-  annual.anom_1991-2020.precip:
-    uses:
-      prepared:
-        - "annual-Jan.anom_1991-2020.precip"
-        - "annual-Nov.anom_1991-2020.precip"
-    apply:
-      rechunk:
-        chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
+#   annual.anom_1991-2020.precip:
+#     uses:
+#       prepared:
+#         - "annual-Jan.anom_1991-2020.precip"
+#         - "annual-Nov.anom_1991-2020.precip"
+#     apply:
+#       rechunk:
+#         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
         
-  annual-Jan.anom_1991-2020.sst:
-    uses:
-      prepared:
-        - "annual-Jan.full.sst"
-    apply:
-      anomalise:
-        clim_period: ["1991-01-01", "2020-12-31"]
-      rechunk:
-        chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
+#   annual-Jan.anom_1991-2020.sst:
+#     uses:
+#       prepared:
+#         - "annual-Jan.full.sst"
+#     apply:
+#       anomalise:
+#         clim_period: ["1991-01-01", "2020-12-31"]
+#       rechunk:
+#         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
         
-  annual-Nov.anom_1991-2020.sst:
-    uses:
-      prepared:
-        - "annual-Nov.full.sst"
-    apply:
-      anomalise:
-        clim_period: ["1991-01-01", "2020-12-31"]
-      rechunk:
-        chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
+#   annual-Nov.anom_1991-2020.sst:
+#     uses:
+#       prepared:
+#         - "annual-Nov.full.sst"
+#     apply:
+#       anomalise:
+#         clim_period: ["1991-01-01", "2020-12-31"]
+#       rechunk:
+#         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
         
-  annual.anom_1991-2020.sst:
-    uses:
-      prepared:
-        - "annual-Jan.anom_1991-2020.sst"
-        - "annual-Nov.anom_1991-2020.sst"
-    apply:
-      rechunk:
-        chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
+#   annual.anom_1991-2020.sst:
+#     uses:
+#       prepared:
+#         - "annual-Jan.anom_1991-2020.sst"
+#         - "annual-Nov.anom_1991-2020.sst"
+#     apply:
+#       rechunk:
+#         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
         
-  annual-Jan.anom_1991-2020.ohc300:
-    uses:
-      prepared:
-        - "annual-Jan.full.ohc300"
-    apply:
-      anomalise:
-        clim_period: ["1991-01-01", "2020-12-31"]
-      rechunk:
-        chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
+#   annual-Jan.anom_1991-2020.ohc300:
+#     uses:
+#       prepared:
+#         - "annual-Jan.full.ohc300"
+#     apply:
+#       anomalise:
+#         clim_period: ["1991-01-01", "2020-12-31"]
+#       rechunk:
+#         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
         
-  annual-Nov.anom_1991-2020.ohc300:
-    uses:
-      prepared:
-        - "annual-Nov.full.ohc300"
-    apply:
-      anomalise:
-        clim_period: ["1991-01-01", "2020-12-31"]
-      rechunk:
-        chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
+#   annual-Nov.anom_1991-2020.ohc300:
+#     uses:
+#       prepared:
+#         - "annual-Nov.full.ohc300"
+#     apply:
+#       anomalise:
+#         clim_period: ["1991-01-01", "2020-12-31"]
+#       rechunk:
+#         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
         
-  annual.anom_1991-2020.ohc300:
-    uses:
-      prepared:
-        - "annual-Jan.anom_1991-2020.ohc300"
-        - "annual-Nov.anom_1991-2020.ohc300"
-    apply:
-      rechunk:
-        chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
+#   annual.anom_1991-2020.ohc300:
+#     uses:
+#       prepared:
+#         - "annual-Jan.anom_1991-2020.ohc300"
+#         - "annual-Nov.anom_1991-2020.ohc300"
+#     apply:
+#       rechunk:
+#         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
         
-  # Prepare 4-year-averages from prepared datasets
-  4-year-Jan.anom_1991-2020.t_ref:
-    uses:
-      prepared:
-        - "annual-Jan.anom_1991-2020.t_ref"
-    apply:
-      rolling_mean:
-        window_size: 4
-      rechunk:
-        chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
+#   # Prepare 4-year-averages from prepared datasets
+#   4-year-Jan.anom_1991-2020.t_ref:
+#     uses:
+#       prepared:
+#         - "annual-Jan.anom_1991-2020.t_ref"
+#     apply:
+#       rolling_mean:
+#         window_size: 4
+#       rechunk:
+#         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
         
-  4-year-Nov.anom_1991-2020.t_ref:
-    uses:
-      prepared:
-        - "annual-Nov.anom_1991-2020.t_ref"
-    apply:
-      rolling_mean:
-        window_size: 4
-      rechunk:
-        chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
+#   4-year-Nov.anom_1991-2020.t_ref:
+#     uses:
+#       prepared:
+#         - "annual-Nov.anom_1991-2020.t_ref"
+#     apply:
+#       rolling_mean:
+#         window_size: 4
+#       rechunk:
+#         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
         
-  4-year.anom_1991-2020.t_ref:
-    uses:
-      prepared:
-        - "4-year-Jan.anom_1991-2020.t_ref"
-        - "4-year-Nov.anom_1991-2020.t_ref"
-    apply:
-      rechunk:
-        chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
+#   4-year.anom_1991-2020.t_ref:
+#     uses:
+#       prepared:
+#         - "4-year-Jan.anom_1991-2020.t_ref"
+#         - "4-year-Nov.anom_1991-2020.t_ref"
+#     apply:
+#       rechunk:
+#         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
         
-  4-year-Jan.anom_1991-2020.precip:
-    uses:
-      prepared:
-        - "annual-Jan.anom_1991-2020.precip"
-    apply:
-      rolling_mean:
-        window_size: 4
-      rechunk:
-        chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
+#   4-year-Jan.anom_1991-2020.precip:
+#     uses:
+#       prepared:
+#         - "annual-Jan.anom_1991-2020.precip"
+#     apply:
+#       rolling_mean:
+#         window_size: 4
+#       rechunk:
+#         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
         
-  4-year-Nov.anom_1991-2020.precip:
-    uses:
-      prepared:
-        - "annual-Nov.anom_1991-2020.precip"
-    apply:
-      rolling_mean:
-        window_size: 4
-      rechunk:
-        chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
+#   4-year-Nov.anom_1991-2020.precip:
+#     uses:
+#       prepared:
+#         - "annual-Nov.anom_1991-2020.precip"
+#     apply:
+#       rolling_mean:
+#         window_size: 4
+#       rechunk:
+#         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
         
-  4-year.anom_1991-2020.precip:
-    uses:
-      prepared:
-        - "4-year-Jan.anom_1991-2020.precip"
-        - "4-year-Nov.anom_1991-2020.precip"
-    apply:
-      rechunk:
-        chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
+#   4-year.anom_1991-2020.precip:
+#     uses:
+#       prepared:
+#         - "4-year-Jan.anom_1991-2020.precip"
+#         - "4-year-Nov.anom_1991-2020.precip"
+#     apply:
+#       rechunk:
+#         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
         
-  4-year-Jan.anom_1991-2020.sst:
-    uses:
-      prepared:
-        - "annual-Jan.anom_1991-2020.sst"
-    apply:
-      rolling_mean:
-        window_size: 4
-      rechunk:
-        chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
+#   4-year-Jan.anom_1991-2020.sst:
+#     uses:
+#       prepared:
+#         - "annual-Jan.anom_1991-2020.sst"
+#     apply:
+#       rolling_mean:
+#         window_size: 4
+#       rechunk:
+#         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
         
-  4-year-Nov.anom_1991-2020.sst:
-    uses:
-      prepared:
-        - "annual-Nov.anom_1991-2020.sst"
-    apply:
-      rolling_mean:
-        window_size: 4
-      rechunk:
-        chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
+#   4-year-Nov.anom_1991-2020.sst:
+#     uses:
+#       prepared:
+#         - "annual-Nov.anom_1991-2020.sst"
+#     apply:
+#       rolling_mean:
+#         window_size: 4
+#       rechunk:
+#         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
         
-  4-year.anom_1991-2020.sst:
-    uses:
-      prepared:
-        - "4-year-Jan.anom_1991-2020.sst"
-        - "4-year-Nov.anom_1991-2020.sst"
-    apply:
-      rechunk:
-        chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
+#   4-year.anom_1991-2020.sst:
+#     uses:
+#       prepared:
+#         - "4-year-Jan.anom_1991-2020.sst"
+#         - "4-year-Nov.anom_1991-2020.sst"
+#     apply:
+#       rechunk:
+#         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
         
-  4-year-Jan.anom_1991-2020.ohc300:
-    uses:
-      prepared:
-        - "annual-Jan.anom_1991-2020.ohc300"
-    apply:
-      rolling_mean:
-        window_size: 4
-      rechunk:
-        chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
+#   4-year-Jan.anom_1991-2020.ohc300:
+#     uses:
+#       prepared:
+#         - "annual-Jan.anom_1991-2020.ohc300"
+#     apply:
+#       rolling_mean:
+#         window_size: 4
+#       rechunk:
+#         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
         
-  4-year-Nov.anom_1991-2020.ohc300:
-    uses:
-      prepared:
-        - "annual-Nov.anom_1991-2020.ohc300"
-    apply:
-      rolling_mean:
-        window_size: 4
-      rechunk:
-        chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
+#   4-year-Nov.anom_1991-2020.ohc300:
+#     uses:
+#       prepared:
+#         - "annual-Nov.anom_1991-2020.ohc300"
+#     apply:
+#       rolling_mean:
+#         window_size: 4
+#       rechunk:
+#         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
         
-  4-year.anom_1991-2020.ohc300:
+#   4-year.anom_1991-2020.ohc300:
+#     uses:
+#       prepared:
+#         - "4-year-Jan.anom_1991-2020.ohc300"
+#         - "4-year-Nov.anom_1991-2020.ohc300"
+#     apply:
+#       rechunk:
+#         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
+
+  # Prepare AMV, IPO from prepared datasets
+  4-year.anom_1991-2020.amv:
     uses:
       prepared:
-        - "4-year-Jan.anom_1991-2020.ohc300"
-        - "4-year-Nov.anom_1991-2020.ohc300"
+        - "4-year.anom_1991-2020.sst"
     apply:
+      calculate_amv:
       rechunk:
-        chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
+        chunks: {"time": -1, "member": -1}
+        
+  4-year.anom_1991-2020.ipo:
+    uses:
+      prepared:
+        - "4-year.anom_1991-2020.sst"
+    apply:
+      calculate_ipo:
+      rechunk:
+        chunks: {"time": -1, "member": -1}
