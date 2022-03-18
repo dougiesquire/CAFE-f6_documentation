@@ -56,36 +56,11 @@ def composite_function(function_dict):
     return composite(*funcs)
 
 
-def get_lon_lat_box(ds, box, lon_dim="lon", lat_dim="lat"):
-    """
-    Return a region specified by a range of longitudes and latitudes.
-
-    Parameters
-    ----------
-    ds : xarray Dataset or DataArray
-        The data to subset
-    box : iterable
-        Iterable with the following elements in this order:
-        [lon_lower, lon_upper, lat_lower, lat_upper]
-    lon_dim : str, optional
-        The name of the longitude dimension
-    lat_dim : str, optional
-        The name of the latitude dimension
-    """
-    lon_inds = np.where(
-        np.logical_and(ds[lon_dim].values >= box[0], ds[lon_dim].values <= box[1])
-    )[0]
-    lat_inds = np.where(
-        np.logical_and(ds[lat_dim].values >= box[2], ds[lat_dim].values <= box[3])
-    )[0]
-    return ds.isel({lon_dim: lon_inds, lat_dim: lat_inds})
-
-
 def get_lon_lat_average(ds, box, lon_dim="lon", lat_dim="lat"):
     """
     Return the average over a region specified by a range of longitudes and latitudes.
 
-    Assumes data are on a regular grid.
+    Longitude is assumed to range from 0-360 deg.
 
     Parameters
     ----------
@@ -99,19 +74,41 @@ def get_lon_lat_average(ds, box, lon_dim="lon", lat_dim="lat"):
     lat_dim : str, optional
         The name of the latitude dimension
     """
-    return (
-        get_lon_lat_box(ds, box, lon_dim, lat_dim)
-        .weighted(ds["area"])
-        .mean([lon_dim, lat_dim])
-    )
+
+    def _get_lat_lon_region(ds, box, lat_dim, lon_dim):
+        region = ((ds[lat_dim] >= box[2]) & (ds[lat_dim] <= box[3])) & (
+            (ds[lon_dim] >= box[0]) & (ds[lon_dim] <= box[1])
+        )
+        return ds.where(region)
+
+    # Force longitudues to range from 0-360
+    ds = ds.assign_coords({lon_dim: (ds[lon_dim] + 360) % 360})
+
+    if (lat_dim in ds.dims) and (lon_dim in ds.dims):
+        average_dims = [lat_dim, lon_dim]
+        # lat and lon are dims so use isel to get regions
+        lon_inds = np.where(
+            np.logical_and(ds[lon_dim].values >= box[0], ds[lon_dim].values <= box[1])
+        )[0]
+        lat_inds = np.where(
+            np.logical_and(ds[lat_dim].values >= box[2], ds[lat_dim].values <= box[3])
+        )[0]
+        region = ds.isel({lon_dim: lon_inds, lat_dim: lat_inds})
+    else:
+        if (lat_dim in ds.dims) and (lon_dim not in ds.dims):
+            average_dims = set([lat_dim, *ds[lon_dim].dims])
+        elif (lat_dim not in ds.dims) and (lon_dim in ds.dims):
+            average_dims = set([*ds[lat_dim].dims, lon_dim])
+        else:
+            average_dims = set([*ds[lat_dim].dims, *ds[lon_dim].dims])
+        region = _get_lat_lon_region(ds, box, lat_dim, lon_dim)
+    return region.weighted(ds["area"].fillna(0)).mean(dim=average_dims)
 
 
 def calculate_nino34(sst_anom, sst_name="sst"):
     """
     Calculate the NINO3.4 index. The NINO3.4 index is calculated as the spatial average
     of SST anomalies over the tropical Pacific region (5∘S–5∘N and 170–120∘ W).
-
-    Longitude is assumed to range from 0-360 deg.
 
     Parameters
     ----------
@@ -134,8 +131,6 @@ def calculate_dmi(sst_anom, sst_name="sst"):
     calculated as the difference between the spatial averages of SST anomalies over
     two regions of the tropical Indian Ocean: (10°S-10°N and 50°E-70°E) and
     (10°S-0°S and 90°E-110°E).
-
-    Longitude is assumed to range from 0-360 deg.
 
     Parameters
     ----------
@@ -162,8 +157,6 @@ def calculate_amv(sst_anom, sst_name="sst"):
     is calculated as the spatial average of SST anomalies over the North Atlantic
     (Equator–60∘ N and 80–0∘ W) minus the spatial average of SST anomalies averaged from
     60∘ S to 60∘ N.
-
-    Longitude is assumed to range from 0-360 deg.
 
     Note typically the SST anomalies are smoothed in time using a 10-year moving average
     (Goldenberg et al., 2001; Enfield et al., 2001), a low-pass filter (Trenberth and Shea
@@ -197,8 +190,6 @@ def calculate_ipo(sst_anom, sst_name="sst"):
     over the central equatorial Pacific (region 2: 10∘ S–10∘ N, 170∘ E–90∘ W) minus the
     average of the SST anomalies in the northwestern (region 1: 25–45∘ N, 140∘ E–145∘ W)
     and southwestern Pacific (region 3: 50–15∘ S, 150∘ E–160∘ W).
-
-    Longitude is assumed to range from 0-360 deg.
 
     Note typically the IPO index is smoothed in time using a 13-year Chebyshev low-pass
     filter (Henley et al., 2015) or by first applying a 4-year temporal average to the
@@ -305,7 +296,7 @@ def add_CAFE_grid_info(ds):
 def add_CanESM5_area(ds):
     """
     Add CanESM5 area variable to a dataset
-    
+
     Parameters
     ----------
     ds : xarray Dataset
@@ -722,6 +713,25 @@ def gridarea_cdo(ds):
     os.remove(f"./{infile}.nc")
     os.remove(f"./{outfile}.nc")
     return weights["cell_area"]
+
+
+def add_area_using_cdo_gridarea(ds, lon_dim="lon", lat_dim="lat"):
+    """
+    Add a area coordinate to the provided dataset containing the cell areas
+    estimated by cdo's gridarea function
+
+    Parameters
+    ----------
+    ds : xarray Dataset
+        The data to use to estimate the cell areas
+    lon_dim : str, optional
+        The name of the longitude dimension on ds
+    lat_dim : str, optional
+        The name of the latitude dimension on ds
+    """
+    other_dims = set(ds.dims) - set([lon_dim, lat_dim])
+    area = gridarea_cdo(ds.isel({d: 0 for d in other_dims}))
+    return ds.assign_coords({"area": area})
 
 
 def max_chunk_size_MB(ds):

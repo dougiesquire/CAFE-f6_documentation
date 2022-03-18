@@ -27,45 +27,66 @@
 name: "EC_Earth3"
 
 prepare:
-  annual.full.t_ref:
-    uses:
-      Amon:
-        - "tas"
-    apply:
-      rename:
-        names: 
-          tas: "t_ref"
-          areacella: "area"
-      coarsen:
-        window_size: 12
-        dim: "lead"
-      interpolate_to_grid_from_file:
-        file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
-      rechunk:
-        chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+#   annual.full.t_ref:
+#     uses:
+#       Amon:
+#         - "tas"
+#     apply:
+#       rename:
+#         names: 
+#           tas: "t_ref"
+#           areacella: "area"
+#       coarsen:
+#         window_size: 12
+#         dim: "lead"
+#       interpolate_to_grid_from_file:
+#         file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
+#       rechunk:
+#         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
         
-  annual.full.precip:
-    uses:
-      Amon:
-        - "pr"
-    apply:
-      rename:
-        names: 
-          pr: "precip"
-          areacella: "area"
-      convert:
-        conversion:
-          precip:
-            multiply_by: 86400
-      coarsen:
-        window_size: 12
-        dim: "lead"
-      interpolate_to_grid_from_file:
-        file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
-      rechunk:
-        chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+#   annual.full.precip:
+#     uses:
+#       Amon:
+#         - "pr"
+#     apply:
+#       rename:
+#         names: 
+#           pr: "precip"
+#           areacella: "area"
+#       convert:
+#         conversion:
+#           precip:
+#             multiply_by: 86400
+#       coarsen:
+#         window_size: 12
+#         dim: "lead"
+#       interpolate_to_grid_from_file:
+#         file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
+#       rechunk:
+#         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
       
-  annual.full.sst:
+#   annual.full.sst:
+#     uses:
+#       Omon:
+#         - "tos"
+#     apply:
+#       rename:
+#         names: 
+#           tos: "sst"
+#           areacello: "area"
+#           i: "x"
+#           j: "y"
+#           longitude: "lon"
+#           latitude: "lat"
+#       coarsen:
+#         window_size: 12
+#         dim: "lead"
+#       interpolate_to_grid_from_file:
+#         file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
+#       rechunk:
+#         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+        
+  3-month.full.nino34:
     uses:
       Omon:
         - "tos"
@@ -74,13 +95,36 @@ prepare:
         names: 
           tos: "sst"
           areacello: "area"
+          i: "x"
+          j: "y"
+          longitude: "lon"
+          latitude: "lat"
       coarsen:
-        window_size: 12
+        window_size: 3
         dim: "lead"
-      interpolate_to_grid_from_file:
-        file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
+      calculate_nino34:
       rechunk:
-        chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+        chunks: {"init": -1, "lead": 1, "member": -1}
+        
+  3-month.full.dmi:
+    uses:
+      Omon:
+        - "tos"
+    apply:
+      rename:
+        names: 
+          tos: "sst"
+          areacello: "area"
+          i: "x"
+          j: "y"
+          longitude: "lon"
+          latitude: "lat"
+      coarsen:
+        window_size: 3
+        dim: "lead"
+      calculate_dmi:
+      rechunk:
+        chunks: {"init": -1, "lead": 1, "member": -1}
         
 #   # Prepare anomalies from prepared datasets
 #   annual.anom_1985-2014.t_ref:
@@ -112,6 +156,26 @@ prepare:
 #         clim_period: ["1985-01-01", "2014-12-31"]
 #       rechunk:
 #         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+        
+  3-month.anom_1985-2014.nino34:
+    uses:
+      prepared:
+        - "3-month.full.nino34"
+    apply:
+      anomalise:
+        clim_period: ["1985-01-01", "2014-12-31"]
+      rechunk:
+        chunks: {"init": -1, "lead": 1, "member": -1}
+        
+  3-month.anom_1985-2014.dmi:
+    uses:
+      prepared:
+        - "3-month.full.dmi"
+    apply:
+      anomalise:
+        clim_period: ["1985-01-01", "2014-12-31"]
+      rechunk:
+        chunks: {"init": -1, "lead": 1, "member": -1}
         
 #   # Prepare 4-year-averages from prepared datasets
 #   4-year.anom_1985-2014.t_ref:

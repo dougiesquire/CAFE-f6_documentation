@@ -66,7 +66,6 @@ endif
 ## Prepare datasets for analysis
 data:
 	mkdir -p $(TEST_DATA_DIR)/reference_exectuable
-	mkdir -p $(RAW_DATA_DIR)/gridinfo
 	ln -sfn /home/599/ds0092/src/mom_cafe/exec/gadi.nci.org.au/CM2M/fms_CM2M.x $(TEST_DATA_DIR)/reference_exectuable/fms_CM2M.x
 	ln -sfn /g/data/xv83/dcfp/CAFE60v1/ $(RAW_DATA_DIR)/CAFE60v1
 	ln -sfn /g/data/xv83/users/ds0092/data/CAFE/historical/WIP/c5-d60-pX-ctrl-19601101/ZARR/ $(RAW_DATA_DIR)/CAFE_ctrl
@@ -81,10 +80,6 @@ data:
 	ln -sfn /g/data/xv83/reanalyses/HadISST/ $(RAW_DATA_DIR)/HadISST
 	ln -sfn /g/data/xv83/reanalyses/JRA55/ $(RAW_DATA_DIR)/JRA55	
 	ln -sfn /g/data/ua8/Precipitation/GPCP/mon/v2-3/ $(RAW_DATA_DIR)/GPCP
-	ln -sfn /g/data/xv83/users/ds0092/active_projects/Squire_2022_CAFE-f6/data/raw/EC-Earth3_hist/r1i1p1f1/Ofx/areacello/gn/v20200918/areacello_Ofx_EC-Earth3_historical_r1i1p1f1_gn.nc $(RAW_DATA_DIR)/gridinfo/EC-Earth3_ocean_are.nc
-	ln -sfn /g/data/xv83/users/ds0092/active_projects/Squire_2022_CAFE-f6/data/raw/EC-Earth3_hist/r1i1p1f1/fx/areacella/gr/v20210324/areacella_fx_EC-Earth3_historical_r1i1p1f1_gr.nc $(RAW_DATA_DIR)/gridinfo/EC-Earth3_atmos_area.nc
-	ln -sfn /g/data/xv83/users/ds0092/active_projects/Squire_2022_CAFE-f6/data/raw/CanESM5_hist/r1i1p2f1/Ofx/areacello/gn/v20190429/areacello_Ofx_CanESM5_historical_r1i1p2f1_gn.nc $(RAW_DATA_DIR)/gridinfo/CanESM5_ocean_area.nc
-	ln -sfn /g/data/xv83/users/ds0092/active_projects/Squire_2022_CAFE-f6/data/raw/CanESM5_hist/r1i1p2f1/fx/areacella/gn/v20190429/areacella_fx_CanESM5_historical_r1i1p2f1_gn.nc $(RAW_DATA_DIR)/gridinfo/CanESM5_atmos_area.nc
 	$(foreach c,$(config),$(file >data_$(c),$(HEADER)) $(file >>data_$(c),python src/prepare_data.py $(c)))
 	for c in $(config); do qsub data_$${c}; rm data_$${c}; done
 

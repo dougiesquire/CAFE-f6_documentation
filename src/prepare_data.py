@@ -201,7 +201,7 @@ class _open:
             ds0 = utils.convert_time_to_lead(ds0, time_freq="months")
             ds0 = utils.round_to_start_of_month(ds0, dim="init")
             d0 = ds0[v]
-            
+
             delayed = []
             for y in years:
                 delayed.append(
@@ -264,8 +264,8 @@ class _open:
         else:
             raise ValueError(f"I don't know where to find the area for realm: {realm}")
         area = xr.open_dataset(file, chunks={})
-        ds = xr.merge([ds, area])
-        
+        ds = ds.assign_coords(area)
+
         if preprocess is not None:
             return preprocess(ds)
         else:
@@ -276,10 +276,7 @@ class _open:
         """Open EC-Earth3 dcppA-hindcast variables from specified monthly realm"""
         model = "EC-Earth3"
         variant_id = "i1p1f1"
-        if realm == "Amon":
-            grid = "gr"
-        else:
-            grid = "gn"
+        grid = "gn" if realm == "Omon" else "gr"
         years = range(1960, 2018 + 1)
         members = range(1, 10 + 1)
         version = "v2020121?"
@@ -300,7 +297,7 @@ class _open:
         else:
             raise ValueError(f"I don't know where to find the area for realm: {realm}")
         area = xr.open_dataset(file, chunks={})
-        
+
         # Lat and lon values are not exactly the same to numerical precision for ds and area
         for c in area.coords:
             if c in ds.coords:
@@ -309,9 +306,9 @@ class _open:
                 else:
                     npt.assert_allclose(ds[c].values, area[c].values, rtol=1e-06)
                     area = area.assign_coords({c: ds[c]})
-        
-        ds = xr.merge([ds, area])
-        
+
+        ds = ds.assign_coords(area)
+
         if preprocess is not None:
             return preprocess(ds)
         else:
@@ -414,6 +411,22 @@ class _open:
         ds = _open._cmip6_historical(
             model, variant_id, grid, variables, realm, members, version
         )
+        ### Add cell area
+        if realm == "Omon":
+            file = (
+                f"{DATA_DIR}/{model}_hist/r1{variant_id}/Ofx/areacello/{grid}/{version}/"
+                f"areacello_Ofx_{model}_historical_r1{variant_id}_{grid}.nc"
+            )
+        elif realm == "Amon":
+            file = (
+                f"{DATA_DIR}/{model}_hist/r1{variant_id}/fx/areacella/{grid}/{version}/"
+                f"areacella_fx_{model}_historical_r1{variant_id}_{grid}.nc"
+            )
+        else:
+            raise ValueError(f"I don't know where to find the area for realm: {realm}")
+        area = xr.open_dataset(file, chunks={})
+        ds = ds.assign_coords(area)
+
         if preprocess is not None:
             return preprocess(ds)
         else:
@@ -434,6 +447,32 @@ class _open:
         ds = _open._cmip6_historical(
             model, variant_id, grid, variables, realm, members, version
         )
+        ### Add cell area
+        if realm == "Omon":
+            file = (
+                f"{DATA_DIR}/{model}_hist/r1{variant_id}/Ofx/areacello/{grid}/v20200918/"
+                f"areacello_Ofx_{model}_historical_r1{variant_id}_{grid}.nc"
+            )
+        elif realm == "Amon":
+            file = (
+                f"{DATA_DIR}/{model}_hist/r1{variant_id}/fx/areacella/{grid}/v20210324/"
+                f"areacella_fx_{model}_historical_r1{variant_id}_{grid}.nc"
+            )
+        else:
+            raise ValueError(f"I don't know where to find the area for realm: {realm}")
+        area = xr.open_dataset(file, chunks={})
+
+        # Lat and lon values are not exactly the same to numerical precision for ds and area
+        for c in area.coords:
+            if c in ds.coords:
+                if np.array_equiv(ds[c].values, area[c].values):
+                    pass
+                else:
+                    npt.assert_allclose(ds[c].values, area[c].values, rtol=1e-06)
+                    area = area.assign_coords({c: ds[c]})
+
+        ds = ds.assign_coords(area)
+
         if preprocess is not None:
             return preprocess(ds)
         else:

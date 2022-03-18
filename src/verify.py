@@ -2,6 +2,8 @@ import sys
 import tempfile
 from pathlib import Path
 
+import warnings
+
 import math
 
 from collections import OrderedDict
@@ -45,7 +47,7 @@ def acc(hcst, obsv):
         The observed timeseries
     """
 
-    return xs.pearson_r(hcst.mean("member"), obsv, dim="time")
+    return xs.pearson_r(hcst.mean("member"), obsv, dim="time", skipna=True)
 
 
 def acc_initialised(hcst, obsv, hist):
@@ -62,9 +64,11 @@ def acc_initialised(hcst, obsv, hist):
     hist : xarray Dataset
         The historical simulation timeseries
     """
-    rXY = xs.pearson_r(hcst.mean("member"), obsv, dim="time")
-    rXU = xs.pearson_r(obsv, hist.mean("member"), dim="time")
-    rYU = xs.pearson_r(hcst.mean("member"), hist.mean("member"), dim="time")
+    rXY = xs.pearson_r(hcst.mean("member"), obsv, dim="time", skipna=True)
+    rXU = xs.pearson_r(obsv, hist.mean("member"), dim="time", skipna=True)
+    rYU = xs.pearson_r(
+        hcst.mean("member"), hist.mean("member"), dim="time", skipna=True
+    )
     θ = xr.where(rYU < 0, 0, 1, keep_attrs=False)
     ru = θ * rXU * rYU
     return rXY - ru
@@ -86,8 +90,8 @@ def msss(hcst, obsv, ref):
     """
     if "member" in ref.dims:
         ref = ref.mean("member")
-    num = xs.mse(hcst.mean("member"), obsv, dim="time")
-    den = xs.mse(ref, obsv, dim="time")
+    num = xs.mse(hcst.mean("member"), obsv, dim="time", skipna=True)
+    den = xs.mse(ref, obsv, dim="time", skipna=True)
     return 1 - num / den
 
 
@@ -446,8 +450,11 @@ def calculate_metric(
     alpha=0.05,
 ):
     """
-    Calculate a skill metric for a set of hindcasts over a common set of
-    verification dates at all leads
+    Calculate a skill metric for a set of hindcasts. This function will attempt
+    to validate over a common set of verification times at all leads and will
+    return a warning if this is not possible. If a common set of verification
+    times cannot be found, this function will verify over all available times
+    at each lead
 
     Parameters
     ----------
@@ -476,7 +483,7 @@ def calculate_metric(
         --is less than or equal to alpha.)
     """
 
-    def _common_set_of_verif_times(hcst, *refs):
+    def _common_set_of_verif_times(hcst, *refs, search_dim="lead"):
         """
         Get the common set of verification times available at all leads
 
@@ -487,11 +494,9 @@ def calculate_metric(
             valid_times = xr.align(*[ref.time for ref in refs])[0].values
         else:
             valid_times = refs[0].time.values
-        times = [i for i in valid_times if (i == hcst_times).any("init").all("lead")]
-        if not times:
-            raise ValueError(
-                "I could not find a common set of verification dates at all leads"
-            )
+        times = [
+            i for i in valid_times if (i == hcst_times).any("init").all(search_dim)
+        ]
         return times
 
     def _reindex_hindcast(hindcast):
@@ -508,33 +513,68 @@ def calculate_metric(
     logger = logging.getLogger(__name__)
 
     verif_times = _common_set_of_verif_times(hindcast, *references)
-    references_verif_times = [ref.sel(time=verif_times) for ref in references]
-    hindcast_verif_times = _reindex_hindcast(hindcast).sel(time=verif_times)
-
-    verif_period = (
-        verif_times[0].strftime("%Y-%m-%d"),
-        verif_times[-1].strftime("%Y-%m-%d"),
-    )
-    logger.info(f"Performing verification over {verif_period[0]} - {verif_period[-1]}")
 
     # Look for metric and transform in this module
     metric = getattr(sys.modules[__name__], metric)
     if transform is not None:
         transform = getattr(sys.modules[__name__], transform)
 
-    skill = _calculate_metric_from_timeseries(
-        hindcast_verif_times,
-        *references_verif_times,
-        metric=metric,
-        metric_kwargs=metric_kwargs,
-        significance=significance,
-        transform=transform,
-        alpha=alpha,
-    )
+    if len(verif_times) > 0:
+        references_verif_times = [ref.sel(time=verif_times) for ref in references]
+        hindcast_verif_times = _reindex_hindcast(hindcast).sel(time=verif_times)
+        logger.info(
+            (
+                f"Performing verification over {verif_period[0]} - {verif_period[-1]} "
+                f"using a common set of verification times at all lead"
+            )
+        )
+        skill = _calculate_metric_from_timeseries(
+            hindcast_verif_times,
+            *references_verif_times,
+            metric=metric,
+            metric_kwargs=metric_kwargs,
+            significance=significance,
+            transform=transform,
+            alpha=alpha,
+        )
 
-    # Add verification period to attributes
-    skill.attrs["verification period start"] = f"{verif_period[0]}"
-    skill.attrs["verification period end"] = f"{verif_period[-1]}"
+        verif_period = f"{verif_times[0].strftime('%Y-%m-%d')} - {verif_times[-1].strftime('%Y-%m-%d')}"
+        skill = skill.assign_coords({"verification_period": verif_period})
+
+    else:
+        # If can't find common verif times, validate over all available times at each lead
+        warnings.warn(
+            (
+                "A common set of verification times at all leads could not be found. "
+                "Verifying over all available times at each lead"
+            )
+        )
+        skill = []
+        for lead in hindcast.lead:
+            hindcast_at_lead = hindcast.sel(lead=lead).dropna(dim="init", how="all")
+            verif_times = _common_set_of_verif_times(
+                hindcast_at_lead, *references, search_dim=None
+            )
+            hindcast_verif_times = hindcast_at_lead.swap_dims({"init": "time"}).sel(
+                time=verif_times
+            )
+            references_verif_times = [ref.sel(time=verif_times) for ref in references]
+            skill_at_lead = _calculate_metric_from_timeseries(
+                hindcast_verif_times,
+                *references_verif_times,
+                metric=metric,
+                metric_kwargs=metric_kwargs,
+                significance=significance,
+                transform=transform,
+                alpha=alpha,
+            )
+
+            verif_period = f"{verif_times[0].strftime('%Y-%m-%d')} - {verif_times[-1].strftime('%Y-%m-%d')}"
+            skill_at_lead = skill_at_lead.assign_coords(
+                {"verification_period": verif_period}
+            )
+            skill.append(skill_at_lead)
+        skill = xr.concat(skill, dim="lead")
 
     return skill
 
