@@ -6,6 +6,9 @@ from pathlib import Path
 import logging
 import argparse
 
+import numpy as np
+import numpy.testing as npt
+
 import dask
 from dask.distributed import Client
 
@@ -198,7 +201,7 @@ class _open:
             ds0 = utils.convert_time_to_lead(ds0, time_freq="months")
             ds0 = utils.round_to_start_of_month(ds0, dim="init")
             d0 = ds0[v]
-
+            
             delayed = []
             for y in years:
                 delayed.append(
@@ -247,6 +250,22 @@ class _open:
         ds = _open._cmip6_dcppA_hindcast(
             model, variant_id, grid, variables, realm, years, members, version
         )
+        ### Add cell area
+        if realm == "Omon":
+            file = (
+                f"{DATA_DIR}/{model}_hist/r1{variant_id}/Ofx/areacello/{grid}/{version}/"
+                f"areacello_Ofx_{model}_historical_r1{variant_id}_{grid}.nc"
+            )
+        elif realm == "Amon":
+            file = (
+                f"{DATA_DIR}/{model}_hist/r1{variant_id}/fx/areacella/{grid}/{version}/"
+                f"areacella_fx_{model}_historical_r1{variant_id}_{grid}.nc"
+            )
+        else:
+            raise ValueError(f"I don't know where to find the area for realm: {realm}")
+        area = xr.open_dataset(file, chunks={})
+        ds = xr.merge([ds, area])
+        
         if preprocess is not None:
             return preprocess(ds)
         else:
@@ -257,13 +276,42 @@ class _open:
         """Open EC-Earth3 dcppA-hindcast variables from specified monthly realm"""
         model = "EC-Earth3"
         variant_id = "i1p1f1"
-        grid = "gr"
+        if realm == "Amon":
+            grid = "gr"
+        else:
+            grid = "gn"
         years = range(1960, 2018 + 1)
         members = range(1, 10 + 1)
         version = "v2020121?"
         ds = _open._cmip6_dcppA_hindcast(
             model, variant_id, grid, variables, realm, years, members, version
         )
+        ### Add cell area
+        if realm == "Omon":
+            file = (
+                f"{DATA_DIR}/{model}_hist/r1{variant_id}/Ofx/areacello/{grid}/v20200918/"
+                f"areacello_Ofx_{model}_historical_r1{variant_id}_{grid}.nc"
+            )
+        elif realm == "Amon":
+            file = (
+                f"{DATA_DIR}/{model}_hist/r1{variant_id}/fx/areacella/{grid}/v20210324/"
+                f"areacella_fx_{model}_historical_r1{variant_id}_{grid}.nc"
+            )
+        else:
+            raise ValueError(f"I don't know where to find the area for realm: {realm}")
+        area = xr.open_dataset(file, chunks={})
+        
+        # Lat and lon values are not exactly the same to numerical precision for ds and area
+        for c in area.coords:
+            if c in ds.coords:
+                if np.array_equiv(ds[c].values, area[c].values):
+                    pass
+                else:
+                    npt.assert_allclose(ds[c].values, area[c].values, rtol=1e-06)
+                    area = area.assign_coords({c: ds[c]})
+        
+        ds = xr.merge([ds, area])
+        
         if preprocess is not None:
             return preprocess(ds)
         else:

@@ -60,8 +60,6 @@ def get_lon_lat_box(ds, box, lon_dim="lon", lat_dim="lat"):
     """
     Return a region specified by a range of longitudes and latitudes.
 
-    Assumes data are on a regular grid.
-
     Parameters
     ----------
     ds : xarray Dataset or DataArray
@@ -74,7 +72,13 @@ def get_lon_lat_box(ds, box, lon_dim="lon", lat_dim="lat"):
     lat_dim : str, optional
         The name of the latitude dimension
     """
-    return ds.sel({lon_dim: slice(box[0], box[1]), lat_dim: slice(box[2], box[3])})
+    lon_inds = np.where(
+        np.logical_and(ds[lon_dim].values >= box[0], ds[lon_dim].values <= box[1])
+    )[0]
+    lat_inds = np.where(
+        np.logical_and(ds[lat_dim].values >= box[2], ds[lat_dim].values <= box[3])
+    )[0]
+    return ds.isel({lon_dim: lon_inds, lat_dim: lat_inds})
 
 
 def get_lon_lat_average(ds, box, lon_dim="lon", lat_dim="lat"):
@@ -102,6 +106,55 @@ def get_lon_lat_average(ds, box, lon_dim="lon", lat_dim="lat"):
     )
 
 
+def calculate_nino34(sst_anom, sst_name="sst"):
+    """
+    Calculate the NINO3.4 index. The NINO3.4 index is calculated as the spatial average
+    of SST anomalies over the tropical Pacific region (5∘S–5∘N and 170–120∘ W).
+
+    Longitude is assumed to range from 0-360 deg.
+
+    Parameters
+    ----------
+    sst_anom : xarray Dataset
+        Array of sst anomalies
+    sst_name : str, optional
+        The name of the sst variable in sst_anom
+    """
+
+    box = [190.0, 240.0, -5.0, 5.0]
+    nino34 = get_lon_lat_average(sst_anom, box)
+    nino34 = nino34.rename({sst_name: "nino34"})
+    nino34["nino34"].attrs = dict(long_name="ENSO Nino 3.4 Index", units="degC")
+    return nino34
+
+
+def calculate_dmi(sst_anom, sst_name="sst"):
+    """
+    Calculate the Dipole Mode Index (DMI) for the Indian Ocean Dipole. The DMI is
+    calculated as the difference between the spatial averages of SST anomalies over
+    two regions of the tropical Indian Ocean: (10°S-10°N and 50°E-70°E) and
+    (10°S-0°S and 90°E-110°E).
+
+    Longitude is assumed to range from 0-360 deg.
+
+    Parameters
+    ----------
+    sst_anom : xarray Dataset
+        Array of sst anomalies
+    sst_name : str, optional
+        The name of the sst variable in sst_anom
+    """
+    region_W = [50.0, 70.0, -10.0, 10.0]
+    region_E = [90.0, 110.0, -10.0, 0.0]
+
+    dmi = get_lon_lat_average(sst_anom, region_W) - get_lon_lat_average(
+        sst_anom, region_E
+    )
+    dmi = dmi.rename({sst_name: "dmi"})
+    dmi["dmi"].attrs = dict(long_name="IOD Dipole Mode Index", units="degC")
+    return dmi
+
+
 def calculate_amv(sst_anom, sst_name="sst"):
     """
     Calculate the Atlantic Multi-decadal Variability (AMV)--also known as the Atlantic
@@ -124,8 +177,8 @@ def calculate_amv(sst_anom, sst_name="sst"):
         The name of the sst variable in sst_anom
     """
 
-    north_atlantic_box = [280, 360, 0, 60]
-    global_box = [0, 360, -60, 60]
+    north_atlantic_box = [280.0, 360.0, 0.0, 60.0]
+    global_box = [0.0, 360.0, -60.0, 60.0]
 
     amv = get_lon_lat_average(sst_anom, north_atlantic_box) - get_lon_lat_average(
         sst_anom, global_box
@@ -151,9 +204,9 @@ def calculate_ipo(sst_anom, sst_name="sst"):
     filter (Henley et al., 2015) or by first applying a 4-year temporal average to the
     sst anomalies (Bilbao at al., 2021).
     """
-    region_1 = [140, 215, 25, 45]
-    region_2 = [170, 270, -10, 10]
-    region_3 = [150, 200, -50, -15]
+    region_1 = [140.0, 215.0, 25.0, 45.0]
+    region_2 = [170.0, 270.0, -10.0, 10.0]
+    region_3 = [150.0, 200.0, -50.0, -15.0]
 
     ipo = (
         get_lon_lat_average(sst_anom, region_2)
@@ -247,6 +300,17 @@ def add_CAFE_grid_info(ds):
         ds = ds.assign_coords(ocean_grid[ocean_u].coords)
 
     return ds
+
+
+def add_CanESM5_area(ds):
+    """
+    Add CanESM5 area variable to a dataset
+    
+    Parameters
+    ----------
+    ds : xarray Dataset
+        The dataset to add area to
+    """
 
 
 def normalise_by_days_in_month(ds):
