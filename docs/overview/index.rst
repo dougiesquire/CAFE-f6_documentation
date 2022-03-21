@@ -3,9 +3,6 @@ Project overview
 
 This project is still under active development. These pages include some details of how the project is currently set up.
 
-Contents
-========
-
 .. toctree::
    :maxdepth: 2
 
