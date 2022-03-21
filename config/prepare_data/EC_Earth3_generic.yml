@@ -1,0 +1,267 @@
+# Config file for specifying processing using src.prepare_data()
+# ==================================================================================
+
+# name: required
+#    The name of the dataset. Must match a method in src.prepare_data._open
+#
+# prepare: required
+#    List of unique identifiers for output variables to prepare and save. This will 
+#    be used to save the prepared output variable(s) as {name}.{identifier}.zarr. 
+#    Each identifier can include the following:
+#
+#    uses: required
+#        List of input variables required to compute the output variable(s). For 
+#        some datasets, this should be further broken into subkeys indicating the 
+#        realm for each list of variables (e.g. ocean_month). Alternatively, users 
+#        can provide the identifier of a previously prepared dataset by entering
+#        `prepared: <identifier>`.
+#    preprocess: optional
+#        Functions and kwargs from src.utils to be applied sequentially prior to 
+#        concatenation (for datasets comprised of multiple concatenated files) 
+#        and/or prior to merging input variables from multiple realms where more 
+#        than one are specified.
+#    apply: optional
+#        Functions and kwargs from src.utils to be applied sequentially to opened 
+#        (and concatenated/merge, where appropriate) dataset.
+
+name: "EC_Earth3"
+
+prepare:
+#   annual.full.t_ref:
+#     uses:
+#       Amon:
+#         - "tas"
+#     apply:
+#       rename:
+#         names: 
+#           tas: "t_ref"
+#           areacella: "area"
+#       coarsen:
+#         window_size: 12
+#         dim: "lead"
+#       interpolate_to_grid_from_file:
+#         file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
+#       rechunk:
+#         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+        
+#   annual.full.precip:
+#     uses:
+#       Amon:
+#         - "pr"
+#     apply:
+#       rename:
+#         names: 
+#           pr: "precip"
+#           areacella: "area"
+#       convert:
+#         conversion:
+#           precip:
+#             multiply_by: 86400
+#       coarsen:
+#         window_size: 12
+#         dim: "lead"
+#       interpolate_to_grid_from_file:
+#         file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
+#       rechunk:
+#         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+      
+#   annual.full.sst:
+#     uses:
+#       Omon:
+#         - "tos"
+#     apply:
+#       rename:
+#         names: 
+#           tos: "sst"
+#           areacello: "area"
+#           i: "x"
+#           j: "y"
+#           longitude: "lon"
+#           latitude: "lat"
+#       coarsen:
+#         window_size: 12
+#         dim: "lead"
+#       interpolate_to_grid_from_file:
+#         file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
+#       rechunk:
+#         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+        
+#   3-month.full.nino34:
+#     uses:
+#       Omon:
+#         - "tos"
+#     apply:
+#       rename:
+#         names: 
+#           tos: "sst"
+#           areacello: "area"
+#           i: "x"
+#           j: "y"
+#           longitude: "lon"
+#           latitude: "lat"
+#       coarsen:
+#         window_size: 3
+#         dim: "lead"
+#       calculate_nino34:
+#       rechunk:
+#         chunks: {"init": -1, "lead": 1, "member": -1}
+        
+#   3-month.full.dmi:
+#     uses:
+#       Omon:
+#         - "tos"
+#     apply:
+#       rename:
+#         names: 
+#           tos: "sst"
+#           areacello: "area"
+#           i: "x"
+#           j: "y"
+#           longitude: "lon"
+#           latitude: "lat"
+#       coarsen:
+#         window_size: 3
+#         dim: "lead"
+#       calculate_dmi:
+#       rechunk:
+#         chunks: {"init": -1, "lead": 1, "member": -1}
+        
+  3-month.anom_1985-2014.sam:
+    uses:
+      Amon:
+        - "psl"
+    apply:
+      rename:
+        names: 
+          psl: "slp"
+          areacella: "area"
+      coarsen:
+        window_size: 3
+        dim: "lead"
+      calculate_sam:
+        clim_period: ["1985-01-01", "2014-12-31"]
+        groupby_dim: "init"
+      rechunk:
+        chunks: {"init": -1, "lead": 1, "member": -1}
+        
+  3-month.anom_1985-2014.nao:
+    uses:
+      Amon:
+        - "psl"
+    apply:
+      rename:
+        names: 
+          psl: "slp"
+          areacella: "area"
+      coarsen:
+        window_size: 3
+        dim: "lead"
+      calculate_nao:
+        clim_period: ["1985-01-01", "2014-12-31"]
+        groupby_dim: "init"
+      rechunk:
+        chunks: {"init": -1, "lead": 1, "member": -1}
+        
+#   # Prepare anomalies from prepared datasets
+#   annual.anom_1985-2014.t_ref:
+#     uses:
+#       prepared:
+#         - "annual.full.t_ref"
+#     apply:
+#       anomalise:
+#         clim_period: ["1985-01-01", "2014-12-31"]
+#       rechunk:
+#         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+        
+#   annual.anom_1985-2014.precip:
+#     uses:
+#       prepared:
+#         - "annual.full.precip"
+#     apply:
+#       anomalise:
+#         clim_period: ["1985-01-01", "2014-12-31"]
+#       rechunk:
+#         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+        
+#   annual.anom_1985-2014.sst:
+#     uses:
+#       prepared:
+#         - "annual.full.sst"
+#     apply:
+#       anomalise:
+#         clim_period: ["1985-01-01", "2014-12-31"]
+#       rechunk:
+#         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+        
+  3-month.anom_1985-2014.nino34:
+    uses:
+      prepared:
+        - "3-month.full.nino34"
+    apply:
+      anomalise:
+        clim_period: ["1985-01-01", "2014-12-31"]
+      rechunk:
+        chunks: {"init": -1, "lead": 1, "member": -1}
+        
+  3-month.anom_1985-2014.dmi:
+    uses:
+      prepared:
+        - "3-month.full.dmi"
+    apply:
+      anomalise:
+        clim_period: ["1985-01-01", "2014-12-31"]
+      rechunk:
+        chunks: {"init": -1, "lead": 1, "member": -1}
+        
+#   # Prepare 4-year-averages from prepared datasets
+#   4-year.anom_1985-2014.t_ref:
+#     uses:
+#       prepared:
+#         - "annual.anom_1985-2014.t_ref"
+#     apply:
+#       rolling_mean:
+#         window_size: 4 
+#         dim: "lead"
+#       rechunk:
+#         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+        
+#   4-year.anom_1985-2014.precip:
+#     uses:
+#       prepared:
+#         - "annual.anom_1985-2014.precip"
+#     apply:
+#       rolling_mean:
+#         window_size: 4 
+#         dim: "lead"
+#       rechunk:
+#         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+        
+#   4-year.anom_1985-2014.sst:
+#     uses:
+#       prepared:
+#         - "annual.anom_1985-2014.sst"
+#     apply:
+#       rolling_mean:
+#         window_size: 4 
+#         dim: "lead"
+#       rechunk:
+#         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+
+#   # Prepare AMV, IPO from prepared datasets
+#   4-year.anom_1985-2014.amv:
+#     uses:
+#       prepared:
+#         - "4-year.anom_1985-2014.sst"
+#     apply:
+#       calculate_amv:
+#       rechunk:
+#         chunks: {"init": -1, "lead": 1, "member": -1}
+        
+#   4-year.anom_1985-2014.ipo:
+#     uses:
+#       prepared:
+#         - "4-year.anom_1985-2014.sst"
+#     apply:
+#       calculate_ipo:
+#       rechunk:
+#         chunks: {"init": -1, "lead": 1, "member": -1}
