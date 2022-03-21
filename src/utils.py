@@ -81,7 +81,7 @@ def get_lon_lat_average(ds, box, lon_dim="lon", lat_dim="lat"):
             lon_region = (ds[lon_dim] >= box[0]) | (ds[lon_dim] <= box[1])
         else:
             lon_region = (ds[lon_dim] >= box[0]) & (ds[lon_dim] <= box[1])
-        lat_region = (ds[lat_dim] >= box[2]) & (ds[lat_dim] <= box[3]) 
+        lat_region = (ds[lat_dim] >= box[2]) & (ds[lat_dim] <= box[3])
         region = lon_region & lat_region
         return ds.where(region)
 
@@ -95,7 +95,7 @@ def get_lon_lat_average(ds, box, lon_dim="lon", lat_dim="lat"):
             lon_logic_func = np.logical_or
         else:
             lon_logic_func = np.logical_and
-            
+
         lon_inds = np.where(
             lon_logic_func(ds[lon_dim].values >= box[0], ds[lon_dim].values <= box[1])
         )[0]
@@ -163,16 +163,16 @@ def calculate_sam(
     slp, clim_period, groupby_dim="time", slp_name="slp", lon_dim="lon", lat_dim="lat"
 ):
     """
-    Calculate the Southern Annular Mode index from monthly data as defined by Gong, D. 
-    and Wang, S., 1999. The SAM index is defined as the difference between the normalized 
+    Calculate the Southern Annular Mode index from monthly data as defined by Gong, D.
+    and Wang, S., 1999. The SAM index is defined as the difference between the normalized
     monthly zonal mean sea level pressure at 40∘S and 65∘S.
-    
+
     Parameters
     ----------
     slp : xarray Dataset
         Array of sea level pressures
     clim_period : iterable
-        Size 2 iterable containing strings indicating the start and end dates of the 
+        Size 2 iterable containing strings indicating the start and end dates of the
         climatological period used to normalise the SAM index
     groupby_dim : str
         The dimension to compute the normalisation over
@@ -428,17 +428,6 @@ def add_CAFE_grid_info(ds):
         ds = ds.assign_coords(ocean_grid[ocean_u].coords)
 
     return ds
-
-
-def add_CanESM5_area(ds):
-    """
-    Add CanESM5 area variable to a dataset
-
-    Parameters
-    ----------
-    ds : xarray Dataset
-        The dataset to add area to
-    """
 
 
 def normalise_by_days_in_month(ds):

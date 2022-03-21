@@ -12,7 +12,8 @@ NCI_PROJECT = xv83
 RAW_DATA_DIR = ./data/raw/
 TEST_DATA_DIR = ./data/testing/
 
-data_config = CAFE60v1.yml CAFEf5.yml CAFEf6.yml CAFE_hist.yml CanESM5_hist.yml CanESM5.yml EC_Earth3.yml EC_Earth3_hist.yml EN422.yml GPCP.yml HadISST.yml JRA55.yml
+data_config = CAFE60v1_generic.yml CAFEf5_generic.yml CAFEf6_generic.yml CAFE_hist_generic.yml CanESM5_hist_generic.yml CanESM5_generic.yml EC_Earth3_generic.yml EC_Earth3_hist_generic.yml EN422_generic.yml GPCP_generic.yml HadISST_generic.yml JRA55_generic.yml
+
 skill_config = CAFEf6_sst.yml CanESM5_sst.yml EC_Earth3_sst.yml CAFEf6_t_ref.yml CanESM5_t_ref.yml EC_Earth3_t_ref.yml CAFEf6_precip.yml CanESM5_precip.yml EC_Earth3_precip.yml CAFEf6_amv.yml CanESM5_amv.yml EC_Earth3_amv.yml CAFEf6_ipo.yml CanESM5_ipo.yml EC_Earth3_ipo.yml CAFEf6_nino34.yml CanESM5_nino34.yml EC_Earth3_nino34.yml CAFEf6_dmi.yml CanESM5_dmi.yml EC_Earth3_dmi.yml CAFEf6_sam.yml CAFEf6_nao.yml CAFEf6_ohc300.yml
 
 ifeq (,$(shell which conda))
@@ -80,6 +81,7 @@ data:
 	ln -sfn /g/data/xv83/reanalyses/HadISST/ $(RAW_DATA_DIR)/HadISST
 	ln -sfn /g/data/xv83/reanalyses/JRA55/ $(RAW_DATA_DIR)/JRA55	
 	ln -sfn /g/data/ua8/Precipitation/GPCP/mon/v2-3/ $(RAW_DATA_DIR)/GPCP
+	echo "Run ./shell/copy_AGCD_data.sh from CSIRO Petrichor to retrieve/update AGCD data"
 	$(foreach c,$(config),$(file >data_$(c),$(HEADER)) $(file >>data_$(c),python src/prepare_data.py $(c)))
 	for c in $(config); do qsub data_$${c}; rm data_$${c}; done
 
