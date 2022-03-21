@@ -98,47 +98,68 @@ prepare:
 #       rechunk:
 #         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
         
-  3-month.full.nino34:
-    uses:
-      Omon:
-        - "tos"
-    apply:
-      rename:
-        names: 
-          tos: "sst"
-          areacello: "area"
-          i: "x"
-          j: "y"
-          longitude: "lon"
-          latitude: "lat"
-      round_to_start_of_month:
-        dim: "time"
-      force_to_Julian_calendar:
-      calculate_nino34:
-      rolling_mean:
-        window_size: 3
-        start_points: ["1960-01-01"]
-        dim: "time"
-      rechunk:
-        chunks: {"time": -1, "member": -1}
+#   3-month.full.nino34:
+#     uses:
+#       Omon:
+#         - "tos"
+#     apply:
+#       rename:
+#         names: 
+#           tos: "sst"
+#           areacello: "area"
+#           i: "x"
+#           j: "y"
+#           longitude: "lon"
+#           latitude: "lat"
+#       round_to_start_of_month:
+#         dim: "time"
+#       force_to_Julian_calendar:
+#       calculate_nino34:
+#       rolling_mean:
+#         window_size: 3
+#         start_points: ["1960-01-01"]
+#         dim: "time"
+#       rechunk:
+#         chunks: {"time": -1, "member": -1}
         
-  3-month.full.dmi:
+#   3-month.full.dmi:
+#     uses:
+#       Omon:
+#         - "tos"
+#     apply:
+#       rename:
+#         names: 
+#           tos: "sst"
+#           areacello: "area"
+#           i: "x"
+#           j: "y"
+#           longitude: "lon"
+#           latitude: "lat"
+#       round_to_start_of_month:
+#         dim: "time"
+#       force_to_Julian_calendar:
+#       calculate_dmi:
+#       rolling_mean:
+#         window_size: 3
+#         start_points: ["1960-01-01"]
+#         dim: "time"
+#       rechunk:
+#         chunks: {"time": -1, "member": -1}
+        
+  3-month.anom_1985-2014.sam:
     uses:
-      Omon:
-        - "tos"
+      Amon:
+        - "psl"
     apply:
       rename:
         names: 
-          tos: "sst"
-          areacello: "area"
-          i: "x"
-          j: "y"
-          longitude: "lon"
-          latitude: "lat"
+          psl: "slp"
+          areacella: "area"
       round_to_start_of_month:
         dim: "time"
       force_to_Julian_calendar:
-      calculate_dmi:
+      calculate_sam:
+        clim_period: ["1985-01-01", "2014-12-31"]
       rolling_mean:
         window_size: 3
         start_points: ["1960-01-01"]
@@ -146,6 +167,27 @@ prepare:
       rechunk:
         chunks: {"time": -1, "member": -1}
 
+  3-month.anom_1985-2014.nao:
+    uses:
+      Amon:
+        - "psl"
+    apply:
+      rename:
+        names: 
+          psl: "slp"
+          areacella: "area"
+      round_to_start_of_month:
+        dim: "time"
+      force_to_Julian_calendar:
+      calculate_nao:
+        clim_period: ["1985-01-01", "2014-12-31"]
+      rolling_mean:
+        window_size: 3
+        start_points: ["1960-01-01"]
+        dim: "time"
+      rechunk:
+        chunks: {"time": -1, "member": -1}
+        
   # Prepare anomalies from prepared datasets
 #   annual.anom_1985-2014.t_ref:
 #     uses:
@@ -177,25 +219,25 @@ prepare:
 #       rechunk:
 #         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
 
-  3-month.anom_1985-2014.nino34:
-    uses:
-      prepared:
-        - "3-month.full.nino34"
-    apply:
-      anomalise:
-        clim_period: ["1985-01-01", "2014-12-31"]
-      rechunk:
-        chunks: {"time": -1, "member": -1}
+#   3-month.anom_1985-2014.nino34:
+#     uses:
+#       prepared:
+#         - "3-month.full.nino34"
+#     apply:
+#       anomalise:
+#         clim_period: ["1985-01-01", "2014-12-31"]
+#       rechunk:
+#         chunks: {"time": -1, "member": -1}
         
-  3-month.anom_1985-2014.dmi:
-    uses:
-      prepared:
-        - "3-month.full.dmi"
-    apply:
-      anomalise:
-        clim_period: ["1985-01-01", "2014-12-31"]
-      rechunk:
-        chunks: {"time": -1, "member": -1}
+#   3-month.anom_1985-2014.dmi:
+#     uses:
+#       prepared:
+#         - "3-month.full.dmi"
+#     apply:
+#       anomalise:
+#         clim_period: ["1985-01-01", "2014-12-31"]
+#       rechunk:
+#         chunks: {"time": -1, "member": -1}
         
 #   # Prepare 4-year-averages from prepared datasets
 #   4-year.anom_1985-2014.t_ref:

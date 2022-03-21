@@ -76,9 +76,13 @@ def get_lon_lat_average(ds, box, lon_dim="lon", lat_dim="lat"):
     """
 
     def _get_lat_lon_region(ds, box, lat_dim, lon_dim):
-        region = ((ds[lat_dim] >= box[2]) & (ds[lat_dim] <= box[3])) & (
-            (ds[lon_dim] >= box[0]) & (ds[lon_dim] <= box[1])
-        )
+        # Allow for regions that cross 360 deg
+        if box[0] > box[1]:
+            lon_region = (ds[lon_dim] >= box[0]) | (ds[lon_dim] <= box[1])
+        else:
+            lon_region = (ds[lon_dim] >= box[0]) & (ds[lon_dim] <= box[1])
+        lat_region = (ds[lat_dim] >= box[2]) & (ds[lat_dim] <= box[3]) 
+        region = lon_region & lat_region
         return ds.where(region)
 
     # Force longitudues to range from 0-360
@@ -86,9 +90,14 @@ def get_lon_lat_average(ds, box, lon_dim="lon", lat_dim="lat"):
 
     if (lat_dim in ds.dims) and (lon_dim in ds.dims):
         average_dims = [lat_dim, lon_dim]
-        # lat and lon are dims so use isel to get regions
+        # Allow for regions that cross 360 deg
+        if box[0] > box[1]:
+            lon_logic_func = np.logical_or
+        else:
+            lon_logic_func = np.logical_and
+            
         lon_inds = np.where(
-            np.logical_and(ds[lon_dim].values >= box[0], ds[lon_dim].values <= box[1])
+            lon_logic_func(ds[lon_dim].values >= box[0], ds[lon_dim].values <= box[1])
         )[0]
         lat_inds = np.where(
             np.logical_and(ds[lat_dim].values >= box[2], ds[lat_dim].values <= box[3])
@@ -148,6 +157,134 @@ def calculate_dmi(sst_anom, sst_name="sst"):
     dmi = dmi.rename({sst_name: "dmi"})
     dmi["dmi"].attrs = dict(long_name="IOD Dipole Mode Index", units="degC")
     return dmi
+
+
+def calculate_sam(
+    slp, clim_period, groupby_dim="time", slp_name="slp", lon_dim="lon", lat_dim="lat"
+):
+    """
+    Calculate the Southern Annular Mode index from monthly data as defined by Gong, D. 
+    and Wang, S., 1999. The SAM index is defined as the difference between the normalized 
+    monthly zonal mean sea level pressure at 40∘S and 65∘S.
+    
+    Parameters
+    ----------
+    slp : xarray Dataset
+        Array of sea level pressures
+    clim_period : iterable
+        Size 2 iterable containing strings indicating the start and end dates of the 
+        climatological period used to normalise the SAM index
+    groupby_dim : str
+        The dimension to compute the normalisation over
+    slp_name : str, optional
+        The name of the slp variable in the input slp Dataset
+    lon_dim : str, optional
+        The name of the longitude dimension
+    lat_dim : str, optional
+        The name of the latitude dimension
+    """
+
+    def _normalise_sam(group, clim_group):
+        """Return the anomalies normalize by their standard deviation"""
+        this_month = group[groupby_dim].dt.month.values[0]
+        grouped_months, _ = zip(*list(clim_group))
+        clim_group_this_month = list(clim_group)[grouped_months.index(this_month)][1]
+        average_dim = [groupby_dim, "member"] if "member" in group.dims else groupby_dim
+        return (
+            group - clim_group_this_month.mean(average_dim)
+        ) / clim_group_this_month.std(average_dim)
+
+    slp_40 = slp.interp({lat_dim: -40}).mean(lon_dim)
+    slp_65 = slp.interp({lat_dim: -65}).mean(lon_dim)
+
+    slp_40_clim_period = mask_period(slp_40, clim_period)
+    slp_65_clim_period = mask_period(slp_65, clim_period)
+
+    slp_40_group = slp_40.groupby(groupby_dim + ".month")
+    slp_40_clim_period_group = slp_40_clim_period.groupby(groupby_dim + ".month")
+    slp_65_group = slp_65.groupby(groupby_dim + ".month")
+    slp_65_clim_period_group = slp_65_clim_period.groupby(groupby_dim + ".month")
+
+    norm_40 = slp_40_group.map(_normalise_sam, clim_group=slp_40_clim_period_group)
+    norm_65 = slp_65_group.map(_normalise_sam, clim_group=slp_65_clim_period_group)
+
+    sam = norm_40 - norm_65
+    sam = sam.rename({slp_name: "sam"})
+    sam["sam"].attrs = dict(long_name="Southern Annular Mode index", units="-")
+    return sam
+
+
+def calculate_nao(
+    slp, clim_period, groupby_dim="time", slp_name="slp", lon_dim="lon", lat_dim="lat"
+):
+    """
+    Calculate the Northern Atlantic Oscillation index from monthly data as defined by
+    Jianping, L. & Wang, J. X. L. (2003). The NAO index is defined as the difference
+    between the normalized monthly mean sea level pressure at 35∘N and 65∘N, averaged
+    over the zonal band spanning 80◦W–30◦E
+
+    Parameters
+    ----------
+    slp : xarray Dataset
+        Array of sea level pressures
+    clim_period : iterable
+        Size 2 iterable containing strings indicating the start and end dates of the
+        climatological period used to normalise the NAO index
+    groupby_dim : str
+        The dimension to compute the normalisation over
+    slp_name : str, optional
+        The name of the slp variable in the input slp Dataset
+    lon_dim : str, optional
+        The name of the longitude dimension
+    lat_dim : str, optional
+        The name of the latitude dimension
+    """
+
+    def _get_lon_band(ds, lon_range, lon_dim):
+        """Return the average over a longitudinal band"""
+        if lon_range[0] > lon_range[1]:
+            logic_func = np.logical_or
+        else:
+            logic_func = np.logical_and
+        lon_inds = np.where(
+            logic_func(
+                ds[lon_dim].values >= lon_range[0], ds[lon_dim].values <= lon_range[1]
+            )
+        )[0]
+        return ds.isel({lon_dim: lon_inds}).mean(lon_dim)
+
+    def _normalise_nao(group, clim_group):
+        """Return the anomalies normalize by their standard deviation"""
+        this_month = group[groupby_dim].dt.month.values[0]
+        grouped_months, _ = zip(*list(clim_group))
+        clim_group_this_month = list(clim_group)[grouped_months.index(this_month)][1]
+        average_dim = [groupby_dim, "member"] if "member" in group.dims else groupby_dim
+        return (
+            group - clim_group_this_month.mean(average_dim)
+        ) / clim_group_this_month.std(average_dim)
+
+    # Force longitudues to range from 0-360
+    slp = slp.assign_coords({lon_dim: (slp[lon_dim] + 360) % 360})
+
+    lon_band = [280, 30]
+    slp_35 = _get_lon_band(slp.interp({lat_dim: 35}), lon_band, lon_dim)
+    slp_65 = _get_lon_band(slp.interp({lat_dim: 65}), lon_band, lon_dim)
+
+    slp_35_clim_period = mask_period(slp_35, clim_period)
+    slp_65_clim_period = mask_period(slp_65, clim_period)
+
+    slp_35_group = slp_35.groupby(groupby_dim + ".month")
+    slp_35_clim_period_group = slp_35_clim_period.groupby(groupby_dim + ".month")
+    slp_65_group = slp_65.groupby(groupby_dim + ".month")
+    slp_65_clim_period_group = slp_65_clim_period.groupby(groupby_dim + ".month")
+
+    norm_35 = slp_35_group.map(_normalise_nao, clim_group=slp_35_clim_period_group)
+    norm_65 = slp_65_group.map(_normalise_nao, clim_group=slp_65_clim_period_group)
+
+    nao = norm_35 - norm_65
+    nao = nao.rename({slp_name: "nao"})
+    nao["nao"].attrs = dict(long_name="Northern Atlantic Oscillation index", units="-")
+    return nao
 
 
 def calculate_amv(sst_anom, sst_name="sst"):

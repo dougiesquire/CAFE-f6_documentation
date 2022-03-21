@@ -221,50 +221,90 @@ prepare:
 #       rechunk:
 #         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
         
-  3-month.full.nino34:
+#   3-month.full.nino34:
+#     uses:
+#       ocean_month:
+#         - "sst"
+#     apply:
+#       add_CAFE_grid_info:
+#       rename:
+#         names:
+#           area_t: "area"
+#           ensemble: "member"
+#           xt_ocean: "x"
+#           yt_ocean: "y"
+#           geolon_t: "lon"
+#           geolat_t: "lat"
+#       round_to_start_of_month:
+#         dim: "time"
+#       calculate_nino34:
+#       rolling_mean:
+#         window_size: 3
+#         start_points: ["1960-01-01"]
+#         dim: "time"
+#       rechunk:
+#         chunks: {"time": -1, "member": -1}
+        
+#   3-month.full.dmi:
+#     uses:
+#       ocean_month:
+#         - "sst"
+#     apply:
+#       add_CAFE_grid_info:
+#       rename:
+#         names:
+#           area_t: "area"
+#           ensemble: "member"
+#           xt_ocean: "x"
+#           yt_ocean: "y"
+#           geolon_t: "lon"
+#           geolat_t: "lat"
+#       round_to_start_of_month:
+#         dim: "time"
+#       calculate_dmi:
+#       rolling_mean:
+#         window_size: 3
+#         start_points: ["1960-01-01"]
+#         dim: "time"
+#       rechunk:
+#         chunks: {"time": -1, "member": -1}
+        
+  3-month.anom_1991-2020.sam:
     uses:
-      ocean_month:
-        - "sst"
+      atmos_isobaric_month:
+        - "slp"
     apply:
-      add_CAFE_grid_info:
+      truncate_latitudes:
       rename:
-        names:
-          area_t: "area"
+        names: 
           ensemble: "member"
-          xt_ocean: "x"
-          yt_ocean: "y"
-          geolon_t: "lon"
-          geolat_t: "lat"
       round_to_start_of_month:
         dim: "time"
-      calculate_nino34:
+      calculate_sam:
+        clim_period: ["1991-01-01", "2020-12-31"]
       rolling_mean:
         window_size: 3
-        start_points: ["1960-01-01"]
+        start_points: ["1960-11-01"]
         dim: "time"
       rechunk:
         chunks: {"time": -1, "member": -1}
         
-  3-month.full.dmi:
+  3-month.anom_1991-2020.nao:
     uses:
-      ocean_month:
-        - "sst"
+      atmos_isobaric_month:
+        - "slp"
     apply:
-      add_CAFE_grid_info:
+      truncate_latitudes:
       rename:
-        names:
-          area_t: "area"
+        names: 
           ensemble: "member"
-          xt_ocean: "x"
-          yt_ocean: "y"
-          geolon_t: "lon"
-          geolat_t: "lat"
       round_to_start_of_month:
         dim: "time"
-      calculate_dmi:
+      calculate_nao:
+        clim_period: ["1991-01-01", "2020-12-31"]
       rolling_mean:
         window_size: 3
-        start_points: ["1960-01-01"]
+        start_points: ["1960-11-01"]
         dim: "time"
       rechunk:
         chunks: {"time": -1, "member": -1}
@@ -386,25 +426,25 @@ prepare:
 #       rechunk:
 #         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
         
-  3-month.anom_1991-2020.nino34:
-    uses:
-      prepared:
-        - "3-month.full.nino34"
-    apply:
-      anomalise:
-        clim_period: ["1991-01-01", "2020-12-31"]
-      rechunk:
-        chunks: {"time": -1, "member": -1}
+#   3-month.anom_1991-2020.nino34:
+#     uses:
+#       prepared:
+#         - "3-month.full.nino34"
+#     apply:
+#       anomalise:
+#         clim_period: ["1991-01-01", "2020-12-31"]
+#       rechunk:
+#         chunks: {"time": -1, "member": -1}
         
-  3-month.anom_1991-2020.dmi:
-    uses:
-      prepared:
-        - "3-month.full.dmi"
-    apply:
-      anomalise:
-        clim_period: ["1991-01-01", "2020-12-31"]
-      rechunk:
-        chunks: {"time": -1, "member": -1}
+#   3-month.anom_1991-2020.dmi:
+#     uses:
+#       prepared:
+#         - "3-month.full.dmi"
+#     apply:
+#       anomalise:
+#         clim_period: ["1991-01-01", "2020-12-31"]
+#       rechunk:
+#         chunks: {"time": -1, "member": -1}
         
 #   # Prepare 4-year-averages from prepared datasets
 #   4-year-Jan.anom_1991-2020.t_ref:

@@ -130,10 +130,60 @@ prepare:
 #       rechunk:
 #         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
 
-  3-month.full.nino34:
+#   3-month.full.nino34:
+#     uses:
+#       ocean_month:
+#         - "sst"
+#     preprocess:
+#       convert_time_to_lead:
+#         time_freq: "months"
+#       coarsen:
+#         window_size: 3
+#         dim: "lead"
+#     apply:
+#       rename:
+#         names:
+#           area_t: "area"
+#           ensemble: "member"
+#           xt_ocean: "x"
+#           yt_ocean: "y"
+#           geolon_t: "lon"
+#           geolat_t: "lat" 
+#       calculate_nino34:
+#       round_to_start_of_month:
+#         dim: ["init", "time"]
+#       rechunk:
+#         chunks: {"init": -1, "lead": 1, "member": -1}
+        
+#   3-month.full.dmi:
+#     uses:
+#       ocean_month:
+#         - "sst"
+#     preprocess:
+#       convert_time_to_lead:
+#         time_freq: "months"
+#       coarsen:
+#         window_size: 3
+#         dim: "lead"
+#     apply:
+#       rename:
+#         names:
+#           area_t: "area"
+#           ensemble: "member"
+#           xt_ocean: "x"
+#           yt_ocean: "y"
+#           geolon_t: "lon"
+#           geolat_t: "lat"
+#       calculate_dmi:
+#       round_to_start_of_month:
+#         dim: ["init", "time"]
+#       rechunk:
+#         chunks: {"init": -1, "lead": 1, "member": -1}
+        
+  3-month.anom_1991-2020.sam:
     uses:
-      ocean_month:
-        - "sst"
+      atmos_isobaric_month:
+        - "slp"
     preprocess:
       convert_time_to_lead:
         time_freq: "months"
@@ -142,39 +192,34 @@ prepare:
         dim: "lead"
     apply:
       rename:
-        names:
-          area_t: "area"
+        names: 
           ensemble: "member"
-          xt_ocean: "x"
-          yt_ocean: "y"
-          geolon_t: "lon"
-          geolat_t: "lat" 
-      calculate_nino34:
+      calculate_sam:
+        clim_period: ["1991-01-01", "2020-12-31"]
+        groupby_dim: "init"
       round_to_start_of_month:
         dim: ["init", "time"]
       rechunk:
-        chunks: {"init": -1, "lead": 1, "member": -1}
-        
-  3-month.full.dmi:
+        chunks: {"init": -1, "lead": 1, "member": -1}        
+
+  3-month.anom_1991-2020.nao:
     uses:
-      ocean_month:
-        - "sst"
+      atmos_isobaric_month:
+        - "slp"
     preprocess:
       convert_time_to_lead:
         time_freq: "months"
+      truncate_latitudes:
       coarsen:
         window_size: 3
         dim: "lead"
     apply:
       rename:
-        names:
-          area_t: "area"
+        names: 
           ensemble: "member"
-          xt_ocean: "x"
-          yt_ocean: "y"
-          geolon_t: "lon"
-          geolat_t: "lat"
-      calculate_dmi:
+      calculate_nao:
+        clim_period: ["1991-01-01", "2020-12-31"]
+        groupby_dim: "init"
       round_to_start_of_month:
         dim: ["init", "time"]
       rechunk:
