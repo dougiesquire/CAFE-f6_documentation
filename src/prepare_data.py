@@ -70,13 +70,11 @@ class _open:
         files = sorted(glob.glob(f"{DATA_DIR}/EN.4.2.2/*.nc"))
         ds = xr.open_mfdataset(
             files,
+            preprocess=preprocess,
             parallel=True,
             use_cftime=True,
         )[variables]
-        if preprocess is not None:
-            return preprocess(ds)
-        else:
-            return ds
+        return ds
 
     @staticmethod
     def GPCP(variables, _, preprocess):
@@ -84,14 +82,31 @@ class _open:
         files = sorted(glob.glob(f"{DATA_DIR}/GPCP/????/*.nc"))
         ds = xr.open_mfdataset(
             files,
+            preprocess=preprocess,
             parallel=True,
             use_cftime=True,
         )[variables]
+        return ds
+
+    @staticmethod
+    def AGCD(variables, _, preprocess):
+        """Open AGCD variables"""
+        result = []
+        chunks = {"time": 8000, "lon": 40, "lat": 40} # Based on chunking on disk
+        for variable in variables:
+            hist_file = f"{DATA_DIR}/AGCD/HISTORICAL/climate/{variable}.nc"
+            recent_file = f"{DATA_DIR}/AGCD/climate/{variable}.nc"
+            ds_hist = xr.open_dataset(hist_file, use_cftime=True, chunks=chunks)
+            ds_recent = xr.open_dataset(recent_file, use_cftime=True, chunks=chunks)
+            ds_hist = ds_hist.sel(time=slice(None, ds_recent.isel(time=0).time.values))
+            ds_recent = ds_recent.isel(time=slice(1, None))
+            result.append(xr.concat((ds_hist, ds_recent), dim="time"))
+        ds = xr.merge(result).chunk(chunks)
         if preprocess is not None:
             return preprocess(ds)
         else:
             return ds
-
+    
     @staticmethod
     def CAFEf6(variables, realm, preprocess):
         """Open CAFE-f6 variables from specified realm applying preprocess prior to
