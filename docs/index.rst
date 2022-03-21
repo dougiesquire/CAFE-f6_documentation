@@ -16,7 +16,7 @@ Contents
 
    overview/index
    results/index
-   api
+   api/index
    
 Indices and tables
 ------------------
