@@ -1,6 +1,9 @@
 Calculating skill metrics
 =========================
 
+Configuration files
+-------------------
+
 Steps for calculating skill metrics from a set of prepared datasets are also specified in yaml files stored in ``config/verify``. Here is an example config yaml file for preparing the initialised component of the correlation skill of CAFE-f6 relative to HadISST:
 
 .. code-block:: yaml

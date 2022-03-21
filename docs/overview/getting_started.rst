@@ -45,7 +45,10 @@ The structure of this project is as follows:
    └── README.md
 
 
-Key steps for getting set up are handled using `make <https://www.gnu.org/software/make/>`_:
+Using `make <https://www.gnu.org/software/make/>`_
+--------------------------------------------------
+
+Key steps for getting set up are handled using `GNU make <https://www.gnu.org/software/make/>`_:
 
 #. ``make environment`` creates the python environment or updates it if it exists
 #. ``make data`` prepares the raw data (in ``data/raw``) for subsequent analysis. The prepared data are stored in ``data/processed``. See :ref:`Data preparation`
