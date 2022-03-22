@@ -20,18 +20,110 @@
 #        Arguments to be passed to src.verify.calculate_metric
 
 prepare:
-  CAFEf6.GPCP.annual.anom_1991-2020.precip_global.rXY_1991-2020:
-    hindcasts: CAFEf6.annual.anom_1991-2020.precip_global
-    observations: GPCP.annual.anom_1991-2020.precip_global
+  # Global metrics
+#   CAFEf6.GPCP.annual.anom_1991-2020.precip_global.rXY_1991-2020:
+#     hindcasts: CAFEf6.annual.anom_1991-2020.precip_global
+#     observations: GPCP.annual.anom_1991-2020.precip_global
+#     verify:
+#       metric: "acc"
+#       significance: True
+#       transform: "Fisher_z"
+#       alpha: 0.05
+      
+#   CAFEf6.GPCP.4-year.anom_1991-2020.precip_global.rXY_1991-2020:
+#     hindcasts: CAFEf6.4-year.anom_1991-2020.precip_global
+#     observations: GPCP.4-year.anom_1991-2020.precip_global
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1991-01-01", "2020-12-31"]
+#     verify:
+#       metric: "acc"
+#       significance: True
+#       transform: "Fisher_z"
+#       alpha: 0.05
+
+#   CAFEf6.GPCP.annual.anom_1991-2020.precip_global.ri_1991-2020:
+#     hindcasts: CAFEf6.annual.anom_1991-2020.precip_global
+#     observations: GPCP.annual.anom_1991-2020.precip_global
+#     simulations: CAFE_hist.annual.anom_1991-2020.precip_global
+#     verify:
+#       metric: "acc_initialised"
+#       significance: True
+#       transform: "Fisher_z"
+#       alpha: 0.05
+      
+#   CAFEf6.GPCP.4-year.anom_1991-2020.precip_global.ri_1991-2020:
+#     hindcasts: CAFEf6.4-year.anom_1991-2020.precip_global
+#     observations: GPCP.4-year.anom_1991-2020.precip_global
+#     simulations: CAFE_hist.4-year.anom_1991-2020.precip_global
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1991-01-01", "2020-12-31"]
+#     verify:
+#       metric: "acc_initialised"
+#       significance: True
+#       transform: "Fisher_z"
+#       alpha: 0.05
+      
+#   CAFEf6.GPCP.annual.anom_1991-2020.precip_global.MSSS_1991-2020:
+#     hindcasts: CAFEf6.annual.anom_1991-2020.precip_global
+#     observations: GPCP.annual.anom_1991-2020.precip_global
+#     simulations: CAFE_hist.annual.anom_1991-2020.precip_global
+#     verify:
+#       metric: "msss"
+#       significance: True
+#       alpha: 0.05
+      
+#   CAFEf6.GPCP.4-year.anom_1991-2020.precip_global.MSSS_1991-2020:
+#     hindcasts: CAFEf6.4-year.anom_1991-2020.precip_global
+#     observations: GPCP.4-year.anom_1991-2020.precip_global
+#     simulations: CAFE_hist.4-year.anom_1991-2020.precip_global
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1991-01-01", "2020-12-31"]
+#     verify:
+#       metric: "msss"
+#       significance: True
+#       alpha: 0.05
+      
+#   CAFEf6.GPCP.annual.anom_1991-2020.precip_global.CRPSS_1991-2020:
+#     hindcasts: CAFEf6.annual.anom_1991-2020.precip_global
+#     observations: GPCP.annual.anom_1991-2020.precip_global
+#     simulations: CAFE_hist.annual.anom_1991-2020.precip_global
+#     verify:
+#       metric: "crpss"
+#       significance: True
+#       alpha: 0.05
+      
+#   CAFEf6.GPCP.4-year.anom_1991-2020.precip_global.CRPSS_1991-2020:
+#     hindcasts: CAFEf6.4-year.anom_1991-2020.precip_global
+#     observations: GPCP.4-year.anom_1991-2020.precip_global
+#     simulations: CAFE_hist.4-year.anom_1991-2020.precip_global
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1991-01-01", "2020-12-31"]
+#     verify:
+#       metric: "crpss"
+#       significance: True
+#       alpha: 0.05
+      
+  # Australian NRM region metrics
+  CAFEf6.AGCD.annual.anom_1991-2020.precip_Aus_NRM.rXY_1991-2020:
+    hindcasts: CAFEf6.annual.anom_1991-2020.precip_Aus_NRM
+    observations: AGCD.annual.anom_1991-2020.precip_Aus_NRM
     verify:
       metric: "acc"
       significance: True
       transform: "Fisher_z"
       alpha: 0.05
       
-  CAFEf6.GPCP.4-year.anom_1991-2020.precip_global.rXY_1991-2020:
-    hindcasts: CAFEf6.4-year.anom_1991-2020.precip_global
-    observations: GPCP.4-year.anom_1991-2020.precip_global
+  CAFEf6.AGCD.4-year.anom_1991-2020.precip_Aus_NRM.rXY_1991-2020:
+    hindcasts: CAFEf6.4-year.anom_1991-2020.precip_Aus_NRM
+    observations: AGCD.4-year.anom_1991-2020.precip_Aus_NRM
     apply:
       all:
         mask_period:
@@ -42,20 +134,20 @@ prepare:
       transform: "Fisher_z"
       alpha: 0.05
 
-  CAFEf6.GPCP.annual.anom_1991-2020.precip_global.ri_1991-2020:
-    hindcasts: CAFEf6.annual.anom_1991-2020.precip_global
-    observations: GPCP.annual.anom_1991-2020.precip_global
-    simulations: CAFE_hist.annual.anom_1991-2020.precip_global
+  CAFEf6.AGCD.annual.anom_1991-2020.precip_Aus_NRM.ri_1991-2020:
+    hindcasts: CAFEf6.annual.anom_1991-2020.precip_Aus_NRM
+    observations: AGCD.annual.anom_1991-2020.precip_Aus_NRM
+    simulations: CAFE_hist.annual.anom_1991-2020.precip_Aus_NRM
     verify:
       metric: "acc_initialised"
       significance: True
       transform: "Fisher_z"
       alpha: 0.05
       
-  CAFEf6.GPCP.4-year.anom_1991-2020.precip_global.ri_1991-2020:
-    hindcasts: CAFEf6.4-year.anom_1991-2020.precip_global
-    observations: GPCP.4-year.anom_1991-2020.precip_global
-    simulations: CAFE_hist.4-year.anom_1991-2020.precip_global
+  CAFEf6.AGCD.4-year.anom_1991-2020.precip_Aus_NRM.ri_1991-2020:
+    hindcasts: CAFEf6.4-year.anom_1991-2020.precip_Aus_NRM
+    observations: AGCD.4-year.anom_1991-2020.precip_Aus_NRM
+    simulations: CAFE_hist.4-year.anom_1991-2020.precip_Aus_NRM
     apply:
       all:
         mask_period:
@@ -66,19 +158,19 @@ prepare:
       transform: "Fisher_z"
       alpha: 0.05
       
-  CAFEf6.GPCP.annual.anom_1991-2020.precip_global.MSSS_1991-2020:
-    hindcasts: CAFEf6.annual.anom_1991-2020.precip_global
-    observations: GPCP.annual.anom_1991-2020.precip_global
-    simulations: CAFE_hist.annual.anom_1991-2020.precip_global
+  CAFEf6.AGCD.annual.anom_1991-2020.precip_Aus_NRM.MSSS_1991-2020:
+    hindcasts: CAFEf6.annual.anom_1991-2020.precip_Aus_NRM
+    observations: AGCD.annual.anom_1991-2020.precip_Aus_NRM
+    simulations: CAFE_hist.annual.anom_1991-2020.precip_Aus_NRM
     verify:
       metric: "msss"
       significance: True
       alpha: 0.05
       
-  CAFEf6.GPCP.4-year.anom_1991-2020.precip_global.MSSS_1991-2020:
-    hindcasts: CAFEf6.4-year.anom_1991-2020.precip_global
-    observations: GPCP.4-year.anom_1991-2020.precip_global
-    simulations: CAFE_hist.4-year.anom_1991-2020.precip_global
+  CAFEf6.AGCD.4-year.anom_1991-2020.precip_Aus_NRM.MSSS_1991-2020:
+    hindcasts: CAFEf6.4-year.anom_1991-2020.precip_Aus_NRM
+    observations: AGCD.4-year.anom_1991-2020.precip_Aus_NRM
+    simulations: CAFE_hist.4-year.anom_1991-2020.precip_Aus_NRM
     apply:
       all:
         mask_period:
@@ -88,19 +180,19 @@ prepare:
       significance: True
       alpha: 0.05
       
-  CAFEf6.GPCP.annual.anom_1991-2020.precip_global.CRPSS_1991-2020:
-    hindcasts: CAFEf6.annual.anom_1991-2020.precip_global
-    observations: GPCP.annual.anom_1991-2020.precip_global
-    simulations: CAFE_hist.annual.anom_1991-2020.precip_global
+  CAFEf6.AGCD.annual.anom_1991-2020.precip_Aus_NRM.CRPSS_1991-2020:
+    hindcasts: CAFEf6.annual.anom_1991-2020.precip_Aus_NRM
+    observations: AGCD.annual.anom_1991-2020.precip_Aus_NRM
+    simulations: CAFE_hist.annual.anom_1991-2020.precip_Aus_NRM
     verify:
       metric: "crpss"
       significance: True
       alpha: 0.05
       
-  CAFEf6.GPCP.4-year.anom_1991-2020.precip_global.CRPSS_1991-2020:
-    hindcasts: CAFEf6.4-year.anom_1991-2020.precip_global
-    observations: GPCP.4-year.anom_1991-2020.precip_global
-    simulations: CAFE_hist.4-year.anom_1991-2020.precip_global
+  CAFEf6.AGCD.4-year.anom_1991-2020.precip_Aus_NRM.CRPSS_1991-2020:
+    hindcasts: CAFEf6.4-year.anom_1991-2020.precip_Aus_NRM
+    observations: AGCD.4-year.anom_1991-2020.precip_Aus_NRM
+    simulations: CAFE_hist.4-year.anom_1991-2020.precip_Aus_NRM
     apply:
       all:
         mask_period:

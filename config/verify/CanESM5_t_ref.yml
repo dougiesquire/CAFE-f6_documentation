@@ -20,9 +20,117 @@
 #        Arguments to be passed to src.verify.calculate_metric
 
 prepare:
-  CanESM5.JRA55.annual.anom_1985-2014.t_ref_global.rXY_1985-2014:
-    hindcasts: CanESM5.annual.anom_1985-2014.t_ref_global
-    observations: JRA55.annual.anom_1985-2014.t_ref_global
+#   # Global metrics
+#   CanESM5.JRA55.annual.anom_1985-2014.t_ref_global.rXY_1985-2014:
+#     hindcasts: CanESM5.annual.anom_1985-2014.t_ref_global
+#     observations: JRA55.annual.anom_1985-2014.t_ref_global
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "acc"
+#       significance: True
+#       transform: "Fisher_z"
+#       alpha: 0.05
+      
+#   CanESM5.JRA55.4-year.anom_1985-2014.t_ref_global.rXY_1985-2014:
+#     hindcasts: CanESM5.4-year.anom_1985-2014.t_ref_global
+#     observations: JRA55.4-year.anom_1985-2014.t_ref_global
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "acc"
+#       significance: True
+#       transform: "Fisher_z"
+#       alpha: 0.05
+
+#   CanESM5.JRA55.annual.anom_1985-2014.t_ref_global.ri_1985-2014:
+#     hindcasts: CanESM5.annual.anom_1985-2014.t_ref_global
+#     observations: JRA55.annual.anom_1985-2014.t_ref_global
+#     simulations: CanESM5_hist.annual.anom_1985-2014.t_ref_global
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "acc_initialised"
+#       significance: True
+#       transform: "Fisher_z"
+#       alpha: 0.05
+      
+#   CanESM5.JRA55.4-year.anom_1985-2014.t_ref_global.ri_1985-2014:
+#     hindcasts: CanESM5.4-year.anom_1985-2014.t_ref_global
+#     observations: JRA55.4-year.anom_1985-2014.t_ref_global
+#     simulations: CanESM5_hist.4-year.anom_1985-2014.t_ref_global
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "acc_initialised"
+#       significance: True
+#       transform: "Fisher_z"
+#       alpha: 0.05
+
+#   CanESM5.JRA55.annual.anom_1985-2014.t_ref_global.MSSS_1985-2014:
+#     hindcasts: CanESM5.annual.anom_1985-2014.t_ref_global
+#     observations: JRA55.annual.anom_1985-2014.t_ref_global
+#     simulations: CanESM5_hist.annual.anom_1985-2014.t_ref_global
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "msss"
+#       significance: True
+#       alpha: 0.05
+      
+#   CanESM5.JRA55.4-year.anom_1985-2014.t_ref_global.MSSS_1985-2014:
+#     hindcasts: CanESM5.4-year.anom_1985-2014.t_ref_global
+#     observations: JRA55.4-year.anom_1985-2014.t_ref_global
+#     simulations: CanESM5_hist.4-year.anom_1985-2014.t_ref_global
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "msss"
+#       significance: True
+#       alpha: 0.05
+      
+#   CanESM5.JRA55.annual.anom_1985-2014.t_ref_global.CRPSS_1985-2014:
+#     hindcasts: CanESM5.annual.anom_1985-2014.t_ref_global
+#     observations: JRA55.annual.anom_1985-2014.t_ref_global
+#     simulations: CanESM5_hist.annual.anom_1985-2014.t_ref_global
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "crpss"
+#       significance: True
+#       alpha: 0.05
+      
+#   CanESM5.JRA55.4-year.anom_1985-2014.t_ref_global.CRPSS_1985-2014:
+#     hindcasts: CanESM5.4-year.anom_1985-2014.t_ref_global
+#     observations: JRA55.4-year.anom_1985-2014.t_ref_global
+#     simulations: CanESM5_hist.4-year.anom_1985-2014.t_ref_global
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "crpss"
+#       significance: True
+#       alpha: 0.05
+      
+  # Australian NRM region metrics
+  CanESM5.JRA55.annual.anom_1985-2014.t_ref_Aus_NRM.rXY_1985-2014:
+    hindcasts: CanESM5.annual.anom_1985-2014.t_ref_Aus_NRM
+    observations: JRA55.annual.anom_1985-2014.t_ref_Aus_NRM
     apply:
       all:
         mask_period:
@@ -33,9 +141,9 @@ prepare:
       transform: "Fisher_z"
       alpha: 0.05
       
-  CanESM5.JRA55.4-year.anom_1985-2014.t_ref_global.rXY_1985-2014:
-    hindcasts: CanESM5.4-year.anom_1985-2014.t_ref_global
-    observations: JRA55.4-year.anom_1985-2014.t_ref_global
+  CanESM5.JRA55.4-year.anom_1985-2014.t_ref_Aus_NRM.rXY_1985-2014:
+    hindcasts: CanESM5.4-year.anom_1985-2014.t_ref_Aus_NRM
+    observations: JRA55.4-year.anom_1985-2014.t_ref_Aus_NRM
     apply:
       all:
         mask_period:
@@ -46,10 +154,10 @@ prepare:
       transform: "Fisher_z"
       alpha: 0.05
 
-  CanESM5.JRA55.annual.anom_1985-2014.t_ref_global.ri_1985-2014:
-    hindcasts: CanESM5.annual.anom_1985-2014.t_ref_global
-    observations: JRA55.annual.anom_1985-2014.t_ref_global
-    simulations: CanESM5_hist.annual.anom_1985-2014.t_ref_global
+  CanESM5.JRA55.annual.anom_1985-2014.t_ref_Aus_NRM.ri_1985-2014:
+    hindcasts: CanESM5.annual.anom_1985-2014.t_ref_Aus_NRM
+    observations: JRA55.annual.anom_1985-2014.t_ref_Aus_NRM
+    simulations: CanESM5_hist.annual.anom_1985-2014.t_ref_Aus_NRM
     apply:
       all:
         mask_period:
@@ -60,10 +168,10 @@ prepare:
       transform: "Fisher_z"
       alpha: 0.05
       
-  CanESM5.JRA55.4-year.anom_1985-2014.t_ref_global.ri_1985-2014:
-    hindcasts: CanESM5.4-year.anom_1985-2014.t_ref_global
-    observations: JRA55.4-year.anom_1985-2014.t_ref_global
-    simulations: CanESM5_hist.4-year.anom_1985-2014.t_ref_global
+  CanESM5.JRA55.4-year.anom_1985-2014.t_ref_Aus_NRM.ri_1985-2014:
+    hindcasts: CanESM5.4-year.anom_1985-2014.t_ref_Aus_NRM
+    observations: JRA55.4-year.anom_1985-2014.t_ref_Aus_NRM
+    simulations: CanESM5_hist.4-year.anom_1985-2014.t_ref_Aus_NRM
     apply:
       all:
         mask_period:
@@ -74,10 +182,10 @@ prepare:
       transform: "Fisher_z"
       alpha: 0.05
 
-  CanESM5.JRA55.annual.anom_1985-2014.t_ref_global.MSSS_1985-2014:
-    hindcasts: CanESM5.annual.anom_1985-2014.t_ref_global
-    observations: JRA55.annual.anom_1985-2014.t_ref_global
-    simulations: CanESM5_hist.annual.anom_1985-2014.t_ref_global
+  CanESM5.JRA55.annual.anom_1985-2014.t_ref_Aus_NRM.MSSS_1985-2014:
+    hindcasts: CanESM5.annual.anom_1985-2014.t_ref_Aus_NRM
+    observations: JRA55.annual.anom_1985-2014.t_ref_Aus_NRM
+    simulations: CanESM5_hist.annual.anom_1985-2014.t_ref_Aus_NRM
     apply:
       all:
         mask_period:
@@ -87,10 +195,10 @@ prepare:
       significance: True
       alpha: 0.05
       
-  CanESM5.JRA55.4-year.anom_1985-2014.t_ref_global.MSSS_1985-2014:
-    hindcasts: CanESM5.4-year.anom_1985-2014.t_ref_global
-    observations: JRA55.4-year.anom_1985-2014.t_ref_global
-    simulations: CanESM5_hist.4-year.anom_1985-2014.t_ref_global
+  CanESM5.JRA55.4-year.anom_1985-2014.t_ref_Aus_NRM.MSSS_1985-2014:
+    hindcasts: CanESM5.4-year.anom_1985-2014.t_ref_Aus_NRM
+    observations: JRA55.4-year.anom_1985-2014.t_ref_Aus_NRM
+    simulations: CanESM5_hist.4-year.anom_1985-2014.t_ref_Aus_NRM
     apply:
       all:
         mask_period:
@@ -100,10 +208,10 @@ prepare:
       significance: True
       alpha: 0.05
       
-  CanESM5.JRA55.annual.anom_1985-2014.t_ref_global.CRPSS_1985-2014:
-    hindcasts: CanESM5.annual.anom_1985-2014.t_ref_global
-    observations: JRA55.annual.anom_1985-2014.t_ref_global
-    simulations: CanESM5_hist.annual.anom_1985-2014.t_ref_global
+  CanESM5.JRA55.annual.anom_1985-2014.t_ref_Aus_NRM.CRPSS_1985-2014:
+    hindcasts: CanESM5.annual.anom_1985-2014.t_ref_Aus_NRM
+    observations: JRA55.annual.anom_1985-2014.t_ref_Aus_NRM
+    simulations: CanESM5_hist.annual.anom_1985-2014.t_ref_Aus_NRM
     apply:
       all:
         mask_period:
@@ -113,10 +221,10 @@ prepare:
       significance: True
       alpha: 0.05
       
-  CanESM5.JRA55.4-year.anom_1985-2014.t_ref_global.CRPSS_1985-2014:
-    hindcasts: CanESM5.4-year.anom_1985-2014.t_ref_global
-    observations: JRA55.4-year.anom_1985-2014.t_ref_global
-    simulations: CanESM5_hist.4-year.anom_1985-2014.t_ref_global
+  CanESM5.JRA55.4-year.anom_1985-2014.t_ref_Aus_NRM.CRPSS_1985-2014:
+    hindcasts: CanESM5.4-year.anom_1985-2014.t_ref_Aus_NRM
+    observations: JRA55.4-year.anom_1985-2014.t_ref_Aus_NRM
+    simulations: CanESM5_hist.4-year.anom_1985-2014.t_ref_Aus_NRM
     apply:
       all:
         mask_period:

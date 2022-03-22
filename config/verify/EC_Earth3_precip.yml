@@ -20,9 +20,117 @@
 #        Arguments to be passed to src.verify.calculate_metric
 
 prepare:
-  EC_Earth3.GPCP.annual.anom_1985-2014.precip_global.rXY_1985-2014:
-    hindcasts: EC_Earth3.annual.anom_1985-2014.precip_global
-    observations: GPCP.annual.anom_1985-2014.precip_global
+#   # Global metrics
+#   EC_Earth3.GPCP.annual.anom_1985-2014.precip_global.rXY_1985-2014:
+#     hindcasts: EC_Earth3.annual.anom_1985-2014.precip_global
+#     observations: GPCP.annual.anom_1985-2014.precip_global
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "acc"
+#       significance: True
+#       transform: "Fisher_z"
+#       alpha: 0.05
+      
+#   EC_Earth3.GPCP.4-year.anom_1985-2014.precip_global.rXY_1985-2014:
+#     hindcasts: EC_Earth3.4-year.anom_1985-2014.precip_global
+#     observations: GPCP.4-year.anom_1985-2014.precip_global
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "acc"
+#       significance: True
+#       transform: "Fisher_z"
+#       alpha: 0.05
+
+#   EC_Earth3.GPCP.annual.anom_1985-2014.precip_global.ri_1985-2014:
+#     hindcasts: EC_Earth3.annual.anom_1985-2014.precip_global
+#     observations: GPCP.annual.anom_1985-2014.precip_global
+#     simulations: EC_Earth3_hist.annual.anom_1985-2014.precip_global
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "acc_initialised"
+#       significance: True
+#       transform: "Fisher_z"
+#       alpha: 0.05
+      
+#   EC_Earth3.GPCP.4-year.anom_1985-2014.precip_global.ri_1985-2014:
+#     hindcasts: EC_Earth3.4-year.anom_1985-2014.precip_global
+#     observations: GPCP.4-year.anom_1985-2014.precip_global
+#     simulations: EC_Earth3_hist.4-year.anom_1985-2014.precip_global
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "acc_initialised"
+#       significance: True
+#       transform: "Fisher_z"
+#       alpha: 0.05
+
+#   EC_Earth3.GPCP.annual.anom_1985-2014.precip_global.MSSS_1985-2014:
+#     hindcasts: EC_Earth3.annual.anom_1985-2014.precip_global
+#     observations: GPCP.annual.anom_1985-2014.precip_global
+#     simulations: EC_Earth3_hist.annual.anom_1985-2014.precip_global
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "msss"
+#       significance: True
+#       alpha: 0.05
+      
+#   EC_Earth3.GPCP.4-year.anom_1985-2014.precip_global.MSSS_1985-2014:
+#     hindcasts: EC_Earth3.4-year.anom_1985-2014.precip_global
+#     observations: GPCP.4-year.anom_1985-2014.precip_global
+#     simulations: EC_Earth3_hist.4-year.anom_1985-2014.precip_global
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "msss"
+#       significance: True
+#       alpha: 0.05
+      
+#   EC_Earth3.GPCP.annual.anom_1985-2014.precip_global.CRPSS_1985-2014:
+#     hindcasts: EC_Earth3.annual.anom_1985-2014.precip_global
+#     observations: GPCP.annual.anom_1985-2014.precip_global
+#     simulations: EC_Earth3_hist.annual.anom_1985-2014.precip_global
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "crpss"
+#       significance: True
+#       alpha: 0.05
+      
+#   EC_Earth3.GPCP.4-year.anom_1985-2014.precip_global.CRPSS_1985-2014:
+#     hindcasts: EC_Earth3.4-year.anom_1985-2014.precip_global
+#     observations: GPCP.4-year.anom_1985-2014.precip_global
+#     simulations: EC_Earth3_hist.4-year.anom_1985-2014.precip_global
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "crpss"
+#       significance: True
+#       alpha: 0.05
+
+  # Australian NRM region metrics
+  EC_Earth3.AGCD.annual.anom_1985-2014.precip_Aus_NRM.rXY_1985-2014:
+    hindcasts: EC_Earth3.annual.anom_1985-2014.precip_Aus_NRM
+    observations: AGCD.annual.anom_1985-2014.precip_Aus_NRM
     apply:
       all:
         mask_period:
@@ -33,9 +141,9 @@ prepare:
       transform: "Fisher_z"
       alpha: 0.05
       
-  EC_Earth3.GPCP.4-year.anom_1985-2014.precip_global.rXY_1985-2014:
-    hindcasts: EC_Earth3.4-year.anom_1985-2014.precip_global
-    observations: GPCP.4-year.anom_1985-2014.precip_global
+  EC_Earth3.AGCD.4-year.anom_1985-2014.precip_Aus_NRM.rXY_1985-2014:
+    hindcasts: EC_Earth3.4-year.anom_1985-2014.precip_Aus_NRM
+    observations: AGCD.4-year.anom_1985-2014.precip_Aus_NRM
     apply:
       all:
         mask_period:
@@ -46,10 +154,10 @@ prepare:
       transform: "Fisher_z"
       alpha: 0.05
 
-  EC_Earth3.GPCP.annual.anom_1985-2014.precip_global.ri_1985-2014:
-    hindcasts: EC_Earth3.annual.anom_1985-2014.precip_global
-    observations: GPCP.annual.anom_1985-2014.precip_global
-    simulations: EC_Earth3_hist.annual.anom_1985-2014.precip_global
+  EC_Earth3.AGCD.annual.anom_1985-2014.precip_Aus_NRM.ri_1985-2014:
+    hindcasts: EC_Earth3.annual.anom_1985-2014.precip_Aus_NRM
+    observations: AGCD.annual.anom_1985-2014.precip_Aus_NRM
+    simulations: EC_Earth3_hist.annual.anom_1985-2014.precip_Aus_NRM
     apply:
       all:
         mask_period:
@@ -60,10 +168,10 @@ prepare:
       transform: "Fisher_z"
       alpha: 0.05
       
-  EC_Earth3.GPCP.4-year.anom_1985-2014.precip_global.ri_1985-2014:
-    hindcasts: EC_Earth3.4-year.anom_1985-2014.precip_global
-    observations: GPCP.4-year.anom_1985-2014.precip_global
-    simulations: EC_Earth3_hist.4-year.anom_1985-2014.precip_global
+  EC_Earth3.AGCD.4-year.anom_1985-2014.precip_Aus_NRM.ri_1985-2014:
+    hindcasts: EC_Earth3.4-year.anom_1985-2014.precip_Aus_NRM
+    observations: AGCD.4-year.anom_1985-2014.precip_Aus_NRM
+    simulations: EC_Earth3_hist.4-year.anom_1985-2014.precip_Aus_NRM
     apply:
       all:
         mask_period:
@@ -74,10 +182,10 @@ prepare:
       transform: "Fisher_z"
       alpha: 0.05
 
-  EC_Earth3.GPCP.annual.anom_1985-2014.precip_global.MSSS_1985-2014:
-    hindcasts: EC_Earth3.annual.anom_1985-2014.precip_global
-    observations: GPCP.annual.anom_1985-2014.precip_global
-    simulations: EC_Earth3_hist.annual.anom_1985-2014.precip_global
+  EC_Earth3.AGCD.annual.anom_1985-2014.precip_Aus_NRM.MSSS_1985-2014:
+    hindcasts: EC_Earth3.annual.anom_1985-2014.precip_Aus_NRM
+    observations: AGCD.annual.anom_1985-2014.precip_Aus_NRM
+    simulations: EC_Earth3_hist.annual.anom_1985-2014.precip_Aus_NRM
     apply:
       all:
         mask_period:
@@ -87,10 +195,10 @@ prepare:
       significance: True
       alpha: 0.05
       
-  EC_Earth3.GPCP.4-year.anom_1985-2014.precip_global.MSSS_1985-2014:
-    hindcasts: EC_Earth3.4-year.anom_1985-2014.precip_global
-    observations: GPCP.4-year.anom_1985-2014.precip_global
-    simulations: EC_Earth3_hist.4-year.anom_1985-2014.precip_global
+  EC_Earth3.AGCD.4-year.anom_1985-2014.precip_Aus_NRM.MSSS_1985-2014:
+    hindcasts: EC_Earth3.4-year.anom_1985-2014.precip_Aus_NRM
+    observations: AGCD.4-year.anom_1985-2014.precip_Aus_NRM
+    simulations: EC_Earth3_hist.4-year.anom_1985-2014.precip_Aus_NRM
     apply:
       all:
         mask_period:
@@ -100,10 +208,10 @@ prepare:
       significance: True
       alpha: 0.05
       
-  EC_Earth3.GPCP.annual.anom_1985-2014.precip_global.CRPSS_1985-2014:
-    hindcasts: EC_Earth3.annual.anom_1985-2014.precip_global
-    observations: GPCP.annual.anom_1985-2014.precip_global
-    simulations: EC_Earth3_hist.annual.anom_1985-2014.precip_global
+  EC_Earth3.AGCD.annual.anom_1985-2014.precip_Aus_NRM.CRPSS_1985-2014:
+    hindcasts: EC_Earth3.annual.anom_1985-2014.precip_Aus_NRM
+    observations: AGCD.annual.anom_1985-2014.precip_Aus_NRM
+    simulations: EC_Earth3_hist.annual.anom_1985-2014.precip_Aus_NRM
     apply:
       all:
         mask_period:
@@ -113,10 +221,10 @@ prepare:
       significance: True
       alpha: 0.05
       
-  EC_Earth3.GPCP.4-year.anom_1985-2014.precip_global.CRPSS_1985-2014:
-    hindcasts: EC_Earth3.4-year.anom_1985-2014.precip_global
-    observations: GPCP.4-year.anom_1985-2014.precip_global
-    simulations: EC_Earth3_hist.4-year.anom_1985-2014.precip_global
+  EC_Earth3.AGCD.4-year.anom_1985-2014.precip_Aus_NRM.CRPSS_1985-2014:
+    hindcasts: EC_Earth3.4-year.anom_1985-2014.precip_Aus_NRM
+    observations: AGCD.4-year.anom_1985-2014.precip_Aus_NRM
+    simulations: EC_Earth3_hist.4-year.anom_1985-2014.precip_Aus_NRM
     apply:
       all:
         mask_period:

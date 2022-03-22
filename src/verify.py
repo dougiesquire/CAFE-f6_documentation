@@ -520,11 +520,12 @@ def calculate_metric(
         transform = getattr(sys.modules[__name__], transform)
 
     if len(verif_times) > 0:
+        verif_period = f"{verif_times[0].strftime('%Y-%m-%d')} - {verif_times[-1].strftime('%Y-%m-%d')}"
         references_verif_times = [ref.sel(time=verif_times) for ref in references]
         hindcast_verif_times = _reindex_hindcast(hindcast).sel(time=verif_times)
         logger.info(
             (
-                f"Performing verification over {verif_period[0]} - {verif_period[-1]} "
+                f"Performing verification over {verif_period} "
                 f"using a common set of verification times at all lead"
             )
         )
@@ -537,8 +538,6 @@ def calculate_metric(
             transform=transform,
             alpha=alpha,
         )
-
-        verif_period = f"{verif_times[0].strftime('%Y-%m-%d')} - {verif_times[-1].strftime('%Y-%m-%d')}"
         skill = skill.assign_coords({"verification_period": verif_period})
 
     else:
@@ -555,6 +554,7 @@ def calculate_metric(
             verif_times = _common_set_of_verif_times(
                 hindcast_at_lead, *references, search_dim=None
             )
+            verif_period = f"{verif_times[0].strftime('%Y-%m-%d')} - {verif_times[-1].strftime('%Y-%m-%d')}"
             hindcast_verif_times = hindcast_at_lead.swap_dims({"init": "time"}).sel(
                 time=verif_times
             )
@@ -569,7 +569,7 @@ def calculate_metric(
                 alpha=alpha,
             )
 
-            verif_period = f"{verif_times[0].strftime('%Y-%m-%d')} - {verif_times[-1].strftime('%Y-%m-%d')}"
+            
             skill_at_lead = skill_at_lead.assign_coords(
                 {"verification_period": verif_period}
             )
