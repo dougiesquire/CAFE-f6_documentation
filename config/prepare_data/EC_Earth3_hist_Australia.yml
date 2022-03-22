@@ -1,0 +1,114 @@
+# Config file for specifying processing using src.prepare_data()
+# ==================================================================================
+
+# name: required
+#    The name of the dataset. Must match a method in src.prepare_data._open
+#
+# prepare: required
+#    List of unique identifiers for output variables to prepare and save. This will 
+#    be used to save the prepared output variable(s) as {name}.{identifier}.zarr. 
+#    Each identifier can include the following:
+#
+#    uses: required
+#        List of input variables required to compute the output variable(s). For 
+#        some datasets, this should be further broken into subkeys indicating the 
+#        realm for each list of variables (e.g. ocean_month). Alternatively, users 
+#        can provide the identifier of a previously prepared dataset by entering
+#        `prepared: <identifier>`.
+#    preprocess: optional
+#        Functions and kwargs from src.utils to be applied sequentially prior to 
+#        concatenation (for datasets comprised of multiple concatenated files) 
+#        and/or prior to merging input variables from multiple realms where more 
+#        than one are specified.
+#    apply: optional
+#        Functions and kwargs from src.utils to be applied sequentially to opened 
+#        (and concatenated/merge, where appropriate) dataset.
+
+name: "EC_Earth3_hist"
+
+prepare:
+  annual.full.t_ref_Aus_NRM:
+    uses:
+      Amon:
+        - "tas"
+    apply:
+      rename:
+        names: 
+          tas: "t_ref"
+          areacella: "area"
+      round_to_start_of_month:
+        dim: "time"
+      coarsen:
+        window_size: 12
+        start_points: ["1960-11-01"]
+        dim: "time"
+      force_to_Julian_calendar:
+      average_over_NRM_super_clusters:
+      rechunk:
+        chunks: {"time": -1, "member": -1}
+        
+  annual.full.precip_Aus_NRM:
+    uses:
+      Amon:
+        - "pr"
+    apply:
+      rename:
+        names: 
+          pr: "precip"
+          areacella: "area"
+      convert:
+        conversion:
+          precip:
+            multiply_by: 86400
+      round_to_start_of_month:
+        dim: "time"
+      coarsen:
+        window_size: 12
+        start_points: ["1960-11-01"]
+        dim: "time"
+      force_to_Julian_calendar:
+      average_over_NRM_super_clusters:
+      rechunk:
+        chunks: {"time": -1, "member": -1}
+
+  # Prepare anomalies from prepared datasets
+  annual.anom_1985-2014.t_ref_Aus_NRM:
+    uses:
+      prepared:
+        - "annual.full.t_ref_Aus_NRM"
+    apply:
+      anomalise:
+        clim_period: ["1985-01-01", "2014-12-31"]
+      rechunk:
+        chunks: {"time": -1, "member": -1}
+        
+  annual.anom_1985-2014.precip_Aus_NRM:
+    uses:
+      prepared:
+        - "annual.full.precip_Aus_NRM"
+    apply:
+      anomalise:
+        clim_period: ["1985-01-01", "2014-12-31"]
+      rechunk:
+        chunks: {"time": -1, "member": -1}
+        
+  # Prepare 4-year-averages from prepared datasets
+  4-year.anom_1985-2014.t_ref_Aus_NRM:
+    uses:
+      prepared:
+        - "annual.anom_1985-2014.t_ref_Aus_NRM"
+    apply:
+      rolling_mean:
+        window_size: 4
+      rechunk:
+        chunks: {"time": -1, "member": -1}
+        
+  4-year.anom_1985-2014.precip_Aus_NRM:
+    uses:
+      prepared:
+        - "annual.anom_1985-2014.precip_Aus_NRM"
+    apply:
+      rolling_mean:
+        window_size: 4
+      rechunk:
+        chunks: {"time": -1, "member": -1}
