@@ -27,7 +27,7 @@
 name: "HadISST"
 
 prepare:
-#   annual-Jan.full.sst:
+#   annual-Jan.full.sst_global:
 #     uses:
 #       ocean_month:
 #         - "sst"
@@ -48,7 +48,7 @@ prepare:
 #       rechunk:
 #         chunks: {"time": -1, "lat": 10, "lon": 12}
 
-#   annual-Nov.full.sst:
+#   annual-Nov.full.sst_global:
 #     uses:
 #       ocean_month:
 #         - "sst"
@@ -112,60 +112,60 @@ prepare:
         chunks: {"time": -1}
         
 #   # Prepare anomalies from prepared datasets
-#   annual-Jan.anom_1991-2020.sst:
+#   annual-Jan.anom_1991-2020.sst_global:
 #     uses:
 #       prepared:
-#         - "annual-Jan.full.sst"
+#         - "annual-Jan.full.sst_global"
 #     apply:
 #       anomalise:
 #         clim_period: ["1991-01-01", "2020-12-31"]
 #       rechunk:
 #         chunks: {"time": -1, "lat": 10, "lon": 12}
         
-#   annual-Nov.anom_1991-2020.sst:
+#   annual-Nov.anom_1991-2020.sst_global:
 #     uses:
 #       prepared:
-#         - "annual-Nov.full.sst"
+#         - "annual-Nov.full.sst_global"
 #     apply:
 #       anomalise:
 #         clim_period: ["1991-01-01", "2020-12-31"]
 #       rechunk:
 #         chunks: {"time": -1, "lat": 10, "lon": 12}
         
-#   annual.anom_1991-2020.sst:
+#   annual.anom_1991-2020.sst_global:
 #     uses:
 #       prepared:
-#         - "annual-Jan.anom_1991-2020.sst"
-#         - "annual-Nov.anom_1991-2020.sst"
+#         - "annual-Jan.anom_1991-2020.sst_global"
+#         - "annual-Nov.anom_1991-2020.sst_global"
 #     apply:
 #       rechunk:
 #         chunks: {"time": -1, "lat": 10, "lon": 12}
         
-#   annual-Jan.anom_1985-2014.sst:
+#   annual-Jan.anom_1985-2014.sst_global:
 #     uses:
 #       prepared:
-#         - "annual-Jan.full.sst"
-#     apply:
-#       anomalise:
-#         clim_period: ["1985-01-01", "2014-12-31"]
-#       rechunk:
-#         chunks: {"time": -1, "lat": 10, "lon": 12}
-        
-#   annual-Nov.anom_1985-2014.sst:
-#     uses:
-#       prepared:
-#         - "annual-Nov.full.sst"
+#         - "annual-Jan.full.sst_global"
 #     apply:
 #       anomalise:
 #         clim_period: ["1985-01-01", "2014-12-31"]
 #       rechunk:
 #         chunks: {"time": -1, "lat": 10, "lon": 12}
         
-#   annual.anom_1985-2014.sst:
+#   annual-Nov.anom_1985-2014.sst_global:
 #     uses:
 #       prepared:
-#         - "annual-Jan.anom_1985-2014.sst"
-#         - "annual-Nov.anom_1985-2014.sst"
+#         - "annual-Nov.full.sst_global"
+#     apply:
+#       anomalise:
+#         clim_period: ["1985-01-01", "2014-12-31"]
+#       rechunk:
+#         chunks: {"time": -1, "lat": 10, "lon": 12}
+        
+#   annual.anom_1985-2014.sst_global:
+#     uses:
+#       prepared:
+#         - "annual-Jan.anom_1985-2014.sst_global"
+#         - "annual-Nov.anom_1985-2014.sst_global"
 #     apply:
 #       rechunk:
 #         chunks: {"time": -1, "lat": 10, "lon": 12}
@@ -211,60 +211,60 @@ prepare:
         chunks: {"time": -1}
         
 #   # Prepare 4-year-averages from prepared datasets
-#   4-year-Jan.anom_1991-2020.sst:
+#   4-year-Jan.anom_1991-2020.sst_global:
 #     uses:
 #       prepared:
-#         - "annual-Jan.anom_1991-2020.sst"
+#         - "annual-Jan.anom_1991-2020.sst_global"
 #     apply:
 #       rolling_mean:
 #         window_size: 4
 #       rechunk:
 #         chunks: {"time": -1, "lat": 10, "lon": 12}
         
-#   4-year-Nov.anom_1991-2020.sst:
+#   4-year-Nov.anom_1991-2020.sst_global:
 #     uses:
 #       prepared:
-#         - "annual-Nov.anom_1991-2020.sst"
+#         - "annual-Nov.anom_1991-2020.sst_global"
 #     apply:
 #       rolling_mean:
 #         window_size: 4
 #       rechunk:
 #         chunks: {"time": -1, "lat": 10, "lon": 12}
         
-#   4-year.anom_1991-2020.sst:
+#   4-year.anom_1991-2020.sst_global:
 #     uses:
 #       prepared:
-#         - "4-year-Jan.anom_1991-2020.sst"
-#         - "4-year-Nov.anom_1991-2020.sst"
+#         - "4-year-Jan.anom_1991-2020.sst_global"
+#         - "4-year-Nov.anom_1991-2020.sst_global"
 #     apply:
 #       rechunk:
 #         chunks: {"time": -1, "lat": 10, "lon": 12}
         
-#   4-year-Jan.anom_1985-2014.sst:
+#   4-year-Jan.anom_1985-2014.sst_global:
 #     uses:
 #       prepared:
-#         - "annual-Jan.anom_1985-2014.sst"
-#     apply:
-#       rolling_mean:
-#         window_size: 4
-#       rechunk:
-#         chunks: {"time": -1, "lat": 10, "lon": 12}
-        
-#   4-year-Nov.anom_1985-2014.sst:
-#     uses:
-#       prepared:
-#         - "annual-Nov.anom_1985-2014.sst"
+#         - "annual-Jan.anom_1985-2014.sst_global"
 #     apply:
 #       rolling_mean:
 #         window_size: 4
 #       rechunk:
 #         chunks: {"time": -1, "lat": 10, "lon": 12}
         
-#   4-year.anom_1985-2014.sst:
+#   4-year-Nov.anom_1985-2014.sst_global:
 #     uses:
 #       prepared:
-#         - "4-year-Jan.anom_1985-2014.sst"
-#         - "4-year-Nov.anom_1985-2014.sst"
+#         - "annual-Nov.anom_1985-2014.sst_global"
+#     apply:
+#       rolling_mean:
+#         window_size: 4
+#       rechunk:
+#         chunks: {"time": -1, "lat": 10, "lon": 12}
+        
+#   4-year.anom_1985-2014.sst_global:
+#     uses:
+#       prepared:
+#         - "4-year-Jan.anom_1985-2014.sst_global"
+#         - "4-year-Nov.anom_1985-2014.sst_global"
 #     apply:
 #       rechunk:
 #         chunks: {"time": -1, "lat": 10, "lon": 12}

@@ -7,6 +7,10 @@ from functools import reduce, partial
 
 import yaml
 
+import regionmask
+
+import geopandas
+
 import numpy as np
 import xarray as xr
 
@@ -56,7 +60,7 @@ def composite_function(function_dict):
     return composite(*funcs)
 
 
-def get_lon_lat_average(ds, box, lon_dim="lon", lat_dim="lat"):
+def average_over_lon_lat_box(ds, box, lon_dim="lon", lat_dim="lat"):
     """
     Return the average over a region specified by a range of longitudes and latitudes.
 
@@ -128,7 +132,7 @@ def calculate_nino34(sst_anom, sst_name="sst"):
     """
 
     box = [190.0, 240.0, -5.0, 5.0]
-    nino34 = get_lon_lat_average(sst_anom, box)
+    nino34 = average_over_lon_lat_box(sst_anom, box)
     nino34 = nino34.rename({sst_name: "nino34"})
     nino34["nino34"].attrs = dict(long_name="ENSO Nino 3.4 Index", units="degC")
     return nino34
@@ -151,7 +155,7 @@ def calculate_dmi(sst_anom, sst_name="sst"):
     region_W = [50.0, 70.0, -10.0, 10.0]
     region_E = [90.0, 110.0, -10.0, 0.0]
 
-    dmi = get_lon_lat_average(sst_anom, region_W) - get_lon_lat_average(
+    dmi = average_over_lon_lat_box(sst_anom, region_W) - average_over_lon_lat_box(
         sst_anom, region_E
     )
     dmi = dmi.rename({sst_name: "dmi"})
@@ -310,7 +314,7 @@ def calculate_amv(sst_anom, sst_name="sst"):
     north_atlantic_box = [280.0, 360.0, 0.0, 60.0]
     global_box = [0.0, 360.0, -60.0, 60.0]
 
-    amv = get_lon_lat_average(sst_anom, north_atlantic_box) - get_lon_lat_average(
+    amv = average_over_lon_lat_box(sst_anom, north_atlantic_box) - average_over_lon_lat_box(
         sst_anom, global_box
     )
     amv = amv.rename({sst_name: "amv"})
@@ -337,10 +341,10 @@ def calculate_ipo(sst_anom, sst_name="sst"):
     region_3 = [150.0, 200.0, -50.0, -15.0]
 
     ipo = (
-        get_lon_lat_average(sst_anom, region_2)
+        average_over_lon_lat_box(sst_anom, region_2)
         - (
-            get_lon_lat_average(sst_anom, region_1)
-            + get_lon_lat_average(sst_anom, region_3)
+            average_over_lon_lat_box(sst_anom, region_1)
+            + average_over_lon_lat_box(sst_anom, region_3)
         )
         / 2
     )
@@ -377,6 +381,30 @@ def calculate_ohc300(temp, depth_dim="depth", temp_name="temp"):
         long_name="Ocean heat content above 300m", units="J/m^2"
     )
     return ohc300
+
+
+def calculate_wind_speed(u_v, u_name, v_name, lon_dim="lon", lat_dim="lat"):
+    """
+    Calculate the wind speed
+
+    Parameters
+    ----------
+    u_v : xarray Dataset
+        Dataset containing the longitudinal and latitudinal components of the wind
+    u_name : str
+        The name of the u-velocity variable in u
+    v_name : str
+        The name of the v-velocity variable in v
+    lon_dim : str, optional
+        The name of the longitude dimension for u and v
+    lat_dim : str, optional
+        The name of the latitude dimension for u and v
+    """
+    V = np.sqrt(u_v[u_name] ** 2 + u_v[v_name] ** 2).to_dataset(name="V_tot")
+    V["V_tot"].attrs = dict(
+        long_name="Total wind speed", units=f"{u_v[u_name].attrs['units']}"
+    )
+    return V
 
 
 def ensemble_mean(ds, ensemble_dim="member"):
@@ -718,7 +746,7 @@ def force_to_Julian_calendar(ds, time_dim="time"):
             time_dim: xr.cftime_range(
                 start=ds.time[0].item().strftime(),
                 end=ds.time[-1].item().strftime(),
-                freq=xr.infer_freq(ds.time),
+                freq=xr.infer_freq(ds.time[:3]),
                 calendar="julian",
             )
         }
@@ -816,6 +844,39 @@ def rolling_mean(ds, window_size, start_points=None, dim="time"):
 
     # For reasons I don't understand, rolling sometimes promotes float32 to float64
     return xr.merge([result[var].astype(ds[var].dtype) for var in ds.data_vars])
+
+
+def get_region_masks_from_shp(ds, shapefile, header):
+    """
+    Extract region masks according to a shapefile
+
+    Parameters
+    ----------
+    ds : xarray Dataset
+        The array with the grid to build the masks for
+    shapefile : str
+        The path to the shapefile to use
+    header : str
+        Name of the shapefile column to use to name the regions
+    """
+    shapes = geopandas.read_file(shapefile)
+    mask = regionmask.mask_3D_geopandas(shapes, ds.lon, ds.lat)
+    return mask.assign_coords({"region": shapes[header].to_list()})
+
+
+def average_over_NRM_super_clusters(ds):
+    """
+    Average the provided array over the NRM super cluster regions
+
+    Parameters
+    ----------
+    ds : xarray Dataset
+        The array to average over the NRM super cluster regions
+    """
+    shapefile = "../../data/raw/NRM_super_clusters/NRM_super_clusters.shp"
+    header = "label"
+    masks = get_region_masks_from_shp(ds, shapefile, header)
+    return ds.where(masks).weighted(ds["area"]).mean(["lon", "lat"])
 
 
 def gridarea_cdo(ds):

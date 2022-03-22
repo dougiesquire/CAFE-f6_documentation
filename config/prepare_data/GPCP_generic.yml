@@ -27,7 +27,7 @@
 name: "GPCP"
 
 prepare:
-  annual-Jan.full.precip:
+  annual-Jan.full.precip_global:
     uses:
       - "precip"
     apply:
@@ -45,7 +45,7 @@ prepare:
       rechunk:
         chunks: {"time": -1, "lat": 10, "lon": 12}
         
-  annual-Nov.full.precip:
+  annual-Nov.full.precip_global:
     uses:
       - "precip"
     apply:
@@ -64,119 +64,119 @@ prepare:
         chunks: {"time": -1, "lat": 10, "lon": 12}
         
   # Prepare anomalies from prepared datasets
-  annual-Jan.anom_1991-2020.precip:
+  annual-Jan.anom_1991-2020.precip_global:
     uses:
       prepared:
-        - "annual-Jan.full.precip"
+        - "annual-Jan.full.precip_global"
     apply:
       anomalise:
         clim_period: ["1991-01-01", "2020-12-31"]
       rechunk:
         chunks: {"time": -1, "lat": 10, "lon": 12}
     
-  annual-Nov.anom_1991-2020.precip:
+  annual-Nov.anom_1991-2020.precip_global:
     uses:
       prepared:
-        - "annual-Nov.full.precip"
+        - "annual-Nov.full.precip_global"
     apply:
       anomalise:
         clim_period: ["1991-01-01", "2020-12-31"]
       rechunk:
         chunks: {"time": -1, "lat": 10, "lon": 12}
         
-  annual.anom_1991-2020.precip:
+  annual.anom_1991-2020.precip_global:
     uses:
       prepared:
-        - "annual-Jan.anom_1991-2020.precip"
-        - "annual-Nov.anom_1991-2020.precip"
+        - "annual-Jan.anom_1991-2020.precip_global"
+        - "annual-Nov.anom_1991-2020.precip_global"
     apply:
       rechunk:
         chunks: {"time": -1, "lat": 10, "lon": 12}
         
-  annual-Jan.anom_1985-2014.precip:
+  annual-Jan.anom_1985-2014.precip_global:
     uses:
       prepared:
-        - "annual-Jan.full.precip"
-    apply:
-      anomalise:
-        clim_period: ["1985-01-01", "2014-12-31"]
-      rechunk:
-        chunks: {"time": -1, "lat": 10, "lon": 12}
-        
-  annual-Nov.anom_1985-2014.precip:
-    uses:
-      prepared:
-        - "annual-Nov.full.precip"
+        - "annual-Jan.full.precip_global"
     apply:
       anomalise:
         clim_period: ["1985-01-01", "2014-12-31"]
       rechunk:
         chunks: {"time": -1, "lat": 10, "lon": 12}
         
-  annual.anom_1985-2014.precip:
+  annual-Nov.anom_1985-2014.precip_global:
     uses:
       prepared:
-        - "annual-Jan.anom_1985-2014.precip"
-        - "annual-Nov.anom_1985-2014.precip"
+        - "annual-Nov.full.precip_global"
+    apply:
+      anomalise:
+        clim_period: ["1985-01-01", "2014-12-31"]
+      rechunk:
+        chunks: {"time": -1, "lat": 10, "lon": 12}
+        
+  annual.anom_1985-2014.precip_global:
+    uses:
+      prepared:
+        - "annual-Jan.anom_1985-2014.precip_global"
+        - "annual-Nov.anom_1985-2014.precip_global"
     apply:
       rechunk:
         chunks: {"time": -1, "lat": 10, "lon": 12}
         
   # Prepare 4-year-averages from prepared datasets
-  4-year-Jan.anom_1991-2020.precip:
+  4-year-Jan.anom_1991-2020.precip_global:
     uses:
       prepared:
-        - "annual-Jan.anom_1991-2020.precip"
+        - "annual-Jan.anom_1991-2020.precip_global"
     apply:
       rolling_mean:
         window_size: 4
       rechunk:
         chunks: {"time": -1, "lat": 10, "lon": 12}
         
-  4-year-Nov.anom_1991-2020.precip:
+  4-year-Nov.anom_1991-2020.precip_global:
     uses:
       prepared:
-        - "annual-Nov.anom_1991-2020.precip"
+        - "annual-Nov.anom_1991-2020.precip_global"
     apply:
       rolling_mean:
         window_size: 4
       rechunk:
         chunks: {"time": -1, "lat": 10, "lon": 12}
         
-  4-year.anom_1991-2020.precip:
+  4-year.anom_1991-2020.precip_global:
     uses:
       prepared:
-        - "4-year-Jan.anom_1991-2020.precip"
-        - "4-year-Nov.anom_1991-2020.precip"
+        - "4-year-Jan.anom_1991-2020.precip_global"
+        - "4-year-Nov.anom_1991-2020.precip_global"
     apply:
       rechunk:
         chunks: {"time": -1, "lat": 10, "lon": 12}
         
-  4-year-Jan.anom_1985-2014.precip:
+  4-year-Jan.anom_1985-2014.precip_global:
     uses:
       prepared:
-        - "annual-Jan.anom_1985-2014.precip"
-    apply:
-      rolling_mean:
-        window_size: 4
-      rechunk:
-        chunks: {"time": -1, "lat": 10, "lon": 12}
-        
-  4-year-Nov.anom_1985-2014.precip:
-    uses:
-      prepared:
-        - "annual-Nov.anom_1985-2014.precip"
+        - "annual-Jan.anom_1985-2014.precip_global"
     apply:
       rolling_mean:
         window_size: 4
       rechunk:
         chunks: {"time": -1, "lat": 10, "lon": 12}
         
-  4-year.anom_1985-2014.precip:
+  4-year-Nov.anom_1985-2014.precip_global:
     uses:
       prepared:
-        - "4-year-Jan.anom_1985-2014.precip"
-        - "4-year-Nov.anom_1985-2014.precip"
+        - "annual-Nov.anom_1985-2014.precip_global"
+    apply:
+      rolling_mean:
+        window_size: 4
+      rechunk:
+        chunks: {"time": -1, "lat": 10, "lon": 12}
+        
+  4-year.anom_1985-2014.precip_global:
+    uses:
+      prepared:
+        - "4-year-Jan.anom_1985-2014.precip_global"
+        - "4-year-Nov.anom_1985-2014.precip_global"
     apply:
       rechunk:
         chunks: {"time": -1, "lat": 10, "lon": 12}

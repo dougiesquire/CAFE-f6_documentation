@@ -27,7 +27,7 @@
 name: "EC_Earth3_hist"
 
 prepare:
-#   annual.full.t_ref:
+#   annual.full.t_ref_global:
 #     uses:
 #       Amon:
 #         - "tas"
@@ -48,7 +48,7 @@ prepare:
 #       rechunk:
 #         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
         
-#   annual.full.precip:
+#   annual.full.precip_global:
 #     uses:
 #       Amon:
 #         - "pr"
@@ -73,7 +73,7 @@ prepare:
 #       rechunk:
 #         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
       
-#   annual.full.sst:
+#   annual.full.sst_global:
 #     uses:
 #       Omon:
 #         - "tos"
@@ -189,30 +189,30 @@ prepare:
         chunks: {"time": -1, "member": -1}
 
 #   # Prepare anomalies from prepared datasets
-#   annual.anom_1985-2014.t_ref:
+#   annual.anom_1985-2014.t_ref_global:
 #     uses:
 #       prepared:
-#         - "annual.full.t_ref"
+#         - "annual.full.t_ref_global"
 #     apply:
 #       anomalise:
 #         clim_period: ["1985-01-01", "2014-12-31"]
 #       rechunk:
 #         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
         
-#   annual.anom_1985-2014.precip:
+#   annual.anom_1985-2014.precip_global:
 #     uses:
 #       prepared:
-#         - "annual.full.precip"
+#         - "annual.full.precip_global"
 #     apply:
 #       anomalise:
 #         clim_period: ["1985-01-01", "2014-12-31"]
 #       rechunk:
 #         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
         
-#   annual.anom_1985-2014.sst:
+#   annual.anom_1985-2014.sst_global:
 #     uses:
 #       prepared:
-#         - "annual.full.sst"
+#         - "annual.full.sst_global"
 #     apply:
 #       anomalise:
 #         clim_period: ["1985-01-01", "2014-12-31"]
@@ -240,30 +240,30 @@ prepare:
         chunks: {"time": -1, "member": -1}
         
 #   # Prepare 4-year-averages from prepared datasets
-#   4-year.anom_1985-2014.t_ref:
+#   4-year.anom_1985-2014.t_ref_global:
 #     uses:
 #       prepared:
-#         - "annual.anom_1985-2014.t_ref"
+#         - "annual.anom_1985-2014.t_ref_global"
 #     apply:
 #       rolling_mean:
 #         window_size: 4
 #       rechunk:
 #         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
         
-#   4-year.anom_1985-2014.precip:
+#   4-year.anom_1985-2014.precip_global:
 #     uses:
 #       prepared:
-#         - "annual.anom_1985-2014.precip"
+#         - "annual.anom_1985-2014.precip_global"
 #     apply:
 #       rolling_mean:
 #         window_size: 4
 #       rechunk:
 #         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
         
-#   4-year.anom_1985-2014.sst:
+#   4-year.anom_1985-2014.sst_global:
 #     uses:
 #       prepared:
-#         - "annual.anom_1985-2014.sst"
+#         - "annual.anom_1985-2014.sst_global"
 #     apply:
 #       rolling_mean:
 #         window_size: 4

@@ -27,7 +27,7 @@
 name: "EN422"
 
 prepare:
-  annual-Jan.full.ohc300:
+  annual-Jan.full.ohc300_global:
     uses:
       - "temperature"
     apply:
@@ -47,7 +47,7 @@ prepare:
       rechunk:
         chunks: {"time": -1, "lat": 10, "lon": 12}
         
-  annual-Nov.full.ohc300:
+  annual-Nov.full.ohc300_global:
     uses:
       - "temperature"
     apply:
@@ -68,119 +68,119 @@ prepare:
         chunks: {"time": -1, "lat": 10, "lon": 12}
         
   # Prepare anomalies from prepared datasets      
-  annual-Jan.anom_1991-2020.ohc300:
+  annual-Jan.anom_1991-2020.ohc300_global:
     uses:
       prepared:
-        - "annual-Jan.full.ohc300"
+        - "annual-Jan.full.ohc300_global"
     apply:
       anomalise:
         clim_period: ["1991-01-01", "2020-12-31"]
       rechunk:
         chunks: {"time": -1, "lat": 10, "lon": 12}
         
-  annual-Nov.anom_1991-2020.ohc300:
+  annual-Nov.anom_1991-2020.ohc300_global:
     uses:
       prepared:
-        - "annual-Nov.full.ohc300"
+        - "annual-Nov.full.ohc300_global"
     apply:
       anomalise:
         clim_period: ["1991-01-01", "2020-12-31"]
       rechunk:
         chunks: {"time": -1, "lat": 10, "lon": 12}
         
-  annual.anom_1991-2020.ohc300:
+  annual.anom_1991-2020.ohc300_global:
     uses:
       prepared:
-        - "annual-Jan.anom_1991-2020.ohc300"
-        - "annual-Nov.anom_1991-2020.ohc300"
+        - "annual-Jan.anom_1991-2020.ohc300_global"
+        - "annual-Nov.anom_1991-2020.ohc300_global"
     apply:
       rechunk:
         chunks: {"time": -1, "lat": 10, "lon": 12}
         
-  annual-Jan.anom_1985-2014.ohc300:
+  annual-Jan.anom_1985-2014.ohc300_global:
     uses:
       prepared:
-        - "annual-Jan.full.ohc300"
-    apply:
-      anomalise:
-        clim_period: ["1985-01-01", "2014-12-31"]
-      rechunk:
-        chunks: {"time": -1, "lat": 10, "lon": 12}
-        
-  annual-Nov.anom_1985-2014.ohc300:
-    uses:
-      prepared:
-        - "annual-Nov.full.ohc300"
+        - "annual-Jan.full.ohc300_global"
     apply:
       anomalise:
         clim_period: ["1985-01-01", "2014-12-31"]
       rechunk:
         chunks: {"time": -1, "lat": 10, "lon": 12}
         
-  annual.anom_1985-2014.ohc300:
+  annual-Nov.anom_1985-2014.ohc300_global:
     uses:
       prepared:
-        - "annual-Jan.anom_1985-2014.ohc300"
-        - "annual-Nov.anom_1985-2014.ohc300"
+        - "annual-Nov.full.ohc300_global"
+    apply:
+      anomalise:
+        clim_period: ["1985-01-01", "2014-12-31"]
+      rechunk:
+        chunks: {"time": -1, "lat": 10, "lon": 12}
+        
+  annual.anom_1985-2014.ohc300_global:
+    uses:
+      prepared:
+        - "annual-Jan.anom_1985-2014.ohc300_global"
+        - "annual-Nov.anom_1985-2014.ohc300_global"
     apply:
       rechunk:
         chunks: {"time": -1, "lat": 10, "lon": 12}
         
   # Prepare 4-year-averages from prepared datasets
-  4-year-Jan.anom_1991-2020.ohc300:
+  4-year-Jan.anom_1991-2020.ohc300_global:
     uses:
       prepared:
-        - "annual-Jan.anom_1991-2020.ohc300"
+        - "annual-Jan.anom_1991-2020.ohc300_global"
     apply:
       rolling_mean:
         window_size: 4
       rechunk:
         chunks: {"time": -1, "lat": 10, "lon": 12}
         
-  4-year-Nov.anom_1991-2020.ohc300:
+  4-year-Nov.anom_1991-2020.ohc300_global:
     uses:
       prepared:
-        - "annual-Nov.anom_1991-2020.ohc300"
+        - "annual-Nov.anom_1991-2020.ohc300_global"
     apply:
       rolling_mean:
         window_size: 4
       rechunk:
         chunks: {"time": -1, "lat": 10, "lon": 12}
         
-  4-year.anom_1991-2020.ohc300:
+  4-year.anom_1991-2020.ohc300_global:
     uses:
       prepared:
-        - "4-year-Jan.anom_1991-2020.ohc300"
-        - "4-year-Nov.anom_1991-2020.ohc300"
+        - "4-year-Jan.anom_1991-2020.ohc300_global"
+        - "4-year-Nov.anom_1991-2020.ohc300_global"
     apply:
       rechunk:
         chunks: {"time": -1, "lat": 10, "lon": 12}
         
-  4-year-Jan.anom_1985-2014.ohc300:
+  4-year-Jan.anom_1985-2014.ohc300_global:
     uses:
       prepared:
-        - "annual-Jan.anom_1985-2014.ohc300"
-    apply:
-      rolling_mean:
-        window_size: 4
-      rechunk:
-        chunks: {"time": -1, "lat": 10, "lon": 12}
-        
-  4-year-Nov.anom_1985-2014.ohc300:
-    uses:
-      prepared:
-        - "annual-Nov.anom_1985-2014.ohc300"
+        - "annual-Jan.anom_1985-2014.ohc300_global"
     apply:
       rolling_mean:
         window_size: 4
       rechunk:
         chunks: {"time": -1, "lat": 10, "lon": 12}
         
-  4-year.anom_1985-2014.ohc300:
+  4-year-Nov.anom_1985-2014.ohc300_global:
     uses:
       prepared:
-        - "4-year-Jan.anom_1985-2014.ohc300"
-        - "4-year-Nov.anom_1985-2014.ohc300"
+        - "annual-Nov.anom_1985-2014.ohc300_global"
+    apply:
+      rolling_mean:
+        window_size: 4
+      rechunk:
+        chunks: {"time": -1, "lat": 10, "lon": 12}
+        
+  4-year.anom_1985-2014.ohc300_global:
+    uses:
+      prepared:
+        - "4-year-Jan.anom_1985-2014.ohc300_global"
+        - "4-year-Nov.anom_1985-2014.ohc300_global"
     apply:
       rechunk:
         chunks: {"time": -1, "lat": 10, "lon": 12}
