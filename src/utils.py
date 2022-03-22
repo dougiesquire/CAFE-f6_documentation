@@ -810,8 +810,8 @@ def coarsen(ds, window_size, start_points=None, dim="time"):
 
 def rolling_mean(ds, window_size, start_points=None, dim="time"):
     """
-    Apply a rolling mean to the data, applying 'max' to all relevant coords and optionally starting
-    at a particular time point in the array
+    Apply a rolling mean to the data, applying 'max' to all relevant coords and 
+    optionally starting at a particular time point in the array
 
     Parameters
     ----------
@@ -844,6 +844,39 @@ def rolling_mean(ds, window_size, start_points=None, dim="time"):
 
     # For reasons I don't understand, rolling sometimes promotes float32 to float64
     return xr.merge([result[var].astype(ds[var].dtype) for var in ds.data_vars])
+
+
+def resample(ds, freq, start_points=None, dim="time"):
+    """
+    Resample data to a different temporal frequency by taking the mean
+    over all values at the downsampled frequency and optionally starting
+    at a particular time point in the array
+
+    Parameters
+    ----------
+    ds : xarray Dataset
+        The dataset to resample
+    freq : str
+        Resample frequency expressed using pandas offset alias
+    start_points : str or list of str
+        Value(s) of coordinate `dim` to start the resampling from. If these fall
+        outside the range of the coordinate, resampling starts at the beginning
+        of the array
+    dim : str, optional
+        The name of the time dimension to resample along
+    """
+    if start_points is None:
+        start_points = [None]
+
+    dss = []
+    for start_point in start_points:
+        dss.append(
+            ds.sel({dim: slice(start_point, None)})
+            .resample({dim: freq})
+            .mean(dim)
+        )
+
+    return xr.concat(dss, dim=dim).sortby(dim)
 
 
 def get_region_masks_from_shp(ds, shapefile, header):

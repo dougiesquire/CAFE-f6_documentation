@@ -32,11 +32,12 @@ prepare:
       - "precip"
     apply:
       add_area_using_cdo_gridarea:
-      coarsen:
-        window_size: 12
+      resample:
+        freq: "A"
         start_points: ["1960-01-01"]
+      round_to_start_of_month:
         dim: "time"
-#       force_to_Julian_calendar:
-#       average_over_NRM_super_clusters:
-#       rechunk:
-#         chunks: {"time": -1}
+      force_to_Julian_calendar:
+      average_over_NRM_super_clusters:
+      rechunk:
+        chunks: {"time": -1}
