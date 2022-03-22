@@ -6,7 +6,7 @@
 Documentation for CAFE-f6 skill assessment
 ==========================================
 
-Welcome to the documentation for my project assessing CAFE-f6. This documentation contains information about the project structure and code, and demonstrates some key results.
+Welcome to the documentation for my `project assessing CAFE-f6 <https://github.com/dougiesquire/Squire_2022_CAFE-f6>`_. This documentation contains information about the project structure and code, and demonstrates some key results.
 
 Contents
 --------
