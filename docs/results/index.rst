@@ -9,3 +9,4 @@ These pages demonstrate some key results of this project. They currently compris
     notebooks/CAFE-f6_issues.ipynb
     notebooks/bias_correct_CAFE-f6.ipynb
     notebooks/generic_skill.ipynb
+    notebooks/Australian_skill.ipynb

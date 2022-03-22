@@ -70,7 +70,7 @@ prepare:
       rechunk:
         chunks: {"time": -1, "member": -1}
         
-  annual.full.V_ref_Aus_NRM:
+  annual.full.V_tot_Aus_NRM:
     uses:
       atmos_isobaric_month:
         - "u_ref"
@@ -115,10 +115,10 @@ prepare:
       rechunk:
         chunks: {"time": -1, "member": -1}
         
-  annual.anom_1991-2020.V_ref_Aus_NRM:
+  annual.anom_1991-2020.V_tot_Aus_NRM:
     uses:
       prepared:
-        - "annual.full.V_ref_Aus_NRM"
+        - "annual.full.V_tot_Aus_NRM"
     apply:
       anomalise:
         clim_period: ["1991-01-01", "2020-12-31"]
@@ -146,10 +146,10 @@ prepare:
       rechunk:
         chunks: {"time": -1, "member": -1}
         
-  4-year.anom_1991-2020.V_ref_Aus_NRM:
+  4-year.anom_1991-2020.V_tot_Aus_NRM:
     uses:
       prepared:
-        - "annual.anom_1991-2020.V_ref_Aus_NRM"
+        - "annual.anom_1991-2020.V_tot_Aus_NRM"
     apply:
       rolling_mean:
         window_size: 4
