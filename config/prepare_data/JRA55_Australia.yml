@@ -120,3 +120,237 @@ prepare:
       average_over_NRM_super_clusters:
       rechunk:
         chunks: {"time": -1}
+        
+  # Prepare anomalies from prepared datasets
+  annual-Jan.anom_1991-2020.t_ref_Aus_NRM:
+    uses:
+      prepared:
+        - "annual-Jan.full.t_ref_Aus_NRM"
+    apply:
+      anomalise:
+        clim_period: ["1991-01-01", "2020-12-31"]
+      rechunk:
+        chunks: {"time": -1}
+        
+  annual-Nov.anom_1991-2020.t_ref_Aus_NRM:
+    uses:
+      prepared:
+        - "annual-Nov.full.t_ref_Aus_NRM"
+    apply:
+      anomalise:
+        clim_period: ["1991-01-01", "2020-12-31"]
+      rechunk:
+        chunks: {"time": -1}
+        
+  annual.anom_1991-2020.t_ref_Aus_NRM:
+    uses:
+      prepared:
+        - "annual-Jan.anom_1991-2020.t_ref_Aus_NRM"
+        - "annual-Nov.anom_1991-2020.t_ref_Aus_NRM"
+    apply:
+      rechunk:
+        chunks: {"time": -1}
+        
+  annual-Jan.anom_1985-2014.t_ref_Aus_NRM:
+    uses:
+      prepared:
+        - "annual-Jan.full.t_ref_Aus_NRM"
+    apply:
+      anomalise:
+        clim_period: ["1985-01-01", "2014-12-31"]
+      rechunk:
+        chunks: {"time": -1}
+        
+  annual-Nov.anom_1985-2014.t_ref_Aus_NRM:
+    uses:
+      prepared:
+        - "annual-Nov.full.t_ref_Aus_NRM"
+    apply:
+      anomalise:
+        clim_period: ["1985-01-01", "2014-12-31"]
+      rechunk:
+        chunks: {"time": -1}
+        
+  annual.anom_1985-2014.t_ref_Aus_NRM:
+    uses:
+      prepared:
+        - "annual-Jan.anom_1985-2014.t_ref_Aus_NRM"
+        - "annual-Nov.anom_1985-2014.t_ref_Aus_NRM"
+    apply:
+      rechunk:
+        chunks: {"time": -1}
+        
+  annual-Jan.anom_1991-2020.V_ref_Aus_NRM:
+    uses:
+      prepared:
+        - "annual-Jan.full.V_ref_Aus_NRM"
+    apply:
+      anomalise:
+        clim_period: ["1991-01-01", "2020-12-31"]
+      rechunk:
+        chunks: {"time": -1}
+        
+  annual-Nov.anom_1991-2020.V_ref_Aus_NRM:
+    uses:
+      prepared:
+        - "annual-Nov.full.V_ref_Aus_NRM"
+    apply:
+      anomalise:
+        clim_period: ["1991-01-01", "2020-12-31"]
+      rechunk:
+        chunks: {"time": -1}
+        
+  annual.anom_1991-2020.V_ref_Aus_NRM:
+    uses:
+      prepared:
+        - "annual-Jan.anom_1991-2020.V_ref_Aus_NRM"
+        - "annual-Nov.anom_1991-2020.V_ref_Aus_NRM"
+    apply:
+      rechunk:
+        chunks: {"time": -1}
+        
+  annual-Jan.anom_1985-2014.V_ref_Aus_NRM:
+    uses:
+      prepared:
+        - "annual-Jan.full.V_ref_Aus_NRM"
+    apply:
+      anomalise:
+        clim_period: ["1985-01-01", "2014-12-31"]
+      rechunk:
+        chunks: {"time": -1}
+        
+  annual-Nov.anom_1985-2014.V_ref_Aus_NRM:
+    uses:
+      prepared:
+        - "annual-Nov.full.V_ref_Aus_NRM"
+    apply:
+      anomalise:
+        clim_period: ["1985-01-01", "2014-12-31"]
+      rechunk:
+        chunks: {"time": -1}
+        
+  annual.anom_1985-2014.V_ref_Aus_NRM:
+    uses:
+      prepared:
+        - "annual-Jan.anom_1985-2014.V_ref_Aus_NRM"
+        - "annual-Nov.anom_1985-2014.V_ref_Aus_NRM"
+    apply:
+      rechunk:
+        chunks: {"time": -1}
+
+  # Prepare 4-year-averages from prepared datasets
+  4-year-Jan.anom_1991-2020.t_ref_Aus_NRM:
+    uses:
+      prepared:
+        - "annual-Jan.anom_1991-2020.t_ref_Aus_NRM"
+    apply:
+      rolling_mean:
+        window_size: 4
+      rechunk:
+        chunks: {"time": -1}
+        
+  4-year-Nov.anom_1991-2020.t_ref_Aus_NRM:
+    uses:
+      prepared:
+        - "annual-Nov.anom_1991-2020.t_ref_Aus_NRM"
+    apply:
+      rolling_mean:
+        window_size: 4
+      rechunk:
+        chunks: {"time": -1}
+        
+  4-year.anom_1991-2020.t_ref_Aus_NRM:
+    uses:
+      prepared:
+        - "4-year-Jan.anom_1991-2020.t_ref_Aus_NRM"
+        - "4-year-Nov.anom_1991-2020.t_ref_Aus_NRM"
+    apply:
+      rechunk:
+        chunks: {"time": -1}
+        
+  4-year-Jan.anom_1985-2014.t_ref_Aus_NRM:
+    uses:
+      prepared:
+        - "annual-Jan.anom_1985-2014.t_ref_Aus_NRM"
+    apply:
+      rolling_mean:
+        window_size: 4
+      rechunk:
+        chunks: {"time": -1}
+        
+  4-year-Nov.anom_1985-2014.t_ref_Aus_NRM:
+    uses:
+      prepared:
+        - "annual-Nov.anom_1985-2014.t_ref_Aus_NRM"
+    apply:
+      rolling_mean:
+        window_size: 4
+      rechunk:
+        chunks: {"time": -1}
+        
+  4-year.anom_1985-2014.t_ref_Aus_NRM:
+    uses:
+      prepared:
+        - "4-year-Jan.anom_1985-2014.t_ref_Aus_NRM"
+        - "4-year-Nov.anom_1985-2014.t_ref_Aus_NRM"
+    apply:
+      rechunk:
+        chunks: {"time": -1}
+        
+  4-year-Jan.anom_1991-2020.V_ref_Aus_NRM:
+    uses:
+      prepared:
+        - "annual-Jan.anom_1991-2020.V_ref_Aus_NRM"
+    apply:
+      rolling_mean:
+        window_size: 4
+      rechunk:
+        chunks: {"time": -1}
+        
+  4-year-Nov.anom_1991-2020.V_ref_Aus_NRM:
+    uses:
+      prepared:
+        - "annual-Nov.anom_1991-2020.V_ref_Aus_NRM"
+    apply:
+      rolling_mean:
+        window_size: 4
+      rechunk:
+        chunks: {"time": -1}
+        
+  4-year.anom_1991-2020.V_ref_Aus_NRM:
+    uses:
+      prepared:
+        - "4-year-Jan.anom_1991-2020.V_ref_Aus_NRM"
+        - "4-year-Nov.anom_1991-2020.V_ref_Aus_NRM"
+    apply:
+      rechunk:
+        chunks: {"time": -1}
+        
+  4-year-Jan.anom_1985-2014.V_ref_Aus_NRM:
+    uses:
+      prepared:
+        - "annual-Jan.anom_1985-2014.V_ref_Aus_NRM"
+    apply:
+      rolling_mean:
+        window_size: 4
+      rechunk:
+        chunks: {"time": -1}
+        
+  4-year-Nov.anom_1985-2014.V_ref_Aus_NRM:
+    uses:
+      prepared:
+        - "annual-Nov.anom_1985-2014.V_ref_Aus_NRM"
+    apply:
+      rolling_mean:
+        window_size: 4
+      rechunk:
+        chunks: {"time": -1}
+        
+  4-year.anom_1985-2014.V_ref_Aus_NRM:
+    uses:
+      prepared:
+        - "4-year-Jan.anom_1985-2014.V_ref_Aus_NRM"
+        - "4-year-Nov.anom_1985-2014.V_ref_Aus_NRM"
+    apply:
+      rechunk:
+        chunks: {"time": -1}

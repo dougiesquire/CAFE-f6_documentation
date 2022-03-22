@@ -31,13 +31,55 @@ prepare:
     uses:
       - "precip"
     apply:
-      add_area_using_cdo_gridarea:
       resample:
         freq: "A"
         start_points: ["1960-01-01"]
       round_to_start_of_month:
         dim: "time"
       force_to_Julian_calendar:
+      add_area_using_cdo_gridarea:
       average_over_NRM_super_clusters:
+      rechunk:
+        chunks: {"time": -1}
+        
+  # Prepare anomalies from prepared datasets
+  annual.anom_1991-2020.precip_Aus_NRM:
+    uses:
+      prepared:
+        - "annual.full.precip_Aus_NRM"
+    apply:
+      anomalise:
+        clim_period: ["1991-01-01", "2020-12-31"]
+      rechunk:
+        chunks: {"time": -1}
+        
+  annual.anom_1985-2014.precip_Aus_NRM:
+    uses:
+      prepared:
+        - "annual.full.precip_Aus_NRM"
+    apply:
+      anomalise:
+        clim_period: ["1985-01-01", "2014-12-31"]
+      rechunk:
+        chunks: {"time": -1}
+        
+  # Prepare 4-year-averages from prepared datasets
+  4-year.anom_1991-2020.precip_Aus_NRM:
+    uses:
+      prepared:
+        - "annual.anom_1991-2020.precip_Aus_NRM"
+    apply:
+      rolling_mean:
+        window_size: 4
+      rechunk:
+        chunks: {"time": -1}
+        
+  4-year.anom_1985-2014.precip_Aus_NRM:
+    uses:
+      prepared:
+        - "annual.anom_1985-2014.precip_Aus_NRM"
+    apply:
+      rolling_mean:
+        window_size: 4
       rechunk:
         chunks: {"time": -1}

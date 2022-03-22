@@ -906,9 +906,13 @@ def average_over_NRM_super_clusters(ds):
     ds : xarray Dataset
         The array to average over the NRM super cluster regions
     """
-    shapefile = "../../data/raw/NRM_super_clusters/NRM_super_clusters.shp"
+    shapefile = PROJECT_DIR / "data/raw/NRM_super_clusters/NRM_super_clusters.shp"
     header = "label"
     masks = get_region_masks_from_shp(ds, shapefile, header)
+    masks = xr.concat(
+        [masks, masks.sum("region").assign_coords({"region": "Australia"})],
+        dim="region",
+    )
     return ds.where(masks).weighted(ds["area"]).mean(["lon", "lat"])
 
 
