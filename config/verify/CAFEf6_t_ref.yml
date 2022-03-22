@@ -20,18 +20,18 @@
 #        Arguments to be passed to src.verify.calculate_metric
 
 prepare:
-  CAFEf6.JRA55.annual.anom_1991-2020.t_ref.rXY_1991-2020:
-    hindcasts: CAFEf6.annual.anom_1991-2020.t_ref
-    observations: JRA55.annual.anom_1991-2020.t_ref
+  CAFEf6.JRA55.annual.anom_1991-2020.t_ref_global.rXY_1991-2020:
+    hindcasts: CAFEf6.annual.anom_1991-2020.t_ref_global
+    observations: JRA55.annual.anom_1991-2020.t_ref_global
     verify:
       metric: "acc"
       significance: True
       transform: "Fisher_z"
       alpha: 0.05
       
-  CAFEf6.JRA55.4-year.anom_1991-2020.t_ref.rXY_1991-2020:
-    hindcasts: CAFEf6.4-year.anom_1991-2020.t_ref
-    observations: JRA55.4-year.anom_1991-2020.t_ref
+  CAFEf6.JRA55.4-year.anom_1991-2020.t_ref_global.rXY_1991-2020:
+    hindcasts: CAFEf6.4-year.anom_1991-2020.t_ref_global
+    observations: JRA55.4-year.anom_1991-2020.t_ref_global
     apply:
       all:
         mask_period:
@@ -42,20 +42,20 @@ prepare:
       transform: "Fisher_z"
       alpha: 0.05
 
-  CAFEf6.JRA55.annual.anom_1991-2020.t_ref.ri_1991-2020:
-    hindcasts: CAFEf6.annual.anom_1991-2020.t_ref
-    observations: JRA55.annual.anom_1991-2020.t_ref
-    simulations: CAFE_hist.annual.anom_1991-2020.t_ref
+  CAFEf6.JRA55.annual.anom_1991-2020.t_ref_global.ri_1991-2020:
+    hindcasts: CAFEf6.annual.anom_1991-2020.t_ref_global
+    observations: JRA55.annual.anom_1991-2020.t_ref_global
+    simulations: CAFE_hist.annual.anom_1991-2020.t_ref_global
     verify:
       metric: "acc_initialised"
       significance: True
       transform: "Fisher_z"
       alpha: 0.05
       
-  CAFEf6.JRA55.4-year.anom_1991-2020.t_ref.ri_1991-2020:
-    hindcasts: CAFEf6.4-year.anom_1991-2020.t_ref
-    observations: JRA55.4-year.anom_1991-2020.t_ref
-    simulations: CAFE_hist.4-year.anom_1991-2020.t_ref
+  CAFEf6.JRA55.4-year.anom_1991-2020.t_ref_global.ri_1991-2020:
+    hindcasts: CAFEf6.4-year.anom_1991-2020.t_ref_global
+    observations: JRA55.4-year.anom_1991-2020.t_ref_global
+    simulations: CAFE_hist.4-year.anom_1991-2020.t_ref_global
     apply:
       all:
         mask_period:
@@ -66,19 +66,19 @@ prepare:
       transform: "Fisher_z"
       alpha: 0.05
       
-  CAFEf6.JRA55.annual.anom_1991-2020.t_ref.MSSS_1991-2020:
-    hindcasts: CAFEf6.annual.anom_1991-2020.t_ref
-    observations: JRA55.annual.anom_1991-2020.t_ref
-    simulations: CAFE_hist.annual.anom_1991-2020.t_ref
+  CAFEf6.JRA55.annual.anom_1991-2020.t_ref_global.MSSS_1991-2020:
+    hindcasts: CAFEf6.annual.anom_1991-2020.t_ref_global
+    observations: JRA55.annual.anom_1991-2020.t_ref_global
+    simulations: CAFE_hist.annual.anom_1991-2020.t_ref_global
     verify:
       metric: "msss"
       significance: True
       alpha: 0.05
       
-  CAFEf6.JRA55.4-year.anom_1991-2020.t_ref.MSSS_1991-2020:
-    hindcasts: CAFEf6.4-year.anom_1991-2020.t_ref
-    observations: JRA55.4-year.anom_1991-2020.t_ref
-    simulations: CAFE_hist.4-year.anom_1991-2020.t_ref
+  CAFEf6.JRA55.4-year.anom_1991-2020.t_ref_global.MSSS_1991-2020:
+    hindcasts: CAFEf6.4-year.anom_1991-2020.t_ref_global
+    observations: JRA55.4-year.anom_1991-2020.t_ref_global
+    simulations: CAFE_hist.4-year.anom_1991-2020.t_ref_global
     apply:
       all:
         mask_period:
@@ -88,19 +88,19 @@ prepare:
       significance: True
       alpha: 0.05
       
-  CAFEf6.JRA55.annual.anom_1991-2020.t_ref.CRPSS_1991-2020:
-    hindcasts: CAFEf6.annual.anom_1991-2020.t_ref
-    observations: JRA55.annual.anom_1991-2020.t_ref
-    simulations: CAFE_hist.annual.anom_1991-2020.t_ref
+  CAFEf6.JRA55.annual.anom_1991-2020.t_ref_global.CRPSS_1991-2020:
+    hindcasts: CAFEf6.annual.anom_1991-2020.t_ref_global
+    observations: JRA55.annual.anom_1991-2020.t_ref_global
+    simulations: CAFE_hist.annual.anom_1991-2020.t_ref_global
     verify:
       metric: "crpss"
       significance: True
       alpha: 0.05
       
-  CAFEf6.JRA55.4-year.anom_1991-2020.t_ref.CRPSS_1991-2020:
-    hindcasts: CAFEf6.4-year.anom_1991-2020.t_ref
-    observations: JRA55.4-year.anom_1991-2020.t_ref
-    simulations: CAFE_hist.4-year.anom_1991-2020.t_ref
+  CAFEf6.JRA55.4-year.anom_1991-2020.t_ref_global.CRPSS_1991-2020:
+    hindcasts: CAFEf6.4-year.anom_1991-2020.t_ref_global
+    observations: JRA55.4-year.anom_1991-2020.t_ref_global
+    simulations: CAFE_hist.4-year.anom_1991-2020.t_ref_global
     apply:
       all:
         mask_period:
