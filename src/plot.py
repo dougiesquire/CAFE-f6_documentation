@@ -230,7 +230,7 @@ def metric_maps(
     return fig
 
 
-def metrics(metrics, variable, headings=None, figsize=(15, 15)):
+def metrics(metrics, variable, headings=None, one_legend=True, shade_background=True, figsize=(15, 15)):
     """
     Plot panels of skill scores
 
@@ -244,6 +244,10 @@ def metrics(metrics, variable, headings=None, figsize=(15, 15)):
         The name of the variable
     headings : list
         List of the same size as fields containing the headins for each panel
+    one_legend : boolean, optional
+        If True, only add a legend to the first panel
+    shade_background : boolean, optional
+        Of True, shade the background either side of zero
     figsize : iterable of length 2
         The total size of the figure
     """
@@ -292,14 +296,15 @@ def metrics(metrics, variable, headings=None, figsize=(15, 15)):
         if headings is not None:
             ax.set_title(headings[r][c])
 
-        legend1 = ax.legend([l[0] for l in plot_lines], metric_dict.keys(), loc=1)
-        has_multiple_lines = [len(l) > 1 for l in plot_lines]
-        if any(has_multiple_lines):
-            line_for_legend = [i for i, x in enumerate(has_multiple_lines) if x][0]
-            leg = ax.legend(plot_lines[line_for_legend], metric_dict[list(metric_dict.keys())[0]].keys(), loc=4)
-            for handle in leg.legendHandles:
-                handle.set_color("grey")
-            ax.add_artist(legend1)
+        if ((one_legend is True) & (r == 0) & (c == 0)) | (one_legend is False):
+            legend1 = ax.legend([l[0] for l in plot_lines], metric_dict.keys(), loc=1)
+            has_multiple_lines = [len(l) > 1 for l in plot_lines]
+            if any(has_multiple_lines):
+                line_for_legend = [i for i, x in enumerate(has_multiple_lines) if x][0]
+                leg = ax.legend(plot_lines[line_for_legend], metric_dict[list(metric_dict.keys())[0]].keys(), loc=4)
+                for handle in leg.legendHandles:
+                    handle.set_color("grey")
+                ax.add_artist(legend1)
 
         if c == 0:
             if any(has_multiple_lines):
@@ -316,7 +321,18 @@ def metrics(metrics, variable, headings=None, figsize=(15, 15)):
             ax.set_xlabel("")
 
         ax.grid(True)
-
+        ax.set_ylim(-1,1)
+        
+        if shade_background:
+            neg_color = "m"
+            pos_color = "g"
+            xlim = ax.get_xlim()
+            ylim = ax.get_ylim()
+            ax.fill_between(xlim, [ylim[0], ylim[0]], color=neg_color, alpha=0.1, zorder=-1)
+            ax.fill_between(xlim, [ylim[1], ylim[1]], color=pos_color, alpha=0.1, zorder=-1)
+            ax.set_xlim(xlim)
+            ax.set_ylim(ylim)
+            
     plt.tight_layout()
     fig.patch.set_facecolor("w")
     return fig
