@@ -1,4 +1,5 @@
 import itertools
+from itertools import cycle
 from pathlib import Path
 
 import cftime
@@ -8,6 +9,7 @@ import xarray as xr
 
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
+from matplotlib.dates import date2num
 import matplotlib.patches as mpatches
 import matplotlib.gridspec as gridspec
 from mpl_toolkits.axes_grid1 import Divider, Size
@@ -41,10 +43,6 @@ def hindcasts(hcsts, obsvs=None, hists=None, shade=False):
         If True, shade background according to change in bias correction in
         CAFE60v1
     """
-
-    from itertools import cycle
-    from matplotlib.pyplot import cm
-    from matplotlib.dates import date2num
 
     def _shading(ax):
         trans = cftime.datetime(1992, 1, 1)
@@ -138,8 +136,8 @@ def hindcasts(hcsts, obsvs=None, hists=None, shade=False):
     return fig
 
 
-def skill_maps(
-    fields, variable, vrange, headings=None, group_rows_by=1, figsize=(15, 15)
+def metric_maps(
+    fields, variable, vrange, headings=None, figsize=(15, 15)
 ):
     """
     Plot panels of skill score maps
@@ -147,11 +145,13 @@ def skill_maps(
     Parameters
     ----------
     fields : list
-        List of size n_rows x n_coloumns containing the fields to plot
+        List of size n_rows x n_columns containing the fields to plot
     variable : str
         The name of the variable
     vrange : iterable of length 2
         The vmin and vmax values for all panels
+    headings : list
+        List of the same size as fields containing the headins for each panel
     figsize : iterable of length 2
         The total size of the figure
     """
@@ -160,8 +160,8 @@ def skill_maps(
         """Return a string of the verification period for a skill metric"""
 
         return (
-            f"{ds.attrs['verification period start'][:4]}-"
-            f"{ds.attrs['verification period end'][:4]}"
+            f"{ds.attrs['verification period'][:4]}-"
+            f"{ds.attrs['verification period'][:4]}"
         )
 
     fig = plt.figure(figsize=figsize)
@@ -215,6 +215,7 @@ def skill_maps(
         ax.set_title(f"{title} | {_get_verif_period(skill)}")
 
     fig.tight_layout()
+    fig.patch.set_facecolor("w")
 
     # Colorbar with fixed physical height
     h = [Size.Fixed(figsize[0] / 12), Size.Fixed(figsize[0] - figsize[0] / 6)]
@@ -226,4 +227,96 @@ def skill_maps(
     )
     fig.colorbar(p, cax=cbar_ax, orientation="horizontal")
 
+    return fig
+
+
+def metrics(metrics, variable, headings=None, figsize=(15, 15)):
+    """
+    Plot panels of skill scores
+
+    Parameters
+    ----------
+    metrics : list
+        List of size n_rows x n_columns containing dictionaries of the model
+        metrics to plot in each panel, e.g.
+        [[{"model1": {"rXY": metric1, "ri": metric2}, "model2": {"rXY": metric1, "ri": metric2}}]]
+    variable : str
+        The name of the variable
+    headings : list
+        List of the same size as fields containing the headins for each panel
+    figsize : iterable of length 2
+        The total size of the figure
+    """
+
+    fig = plt.figure(figsize=figsize)
+    n_rows = len(metrics)
+    n_columns = len(metrics[0])
+    axs = fig.subplots(
+        n_rows,
+        n_columns,
+        sharex=True,
+        sharey=True,
+    )
+    if n_rows == 1:
+        axs = [axs]
+        if n_columns == 1:
+            axs = [axs]
+    elif n_columns == 1:
+        axs = [[ax] for ax in axs]
+
+    for r, c in itertools.product(range(n_rows), range(n_columns)):
+        ax = axs[r][c]
+
+        metric_dict = metrics[r][c]
+        colors = ["C0", "C1", "C2", "C3", "C4"]
+        colorcycler = cycle(colors)
+        plot_lines = []
+        for model, model_metrics in metric_dict.items():
+            color = next(colorcycler)
+            lines = ["-", "--", "-.", ":"]
+            linecycler = cycle(lines)
+            metric_lines = []
+            for metric_name, model_metric in model_metrics.items():
+                line = next(linecycler)
+                (p,) = model_metric[variable].plot(
+                    ax=ax,
+                    linestyle=line,
+                    color=color,
+                )
+                model_metric[variable].where(model_metric[f"{variable}_signif"]).plot(
+                    ax=ax, linestyle="none", marker="o", color=color
+                )
+                metric_lines.append(p)
+            plot_lines.append(metric_lines)
+
+        if headings is not None:
+            ax.set_title(headings[r][c])
+
+        legend1 = ax.legend([l[0] for l in plot_lines], metric_dict.keys(), loc=1)
+        has_multiple_lines = [len(l) > 1 for l in plot_lines]
+        if any(has_multiple_lines):
+            line_for_legend = [i for i, x in enumerate(has_multiple_lines) if x][0]
+            leg = ax.legend(plot_lines[line_for_legend], metric_dict[list(metric_dict.keys())[0]].keys(), loc=4)
+            for handle in leg.legendHandles:
+                handle.set_color("grey")
+            ax.add_artist(legend1)
+
+        if c == 0:
+            if any(has_multiple_lines):
+                ax.set_ylabel("Skill")
+            else:
+                # Assume all metrics are the same
+                ax.set_ylabel(list(model_metrics.keys())[0])
+        else:
+            ax.set_ylabel("")
+
+        if r == (n_rows - 1):
+            ax.set_xlabel("Final lead month of forecast period")
+        else:
+            ax.set_xlabel("")
+
+        ax.grid(True)
+
+    plt.tight_layout()
+    fig.patch.set_facecolor("w")
     return fig
