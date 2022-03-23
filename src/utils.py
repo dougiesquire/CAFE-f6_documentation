@@ -7,10 +7,6 @@ from functools import reduce, partial
 
 import yaml
 
-import regionmask
-
-import geopandas
-
 import numpy as np
 import xarray as xr
 
@@ -314,9 +310,9 @@ def calculate_amv(sst_anom, sst_name="sst"):
     north_atlantic_box = [280.0, 360.0, 0.0, 60.0]
     global_box = [0.0, 360.0, -60.0, 60.0]
 
-    amv = average_over_lon_lat_box(sst_anom, north_atlantic_box) - average_over_lon_lat_box(
-        sst_anom, global_box
-    )
+    amv = average_over_lon_lat_box(
+        sst_anom, north_atlantic_box
+    ) - average_over_lon_lat_box(sst_anom, global_box)
     amv = amv.rename({sst_name: "amv"})
     amv["amv"].attrs = dict(
         long_name="Atlantic multi-decadal variability", units="degC"
@@ -810,7 +806,7 @@ def coarsen(ds, window_size, start_points=None, dim="time"):
 
 def rolling_mean(ds, window_size, start_points=None, dim="time"):
     """
-    Apply a rolling mean to the data, applying 'max' to all relevant coords and 
+    Apply a rolling mean to the data, applying 'max' to all relevant coords and
     optionally starting at a particular time point in the array
 
     Parameters
@@ -871,9 +867,7 @@ def resample(ds, freq, start_points=None, dim="time"):
     dss = []
     for start_point in start_points:
         dss.append(
-            ds.sel({dim: slice(start_point, None)})
-            .resample({dim: freq})
-            .mean(dim)
+            ds.sel({dim: slice(start_point, None)}).resample({dim: freq}).mean(dim)
         )
 
     return xr.concat(dss, dim=dim).sortby(dim)
@@ -892,6 +886,9 @@ def get_region_masks_from_shp(ds, shapefile, header):
     header : str
         Name of the shapefile column to use to name the regions
     """
+    import geopandas
+    import regionmask
+
     shapes = geopandas.read_file(shapefile)
     mask = regionmask.mask_3D_geopandas(shapes, ds.lon, ds.lat)
     return mask.assign_coords({"region": shapes[header].to_list()})

@@ -92,22 +92,28 @@ class _open:
     def AGCD(variables, _, preprocess):
         """Open AGCD variables"""
         result = []
-        chunks = {"time": 8000, "lon": 40, "lat": 40} # Based on chunking on disk
-        max_time = "2021-12-31" # Recent times can be flaky
+        chunks = {"time": 8000, "lon": 40, "lat": 40}  # Based on chunking on disk
+        max_time = "2021-12-31"  # Recent times can be flaky
         for variable in variables:
             hist_file = f"{DATA_DIR}/AGCD/HISTORICAL/climate/{variable}.nc"
             recent_file = f"{DATA_DIR}/AGCD/climate/{variable}.nc"
-            ds_hist = xr.open_dataset(hist_file, use_cftime=True, chunks=chunks)[[variable]]
-            ds_recent = xr.open_dataset(recent_file, use_cftime=True, chunks=chunks)[[variable]]
+            ds_hist = xr.open_dataset(hist_file, use_cftime=True, chunks=chunks)[
+                [variable]
+            ]
+            ds_recent = xr.open_dataset(recent_file, use_cftime=True, chunks=chunks)[
+                [variable]
+            ]
             ds_hist = ds_hist.sel(time=slice(None, ds_recent.isel(time=0).time.values))
-            ds_recent = ds_recent.sel(time=slice(ds_recent.isel(time=1).time.values, max_time))
+            ds_recent = ds_recent.sel(
+                time=slice(ds_recent.isel(time=1).time.values, max_time)
+            )
             result.append(xr.concat((ds_hist, ds_recent), dim="time"))
         ds = xr.merge(result).chunk(chunks)
         if preprocess is not None:
             return preprocess(ds)
         else:
             return ds
-    
+
     @staticmethod
     def CAFEf6(variables, realm, preprocess):
         """Open CAFE-f6 variables from specified realm applying preprocess prior to

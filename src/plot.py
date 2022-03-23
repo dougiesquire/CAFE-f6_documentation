@@ -136,9 +136,7 @@ def hindcasts(hcsts, obsvs=None, hists=None, shade=False):
     return fig
 
 
-def metric_maps(
-    fields, variable, vrange, headings=None, figsize=(15, 15)
-):
+def metric_maps(fields, variable, vrange, headings=None, figsize=(15, 15)):
     """
     Plot panels of skill score maps
 
@@ -230,7 +228,14 @@ def metric_maps(
     return fig
 
 
-def metrics(metrics, variable, headings=None, one_legend=True, shade_background=True, figsize=(15, 15)):
+def metrics(
+    metrics,
+    variable,
+    headings=None,
+    one_legend=True,
+    shade_background=True,
+    figsize=(15, 15),
+):
     """
     Plot panels of skill scores
 
@@ -301,7 +306,11 @@ def metrics(metrics, variable, headings=None, one_legend=True, shade_background=
             has_multiple_lines = [len(l) > 1 for l in plot_lines]
             if any(has_multiple_lines):
                 line_for_legend = [i for i, x in enumerate(has_multiple_lines) if x][0]
-                leg = ax.legend(plot_lines[line_for_legend], metric_dict[list(metric_dict.keys())[0]].keys(), loc=4)
+                leg = ax.legend(
+                    plot_lines[line_for_legend],
+                    metric_dict[list(metric_dict.keys())[0]].keys(),
+                    loc=4,
+                )
                 for handle in leg.legendHandles:
                     handle.set_color("grey")
                 ax.add_artist(legend1)
@@ -321,18 +330,22 @@ def metrics(metrics, variable, headings=None, one_legend=True, shade_background=
             ax.set_xlabel("")
 
         ax.grid(True)
-        ax.set_ylim(-1,1)
-        
+        ax.set_ylim(-1, 1)
+
         if shade_background:
             neg_color = "m"
             pos_color = "g"
             xlim = ax.get_xlim()
             ylim = ax.get_ylim()
-            ax.fill_between(xlim, [ylim[0], ylim[0]], color=neg_color, alpha=0.1, zorder=-1)
-            ax.fill_between(xlim, [ylim[1], ylim[1]], color=pos_color, alpha=0.1, zorder=-1)
+            ax.fill_between(
+                xlim, [ylim[0], ylim[0]], color=neg_color, alpha=0.1, zorder=-1
+            )
+            ax.fill_between(
+                xlim, [ylim[1], ylim[1]], color=pos_color, alpha=0.1, zorder=-1
+            )
             ax.set_xlim(xlim)
             ax.set_ylim(ylim)
-            
+
     plt.tight_layout()
     fig.patch.set_facecolor("w")
     return fig

@@ -569,7 +569,6 @@ def calculate_metric(
                 alpha=alpha,
             )
 
-            
             skill_at_lead = skill_at_lead.assign_coords(
                 {"verification_period": verif_period}
             )

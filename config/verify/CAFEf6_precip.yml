@@ -20,7 +20,7 @@
 #        Arguments to be passed to src.verify.calculate_metric
 
 prepare:
-  # Global metrics
+#   # Global metrics
 #   CAFEf6.GPCP.annual.anom_1991-2020.precip_global.rXY_1991-2020:
 #     hindcasts: CAFEf6.annual.anom_1991-2020.precip_global
 #     observations: GPCP.annual.anom_1991-2020.precip_global
