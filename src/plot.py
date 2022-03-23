@@ -1,3 +1,5 @@
+import functools
+
 import itertools
 from itertools import cycle
 from pathlib import Path
@@ -136,7 +138,7 @@ def hindcasts(hcsts, obsvs=None, hists=None, shade=False):
     return fig
 
 
-def metric_maps(fields, variable, vrange, headings=None, figsize=(15, 15)):
+def metric_maps(fields, variable, vrange, headings=None, add_colorbar=True, figsize=(15, 15)):
     """
     Plot panels of skill score maps
 
@@ -204,15 +206,16 @@ def metric_maps(fields, variable, vrange, headings=None, figsize=(15, 15)):
             add_colorbar=False,
         )
         p.axes.coastlines(color=[0.2, 0.2, 0.2], linewidth=0.75)
-        ax.contourf(
-            lon,
-            lat,
-            1 * skill[f"{variable}_signif"],
-            [0, 0.5, 1],
-            colors="none",
-            hatches=[None, "///", None],
-            transform=ccrs.PlateCarree(),
-        )
+        if f"{variable}_signif"in skill:
+            ax.contourf(
+                lon,
+                lat,
+                1 * skill[f"{variable}_signif"],
+                [0, 0.5, 1],
+                colors="none",
+                hatches=[None, "///", None],
+                transform=ccrs.PlateCarree(),
+            )
 
         if headings is not None:
             ax.set_title(headings[r][c])
@@ -223,15 +226,16 @@ def metric_maps(fields, variable, vrange, headings=None, figsize=(15, 15)):
     fig.tight_layout()
     fig.patch.set_facecolor("w")
 
-    # Colorbar with fixed physical height
-    h = [Size.Fixed(figsize[0] / 12), Size.Fixed(figsize[0] - figsize[0] / 6)]
-    v = [Size.Fixed(0), Size.Fixed(0.15)]
-    divider = Divider(fig, (0, 0, 1, 1), h, v, aspect=False)
-    #     fig.subplots_adjust(bottom=0.1)
-    cbar_ax = fig.add_axes(
-        divider.get_position(), axes_locator=divider.new_locator(nx=1, ny=1)
-    )
-    fig.colorbar(p, cax=cbar_ax, orientation="horizontal")
+    if add_colorbar:
+        # Colorbar with fixed physical height
+        h = [Size.Fixed(figsize[0] / 12), Size.Fixed(figsize[0] - figsize[0] / 6)]
+        v = [Size.Fixed(0), Size.Fixed(0.15)]
+        divider = Divider(fig, (0, 0, 1, 1), h, v, aspect=False)
+        #     fig.subplots_adjust(bottom=0.1)
+        cbar_ax = fig.add_axes(
+            divider.get_position(), axes_locator=divider.new_locator(nx=1, ny=1)
+        )
+        fig.colorbar(p, cax=cbar_ax, orientation="horizontal")
 
     return fig
 
@@ -245,7 +249,8 @@ def metrics(
     figsize=(15, 15),
 ):
     """
-    Plot panels of skill scores
+    Plot panels of skill scores. When multiple metrics are provided in a panel,
+    cross are shown along the x-axis where both metrics are positive.
 
     Parameters
     ----------
@@ -287,6 +292,8 @@ def metrics(
         metric_dict = metrics[r][c]
         colors = ["C0", "C1", "C2", "C3", "C4"]
         colorcycler = cycle(colors)
+        # spaces = [0,0.1,-0.1,0.2,-0.2]
+        # spacecycler = cycle(spaces)
         plot_lines = []
         for model, model_metrics in metric_dict.items():
             color = next(colorcycler)
@@ -305,7 +312,25 @@ def metrics(
                 )
                 metric_lines.append(p)
             plot_lines.append(metric_lines)
+            
+            # if len(model_metrics) > 1:
+            #     def logical_and(ds_1, ds_2):
+            #         out = ds_1 & ds_2
+            #         return out.where(out > 0)
 
+            #     def reduction(ds):
+            #         """How to select where crosses go when multiple metrics are provided"""
+            #         return xr.where(
+            #             (ds[variable] > 0) & ds[f"{variable}_signif"], True, False
+            #         ).to_dataset(name=variable)
+            #         # return ds[[variable]] > 0
+
+            #     crosses = functools.reduce(
+            #     logical_and, [reduction(ds) for ds in model_metrics.values()]
+            #     ).dropna(dim="lead")
+            #     space = next(spacecycler)
+            #     ax.plot(crosses.lead,[space]*len(crosses.lead), marker='x', linestyle="none", color=color)
+                
         if headings is not None:
             ax.set_title(headings[r][c])
 
