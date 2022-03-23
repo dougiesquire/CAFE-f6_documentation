@@ -74,7 +74,7 @@ def acc_initialised(hcst, obsv, hist):
     return rXY - ru
 
 
-def msss(hcst, obsv, ref):
+def _msss(hcst, obsv, ref):
     """
     Return the mean squared skill score between a forecast and observations
     relative to a reference dataset
@@ -88,11 +88,43 @@ def msss(hcst, obsv, ref):
     ref : xarray Dataset
         The reference timeseries
     """
-    if "member" in ref.dims:
-        ref = ref.mean("member")
-    num = xs.mse(hcst.mean("member"), obsv, dim="time", skipna=True)
+    num = xs.mse(hcst, obsv, dim="time", skipna=True)
     den = xs.mse(ref, obsv, dim="time", skipna=True)
     return 1 - num / den
+
+
+def msss_hist(hcst, obsv, hist):
+    """
+    Return the mean squared skill score between a forecast and observations
+    relative to historical simulations
+
+    Parameters
+    ----------
+    hcst : xarray Dataset
+        The forecast timeseries
+    obsv : xarray Dataset
+        The observed timeseries
+    hist : xarray Dataset
+        The historical simulation timeseries
+    """
+    return _msss(hcst.mean("member"), obsv, hist.mean("member"))
+
+
+def msss_clim(hcst, obsv):
+    """
+    Return the mean squared skill score between a forecast and observations
+    relative to climatology
+    
+    Note the inputs are expected to be anomalies
+
+    Parameters
+    ----------
+    hcst : xarray Dataset
+        The forecast timeseries
+    obsv : xarray Dataset
+        The observed timeseries
+    """
+    return _msss(hcst.mean("member"), obsv, xr.zeros_like(obsv))
 
 
 def crpss(hcst, obsv, ref):

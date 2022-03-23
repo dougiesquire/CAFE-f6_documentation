@@ -75,7 +75,7 @@ prepare:
 #       transform: "Fisher_z"
 #       alpha: 0.05
 
-#   EC_Earth3.JRA55.annual.anom_1985-2014.t_ref_global.MSSS_1985-2014:
+#   EC_Earth3.JRA55.annual.anom_1985-2014.t_ref_global.MSSS_hist_1985-2014:
 #     hindcasts: EC_Earth3.annual.anom_1985-2014.t_ref_global
 #     observations: JRA55.annual.anom_1985-2014.t_ref_global
 #     simulations: EC_Earth3_hist.annual.anom_1985-2014.t_ref_global
@@ -84,11 +84,11 @@ prepare:
 #         mask_period:
 #           period: ["1985-01-01", "2014-12-31"]
 #     verify:
-#       metric: "msss"
+#       metric: "msss_hist"
 #       significance: True
 #       alpha: 0.05
       
-#   EC_Earth3.JRA55.4-year.anom_1985-2014.t_ref_global.MSSS_1985-2014:
+#   EC_Earth3.JRA55.4-year.anom_1985-2014.t_ref_global.MSSS_hist_1985-2014:
 #     hindcasts: EC_Earth3.4-year.anom_1985-2014.t_ref_global
 #     observations: JRA55.4-year.anom_1985-2014.t_ref_global
 #     simulations: EC_Earth3_hist.4-year.anom_1985-2014.t_ref_global
@@ -97,11 +97,35 @@ prepare:
 #         mask_period:
 #           period: ["1985-01-01", "2014-12-31"]
 #     verify:
-#       metric: "msss"
+#       metric: "msss_hist"
 #       significance: True
 #       alpha: 0.05
+
+  EC_Earth3.JRA55.annual.anom_1985-2014.t_ref_global.MSSS_clim_1985-2014:
+    hindcasts: EC_Earth3.annual.anom_1985-2014.t_ref_global
+    observations: JRA55.annual.anom_1985-2014.t_ref_global
+    apply:
+      all:
+        mask_period:
+          period: ["1985-01-01", "2014-12-31"]
+    verify:
+      metric: "msss_clim"
+      significance: True
+      alpha: 0.05
       
-#   EC_Earth3.JRA55.annual.anom_1985-2014.t_ref_global.CRPSS_1985-2014:
+  EC_Earth3.JRA55.4-year.anom_1985-2014.t_ref_global.MSSS_clim_1985-2014:
+    hindcasts: EC_Earth3.4-year.anom_1985-2014.t_ref_global
+    observations: JRA55.4-year.anom_1985-2014.t_ref_global
+    apply:
+      all:
+        mask_period:
+          period: ["1985-01-01", "2014-12-31"]
+    verify:
+      metric: "msss_clim"
+      significance: True
+      alpha: 0.05
+      
+#   EC_Earth3.JRA55.annual.anom_1985-2014.t_ref_global.CRPSS_hist_1985-2014:
 #     hindcasts: EC_Earth3.annual.anom_1985-2014.t_ref_global
 #     observations: JRA55.annual.anom_1985-2014.t_ref_global
 #     simulations: EC_Earth3_hist.annual.anom_1985-2014.t_ref_global
@@ -114,7 +138,7 @@ prepare:
 #       significance: True
 #       alpha: 0.05
       
-#   EC_Earth3.JRA55.4-year.anom_1985-2014.t_ref_global.CRPSS_1985-2014:
+#   EC_Earth3.JRA55.4-year.anom_1985-2014.t_ref_global.CRPSS_hist_1985-2014:
 #     hindcasts: EC_Earth3.4-year.anom_1985-2014.t_ref_global
 #     observations: JRA55.4-year.anom_1985-2014.t_ref_global
 #     simulations: EC_Earth3_hist.4-year.anom_1985-2014.t_ref_global
@@ -127,109 +151,133 @@ prepare:
 #       significance: True
 #       alpha: 0.05
       
-  # Australian NRM region metrics
-  EC_Earth3.JRA55.annual.anom_1985-2014.t_ref_Aus_NRM.rXY_1985-2014:
-    hindcasts: EC_Earth3.annual.anom_1985-2014.t_ref_Aus_NRM
-    observations: JRA55.annual.anom_1985-2014.t_ref_Aus_NRM
-    apply:
-      all:
-        mask_period:
-          period: ["1985-01-01", "2014-12-31"]
-    verify:
-      metric: "acc"
-      significance: True
-      transform: "Fisher_z"
-      alpha: 0.05
+#   # Australian NRM region metrics
+#   EC_Earth3.JRA55.annual.anom_1985-2014.t_ref_Aus_NRM.rXY_1985-2014:
+#     hindcasts: EC_Earth3.annual.anom_1985-2014.t_ref_Aus_NRM
+#     observations: JRA55.annual.anom_1985-2014.t_ref_Aus_NRM
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "acc"
+#       significance: True
+#       transform: "Fisher_z"
+#       alpha: 0.05
       
-  EC_Earth3.JRA55.4-year.anom_1985-2014.t_ref_Aus_NRM.rXY_1985-2014:
-    hindcasts: EC_Earth3.4-year.anom_1985-2014.t_ref_Aus_NRM
-    observations: JRA55.4-year.anom_1985-2014.t_ref_Aus_NRM
-    apply:
-      all:
-        mask_period:
-          period: ["1985-01-01", "2014-12-31"]
-    verify:
-      metric: "acc"
-      significance: True
-      transform: "Fisher_z"
-      alpha: 0.05
+#   EC_Earth3.JRA55.4-year.anom_1985-2014.t_ref_Aus_NRM.rXY_1985-2014:
+#     hindcasts: EC_Earth3.4-year.anom_1985-2014.t_ref_Aus_NRM
+#     observations: JRA55.4-year.anom_1985-2014.t_ref_Aus_NRM
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "acc"
+#       significance: True
+#       transform: "Fisher_z"
+#       alpha: 0.05
 
-  EC_Earth3.JRA55.annual.anom_1985-2014.t_ref_Aus_NRM.ri_1985-2014:
-    hindcasts: EC_Earth3.annual.anom_1985-2014.t_ref_Aus_NRM
-    observations: JRA55.annual.anom_1985-2014.t_ref_Aus_NRM
-    simulations: EC_Earth3_hist.annual.anom_1985-2014.t_ref_Aus_NRM
-    apply:
-      all:
-        mask_period:
-          period: ["1985-01-01", "2014-12-31"]
-    verify:
-      metric: "acc_initialised"
-      significance: True
-      transform: "Fisher_z"
-      alpha: 0.05
+#   EC_Earth3.JRA55.annual.anom_1985-2014.t_ref_Aus_NRM.ri_1985-2014:
+#     hindcasts: EC_Earth3.annual.anom_1985-2014.t_ref_Aus_NRM
+#     observations: JRA55.annual.anom_1985-2014.t_ref_Aus_NRM
+#     simulations: EC_Earth3_hist.annual.anom_1985-2014.t_ref_Aus_NRM
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "acc_initialised"
+#       significance: True
+#       transform: "Fisher_z"
+#       alpha: 0.05
       
-  EC_Earth3.JRA55.4-year.anom_1985-2014.t_ref_Aus_NRM.ri_1985-2014:
-    hindcasts: EC_Earth3.4-year.anom_1985-2014.t_ref_Aus_NRM
-    observations: JRA55.4-year.anom_1985-2014.t_ref_Aus_NRM
-    simulations: EC_Earth3_hist.4-year.anom_1985-2014.t_ref_Aus_NRM
-    apply:
-      all:
-        mask_period:
-          period: ["1985-01-01", "2014-12-31"]
-    verify:
-      metric: "acc_initialised"
-      significance: True
-      transform: "Fisher_z"
-      alpha: 0.05
+#   EC_Earth3.JRA55.4-year.anom_1985-2014.t_ref_Aus_NRM.ri_1985-2014:
+#     hindcasts: EC_Earth3.4-year.anom_1985-2014.t_ref_Aus_NRM
+#     observations: JRA55.4-year.anom_1985-2014.t_ref_Aus_NRM
+#     simulations: EC_Earth3_hist.4-year.anom_1985-2014.t_ref_Aus_NRM
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "acc_initialised"
+#       significance: True
+#       transform: "Fisher_z"
+#       alpha: 0.05
 
-  EC_Earth3.JRA55.annual.anom_1985-2014.t_ref_Aus_NRM.MSSS_1985-2014:
+#   EC_Earth3.JRA55.annual.anom_1985-2014.t_ref_Aus_NRM.MSSS_hist_1985-2014:
+#     hindcasts: EC_Earth3.annual.anom_1985-2014.t_ref_Aus_NRM
+#     observations: JRA55.annual.anom_1985-2014.t_ref_Aus_NRM
+#     simulations: EC_Earth3_hist.annual.anom_1985-2014.t_ref_Aus_NRM
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "msss_hist"
+#       significance: True
+#       alpha: 0.05
+      
+#   EC_Earth3.JRA55.4-year.anom_1985-2014.t_ref_Aus_NRM.MSSS_hist_1985-2014:
+#     hindcasts: EC_Earth3.4-year.anom_1985-2014.t_ref_Aus_NRM
+#     observations: JRA55.4-year.anom_1985-2014.t_ref_Aus_NRM
+#     simulations: EC_Earth3_hist.4-year.anom_1985-2014.t_ref_Aus_NRM
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "msss_hist"
+#       significance: True
+#       alpha: 0.05
+
+  EC_Earth3.JRA55.annual.anom_1985-2014.t_ref_Aus_NRM.MSSS_clim_1985-2014:
     hindcasts: EC_Earth3.annual.anom_1985-2014.t_ref_Aus_NRM
     observations: JRA55.annual.anom_1985-2014.t_ref_Aus_NRM
-    simulations: EC_Earth3_hist.annual.anom_1985-2014.t_ref_Aus_NRM
     apply:
       all:
         mask_period:
           period: ["1985-01-01", "2014-12-31"]
     verify:
-      metric: "msss"
+      metric: "msss_clim"
       significance: True
       alpha: 0.05
       
-  EC_Earth3.JRA55.4-year.anom_1985-2014.t_ref_Aus_NRM.MSSS_1985-2014:
+  EC_Earth3.JRA55.4-year.anom_1985-2014.t_ref_Aus_NRM.MSSS_clim_1985-2014:
     hindcasts: EC_Earth3.4-year.anom_1985-2014.t_ref_Aus_NRM
     observations: JRA55.4-year.anom_1985-2014.t_ref_Aus_NRM
-    simulations: EC_Earth3_hist.4-year.anom_1985-2014.t_ref_Aus_NRM
     apply:
       all:
         mask_period:
           period: ["1985-01-01", "2014-12-31"]
     verify:
-      metric: "msss"
+      metric: "msss_clim"
       significance: True
       alpha: 0.05
       
-  EC_Earth3.JRA55.annual.anom_1985-2014.t_ref_Aus_NRM.CRPSS_1985-2014:
-    hindcasts: EC_Earth3.annual.anom_1985-2014.t_ref_Aus_NRM
-    observations: JRA55.annual.anom_1985-2014.t_ref_Aus_NRM
-    simulations: EC_Earth3_hist.annual.anom_1985-2014.t_ref_Aus_NRM
-    apply:
-      all:
-        mask_period:
-          period: ["1985-01-01", "2014-12-31"]
-    verify:
-      metric: "crpss"
-      significance: True
-      alpha: 0.05
+#   EC_Earth3.JRA55.annual.anom_1985-2014.t_ref_Aus_NRM.CRPSS_hist_1985-2014:
+#     hindcasts: EC_Earth3.annual.anom_1985-2014.t_ref_Aus_NRM
+#     observations: JRA55.annual.anom_1985-2014.t_ref_Aus_NRM
+#     simulations: EC_Earth3_hist.annual.anom_1985-2014.t_ref_Aus_NRM
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "crpss"
+#       significance: True
+#       alpha: 0.05
       
-  EC_Earth3.JRA55.4-year.anom_1985-2014.t_ref_Aus_NRM.CRPSS_1985-2014:
-    hindcasts: EC_Earth3.4-year.anom_1985-2014.t_ref_Aus_NRM
-    observations: JRA55.4-year.anom_1985-2014.t_ref_Aus_NRM
-    simulations: EC_Earth3_hist.4-year.anom_1985-2014.t_ref_Aus_NRM
-    apply:
-      all:
-        mask_period:
-          period: ["1985-01-01", "2014-12-31"]
-    verify:
-      metric: "crpss"
-      significance: True
-      alpha: 0.05
+#   EC_Earth3.JRA55.4-year.anom_1985-2014.t_ref_Aus_NRM.CRPSS_hist_1985-2014:
+#     hindcasts: EC_Earth3.4-year.anom_1985-2014.t_ref_Aus_NRM
+#     observations: JRA55.4-year.anom_1985-2014.t_ref_Aus_NRM
+#     simulations: EC_Earth3_hist.4-year.anom_1985-2014.t_ref_Aus_NRM
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "crpss"
+#       significance: True
+#       alpha: 0.05

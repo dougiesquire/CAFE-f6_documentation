@@ -20,55 +20,67 @@
 #        Arguments to be passed to src.verify.calculate_metric
 
 prepare:
-  CanESM5.HadISST.4-year.anom_1985-2014.ipo.rXY_1985-2014:
-    hindcasts: CanESM5.4-year.anom_1985-2014.ipo
-    observations: HadISST.4-year.anom_1985-2014.ipo
-    apply:
-      all:
-        mask_period:
-          period: ["1985-01-01", "2014-12-31"]
-    verify:
-      metric: "acc"
-      significance: True
-      transform: "Fisher_z"
-      alpha: 0.05
+#   CanESM5.HadISST.4-year.anom_1985-2014.ipo.rXY_1985-2014:
+#     hindcasts: CanESM5.4-year.anom_1985-2014.ipo
+#     observations: HadISST.4-year.anom_1985-2014.ipo
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "acc"
+#       significance: True
+#       transform: "Fisher_z"
+#       alpha: 0.05
 
-  CanESM5.HadISST.4-year.anom_1985-2014.ipo.ri_1985-2014:
-    hindcasts: CanESM5.4-year.anom_1985-2014.ipo
-    observations: HadISST.4-year.anom_1985-2014.ipo
-    simulations: CanESM5_hist.4-year.anom_1985-2014.ipo
-    apply:
-      all:
-        mask_period:
-          period: ["1985-01-01", "2014-12-31"]
-    verify:
-      metric: "acc_initialised"
-      significance: True
-      transform: "Fisher_z"
-      alpha: 0.05
+#   CanESM5.HadISST.4-year.anom_1985-2014.ipo.ri_1985-2014:
+#     hindcasts: CanESM5.4-year.anom_1985-2014.ipo
+#     observations: HadISST.4-year.anom_1985-2014.ipo
+#     simulations: CanESM5_hist.4-year.anom_1985-2014.ipo
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "acc_initialised"
+#       significance: True
+#       transform: "Fisher_z"
+#       alpha: 0.05
 
-  CanESM5.HadISST.4-year.anom_1985-2014.ipo.MSSS_1985-2014:
+#   CanESM5.HadISST.4-year.anom_1985-2014.ipo.MSSS_hist_1985-2014:
+#     hindcasts: CanESM5.4-year.anom_1985-2014.ipo
+#     observations: HadISST.4-year.anom_1985-2014.ipo
+#     simulations: CanESM5_hist.4-year.anom_1985-2014.ipo
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "msss_hist"
+#       significance: True
+#       alpha: 0.05
+
+  CanESM5.HadISST.4-year.anom_1985-2014.ipo.MSSS_clim_1985-2014:
     hindcasts: CanESM5.4-year.anom_1985-2014.ipo
     observations: HadISST.4-year.anom_1985-2014.ipo
-    simulations: CanESM5_hist.4-year.anom_1985-2014.ipo
     apply:
       all:
         mask_period:
           period: ["1985-01-01", "2014-12-31"]
     verify:
-      metric: "msss"
+      metric: "msss_clim"
       significance: True
       alpha: 0.05
       
-  CanESM5.HadISST.4-year.anom_1985-2014.ipo.CRPSS_1985-2014:
-    hindcasts: CanESM5.4-year.anom_1985-2014.ipo
-    observations: HadISST.4-year.anom_1985-2014.ipo
-    simulations: CanESM5_hist.4-year.anom_1985-2014.ipo
-    apply:
-      all:
-        mask_period:
-          period: ["1985-01-01", "2014-12-31"]
-    verify:
-      metric: "crpss"
-      significance: True
-      alpha: 0.05
+#   CanESM5.HadISST.4-year.anom_1985-2014.ipo.CRPSS_hist_1985-2014:
+#     hindcasts: CanESM5.4-year.anom_1985-2014.ipo
+#     observations: HadISST.4-year.anom_1985-2014.ipo
+#     simulations: CanESM5_hist.4-year.anom_1985-2014.ipo
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "crpss"
+#       significance: True
+#       alpha: 0.05

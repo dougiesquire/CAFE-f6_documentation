@@ -20,55 +20,67 @@
 #        Arguments to be passed to src.verify.calculate_metric
 
 prepare:
-  CanESM5.HadISST.3-month.anom_1985-2014.dmi.rXY_1985-2014:
-    hindcasts: CanESM5.3-month.anom_1985-2014.dmi
-    observations: HadISST.3-month.anom_1985-2014.dmi
-    apply:
-      all:
-        mask_period:
-          period: ["1985-01-01", "2014-12-31"]
-    verify:
-      metric: "acc"
-      significance: True
-      transform: "Fisher_z"
-      alpha: 0.05
+#   CanESM5.HadISST.3-month.anom_1985-2014.dmi.rXY_1985-2014:
+#     hindcasts: CanESM5.3-month.anom_1985-2014.dmi
+#     observations: HadISST.3-month.anom_1985-2014.dmi
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "acc"
+#       significance: True
+#       transform: "Fisher_z"
+#       alpha: 0.05
 
-  CanESM5.HadISST.3-month.anom_1985-2014.dmi.ri_1985-2014:
-    hindcasts: CanESM5.3-month.anom_1985-2014.dmi
-    observations: HadISST.3-month.anom_1985-2014.dmi
-    simulations: CanESM5_hist.3-month.anom_1985-2014.dmi
-    apply:
-      all:
-        mask_period:
-          period: ["1985-01-01", "2014-12-31"]
-    verify:
-      metric: "acc_initialised"
-      significance: True
-      transform: "Fisher_z"
-      alpha: 0.05
+#   CanESM5.HadISST.3-month.anom_1985-2014.dmi.ri_1985-2014:
+#     hindcasts: CanESM5.3-month.anom_1985-2014.dmi
+#     observations: HadISST.3-month.anom_1985-2014.dmi
+#     simulations: CanESM5_hist.3-month.anom_1985-2014.dmi
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "acc_initialised"
+#       significance: True
+#       transform: "Fisher_z"
+#       alpha: 0.05
 
-  CanESM5.HadISST.3-month.anom_1985-2014.dmi.MSSS_1985-2014:
+#   CanESM5.HadISST.3-month.anom_1985-2014.dmi.MSSS_hist_1985-2014:
+#     hindcasts: CanESM5.3-month.anom_1985-2014.dmi
+#     observations: HadISST.3-month.anom_1985-2014.dmi
+#     simulations: CanESM5_hist.3-month.anom_1985-2014.dmi
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "msss_hist"
+#       significance: True
+#       alpha: 0.05
+
+  CanESM5.HadISST.3-month.anom_1985-2014.dmi.MSSS_clim_1985-2014:
     hindcasts: CanESM5.3-month.anom_1985-2014.dmi
     observations: HadISST.3-month.anom_1985-2014.dmi
-    simulations: CanESM5_hist.3-month.anom_1985-2014.dmi
     apply:
       all:
         mask_period:
           period: ["1985-01-01", "2014-12-31"]
     verify:
-      metric: "msss"
+      metric: "msss_clim"
       significance: True
       alpha: 0.05
       
-  CanESM5.HadISST.3-month.anom_1985-2014.dmi.CRPSS_1985-2014:
-    hindcasts: CanESM5.3-month.anom_1985-2014.dmi
-    observations: HadISST.3-month.anom_1985-2014.dmi
-    simulations: CanESM5_hist.3-month.anom_1985-2014.dmi
-    apply:
-      all:
-        mask_period:
-          period: ["1985-01-01", "2014-12-31"]
-    verify:
-      metric: "crpss"
-      significance: True
-      alpha: 0.05
+#   CanESM5.HadISST.3-month.anom_1985-2014.dmi.CRPSS_hist_1985-2014:
+#     hindcasts: CanESM5.3-month.anom_1985-2014.dmi
+#     observations: HadISST.3-month.anom_1985-2014.dmi
+#     simulations: CanESM5_hist.3-month.anom_1985-2014.dmi
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "crpss"
+#       significance: True
+#       alpha: 0.05

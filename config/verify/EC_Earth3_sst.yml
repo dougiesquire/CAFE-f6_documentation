@@ -20,134 +20,158 @@
 #        Arguments to be passed to src.verify.calculate_metric
 
 prepare:
-  EC_Earth3.HadISST.annual.anom_1985-2014.sst_global.rXY_1985-2014:
-    hindcasts: EC_Earth3.annual.anom_1985-2014.sst_global
-    observations: HadISST.annual.anom_1985-2014.sst_global
-    apply:
-      all:
-        mask_period:
-          period: ["1985-01-01", "2014-12-31"]
-    verify:
-      metric: "acc"
-      significance: True
-      transform: "Fisher_z"
-      alpha: 0.05
+#   EC_Earth3.HadISST.annual.anom_1985-2014.sst_global.rXY_1985-2014:
+#     hindcasts: EC_Earth3.annual.anom_1985-2014.sst_global
+#     observations: HadISST.annual.anom_1985-2014.sst_global
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "acc"
+#       significance: True
+#       transform: "Fisher_z"
+#       alpha: 0.05
       
-  EC_Earth3.HadISST.annual.anom_1985-2014.sst_global.rXY_1971-2017:
-    hindcasts: EC_Earth3.annual.anom_1985-2014.sst_global
-    observations: HadISST.annual.anom_1985-2014.sst_global
-    apply:
-      all:
-        mask_period:
-          period: ["1971-01-01", "2017-12-31"]
-    verify:
-      metric: "acc"
-      significance: True
-      transform: "Fisher_z"
-      alpha: 0.05
+#   EC_Earth3.HadISST.annual.anom_1985-2014.sst_global.rXY_1971-2017:
+#     hindcasts: EC_Earth3.annual.anom_1985-2014.sst_global
+#     observations: HadISST.annual.anom_1985-2014.sst_global
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1971-01-01", "2017-12-31"]
+#     verify:
+#       metric: "acc"
+#       significance: True
+#       transform: "Fisher_z"
+#       alpha: 0.05
       
-  EC_Earth3.HadISST.4-year.anom_1985-2014.sst_global.rXY_1985-2014:
-    hindcasts: EC_Earth3.4-year.anom_1985-2014.sst_global
-    observations: HadISST.4-year.anom_1985-2014.sst_global
-    apply:
-      all:
-        mask_period:
-          period: ["1985-01-01", "2014-12-31"]
-    verify:
-      metric: "acc"
-      significance: True
-      transform: "Fisher_z"
-      alpha: 0.05
+#   EC_Earth3.HadISST.4-year.anom_1985-2014.sst_global.rXY_1985-2014:
+#     hindcasts: EC_Earth3.4-year.anom_1985-2014.sst_global
+#     observations: HadISST.4-year.anom_1985-2014.sst_global
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "acc"
+#       significance: True
+#       transform: "Fisher_z"
+#       alpha: 0.05
       
-  EC_Earth3.HadISST.4-year.anom_1985-2014.sst_global.rXY_1971-2017:
-    hindcasts: EC_Earth3.4-year.anom_1985-2014.sst_global
-    observations: HadISST.4-year.anom_1985-2014.sst_global
-    apply:
-      all:
-        mask_period:
-          period: ["1971-01-01", "2017-12-31"]
-    verify:
-      metric: "acc"
-      significance: True
-      transform: "Fisher_z"
-      alpha: 0.05
+#   EC_Earth3.HadISST.4-year.anom_1985-2014.sst_global.rXY_1971-2017:
+#     hindcasts: EC_Earth3.4-year.anom_1985-2014.sst_global
+#     observations: HadISST.4-year.anom_1985-2014.sst_global
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1971-01-01", "2017-12-31"]
+#     verify:
+#       metric: "acc"
+#       significance: True
+#       transform: "Fisher_z"
+#       alpha: 0.05
 
-  EC_Earth3.HadISST.annual.anom_1985-2014.sst_global.ri_1985-2014:
-    hindcasts: EC_Earth3.annual.anom_1985-2014.sst_global
-    observations: HadISST.annual.anom_1985-2014.sst_global
-    simulations: EC_Earth3_hist.annual.anom_1985-2014.sst_global
-    apply:
-      all:
-        mask_period:
-          period: ["1985-01-01", "2014-12-31"]
-    verify:
-      metric: "acc_initialised"
-      significance: True
-      transform: "Fisher_z"
-      alpha: 0.05
+#   EC_Earth3.HadISST.annual.anom_1985-2014.sst_global.ri_1985-2014:
+#     hindcasts: EC_Earth3.annual.anom_1985-2014.sst_global
+#     observations: HadISST.annual.anom_1985-2014.sst_global
+#     simulations: EC_Earth3_hist.annual.anom_1985-2014.sst_global
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "acc_initialised"
+#       significance: True
+#       transform: "Fisher_z"
+#       alpha: 0.05
       
-  EC_Earth3.HadISST.4-year.anom_1985-2014.sst_global.ri_1985-2014:
-    hindcasts: EC_Earth3.4-year.anom_1985-2014.sst_global
-    observations: HadISST.4-year.anom_1985-2014.sst_global
-    simulations: EC_Earth3_hist.4-year.anom_1985-2014.sst_global
-    apply:
-      all:
-        mask_period:
-          period: ["1985-01-01", "2014-12-31"]
-    verify:
-      metric: "acc_initialised"
-      significance: True
-      transform: "Fisher_z"
-      alpha: 0.05
+#   EC_Earth3.HadISST.4-year.anom_1985-2014.sst_global.ri_1985-2014:
+#     hindcasts: EC_Earth3.4-year.anom_1985-2014.sst_global
+#     observations: HadISST.4-year.anom_1985-2014.sst_global
+#     simulations: EC_Earth3_hist.4-year.anom_1985-2014.sst_global
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "acc_initialised"
+#       significance: True
+#       transform: "Fisher_z"
+#       alpha: 0.05
 
-  EC_Earth3.HadISST.annual.anom_1985-2014.sst_global.MSSS_1985-2014:
+#   EC_Earth3.HadISST.annual.anom_1985-2014.sst_global.MSSS_hist_1985-2014:
+#     hindcasts: EC_Earth3.annual.anom_1985-2014.sst_global
+#     observations: HadISST.annual.anom_1985-2014.sst_global
+#     simulations: EC_Earth3_hist.annual.anom_1985-2014.sst_global
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "msss_hist"
+#       significance: True
+#       alpha: 0.05
+      
+#   EC_Earth3.HadISST.4-year.anom_1985-2014.sst_global.MSSS_hist_1985-2014:
+#     hindcasts: EC_Earth3.4-year.anom_1985-2014.sst_global
+#     observations: HadISST.4-year.anom_1985-2014.sst_global
+#     simulations: EC_Earth3_hist.4-year.anom_1985-2014.sst_global
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "msss_hist"
+#       significance: True
+#       alpha: 0.05
+
+  EC_Earth3.HadISST.annual.anom_1985-2014.sst_global.MSSS_clim_1985-2014:
     hindcasts: EC_Earth3.annual.anom_1985-2014.sst_global
     observations: HadISST.annual.anom_1985-2014.sst_global
-    simulations: EC_Earth3_hist.annual.anom_1985-2014.sst_global
     apply:
       all:
         mask_period:
           period: ["1985-01-01", "2014-12-31"]
     verify:
-      metric: "msss"
+      metric: "msss_clim"
       significance: True
       alpha: 0.05
       
-  EC_Earth3.HadISST.4-year.anom_1985-2014.sst_global.MSSS_1985-2014:
+  EC_Earth3.HadISST.4-year.anom_1985-2014.sst_global.MSSS_clim_1985-2014:
     hindcasts: EC_Earth3.4-year.anom_1985-2014.sst_global
     observations: HadISST.4-year.anom_1985-2014.sst_global
-    simulations: EC_Earth3_hist.4-year.anom_1985-2014.sst_global
     apply:
       all:
         mask_period:
           period: ["1985-01-01", "2014-12-31"]
     verify:
-      metric: "msss"
+      metric: "msss_clim"
       significance: True
       alpha: 0.05
       
-  EC_Earth3.HadISST.annual.anom_1985-2014.sst_global.CRPSS_1985-2014:
-    hindcasts: EC_Earth3.annual.anom_1985-2014.sst_global
-    observations: HadISST.annual.anom_1985-2014.sst_global
-    simulations: EC_Earth3_hist.annual.anom_1985-2014.sst_global
-    apply:
-      all:
-        mask_period:
-          period: ["1985-01-01", "2014-12-31"]
-    verify:
-      metric: "crpss"
-      significance: True
-      alpha: 0.05
+#   EC_Earth3.HadISST.annual.anom_1985-2014.sst_global.CRPSS_hist_1985-2014:
+#     hindcasts: EC_Earth3.annual.anom_1985-2014.sst_global
+#     observations: HadISST.annual.anom_1985-2014.sst_global
+#     simulations: EC_Earth3_hist.annual.anom_1985-2014.sst_global
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "crpss"
+#       significance: True
+#       alpha: 0.05
       
-  EC_Earth3.HadISST.4-year.anom_1985-2014.sst_global.CRPSS_1985-2014:
-    hindcasts: EC_Earth3.4-year.anom_1985-2014.sst_global
-    observations: HadISST.4-year.anom_1985-2014.sst_global
-    simulations: EC_Earth3_hist.4-year.anom_1985-2014.sst_global
-    apply:
-      all:
-        mask_period:
-          period: ["1985-01-01", "2014-12-31"]
-    verify:
-      metric: "crpss"
-      significance: True
-      alpha: 0.05
+#   EC_Earth3.HadISST.4-year.anom_1985-2014.sst_global.CRPSS_hist_1985-2014:
+#     hindcasts: EC_Earth3.4-year.anom_1985-2014.sst_global
+#     observations: HadISST.4-year.anom_1985-2014.sst_global
+#     simulations: EC_Earth3_hist.4-year.anom_1985-2014.sst_global
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "crpss"
+#       significance: True
+#       alpha: 0.05

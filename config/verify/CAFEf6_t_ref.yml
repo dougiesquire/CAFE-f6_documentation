@@ -67,16 +67,16 @@ prepare:
 #       transform: "Fisher_z"
 #       alpha: 0.05
       
-#   CAFEf6.JRA55.annual.anom_1991-2020.t_ref_global.MSSS_1991-2020:
+#   CAFEf6.JRA55.annual.anom_1991-2020.t_ref_global.MSSS_hist_1991-2020:
 #     hindcasts: CAFEf6.annual.anom_1991-2020.t_ref_global
 #     observations: JRA55.annual.anom_1991-2020.t_ref_global
 #     simulations: CAFE_hist.annual.anom_1991-2020.t_ref_global
 #     verify:
-#       metric: "msss"
+#       metric: "msss_hist"
 #       significance: True
 #       alpha: 0.05
       
-#   CAFEf6.JRA55.4-year.anom_1991-2020.t_ref_global.MSSS_1991-2020:
+#   CAFEf6.JRA55.4-year.anom_1991-2020.t_ref_global.MSSS_hist_1991-2020:
 #     hindcasts: CAFEf6.4-year.anom_1991-2020.t_ref_global
 #     observations: JRA55.4-year.anom_1991-2020.t_ref_global
 #     simulations: CAFE_hist.4-year.anom_1991-2020.t_ref_global
@@ -85,119 +85,159 @@ prepare:
 #         mask_period:
 #           period: ["1991-01-01", "2020-12-31"]
 #     verify:
-#       metric: "msss"
+#       metric: "msss_hist"
 #       significance: True
 #       alpha: 0.05
-      
-#   CAFEf6.JRA55.annual.anom_1991-2020.t_ref_global.CRPSS_1991-2020:
-#     hindcasts: CAFEf6.annual.anom_1991-2020.t_ref_global
-#     observations: JRA55.annual.anom_1991-2020.t_ref_global
-#     simulations: CAFE_hist.annual.anom_1991-2020.t_ref_global
-#     verify:
-#       metric: "crpss"
-#       significance: True
-#       alpha: 0.05
-      
-#   CAFEf6.JRA55.4-year.anom_1991-2020.t_ref_global.CRPSS_1991-2020:
-#     hindcasts: CAFEf6.4-year.anom_1991-2020.t_ref_global
-#     observations: JRA55.4-year.anom_1991-2020.t_ref_global
-#     simulations: CAFE_hist.4-year.anom_1991-2020.t_ref_global
-#     apply:
-#       all:
-#         mask_period:
-#           period: ["1991-01-01", "2020-12-31"]
-#     verify:
-#       metric: "crpss"
-#       significance: True
-#       alpha: 0.05
-      
-  # Australian NRM region metrics
-  CAFEf6.JRA55.annual.anom_1991-2020.t_ref_Aus_NRM.rXY_1991-2020:
-    hindcasts: CAFEf6.annual.anom_1991-2020.t_ref_Aus_NRM
-    observations: JRA55.annual.anom_1991-2020.t_ref_Aus_NRM
-    verify:
-      metric: "acc"
-      significance: True
-      transform: "Fisher_z"
-      alpha: 0.05
-      
-  CAFEf6.JRA55.4-year.anom_1991-2020.t_ref_Aus_NRM.rXY_1991-2020:
-    hindcasts: CAFEf6.4-year.anom_1991-2020.t_ref_Aus_NRM
-    observations: JRA55.4-year.anom_1991-2020.t_ref_Aus_NRM
-    apply:
-      all:
-        mask_period:
-          period: ["1991-01-01", "2020-12-31"]
-    verify:
-      metric: "acc"
-      significance: True
-      transform: "Fisher_z"
-      alpha: 0.05
 
-  CAFEf6.JRA55.annual.anom_1991-2020.t_ref_Aus_NRM.ri_1991-2020:
-    hindcasts: CAFEf6.annual.anom_1991-2020.t_ref_Aus_NRM
-    observations: JRA55.annual.anom_1991-2020.t_ref_Aus_NRM
-    simulations: CAFE_hist.annual.anom_1991-2020.t_ref_Aus_NRM
+  CAFEf6.JRA55.annual.anom_1991-2020.t_ref_global.MSSS_clim_1991-2020:
+    hindcasts: CAFEf6.annual.anom_1991-2020.t_ref_global
+    observations: JRA55.annual.anom_1991-2020.t_ref_global
     verify:
-      metric: "acc_initialised"
+      metric: "msss_clim"
       significance: True
-      transform: "Fisher_z"
       alpha: 0.05
       
-  CAFEf6.JRA55.4-year.anom_1991-2020.t_ref_Aus_NRM.ri_1991-2020:
-    hindcasts: CAFEf6.4-year.anom_1991-2020.t_ref_Aus_NRM
-    observations: JRA55.4-year.anom_1991-2020.t_ref_Aus_NRM
-    simulations: CAFE_hist.4-year.anom_1991-2020.t_ref_Aus_NRM
+  CAFEf6.JRA55.4-year.anom_1991-2020.t_ref_global.MSSS_clim_1991-2020:
+    hindcasts: CAFEf6.4-year.anom_1991-2020.t_ref_global
+    observations: JRA55.4-year.anom_1991-2020.t_ref_global
     apply:
       all:
         mask_period:
           period: ["1991-01-01", "2020-12-31"]
     verify:
-      metric: "acc_initialised"
+      metric: "msss_clim"
       significance: True
-      transform: "Fisher_z"
       alpha: 0.05
       
-  CAFEf6.JRA55.annual.anom_1991-2020.t_ref_Aus_NRM.MSSS_1991-2020:
+#   CAFEf6.JRA55.annual.anom_1991-2020.t_ref_global.CRPSS_hist_1991-2020:
+#     hindcasts: CAFEf6.annual.anom_1991-2020.t_ref_global
+#     observations: JRA55.annual.anom_1991-2020.t_ref_global
+#     simulations: CAFE_hist.annual.anom_1991-2020.t_ref_global
+#     verify:
+#       metric: "crpss"
+#       significance: True
+#       alpha: 0.05
+      
+#   CAFEf6.JRA55.4-year.anom_1991-2020.t_ref_global.CRPSS_hist_1991-2020:
+#     hindcasts: CAFEf6.4-year.anom_1991-2020.t_ref_global
+#     observations: JRA55.4-year.anom_1991-2020.t_ref_global
+#     simulations: CAFE_hist.4-year.anom_1991-2020.t_ref_global
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1991-01-01", "2020-12-31"]
+#     verify:
+#       metric: "crpss"
+#       significance: True
+#       alpha: 0.05
+      
+#   # Australian NRM region metrics
+#   CAFEf6.JRA55.annual.anom_1991-2020.t_ref_Aus_NRM.rXY_1991-2020:
+#     hindcasts: CAFEf6.annual.anom_1991-2020.t_ref_Aus_NRM
+#     observations: JRA55.annual.anom_1991-2020.t_ref_Aus_NRM
+#     verify:
+#       metric: "acc"
+#       significance: True
+#       transform: "Fisher_z"
+#       alpha: 0.05
+      
+#   CAFEf6.JRA55.4-year.anom_1991-2020.t_ref_Aus_NRM.rXY_1991-2020:
+#     hindcasts: CAFEf6.4-year.anom_1991-2020.t_ref_Aus_NRM
+#     observations: JRA55.4-year.anom_1991-2020.t_ref_Aus_NRM
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1991-01-01", "2020-12-31"]
+#     verify:
+#       metric: "acc"
+#       significance: True
+#       transform: "Fisher_z"
+#       alpha: 0.05
+
+#   CAFEf6.JRA55.annual.anom_1991-2020.t_ref_Aus_NRM.ri_1991-2020:
+#     hindcasts: CAFEf6.annual.anom_1991-2020.t_ref_Aus_NRM
+#     observations: JRA55.annual.anom_1991-2020.t_ref_Aus_NRM
+#     simulations: CAFE_hist.annual.anom_1991-2020.t_ref_Aus_NRM
+#     verify:
+#       metric: "acc_initialised"
+#       significance: True
+#       transform: "Fisher_z"
+#       alpha: 0.05
+      
+#   CAFEf6.JRA55.4-year.anom_1991-2020.t_ref_Aus_NRM.ri_1991-2020:
+#     hindcasts: CAFEf6.4-year.anom_1991-2020.t_ref_Aus_NRM
+#     observations: JRA55.4-year.anom_1991-2020.t_ref_Aus_NRM
+#     simulations: CAFE_hist.4-year.anom_1991-2020.t_ref_Aus_NRM
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1991-01-01", "2020-12-31"]
+#     verify:
+#       metric: "acc_initialised"
+#       significance: True
+#       transform: "Fisher_z"
+#       alpha: 0.05
+      
+#   CAFEf6.JRA55.annual.anom_1991-2020.t_ref_Aus_NRM.MSSS_hist_1991-2020:
+#     hindcasts: CAFEf6.annual.anom_1991-2020.t_ref_Aus_NRM
+#     observations: JRA55.annual.anom_1991-2020.t_ref_Aus_NRM
+#     simulations: CAFE_hist.annual.anom_1991-2020.t_ref_Aus_NRM
+#     verify:
+#       metric: "msss_hist"
+#       significance: True
+#       alpha: 0.05
+      
+#   CAFEf6.JRA55.4-year.anom_1991-2020.t_ref_Aus_NRM.MSSS_hist_1991-2020:
+#     hindcasts: CAFEf6.4-year.anom_1991-2020.t_ref_Aus_NRM
+#     observations: JRA55.4-year.anom_1991-2020.t_ref_Aus_NRM
+#     simulations: CAFE_hist.4-year.anom_1991-2020.t_ref_Aus_NRM
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1991-01-01", "2020-12-31"]
+#     verify:
+#       metric: "msss_hist"
+#       significance: True
+#       alpha: 0.05
+
+  CAFEf6.JRA55.annual.anom_1991-2020.t_ref_Aus_NRM.MSSS_clim_1991-2020:
     hindcasts: CAFEf6.annual.anom_1991-2020.t_ref_Aus_NRM
     observations: JRA55.annual.anom_1991-2020.t_ref_Aus_NRM
-    simulations: CAFE_hist.annual.anom_1991-2020.t_ref_Aus_NRM
     verify:
-      metric: "msss"
+      metric: "msss_clim"
       significance: True
       alpha: 0.05
       
-  CAFEf6.JRA55.4-year.anom_1991-2020.t_ref_Aus_NRM.MSSS_1991-2020:
+  CAFEf6.JRA55.4-year.anom_1991-2020.t_ref_Aus_NRM.MSSS_clim_1991-2020:
     hindcasts: CAFEf6.4-year.anom_1991-2020.t_ref_Aus_NRM
     observations: JRA55.4-year.anom_1991-2020.t_ref_Aus_NRM
-    simulations: CAFE_hist.4-year.anom_1991-2020.t_ref_Aus_NRM
     apply:
       all:
         mask_period:
           period: ["1991-01-01", "2020-12-31"]
     verify:
-      metric: "msss"
+      metric: "msss_clim"
       significance: True
       alpha: 0.05
       
-  CAFEf6.JRA55.annual.anom_1991-2020.t_ref_Aus_NRM.CRPSS_1991-2020:
-    hindcasts: CAFEf6.annual.anom_1991-2020.t_ref_Aus_NRM
-    observations: JRA55.annual.anom_1991-2020.t_ref_Aus_NRM
-    simulations: CAFE_hist.annual.anom_1991-2020.t_ref_Aus_NRM
-    verify:
-      metric: "crpss"
-      significance: True
-      alpha: 0.05
+#   CAFEf6.JRA55.annual.anom_1991-2020.t_ref_Aus_NRM.CRPSS_hist_1991-2020:
+#     hindcasts: CAFEf6.annual.anom_1991-2020.t_ref_Aus_NRM
+#     observations: JRA55.annual.anom_1991-2020.t_ref_Aus_NRM
+#     simulations: CAFE_hist.annual.anom_1991-2020.t_ref_Aus_NRM
+#     verify:
+#       metric: "crpss"
+#       significance: True
+#       alpha: 0.05
       
-  CAFEf6.JRA55.4-year.anom_1991-2020.t_ref_Aus_NRM.CRPSS_1991-2020:
-    hindcasts: CAFEf6.4-year.anom_1991-2020.t_ref_Aus_NRM
-    observations: JRA55.4-year.anom_1991-2020.t_ref_Aus_NRM
-    simulations: CAFE_hist.4-year.anom_1991-2020.t_ref_Aus_NRM
-    apply:
-      all:
-        mask_period:
-          period: ["1991-01-01", "2020-12-31"]
-    verify:
-      metric: "crpss"
-      significance: True
-      alpha: 0.05
+#   CAFEf6.JRA55.4-year.anom_1991-2020.t_ref_Aus_NRM.CRPSS_hist_1991-2020:
+#     hindcasts: CAFEf6.4-year.anom_1991-2020.t_ref_Aus_NRM
+#     observations: JRA55.4-year.anom_1991-2020.t_ref_Aus_NRM
+#     simulations: CAFE_hist.4-year.anom_1991-2020.t_ref_Aus_NRM
+#     apply:
+#       all:
+#         mask_period:
+#           period: ["1991-01-01", "2020-12-31"]
+#     verify:
+#       metric: "crpss"
+#       significance: True
+#       alpha: 0.05

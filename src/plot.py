@@ -156,11 +156,19 @@ def metric_maps(fields, variable, vrange, headings=None, figsize=(15, 15)):
 
     def _get_verif_period(ds):
         """Return a string of the verification period for a skill metric"""
-
-        return (
-            f"{ds.attrs['verification period'][:4]}-"
-            f"{ds.attrs['verification period'][:4]}"
-        )
+        if "verification_period" in ds.coords:
+            if "lead" in ds['verification_period'].dims:
+                return "Lead-dependent verification period"
+            else:
+                return (
+                    f"{ds['verification_period'].item()[:4]}-"
+                    f"{ds['verification_period'].item()[13:17]}"
+                )
+        else:
+            return (
+                f"{ds.attrs['verification period start'][:4]}-"
+                f"{ds.attrs['verification period end'][:4]}"
+            )
 
     fig = plt.figure(figsize=figsize)
     n_rows = len(fields)
