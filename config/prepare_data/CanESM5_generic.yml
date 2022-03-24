@@ -64,6 +64,23 @@ prepare:
 #         file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
 #       rechunk:
 #         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+
+  annual.full.slp_global:
+    uses:
+      Amon:
+        - "psl"
+    apply:
+      rename:
+        names: 
+          psl: "slp"
+          areacella: "area"
+      coarsen:
+        window_size: 12
+        dim: "lead"
+      interpolate_to_grid_from_file:
+        file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
+      rechunk:
+        chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
       
 #   annual.full.sst_global:
 #     uses:
@@ -126,41 +143,41 @@ prepare:
 #       rechunk:
 #         chunks: {"init": -1, "lead": 1, "member": -1}
         
-  3-month.anom_1985-2014.sam:
-    uses:
-      Amon:
-        - "psl"
-    apply:
-      rename:
-        names: 
-          psl: "slp"
-          areacella: "area"
-      coarsen:
-        window_size: 3
-        dim: "lead"
-      calculate_sam:
-        clim_period: ["1985-01-01", "2014-12-31"]
-        groupby_dim: "init"
-      rechunk:
-        chunks: {"init": -1, "lead": 1, "member": -1}
+#   3-month.anom_1985-2014.sam:
+#     uses:
+#       Amon:
+#         - "psl"
+#     apply:
+#       rename:
+#         names: 
+#           psl: "slp"
+#           areacella: "area"
+#       coarsen:
+#         window_size: 3
+#         dim: "lead"
+#       calculate_sam:
+#         clim_period: ["1985-01-01", "2014-12-31"]
+#         groupby_dim: "init"
+#       rechunk:
+#         chunks: {"init": -1, "lead": 1, "member": -1}
         
-  3-month.anom_1985-2014.nao:
-    uses:
-      Amon:
-        - "psl"
-    apply:
-      rename:
-        names: 
-          psl: "slp"
-          areacella: "area"
-      coarsen:
-        window_size: 3
-        dim: "lead"
-      calculate_nao:
-        clim_period: ["1985-01-01", "2014-12-31"]
-        groupby_dim: "init"
-      rechunk:
-        chunks: {"init": -1, "lead": 1, "member": -1}
+#   3-month.anom_1985-2014.nao:
+#     uses:
+#       Amon:
+#         - "psl"
+#     apply:
+#       rename:
+#         names: 
+#           psl: "slp"
+#           areacella: "area"
+#       coarsen:
+#         window_size: 3
+#         dim: "lead"
+#       calculate_nao:
+#         clim_period: ["1985-01-01", "2014-12-31"]
+#         groupby_dim: "init"
+#       rechunk:
+#         chunks: {"init": -1, "lead": 1, "member": -1}
         
 #   # Prepare anomalies from prepared datasets
 #   annual.anom_1985-2014.t_ref_global:
@@ -182,6 +199,16 @@ prepare:
 #         clim_period: ["1985-01-01", "2014-12-31"]
 #       rechunk:
 #         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+
+  annual.anom_1985-2014.slp_global:
+    uses:
+      prepared:
+        - "annual.full.slp_global"
+    apply:
+      anomalise:
+        clim_period: ["1985-01-01", "2014-12-31"]
+      rechunk:
+        chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
         
 #   annual.anom_1985-2014.sst_global:
 #     uses:
@@ -235,6 +262,17 @@ prepare:
 #         dim: "lead"
 #       rechunk:
 #         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+
+  4-year.anom_1985-2014.slp_global:
+    uses:
+      prepared:
+        - "annual.anom_1985-2014.slp_global"
+    apply:
+      rolling_mean:
+        window_size: 4 
+        dim: "lead"
+      rechunk:
+        chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
         
 #   4-year.anom_1985-2014.sst_global:
 #     uses:

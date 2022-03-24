@@ -67,6 +67,28 @@ prepare:
 #         dim: "time"
 #       rechunk:
 #         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
+
+  annual.full.slp_global:
+    uses:
+      atmos_isobaric_month:
+        - "slp"
+    apply:
+      rename:
+        names:
+          ensemble: "member"
+      convert:
+        conversion:
+          slp:
+            multiply_by: 100
+      truncate_latitudes:
+      round_to_start_of_month:
+        dim: "time"
+      coarsen:
+        window_size: 12
+        start_points: ["1960-11-01"]
+        dim: "time"
+      rechunk:
+        chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
       
 #   annual.full.sst_global:
 #     uses:
@@ -166,45 +188,45 @@ prepare:
 #       rechunk:
 #         chunks: {"time": -1, "member": -1}
         
-  3-month.anom_1991-2020.sam:
-    uses:
-      atmos_isobaric_month:
-        - "slp"
-    apply:
-      truncate_latitudes:
-      rename:
-        names: 
-          ensemble: "member"
-      round_to_start_of_month:
-        dim: "time"
-      calculate_sam:
-        clim_period: ["1991-01-01", "2020-12-31"]
-      rolling_mean:
-        window_size: 3
-        start_points: ["1960-11-01"]
-        dim: "time"
-      rechunk:
-        chunks: {"time": -1, "member": -1}
+#   3-month.anom_1991-2020.sam:
+#     uses:
+#       atmos_isobaric_month:
+#         - "slp"
+#     apply:
+#       truncate_latitudes:
+#       rename:
+#         names: 
+#           ensemble: "member"
+#       round_to_start_of_month:
+#         dim: "time"
+#       calculate_sam:
+#         clim_period: ["1991-01-01", "2020-12-31"]
+#       rolling_mean:
+#         window_size: 3
+#         start_points: ["1960-11-01"]
+#         dim: "time"
+#       rechunk:
+#         chunks: {"time": -1, "member": -1}
         
-  3-month.anom_1991-2020.nao:
-    uses:
-      atmos_isobaric_month:
-        - "slp"
-    apply:
-      truncate_latitudes:
-      rename:
-        names: 
-          ensemble: "member"
-      round_to_start_of_month:
-        dim: "time"
-      calculate_nao:
-        clim_period: ["1991-01-01", "2020-12-31"]
-      rolling_mean:
-        window_size: 3
-        start_points: ["1960-11-01"]
-        dim: "time"
-      rechunk:
-        chunks: {"time": -1, "member": -1}
+#   3-month.anom_1991-2020.nao:
+#     uses:
+#       atmos_isobaric_month:
+#         - "slp"
+#     apply:
+#       truncate_latitudes:
+#       rename:
+#         names: 
+#           ensemble: "member"
+#       round_to_start_of_month:
+#         dim: "time"
+#       calculate_nao:
+#         clim_period: ["1991-01-01", "2020-12-31"]
+#       rolling_mean:
+#         window_size: 3
+#         start_points: ["1960-11-01"]
+#         dim: "time"
+#       rechunk:
+#         chunks: {"time": -1, "member": -1}
         
 #   # Prepare anomalies from prepared datasets
 #   annual.anom_1991-2020.t_ref_global:
@@ -226,6 +248,16 @@ prepare:
 #         clim_period: ["1991-01-01", "2020-12-31"]
 #       rechunk:
 #         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
+
+  annual.anom_1991-2020.slp_global:
+    uses:
+      prepared:
+        - "annual.full.slp_global"
+    apply:
+      anomalise:
+        clim_period: ["1991-01-01", "2020-12-31"]
+      rechunk:
+        chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
         
 #   annual.anom_1991-2020.sst_global:
 #     uses:
@@ -247,25 +279,25 @@ prepare:
 #       rechunk:
 #         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
 
-  3-month.anom_1991-2020.nino34:
-    uses:
-      prepared:
-        - "3-month.full.nino34"
-    apply:
-      anomalise:
-        clim_period: ["1991-01-01", "2020-12-31"]
-      rechunk:
-        chunks: {"time": -1, "member": -1}
+#   3-month.anom_1991-2020.nino34:
+#     uses:
+#       prepared:
+#         - "3-month.full.nino34"
+#     apply:
+#       anomalise:
+#         clim_period: ["1991-01-01", "2020-12-31"]
+#       rechunk:
+#         chunks: {"time": -1, "member": -1}
         
-  3-month.anom_1991-2020.dmi:
-    uses:
-      prepared:
-        - "3-month.full.dmi"
-    apply:
-      anomalise:
-        clim_period: ["1991-01-01", "2020-12-31"]
-      rechunk:
-        chunks: {"time": -1, "member": -1}
+#   3-month.anom_1991-2020.dmi:
+#     uses:
+#       prepared:
+#         - "3-month.full.dmi"
+#     apply:
+#       anomalise:
+#         clim_period: ["1991-01-01", "2020-12-31"]
+#       rechunk:
+#         chunks: {"time": -1, "member": -1}
         
 #   # Prepare 4-year-averages from prepared datasets
 #   4-year.anom_1991-2020.t_ref_global:
@@ -287,6 +319,16 @@ prepare:
 #         window_size: 4
 #       rechunk:
 #         chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
+
+  4-year.anom_1991-2020.slp_global:
+    uses:
+      prepared:
+        - "annual.anom_1991-2020.slp_global"
+    apply:
+      rolling_mean:
+        window_size: 4
+      rechunk:
+        chunks: {"time": -1, "member": -1, "lat": 10, "lon": 12}
         
 #   4-year.anom_1991-2020.sst_global:
 #     uses:

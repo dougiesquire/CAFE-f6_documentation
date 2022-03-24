@@ -69,7 +69,7 @@ prepare:
 #       rechunk:
 #         chunks: {"time": -1, "lat": 10, "lon": 12}
 
-  3-month.anom_1991-2020.sam:
+  annual-Jan.full.slp_global:
     uses:
       surface_month:
         - "PRMSL_GDS0_MSL"
@@ -81,16 +81,16 @@ prepare:
           g0_lat_1: "lat"
           g0_lon_2: "lon"
       force_to_Julian_calendar:
-      calculate_sam:
-        clim_period: ["1991-01-01", "2020-12-31"]
-      rolling_mean:
-        window_size: 3
+      coarsen:
+        window_size: 12
         start_points: ["1960-01-01"]
         dim: "time"
+      interpolate_to_grid_from_file:
+        file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
       rechunk:
-        chunks: {"time": -1}
+        chunks: {"time": -1, "lat": 10, "lon": 12}
         
-  3-month.anom_1985-2014.sam:
+  annual-Nov.full.slp_global:
     uses:
       surface_month:
         - "PRMSL_GDS0_MSL"
@@ -102,56 +102,98 @@ prepare:
           g0_lat_1: "lat"
           g0_lon_2: "lon"
       force_to_Julian_calendar:
-      calculate_sam:
-        clim_period: ["1985-01-01", "2014-12-31"]
-      rolling_mean:
-        window_size: 3
-        start_points: ["1960-01-01"]
+      coarsen:
+        window_size: 12
+        start_points: ["1960-11-01"]
         dim: "time"
+      interpolate_to_grid_from_file:
+        file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
       rechunk:
-        chunks: {"time": -1}
+        chunks: {"time": -1, "lat": 10, "lon": 12}
 
-  3-month.anom_1991-2020.nao:
-    uses:
-      surface_month:
-        - "PRMSL_GDS0_MSL"
-    apply:
-      rename:
-        names: 
-          PRMSL_GDS0_MSL: "slp"
-          initial_time0_hours: "time"
-          g0_lat_1: "lat"
-          g0_lon_2: "lon"
-      force_to_Julian_calendar:
-      calculate_nao:
-        clim_period: ["1991-01-01", "2020-12-31"]
-      rolling_mean:
-        window_size: 3
-        start_points: ["1960-01-01"]
-        dim: "time"
-      rechunk:
-        chunks: {"time": -1}
+#   3-month.anom_1991-2020.sam:
+#     uses:
+#       surface_month:
+#         - "PRMSL_GDS0_MSL"
+#     apply:
+#       rename:
+#         names: 
+#           PRMSL_GDS0_MSL: "slp"
+#           initial_time0_hours: "time"
+#           g0_lat_1: "lat"
+#           g0_lon_2: "lon"
+#       force_to_Julian_calendar:
+#       calculate_sam:
+#         clim_period: ["1991-01-01", "2020-12-31"]
+#       rolling_mean:
+#         window_size: 3
+#         start_points: ["1960-01-01"]
+#         dim: "time"
+#       rechunk:
+#         chunks: {"time": -1}
         
-  3-month.anom_1985-2014.nao:
-    uses:
-      surface_month:
-        - "PRMSL_GDS0_MSL"
-    apply:
-      rename:
-        names: 
-          PRMSL_GDS0_MSL: "slp"
-          initial_time0_hours: "time"
-          g0_lat_1: "lat"
-          g0_lon_2: "lon"
-      force_to_Julian_calendar:
-      calculate_nao:
-        clim_period: ["1985-01-01", "2014-12-31"]
-      rolling_mean:
-        window_size: 3
-        start_points: ["1960-01-01"]
-        dim: "time"
-      rechunk:
-        chunks: {"time": -1}
+#   3-month.anom_1985-2014.sam:
+#     uses:
+#       surface_month:
+#         - "PRMSL_GDS0_MSL"
+#     apply:
+#       rename:
+#         names: 
+#           PRMSL_GDS0_MSL: "slp"
+#           initial_time0_hours: "time"
+#           g0_lat_1: "lat"
+#           g0_lon_2: "lon"
+#       force_to_Julian_calendar:
+#       calculate_sam:
+#         clim_period: ["1985-01-01", "2014-12-31"]
+#       rolling_mean:
+#         window_size: 3
+#         start_points: ["1960-01-01"]
+#         dim: "time"
+#       rechunk:
+#         chunks: {"time": -1}
+
+#   3-month.anom_1991-2020.nao:
+#     uses:
+#       surface_month:
+#         - "PRMSL_GDS0_MSL"
+#     apply:
+#       rename:
+#         names: 
+#           PRMSL_GDS0_MSL: "slp"
+#           initial_time0_hours: "time"
+#           g0_lat_1: "lat"
+#           g0_lon_2: "lon"
+#       force_to_Julian_calendar:
+#       calculate_nao:
+#         clim_period: ["1991-01-01", "2020-12-31"]
+#       rolling_mean:
+#         window_size: 3
+#         start_points: ["1960-01-01"]
+#         dim: "time"
+#       rechunk:
+#         chunks: {"time": -1}
+        
+#   3-month.anom_1985-2014.nao:
+#     uses:
+#       surface_month:
+#         - "PRMSL_GDS0_MSL"
+#     apply:
+#       rename:
+#         names: 
+#           PRMSL_GDS0_MSL: "slp"
+#           initial_time0_hours: "time"
+#           g0_lat_1: "lat"
+#           g0_lon_2: "lon"
+#       force_to_Julian_calendar:
+#       calculate_nao:
+#         clim_period: ["1985-01-01", "2014-12-31"]
+#       rolling_mean:
+#         window_size: 3
+#         start_points: ["1960-01-01"]
+#         dim: "time"
+#       rechunk:
+#         chunks: {"time": -1}
         
 #   # Prepare anomalies from prepared datasets
 #   annual-Jan.anom_1991-2020.t_ref_global:
@@ -211,6 +253,64 @@ prepare:
 #     apply:
 #       rechunk:
 #         chunks: {"time": -1, "lat": 10, "lon": 12}
+
+  annual-Jan.anom_1991-2020.slp_global:
+    uses:
+      prepared:
+        - "annual-Jan.full.slp_global"
+    apply:
+      anomalise:
+        clim_period: ["1991-01-01", "2020-12-31"]
+      rechunk:
+        chunks: {"time": -1, "lat": 10, "lon": 12}
+        
+  annual-Nov.anom_1991-2020.slp_global:
+    uses:
+      prepared:
+        - "annual-Nov.full.slp_global"
+    apply:
+      anomalise:
+        clim_period: ["1991-01-01", "2020-12-31"]
+      rechunk:
+        chunks: {"time": -1, "lat": 10, "lon": 12}
+        
+  annual.anom_1991-2020.slp_global:
+    uses:
+      prepared:
+        - "annual-Jan.anom_1991-2020.slp_global"
+        - "annual-Nov.anom_1991-2020.slp_global"
+    apply:
+      rechunk:
+        chunks: {"time": -1, "lat": 10, "lon": 12}
+        
+  annual-Jan.anom_1985-2014.slp_global:
+    uses:
+      prepared:
+        - "annual-Jan.full.slp_global"
+    apply:
+      anomalise:
+        clim_period: ["1985-01-01", "2014-12-31"]
+      rechunk:
+        chunks: {"time": -1, "lat": 10, "lon": 12}
+        
+  annual-Nov.anom_1985-2014.slp_global:
+    uses:
+      prepared:
+        - "annual-Nov.full.slp_global"
+    apply:
+      anomalise:
+        clim_period: ["1985-01-01", "2014-12-31"]
+      rechunk:
+        chunks: {"time": -1, "lat": 10, "lon": 12}
+        
+  annual.anom_1985-2014.slp_global:
+    uses:
+      prepared:
+        - "annual-Jan.anom_1985-2014.slp_global"
+        - "annual-Nov.anom_1985-2014.slp_global"
+    apply:
+      rechunk:
+        chunks: {"time": -1, "lat": 10, "lon": 12}
            
 #   # Prepare 4-year-averages from prepared datasets
 #   4-year-Jan.anom_1991-2020.t_ref_global:
@@ -270,3 +370,61 @@ prepare:
 #     apply:
 #       rechunk:
 #         chunks: {"time": -1, "lat": 10, "lon": 12}
+
+  4-year-Jan.anom_1991-2020.slp_global:
+    uses:
+      prepared:
+        - "annual-Jan.anom_1991-2020.slp_global"
+    apply:
+      rolling_mean:
+        window_size: 4
+      rechunk:
+        chunks: {"time": -1, "lat": 10, "lon": 12}
+        
+  4-year-Nov.anom_1991-2020.slp_global:
+    uses:
+      prepared:
+        - "annual-Nov.anom_1991-2020.slp_global"
+    apply:
+      rolling_mean:
+        window_size: 4
+      rechunk:
+        chunks: {"time": -1, "lat": 10, "lon": 12}
+        
+  4-year.anom_1991-2020.slp_global:
+    uses:
+      prepared:
+        - "4-year-Jan.anom_1991-2020.slp_global"
+        - "4-year-Nov.anom_1991-2020.slp_global"
+    apply:
+      rechunk:
+        chunks: {"time": -1, "lat": 10, "lon": 12}
+        
+  4-year-Jan.anom_1985-2014.slp_global:
+    uses:
+      prepared:
+        - "annual-Jan.anom_1985-2014.slp_global"
+    apply:
+      rolling_mean:
+        window_size: 4
+      rechunk:
+        chunks: {"time": -1, "lat": 10, "lon": 12}
+        
+  4-year-Nov.anom_1985-2014.slp_global:
+    uses:
+      prepared:
+        - "annual-Nov.anom_1985-2014.slp_global"
+    apply:
+      rolling_mean:
+        window_size: 4
+      rechunk:
+        chunks: {"time": -1, "lat": 10, "lon": 12}
+        
+  4-year.anom_1985-2014.slp_global:
+    uses:
+      prepared:
+        - "4-year-Jan.anom_1985-2014.slp_global"
+        - "4-year-Nov.anom_1985-2014.slp_global"
+    apply:
+      rechunk:
+        chunks: {"time": -1, "lat": 10, "lon": 12}

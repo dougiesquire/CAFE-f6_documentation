@@ -77,6 +77,33 @@ prepare:
 #         dim: ["init", "time"]
 #       rechunk:
 #         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+
+  annual.full.slp_global:
+    uses:
+      atmos_isobaric_month:
+        - "slp"
+    apply:
+      truncate_latitudes:
+      add_CAFE_grid_info:
+      rename:
+        names:
+          ensemble: "member"
+          init_date: "init"
+          lead_time: "lead"
+      add_attrs:
+        attrs: {"units": "months"}
+        variable: "lead"
+      convert:
+        conversion:
+          slp:
+            multiply_by: 100
+      coarsen:
+        window_size: 12
+        dim: "lead"
+      round_to_start_of_month:
+        dim: ["init", "time"]
+      rechunk:
+        chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
         
 #   annual.full.sst_global:
 #     uses:
@@ -196,55 +223,55 @@ prepare:
 #       rechunk:
 #         chunks: {"init": -1, "lead": 1, "member": -1}
         
-  3-month.anom_1991-2020.sam:
-    uses:
-      atmos_isobaric_month:
-        - "slp"
-    apply:
-      truncate_latitudes:
-      rename:
-        names: 
-          ensemble: "member"
-          init_date: "init"
-          lead_time: "lead"
-      add_attrs:
-        attrs: {"units": "months"}
-        variable: "lead"
-      calculate_sam:
-        clim_period: ["1991-01-01", "2020-12-31"]
-        groupby_dim: "init"
-      coarsen:
-        window_size: 3
-        dim: "lead"
-      round_to_start_of_month:
-        dim: ["init", "time"]
-      rechunk:
-        chunks: {"init": -1, "lead": 1, "member": -1}
+#   3-month.anom_1991-2020.sam:
+#     uses:
+#       atmos_isobaric_month:
+#         - "slp"
+#     apply:
+#       truncate_latitudes:
+#       rename:
+#         names: 
+#           ensemble: "member"
+#           init_date: "init"
+#           lead_time: "lead"
+#       add_attrs:
+#         attrs: {"units": "months"}
+#         variable: "lead"
+#       calculate_sam:
+#         clim_period: ["1991-01-01", "2020-12-31"]
+#         groupby_dim: "init"
+#       coarsen:
+#         window_size: 3
+#         dim: "lead"
+#       round_to_start_of_month:
+#         dim: ["init", "time"]
+#       rechunk:
+#         chunks: {"init": -1, "lead": 1, "member": -1}
         
-  3-month.anom_1991-2020.nao:
-    uses:
-      atmos_isobaric_month:
-        - "slp"
-    apply:
-      truncate_latitudes:
-      rename:
-        names: 
-          ensemble: "member"
-          init_date: "init"
-          lead_time: "lead"
-      add_attrs:
-        attrs: {"units": "months"}
-        variable: "lead"
-      calculate_nao:
-        clim_period: ["1991-01-01", "2020-12-31"]
-        groupby_dim: "init"
-      coarsen:
-        window_size: 3
-        dim: "lead"
-      round_to_start_of_month:
-        dim: ["init", "time"]
-      rechunk:
-        chunks: {"init": -1, "lead": 1, "member": -1}
+#   3-month.anom_1991-2020.nao:
+#     uses:
+#       atmos_isobaric_month:
+#         - "slp"
+#     apply:
+#       truncate_latitudes:
+#       rename:
+#         names: 
+#           ensemble: "member"
+#           init_date: "init"
+#           lead_time: "lead"
+#       add_attrs:
+#         attrs: {"units": "months"}
+#         variable: "lead"
+#       calculate_nao:
+#         clim_period: ["1991-01-01", "2020-12-31"]
+#         groupby_dim: "init"
+#       coarsen:
+#         window_size: 3
+#         dim: "lead"
+#       round_to_start_of_month:
+#         dim: ["init", "time"]
+#       rechunk:
+#         chunks: {"init": -1, "lead": 1, "member": -1}
         
 #   # Prepare anomalies from prepared datasets
 #   annual.anom_1991-2020.t_ref_global:
@@ -266,6 +293,16 @@ prepare:
 #         clim_period: ["1991-01-01", "2020-12-31"]
 #       rechunk:
 #         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+
+  annual.anom_1991-2020.slp_global:
+    uses:
+      prepared:
+        - "annual.full.slp_global"
+    apply:
+      anomalise:
+        clim_period: ["1991-01-01", "2020-12-31"]
+      rechunk:
+        chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
         
 #   annual.anom_1991-2020.sst_global:
 #     uses:
@@ -329,6 +366,17 @@ prepare:
 #         dim: "lead"
 #       rechunk:
 #         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+
+  4-year.anom_1991-2020.slp_global:
+    uses:
+      prepared:
+        - "annual.anom_1991-2020.slp_global"
+    apply:
+      rolling_mean:
+        window_size: 4
+        dim: "lead"
+      rechunk:
+        chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
         
 #   4-year.anom_1991-2020.sst_global:
 #     uses:

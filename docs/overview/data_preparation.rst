@@ -29,9 +29,11 @@ Steps for preparing the various datasets used in this project are specified in y
        preprocess:                      # <- Functions and kwargs from src.utils to be
          normalise_by_days_in_month:    #    applied sequentially prior to concatenation
          convert_time_to_lead:          #    (for datasets comprised of multiple
-         truncate_latitudes:            #    concatenated files) and/or prior to merging
-         coarsen_monthly_to_annual:     #    input variables from multiple realms where 
-           dim: "lead"                  #    more than one are specified
+           time_freq: "months"          #    concatenated files) and/or prior to merging
+         truncate_latitudes:            #    input variables from multiple realms where
+         coarsen:                       #    more than one are specified
+           window_size: 12
+           dim: "lead"
        apply:                           # <- Functions and kwargs from src.utils to be
          rename:                        #    applied sequentially to the opened (and
            names:                       #    concatenated/merge, where appropriate)
@@ -43,7 +45,7 @@ Steps for preparing the various datasets used in this project are specified in y
          round_to_start_of_month:
            dim: ["init", "time"]
          rechunk:
-           chunks: {"init": -1, "lead": 2, "member": -1, "lat": 45, "lon": 72}
+           chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
 
      annual.anom_1991-2020.precip:
        uses:
@@ -53,7 +55,7 @@ Steps for preparing the various datasets used in this project are specified in y
          anomalise:
            clim_period: ["1991-01-01", "2020-12-31"]
          rechunk:
-           chunks: {"init": -1, "lead": 2, "member": -1, "lat": 45, "lon": 72}
+           chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
 
 Code for preparing data from a specified yaml file is in ``src/prepare_data.py``:
 
