@@ -197,8 +197,8 @@ def calculate_sam(
     slp_40 = slp.interp({lat_dim: -40}).mean(lon_dim)
     slp_65 = slp.interp({lat_dim: -65}).mean(lon_dim)
 
-    slp_40_clim_period = mask_period(slp_40, clim_period)
-    slp_65_clim_period = mask_period(slp_65, clim_period)
+    slp_40_clim_period = keep_period(slp_40, clim_period)
+    slp_65_clim_period = keep_period(slp_65, clim_period)
 
     slp_40_group = slp_40.groupby(groupby_dim + ".month")
     slp_40_clim_period_group = slp_40_clim_period.groupby(groupby_dim + ".month")
@@ -270,8 +270,8 @@ def calculate_nao(
     slp_35 = _get_lon_band(slp.interp({lat_dim: 35}), lon_band, lon_dim)
     slp_65 = _get_lon_band(slp.interp({lat_dim: 65}), lon_band, lon_dim)
 
-    slp_35_clim_period = mask_period(slp_35, clim_period)
-    slp_65_clim_period = mask_period(slp_65, clim_period)
+    slp_35_clim_period = keep_period(slp_35, clim_period)
+    slp_65_clim_period = keep_period(slp_65, clim_period)
 
     slp_35_group = slp_35.groupby(groupby_dim + ".month")
     slp_35_clim_period_group = slp_35_clim_period.groupby(groupby_dim + ".month")
@@ -529,6 +529,21 @@ def truncate_latitudes(ds, dp=10, lat_dim="lat"):
     return ds
 
 
+def drop_Feb_29(ds, time_dim="time"):
+    """
+    Drop all occurences of Feb 29th
+    
+    Parameters
+    ----------
+    ds : xarray Dataset
+        A dataset with a time dimension
+    time_dim : str, optional
+        The name of the time dimension
+    """
+    keep = np.logical_not((ds[time_dim].dt.month == 2) & (ds[time_dim].dt.day == 29))
+    return ds.where(keep, drop=True)
+
+
 def rechunk(ds, chunks):
     """
     Rechunk a dataset
@@ -610,9 +625,9 @@ def convert(ds, conversion):
     return ds_c
 
 
-def mask_period(ds, period):
+def keep_period(ds, period):
     """
-    Mask times outside of a specified period
+    Keep only times outside of a specified period
 
     Parameters
     ----------
@@ -643,6 +658,26 @@ def mask_period(ds, period):
         raise ValueError("I don't know how to mask the time period for this data")
 
 
+def _get_groupby_and_mean_dims(ds):
+    """
+    Get the groupby and averaging dimensions for performing operations like
+    calculating anomalies and percentile thresholds
+    """
+    if "time" in ds.dims:
+        groupby_dim = "time"
+    elif "init" in ds.dims:
+        groupby_dim = "init"
+    else:
+        raise ValueError("I don't know how to compute the percentiles for this data")
+
+    if "member" in ds.dims:
+        mean_dim = [groupby_dim, "member"]
+    else:
+        mean_dim = groupby_dim
+
+    return groupby_dim, mean_dim
+
+
 def anomalise(ds, clim_period):
     """
     Returns the anomalies of ds relative to its climatology over clim_period
@@ -655,19 +690,9 @@ def anomalise(ds, clim_period):
         Size 2 iterable containing strings indicating the start and end dates
         of the climatological period
     """
-    ds_period = mask_period(ds, clim_period)
+    ds_period = keep_period(ds, clim_period)
 
-    if "time" in ds.dims:
-        groupby_dim = "time"
-    elif "init" in ds.dims:
-        groupby_dim = "init"
-    else:
-        raise ValueError("I don't know how to compute the anomalies for this data")
-
-    if "member" in ds.dims:
-        mean_dim = [groupby_dim, "member"]
-    else:
-        mean_dim = groupby_dim
+    groupby_dim, mean_dim = _get_groupby_and_mean_dims(ds)
 
     clim = ds_period.groupby(f"{groupby_dim}.month").mean(mean_dim)
     return (ds.groupby(f"{groupby_dim}.month") - clim).drop("month")
@@ -951,7 +976,7 @@ def add_area_using_cdo_gridarea(ds, lon_dim="lon", lat_dim="lat"):
         The name of the latitude dimension on ds
     """
     other_dims = set(ds.dims) - set([lon_dim, lat_dim])
-    area = gridarea_cdo(ds.isel({d: 0 for d in other_dims}))
+    area = gridarea_cdo(ds.isel({d: 0 for d in other_dims}).load())
     return ds.assign_coords({"area": area})
 
 
