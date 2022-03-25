@@ -185,32 +185,34 @@ prepare:
         conversion:
           t_ref_max:
             add: -273.15
+      round_to_start_of_day:
+        dim: ["init", "time"]
       average_over_NRM_super_clusters:
-#       mask_CAFEf6_reduced_dt:
-#       rechunk:
-#         chunks: {"init": -1, "lead": 28, "member": -1}
+      mask_CAFEf6_reduced_dt:
+      rechunk:
+        chunks: {"init": -1, "lead": 28, "member": -1}
         
-#   annual.days_over_p90.t_ref_max_Aus_NRM:
-#     uses:
-#       prepared:
-#         - "daily.full.t_ref_max_Aus_NRM"
-#     apply:
-#       over_percentile_threshold:
-#         percentile: 0.9
-#         percentile_period: ["1991-01-01", "2020-12-31"]
-#       coarsen:
-#         window_size: 365
-#         dim: "lead"
-#       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1}
+  annual.days_over_p90.t_ref_max_Aus_NRM:
+    uses:
+      prepared:
+        - "daily.full.t_ref_max_Aus_NRM"
+    apply:
+      over_percentile_threshold:
+        percentile: 0.9
+        percentile_period: ["1991-01-01", "2020-12-31"]
+      coarsen:
+        window_size: 365
+        dim: "lead"
+      rechunk:
+        chunks: {"init": -1, "lead": 1, "member": -1}
         
-#   4-year.days_over_p90.t_ref_max_Aus_NRM:
-#     uses:
-#       prepared:
-#         - "annual.days_over_p90.t_ref_max_Aus_NRM"
-#     apply:
-#       rolling_mean:
-#         window_size: 4
-#         dim: "lead"
-#       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1}
+  4-year.days_over_p90.t_ref_max_Aus_NRM:
+    uses:
+      prepared:
+        - "annual.days_over_p90.t_ref_max_Aus_NRM"
+    apply:
+      rolling_mean:
+        window_size: 4
+        dim: "lead"
+      rechunk:
+        chunks: {"init": -1, "lead": 1, "member": -1}

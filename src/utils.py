@@ -866,6 +866,25 @@ def force_to_Julian_calendar(ds, time_dim="time"):
     )
 
 
+def round_to_start_of_day(ds, dim):
+    """
+    Return provided array with specified time dimension rounded to the start of
+    the day
+
+    Parameters
+    ----------
+    ds : xarray Dataset
+        The dataset with a dimension(s) to round
+    dim : str
+        The name of the dimensions to round
+    """
+    if isinstance(dim, str):
+        dim = [dim]
+    for d in dim:
+        ds = ds.copy().assign_coords({d: ds[d].compute().dt.floor("D")})
+    return ds
+
+
 def round_to_start_of_month(ds, dim):
     """
     Return provided array with specified time dimension rounded to the start of
