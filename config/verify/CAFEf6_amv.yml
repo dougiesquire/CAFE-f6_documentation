@@ -20,67 +20,67 @@
 #        Arguments to be passed to src.verify.calculate_metric
 
 prepare:
-#   CAFEf6.HadISST.4-year.anom_1991-2020.amv.rXY_1991-2020:
-#     hindcasts: CAFEf6.4-year.anom_1991-2020.amv
-#     observations: HadISST.4-year.anom_1991-2020.amv
-#     apply:
-#       all:
-#         mask_period:
-#           period: ["1991-01-01", "2020-12-31"]
-#     verify:
-#       metric: "acc"
-#       significance: True
-#       transform: "Fisher_z"
-#       alpha: 0.05
+  CAFEf6.HadISST.4-year.anom_1991-2020.amv.rXY_1991-2020:
+    hindcasts: CAFEf6.4-year.anom_1991-2020.amv
+    observations: HadISST.4-year.anom_1991-2020.amv
+    apply:
+      all:
+        keep_period:
+          period: ["1991-01-01", "2020-12-31"]
+    verify:
+      metric: "acc"
+      significance: True
+      transform: "Fisher_z"
+      alpha: 0.05
 
-#   CAFEf6.HadISST.4-year.anom_1991-2020.amv.ri_1991-2020:
-#     hindcasts: CAFEf6.4-year.anom_1991-2020.amv
-#     observations: HadISST.4-year.anom_1991-2020.amv
-#     simulations: CAFE_hist.4-year.anom_1991-2020.amv
-#     apply:
-#       all:
-#         mask_period:
-#           period: ["1991-01-01", "2020-12-31"]
-#     verify:
-#       metric: "acc_initialised"
-#       significance: True
-#       transform: "Fisher_z"
-#       alpha: 0.05
+  CAFEf6.HadISST.4-year.anom_1991-2020.amv.ri_1991-2020:
+    hindcasts: CAFEf6.4-year.anom_1991-2020.amv
+    observations: HadISST.4-year.anom_1991-2020.amv
+    simulations: CAFE_hist.4-year.anom_1991-2020.amv
+    apply:
+      all:
+        keep_period:
+          period: ["1991-01-01", "2020-12-31"]
+    verify:
+      metric: "acc_initialised"
+      significance: True
+      transform: "Fisher_z"
+      alpha: 0.05
 
-#   CAFEf6.HadISST.4-year.anom_1991-2020.amv.MSSS_hist_1991-2020:
-#     hindcasts: CAFEf6.4-year.anom_1991-2020.amv
-#     observations: HadISST.4-year.anom_1991-2020.amv
-#     simulations: CAFE_hist.4-year.anom_1991-2020.amv
-#     apply:
-#       all:
-#         mask_period:
-#           period: ["1991-01-01", "2020-12-31"]
-#     verify:
-#       metric: "msss_hist"
-#       significance: True
-#       alpha: 0.05
+  CAFEf6.HadISST.4-year.anom_1991-2020.amv.MSSS_hist_1991-2020:
+    hindcasts: CAFEf6.4-year.anom_1991-2020.amv
+    observations: HadISST.4-year.anom_1991-2020.amv
+    simulations: CAFE_hist.4-year.anom_1991-2020.amv
+    apply:
+      all:
+        keep_period:
+          period: ["1991-01-01", "2020-12-31"]
+    verify:
+      metric: "msss_hist"
+      significance: True
+      alpha: 0.05
 
   CAFEf6.HadISST.4-year.anom_1991-2020.amv.MSSS_clim_1991-2020:
     hindcasts: CAFEf6.4-year.anom_1991-2020.amv
     observations: HadISST.4-year.anom_1991-2020.amv
     apply:
       all:
-        mask_period:
+        keep_period:
           period: ["1991-01-01", "2020-12-31"]
     verify:
       metric: "msss_clim"
       significance: True
       alpha: 0.05
       
-#   CAFEf6.HadISST.4-year.anom_1991-2020.amv.CRPSS_hist_1991-2020:
-#     hindcasts: CAFEf6.4-year.anom_1991-2020.amv
-#     observations: HadISST.4-year.anom_1991-2020.amv
-#     simulations: CAFE_hist.4-year.anom_1991-2020.amv
-#     apply:
-#       all:
-#         mask_period:
-#           period: ["1991-01-01", "2020-12-31"]
-#     verify:
-#       metric: "crpss"
-#       significance: True
-#       alpha: 0.05
+  CAFEf6.HadISST.4-year.anom_1991-2020.amv.CRPSS_hist_1991-2020:
+    hindcasts: CAFEf6.4-year.anom_1991-2020.amv
+    observations: HadISST.4-year.anom_1991-2020.amv
+    simulations: CAFE_hist.4-year.anom_1991-2020.amv
+    apply:
+      all:
+        keep_period:
+          period: ["1991-01-01", "2020-12-31"]
+    verify:
+      metric: "crpss"
+      significance: True
+      alpha: 0.05

@@ -16,10 +16,16 @@ import matplotlib.patches as mpatches
 import matplotlib.gridspec as gridspec
 from mpl_toolkits.axes_grid1 import Divider, Size
 
+import cartopy
+import cartopy.crs as ccrs
+
 PROJECT_DIR = Path(__file__).resolve().parents[1]
 
+cartopy.config["pre_existing_data_dir"] = PROJECT_DIR / "data/cartopy-data"
+cartopy.config["data_dir"] = PROJECT_DIR / "data/cartopy-data"
 
-def hindcasts(hcsts, obsvs=None, hists=None, shade=False):
+
+def hindcasts(hcsts, obsvs=None, hists=None, shade=False, ax=None, figsize=(15, 4)):
     """
     Plot sets of hindcasts. Where multiple variables are provided, it is
     assumed that all inputs contain the same variables.
@@ -56,10 +62,12 @@ def hindcasts(hcsts, obsvs=None, hists=None, shade=False):
 
     n_vars = len(hcsts[list(hcsts.keys())[0]].data_vars)
 
-    fig = plt.figure(figsize=(15, n_vars * 4))
-    axs = fig.subplots(n_vars, 1, sharex=True)
-    if n_vars == 1:
-        axs = [axs]
+    if ax is None:
+        fig = plt.figure(figsize=(figsize[0], n_vars * figsize[1]))
+        axs = fig.subplots(n_vars, 1, sharex=True)
+        if n_vars == 1:
+            axs = [axs]
+    else: axs = [ax]
 
     # Plot the hindcasts
     colormaps = ["autumn", "winter", "cool"]
@@ -120,8 +128,9 @@ def hindcasts(hcsts, obsvs=None, hists=None, shade=False):
                 )
 
     # Format plots
-    ticks = xr.cftime_range(start=xlim[0], end=xlim[-1], freq="2AS", calendar="julian")
-    xlim = (ticks.shift(-1, "AS")[0], ticks.shift(2, "AS")[-1])
+    ticks = xr.cftime_range(start=xlim[0], end=xlim[-1], freq="5AS", calendar="julian")
+    years = xr.cftime_range(start=xlim[0], end=xlim[-1], freq="AS", calendar="julian")
+    xlim = (years.shift(-1, "AS")[0], years.shift(2, "AS")[-1])
     for a, var in enumerate(hcst.data_vars):
         axs[a].set_xticks(ticks.values)
         axs[a].set_xticklabels(ticks.year, rotation=40)
@@ -139,9 +148,10 @@ def hindcasts(hcsts, obsvs=None, hists=None, shade=False):
             _shading(axs[a])
 
     plt.tight_layout()
-    fig.patch.set_facecolor("w")
-
-    return fig
+    if ax is None:
+        fig.patch.set_facecolor("w")
+        return fig
+    else: return ax
 
 
 def metric_maps(fields, variable, vrange, headings=None, add_colorbar=True, figsize=(15, 15)):
@@ -161,11 +171,6 @@ def metric_maps(fields, variable, vrange, headings=None, add_colorbar=True, figs
     figsize : iterable of length 2
         The total size of the figure
     """
-    
-    import cartopy
-    import cartopy.crs as ccrs
-    cartopy.config["pre_existing_data_dir"] = PROJECT_DIR / "data/cartopy-data"
-    cartopy.config["data_dir"] = PROJECT_DIR / "data/cartopy-data"
 
     def _get_verif_period(ds):
         """Return a string of the verification period for a skill metric"""

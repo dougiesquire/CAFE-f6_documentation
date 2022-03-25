@@ -111,7 +111,7 @@ def average_over_lon_lat_box(ds, box, lon_dim="lon", lat_dim="lat"):
         else:
             average_dims = set([*ds[lat_dim].dims, *ds[lon_dim].dims])
         region = _get_lat_lon_region(ds, box, lat_dim, lon_dim)
-    return region.weighted(ds["area"].fillna(0)).mean(dim=average_dims)
+    return region.weighted(ds["area"].fillna(0)).mean(dim=average_dims, keep_attrs=True)
 
 
 def calculate_nino34(sst_anom, sst_name="sst"):

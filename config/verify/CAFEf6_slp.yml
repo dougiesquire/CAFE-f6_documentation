@@ -35,7 +35,7 @@ prepare:
     observations: JRA55.4-year.anom_1991-2020.slp_global
     apply:
       all:
-        mask_period:
+        keep_period:
           period: ["1991-01-01", "2020-12-31"]
     verify:
       metric: "acc"
@@ -59,7 +59,7 @@ prepare:
     simulations: CAFE_hist.4-year.anom_1991-2020.slp_global
     apply:
       all:
-        mask_period:
+        keep_period:
           period: ["1991-01-01", "2020-12-31"]
     verify:
       metric: "acc_initialised"
@@ -82,7 +82,7 @@ prepare:
     simulations: CAFE_hist.4-year.anom_1991-2020.slp_global
     apply:
       all:
-        mask_period:
+        keep_period:
           period: ["1991-01-01", "2020-12-31"]
     verify:
       metric: "msss_hist"
@@ -102,7 +102,7 @@ prepare:
     observations: JRA55.4-year.anom_1991-2020.slp_global
     apply:
       all:
-        mask_period:
+        keep_period:
           period: ["1991-01-01", "2020-12-31"]
     verify:
       metric: "msss_clim"
@@ -124,7 +124,7 @@ prepare:
     simulations: CAFE_hist.4-year.anom_1991-2020.slp_global
     apply:
       all:
-        mask_period:
+        keep_period:
           period: ["1991-01-01", "2020-12-31"]
     verify:
       metric: "crpss"

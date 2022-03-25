@@ -20,67 +20,67 @@
 #        Arguments to be passed to src.verify.calculate_metric
 
 prepare:
-#   CAFEf6.HadISST.3-month.anom_1991-2020.nino34.rXY_1991-2020:
-#     hindcasts: CAFEf6.3-month.anom_1991-2020.nino34
-#     observations: HadISST.3-month.anom_1991-2020.nino34
-#     apply:
-#       all:
-#         mask_period:
-#           period: ["1991-01-01", "2020-12-31"]
-#     verify:
-#       metric: "acc"
-#       significance: True
-#       transform: "Fisher_z"
-#       alpha: 0.05
+  CAFEf6.HadISST.3-month.anom_1991-2020.nino34.rXY_1991-2020:
+    hindcasts: CAFEf6.3-month.anom_1991-2020.nino34
+    observations: HadISST.3-month.anom_1991-2020.nino34
+    apply:
+      all:
+        keep_period:
+          period: ["1991-01-01", "2020-12-31"]
+    verify:
+      metric: "acc"
+      significance: True
+      transform: "Fisher_z"
+      alpha: 0.05
 
-#   CAFEf6.HadISST.3-month.anom_1991-2020.nino34.ri_1991-2020:
-#     hindcasts: CAFEf6.3-month.anom_1991-2020.nino34
-#     observations: HadISST.3-month.anom_1991-2020.nino34
-#     simulations: CAFE_hist.3-month.anom_1991-2020.nino34
-#     apply:
-#       all:
-#         mask_period:
-#           period: ["1991-01-01", "2020-12-31"]
-#     verify:
-#       metric: "acc_initialised"
-#       significance: True
-#       transform: "Fisher_z"
-#       alpha: 0.05
+  CAFEf6.HadISST.3-month.anom_1991-2020.nino34.ri_1991-2020:
+    hindcasts: CAFEf6.3-month.anom_1991-2020.nino34
+    observations: HadISST.3-month.anom_1991-2020.nino34
+    simulations: CAFE_hist.3-month.anom_1991-2020.nino34
+    apply:
+      all:
+        keep_period:
+          period: ["1991-01-01", "2020-12-31"]
+    verify:
+      metric: "acc_initialised"
+      significance: True
+      transform: "Fisher_z"
+      alpha: 0.05
 
-#   CAFEf6.HadISST.3-month.anom_1991-2020.nino34.MSSS_hist_1991-2020:
-#     hindcasts: CAFEf6.3-month.anom_1991-2020.nino34
-#     observations: HadISST.3-month.anom_1991-2020.nino34
-#     simulations: CAFE_hist.3-month.anom_1991-2020.nino34
-#     apply:
-#       all:
-#         mask_period:
-#           period: ["1991-01-01", "2020-12-31"]
-#     verify:
-#       metric: "msss_hist"
-#       significance: True
-#       alpha: 0.05
+  CAFEf6.HadISST.3-month.anom_1991-2020.nino34.MSSS_hist_1991-2020:
+    hindcasts: CAFEf6.3-month.anom_1991-2020.nino34
+    observations: HadISST.3-month.anom_1991-2020.nino34
+    simulations: CAFE_hist.3-month.anom_1991-2020.nino34
+    apply:
+      all:
+        keep_period:
+          period: ["1991-01-01", "2020-12-31"]
+    verify:
+      metric: "msss_hist"
+      significance: True
+      alpha: 0.05
       
   CAFEf6.HadISST.3-month.anom_1991-2020.nino34.MSSS_clim_1991-2020:
     hindcasts: CAFEf6.3-month.anom_1991-2020.nino34
     observations: HadISST.3-month.anom_1991-2020.nino34
     apply:
       all:
-        mask_period:
+        keep_period:
           period: ["1991-01-01", "2020-12-31"]
     verify:
       metric: "msss_clim"
       significance: True
       alpha: 0.05
       
-#   CAFEf6.HadISST.3-month.anom_1991-2020.nino34.CRPSS_hist_1991-2020:
-#     hindcasts: CAFEf6.3-month.anom_1991-2020.nino34
-#     observations: HadISST.3-month.anom_1991-2020.nino34
-#     simulations: CAFE_hist.3-month.anom_1991-2020.nino34
-#     apply:
-#       all:
-#         mask_period:
-#           period: ["1991-01-01", "2020-12-31"]
-#     verify:
-#       metric: "crpss"
-#       significance: True
-#       alpha: 0.05
+  CAFEf6.HadISST.3-month.anom_1991-2020.nino34.CRPSS_hist_1991-2020:
+    hindcasts: CAFEf6.3-month.anom_1991-2020.nino34
+    observations: HadISST.3-month.anom_1991-2020.nino34
+    simulations: CAFE_hist.3-month.anom_1991-2020.nino34
+    apply:
+      all:
+        keep_period:
+          period: ["1991-01-01", "2020-12-31"]
+    verify:
+      metric: "crpss"
+      significance: True
+      alpha: 0.05

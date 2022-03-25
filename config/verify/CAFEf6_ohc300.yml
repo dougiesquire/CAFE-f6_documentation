@@ -20,73 +20,73 @@
 #        Arguments to be passed to src.verify.calculate_metric
 
 prepare:
-#   CAFEf6.EN422.annual.anom_1991-2020.ohc300_global.rXY_1991-2020:
-#     hindcasts: CAFEf6.annual.anom_1991-2020.ohc300_global
-#     observations: EN422.annual.anom_1991-2020.ohc300_global
-#     verify:
-#       metric: "acc"
-#       significance: True
-#       transform: "Fisher_z"
-#       alpha: 0.05
+  CAFEf6.EN422.annual.anom_1991-2020.ohc300_global.rXY_1991-2020:
+    hindcasts: CAFEf6.annual.anom_1991-2020.ohc300_global
+    observations: EN422.annual.anom_1991-2020.ohc300_global
+    verify:
+      metric: "acc"
+      significance: True
+      transform: "Fisher_z"
+      alpha: 0.05
       
-#   CAFEf6.EN422.4-year.anom_1991-2020.ohc300_global.rXY_1991-2020:
-#     hindcasts: CAFEf6.4-year.anom_1991-2020.ohc300_global
-#     observations: EN422.4-year.anom_1991-2020.ohc300_global
-#     apply:
-#       all:
-#         mask_period:
-#           period: ["1991-01-01", "2020-12-31"]
-#     verify:
-#       metric: "acc"
-#       significance: True
-#       transform: "Fisher_z"
-#       alpha: 0.05
+  CAFEf6.EN422.4-year.anom_1991-2020.ohc300_global.rXY_1991-2020:
+    hindcasts: CAFEf6.4-year.anom_1991-2020.ohc300_global
+    observations: EN422.4-year.anom_1991-2020.ohc300_global
+    apply:
+      all:
+        keep_period:
+          period: ["1991-01-01", "2020-12-31"]
+    verify:
+      metric: "acc"
+      significance: True
+      transform: "Fisher_z"
+      alpha: 0.05
 
-#   CAFEf6.EN422.annual.anom_1991-2020.ohc300_global.ri_1991-2020:
-#     hindcasts: CAFEf6.annual.anom_1991-2020.ohc300_global
-#     observations: EN422.annual.anom_1991-2020.ohc300_global
-#     simulations: CAFE_hist.annual.anom_1991-2020.ohc300_global
-#     verify:
-#       metric: "acc_initialised"
-#       significance: True
-#       transform: "Fisher_z"
-#       alpha: 0.05
+  CAFEf6.EN422.annual.anom_1991-2020.ohc300_global.ri_1991-2020:
+    hindcasts: CAFEf6.annual.anom_1991-2020.ohc300_global
+    observations: EN422.annual.anom_1991-2020.ohc300_global
+    simulations: CAFE_hist.annual.anom_1991-2020.ohc300_global
+    verify:
+      metric: "acc_initialised"
+      significance: True
+      transform: "Fisher_z"
+      alpha: 0.05
       
-#   CAFEf6.EN422.4-year.anom_1991-2020.ohc300_global.ri_1991-2020:
-#     hindcasts: CAFEf6.4-year.anom_1991-2020.ohc300_global
-#     observations: EN422.4-year.anom_1991-2020.ohc300_global
-#     simulations: CAFE_hist.4-year.anom_1991-2020.ohc300_global
-#     apply:
-#       all:
-#         mask_period:
-#           period: ["1991-01-01", "2020-12-31"]
-#     verify:
-#       metric: "acc_initialised"
-#       significance: True
-#       transform: "Fisher_z"
-#       alpha: 0.05
+  CAFEf6.EN422.4-year.anom_1991-2020.ohc300_global.ri_1991-2020:
+    hindcasts: CAFEf6.4-year.anom_1991-2020.ohc300_global
+    observations: EN422.4-year.anom_1991-2020.ohc300_global
+    simulations: CAFE_hist.4-year.anom_1991-2020.ohc300_global
+    apply:
+      all:
+        keep_period:
+          period: ["1991-01-01", "2020-12-31"]
+    verify:
+      metric: "acc_initialised"
+      significance: True
+      transform: "Fisher_z"
+      alpha: 0.05
       
-#   CAFEf6.EN422.annual.anom_1991-2020.ohc300_global.MSSS_hist_1991-2020:
-#     hindcasts: CAFEf6.annual.anom_1991-2020.ohc300_global
-#     observations: EN422.annual.anom_1991-2020.ohc300_global
-#     simulations: CAFE_hist.annual.anom_1991-2020.ohc300_global
-#     verify:
-#       metric: "msss_hist"
-#       significance: True
-#       alpha: 0.05
+  CAFEf6.EN422.annual.anom_1991-2020.ohc300_global.MSSS_hist_1991-2020:
+    hindcasts: CAFEf6.annual.anom_1991-2020.ohc300_global
+    observations: EN422.annual.anom_1991-2020.ohc300_global
+    simulations: CAFE_hist.annual.anom_1991-2020.ohc300_global
+    verify:
+      metric: "msss_hist"
+      significance: True
+      alpha: 0.05
       
-#   CAFEf6.EN422.4-year.anom_1991-2020.ohc300_global.MSSS_hist_1991-2020:
-#     hindcasts: CAFEf6.4-year.anom_1991-2020.ohc300_global
-#     observations: EN422.4-year.anom_1991-2020.ohc300_global
-#     simulations: CAFE_hist.4-year.anom_1991-2020.ohc300_global
-#     apply:
-#       all:
-#         mask_period:
-#           period: ["1991-01-01", "2020-12-31"]
-#     verify:
-#       metric: "msss_hist"
-#       significance: True
-#       alpha: 0.05
+  CAFEf6.EN422.4-year.anom_1991-2020.ohc300_global.MSSS_hist_1991-2020:
+    hindcasts: CAFEf6.4-year.anom_1991-2020.ohc300_global
+    observations: EN422.4-year.anom_1991-2020.ohc300_global
+    simulations: CAFE_hist.4-year.anom_1991-2020.ohc300_global
+    apply:
+      all:
+        keep_period:
+          period: ["1991-01-01", "2020-12-31"]
+    verify:
+      metric: "msss_hist"
+      significance: True
+      alpha: 0.05
 
   CAFEf6.EN422.annual.anom_1991-2020.ohc300_global.MSSS_clim_1991-2020:
     hindcasts: CAFEf6.annual.anom_1991-2020.ohc300_global
@@ -101,31 +101,31 @@ prepare:
     observations: EN422.4-year.anom_1991-2020.ohc300_global
     apply:
       all:
-        mask_period:
+        keep_period:
           period: ["1991-01-01", "2020-12-31"]
     verify:
       metric: "msss_clim"
       significance: True
       alpha: 0.05
       
-#   CAFEf6.EN422.annual.anom_1991-2020.ohc300_global.CRPSS_hist_1991-2020:
-#     hindcasts: CAFEf6.annual.anom_1991-2020.ohc300_global
-#     observations: EN422.annual.anom_1991-2020.ohc300_global
-#     simulations: CAFE_hist.annual.anom_1991-2020.ohc300_global
-#     verify:
-#       metric: "crpss"
-#       significance: True
-#       alpha: 0.05
+  CAFEf6.EN422.annual.anom_1991-2020.ohc300_global.CRPSS_hist_1991-2020:
+    hindcasts: CAFEf6.annual.anom_1991-2020.ohc300_global
+    observations: EN422.annual.anom_1991-2020.ohc300_global
+    simulations: CAFE_hist.annual.anom_1991-2020.ohc300_global
+    verify:
+      metric: "crpss"
+      significance: True
+      alpha: 0.05
       
-#   CAFEf6.EN422.4-year.anom_1991-2020.ohc300_global.CRPSS_hist_1991-2020:
-#     hindcasts: CAFEf6.4-year.anom_1991-2020.ohc300_global
-#     observations: EN422.4-year.anom_1991-2020.ohc300_global
-#     simulations: CAFE_hist.4-year.anom_1991-2020.ohc300_global
-#     apply:
-#       all:
-#         mask_period:
-#           period: ["1991-01-01", "2020-12-31"]
-#     verify:
-#       metric: "crpss"
-#       significance: True
-#       alpha: 0.05
+  CAFEf6.EN422.4-year.anom_1991-2020.ohc300_global.CRPSS_hist_1991-2020:
+    hindcasts: CAFEf6.4-year.anom_1991-2020.ohc300_global
+    observations: EN422.4-year.anom_1991-2020.ohc300_global
+    simulations: CAFE_hist.4-year.anom_1991-2020.ohc300_global
+    apply:
+      all:
+        keep_period:
+          period: ["1991-01-01", "2020-12-31"]
+    verify:
+      metric: "crpss"
+      significance: True
+      alpha: 0.05
