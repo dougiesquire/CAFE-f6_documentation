@@ -16,13 +16,7 @@ import matplotlib.patches as mpatches
 import matplotlib.gridspec as gridspec
 from mpl_toolkits.axes_grid1 import Divider, Size
 
-import cartopy
-import cartopy.crs as ccrs
-
 PROJECT_DIR = Path(__file__).resolve().parents[1]
-
-cartopy.config["pre_existing_data_dir"] = PROJECT_DIR / "data/cartopy-data"
-cartopy.config["data_dir"] = PROJECT_DIR / "data/cartopy-data"
 
 
 def hindcasts(hcsts, obsvs=None, hists=None, shade=False):
@@ -167,6 +161,11 @@ def metric_maps(fields, variable, vrange, headings=None, add_colorbar=True, figs
     figsize : iterable of length 2
         The total size of the figure
     """
+    
+    import cartopy
+    import cartopy.crs as ccrs
+    cartopy.config["pre_existing_data_dir"] = PROJECT_DIR / "data/cartopy-data"
+    cartopy.config["data_dir"] = PROJECT_DIR / "data/cartopy-data"
 
     def _get_verif_period(ds):
         """Return a string of the verification period for a skill metric"""
