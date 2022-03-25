@@ -1,0 +1,47 @@
+2022-03-25 12:16:10,292 - __main__ - INFO - Spinning up a dask cluster
+2022-03-25 12:16:11,581 - __main__ - INFO - Generating grid files
+2022-03-25 12:16:11,583 - __main__ - INFO - Preparing raw data using CAFEf6_Australia.yml
+2022-03-25 12:16:11,619 - __main__ - INFO - Processing annual.full.t_ref_Aus_NRM from CAFEf6
+2022-03-25 12:16:51,781 - __main__ - INFO - Processing annual.full.precip_Aus_NRM from CAFEf6
+2022-03-25 12:17:35,188 - __main__ - INFO - Processing annual.full.V_tot_Aus_NRM from CAFEf6
+2022-03-25 12:18:05,964 - __main__ - INFO - Processing annual.anom_1991-2020.t_ref_Aus_NRM from CAFEf6
+2022-03-25 12:18:06,873 - __main__ - INFO - Processing annual.anom_1991-2020.precip_Aus_NRM from CAFEf6
+2022-03-25 12:18:07,743 - __main__ - INFO - Processing annual.anom_1991-2020.V_tot_Aus_NRM from CAFEf6
+2022-03-25 12:18:08,581 - __main__ - INFO - Processing 4-year.anom_1991-2020.t_ref_Aus_NRM from CAFEf6
+2022-03-25 12:18:09,696 - __main__ - INFO - Processing 4-year.anom_1991-2020.precip_Aus_NRM from CAFEf6
+2022-03-25 12:18:10,805 - __main__ - INFO - Processing 4-year.anom_1991-2020.V_tot_Aus_NRM from CAFEf6
+2022-03-25 12:18:11,887 - __main__ - INFO - Processing daily.full.t_ref_max_Aus_NRM from CAFEf6
+2022-03-25 12:19:46,892 - __main__ - INFO - Processing annual.days_over_p90.t_ref_max_Aus_NRM from CAFEf6
+Traceback (most recent call last):
+  File "/g/data/xv83/users/ds0092/active_projects/Squire_2022_CAFE-f6/src/prepare_data.py", line 718, in <module>
+    main(config, config_dir, save_dir)
+  File "/g/data/xv83/users/ds0092/active_projects/Squire_2022_CAFE-f6/src/prepare_data.py", line 685, in main
+    prepare_dataset(f"{config_dir}/{config}", save_dir)
+  File "/g/data/xv83/users/ds0092/active_projects/Squire_2022_CAFE-f6/src/prepare_data.py", line 648, in prepare_dataset
+    ds = utils.composite_function(params["apply"])(ds)
+  File "/g/data/xv83/users/ds0092/active_projects/Squire_2022_CAFE-f6/src/utils.py", line 44, in <lambda>
+    return lambda x: g(f(x))
+  File "/g/data/xv83/users/ds0092/active_projects/Squire_2022_CAFE-f6/src/utils.py", line 44, in <lambda>
+    return lambda x: g(f(x))
+  File "/g/data/xv83/users/ds0092/active_projects/Squire_2022_CAFE-f6/src/utils.py", line 44, in <lambda>
+    return lambda x: g(f(x))
+  File "/g/data/xv83/users/ds0092/active_projects/Squire_2022_CAFE-f6/src/utils.py", line 761, in over_percentile_threshold
+    percentile_thresholds = calculate_percentile_thresholds(
+  File "/g/data/xv83/users/ds0092/active_projects/Squire_2022_CAFE-f6/src/utils.py", line 734, in calculate_percentile_thresholds
+    ds_period = keep_period(ds, percentile_period)
+  File "/g/data/xv83/users/ds0092/active_projects/Squire_2022_CAFE-f6/src/utils.py", line 662, in keep_period
+    calendar = ds.time.values.flat[0].calendar
+IndexError: index 0 is out of bounds for axis 0 with size 0
+
+======================================================================================
+                  Resource Usage on 2022-03-25 12:19:54:
+   Job Id:             37233100.gadi-pbs
+   Project:            xv83
+   Exit Status:        1
+   Service Units:      18.88
+   NCPUs Requested:    48                     NCPUs Used: 48              
+                                           CPU Time Used: 00:11:30                                   
+   Memory Requested:   192.0GB               Memory Used: 82.09GB         
+   Walltime requested: 04:00:00            Walltime Used: 00:03:56        
+   JobFS requested:    100.0GB                JobFS used: 0B              
+======================================================================================

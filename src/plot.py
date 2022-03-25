@@ -62,7 +62,7 @@ def hindcasts(hcsts, obsvs=None, hists=None, shade=False):
 
     n_vars = len(hcsts[list(hcsts.keys())[0]].data_vars)
 
-    fig = plt.figure(figsize=(10, n_vars * 4))
+    fig = plt.figure(figsize=(15, n_vars * 4))
     axs = fig.subplots(n_vars, 1, sharex=True)
     if n_vars == 1:
         axs = [axs]
@@ -86,10 +86,23 @@ def hindcasts(hcsts, obsvs=None, hists=None, shade=False):
                     label = "_nolabel_"
 
                 h = hcst[var].sel(init=i)
+                if "member" in h.dims:
+                    h_mean = h.mean("member", keep_attrs=True)
+                    for m in h.member:
+                        axs[a].plot(
+                            h[hcst_time], 
+                            h.sel(member=m), 
+                            color=[0.8,0.8,0.8], 
+                            linestyle="-", 
+                            label="_nolabel_",
+                            zorder=-1
+                        )
+                else:
+                    h_mean = h
                 axs[a].plot(
-                    h[hcst_time][0], h[0], color=c, marker="o", label="_nolabel_"
+                    h_mean[hcst_time][0], h_mean[0], color=c, marker="o", label="_nolabel_"
                 )
-                axs[a].plot(h[hcst_time], h, color=c, linestyle="-", label=label)
+                axs[a].plot(h_mean[hcst_time], h_mean, color=c, linestyle="-", label=label)
     xlim = (hcst[hcst_time].min().item(), hcst[hcst_time].max().item())
 
     # Plot the observations
@@ -105,12 +118,11 @@ def hindcasts(hcsts, obsvs=None, hists=None, shade=False):
 
     # Plot the historical runs
     if hists is not None:
-        linecycler = cycle(lines)
         for name, hist in hists.items():
-            line = next(linecycler)
             for a, var in enumerate(hist.data_vars):
+                h_mean = hist[var].mean("member", keep_attrs=True) if "member" in hist[var].dims else hist[var]
                 axs[a].plot(
-                    hist.time, hist[var], color="grey", label=name, linestyle=line
+                    h_mean.time, h_mean, label=name
                 )
 
     # Format plots
@@ -118,7 +130,7 @@ def hindcasts(hcsts, obsvs=None, hists=None, shade=False):
     xlim = (ticks.shift(-1, "AS")[0], ticks.shift(2, "AS")[-1])
     for a, var in enumerate(hcst.data_vars):
         axs[a].set_xticks(ticks.values)
-        axs[a].set_xticklabels(ticks.year)
+        axs[a].set_xticklabels(ticks.year, rotation=40)
         axs[a].set_xlim(xlim)
         axs[a].set_ylabel(hcst[var].attrs["long_name"])
         axs[a].grid()

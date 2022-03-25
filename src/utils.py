@@ -402,6 +402,25 @@ def calculate_wind_speed(u_v, u_name, v_name, lon_dim="lon", lat_dim="lat"):
     )
     return V
 
+def calculate_tmean_from_tmin_tmax(ds, tmin_name="tmin", tmax_name="tmax", tmean_name="tmean"):
+    """
+    Estimate tmean as the average of tmin and tmax
+
+    Parameters
+    ----------
+    ds : xarray Dataset
+        Dataset containing tmin and tmax variables
+    tmin_name : str
+        The name of the tmin variable
+    tmax_name : str
+        The name of the tmax variable
+    tmean_name : str
+        The name of the output tmean variable
+    """
+    tmean = ((ds[tmin_name] + ds[tmax_name]) / 2).to_dataset(name=tmean_name)
+    tmean[tmean_name].attrs["long_name"] = "Daily mean air temperature"
+    return tmean
+
 
 def ensemble_mean(ds, ensemble_dim="member"):
     """Return the ensemble mean of the input array
@@ -698,6 +717,79 @@ def anomalise(ds, clim_period):
     return (ds.groupby(f"{groupby_dim}.month") - clim).drop("month")
 
 
+def calculate_percentile_thresholds(ds, percentile, percentile_period):
+    """
+    Returns the percentile values of ds over a provided period
+
+    Parameters
+    ----------
+    ds : xarray Dataset
+        The data to calculate the percentiles
+    percentile : float
+        The percentile to calculate
+    percentile_period : iterable
+        Size 2 iterable containing strings indicating the start and end dates
+        of the period over which to calculate the percentile thresholds
+    """
+    ds_period = keep_period(ds, percentile_period)
+
+    groupby_dim, mean_dim = _get_groupby_and_mean_dims(ds)
+
+    return ds_period.groupby(f"{groupby_dim}.month").quantile(
+        q=percentile, dim=mean_dim
+    )
+
+
+def over_percentile_threshold(ds, percentile, percentile_period):
+    """
+    Find which values in the input array are over a specified percentile
+    calculated over a specified period. Returns a boolean array with True
+    where values are over the specified percentile and False elsewhere.
+
+    Parameters
+    ----------
+    ds : xarray Dataset
+        The data threshold based in it's percentiles
+    percentile : float
+        The percentile use to threshold the data
+    percentile_period : iterable
+        Size 2 iterable containing strings indicating the start and end dates
+        of the period over which to calculate the percentile thresholds
+    """
+    groupby_dim, _ = _get_groupby_and_mean_dims(ds)
+
+    percentile_thresholds = calculate_percentile_thresholds(
+        ds, percentile, percentile_period
+    )
+
+    return (ds.groupby(f"{groupby_dim}.month") > percentile_thresholds).drop("month")
+
+
+def under_percentile_threshold(ds, percentile, percentile_period):
+    """
+    Find which values in the input array are under a specified percentile
+    calculated over a specified period. Returns a boolean array with True
+    where values are under the specified percentile and False elsewhere.
+
+    Parameters
+    ----------
+    ds : xarray Dataset
+        The data threshold based in it's percentiles
+    percentile : float
+        The percentile use to threshold the data
+    percentile_period : iterable
+        Size 2 iterable containing strings indicating the start and end dates
+        of the period over which to calculate the percentile thresholds
+    """
+    groupby_dim, _ = _get_groupby_and_mean_dims(ds)
+
+    percentile_thresholds = calculate_percentile_thresholds(
+        ds, percentile, percentile_period
+    )
+
+    return (ds.groupby(f"{groupby_dim}.month") < percentile_thresholds).drop("month")
+
+
 def interpolate_to_grid_from_file(ds, file, add_area=True, ignore_degenerate=True):
     import xesmf
 
@@ -936,6 +1028,23 @@ def average_over_NRM_super_clusters(ds):
         dim="region",
     )
     return ds.where(masks).weighted(ds["area"]).mean(["lon", "lat"])
+
+
+def mask_CAFEf6_reduced_dt(ds):
+    """
+    Mask out the ensemble members of CAFE-f6 that were run with a reduced timestep
+    since reducing the timestep was found to produce a different model equilibrium
+
+    Parameters
+    ----------
+    ds : xarray Dataset
+        The CAFE-f6 data to mask
+    """
+    mask_file = PROJECT_DIR / "data/raw/CAFEf6/CAFE-f6_dt_atmos.nc"
+    mask = xr.open_dataset(mask_file)["dt_atmos"] >= 1800
+    mask = mask.rename({"init_date": "init", "ensemble": "member"})
+    mask = mask.assign_coords({"init": mask.init.dt.floor("D")})
+    return ds.where(mask)
 
 
 def gridarea_cdo(ds):
