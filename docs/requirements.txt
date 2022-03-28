@@ -9,7 +9,6 @@ xarray
 cftime
 xskillscore
 matplotlib
-cartopy
 pydata-sphinx-theme
 nbsphinx
 pandoc
