@@ -333,6 +333,9 @@ def _iterative_blocked_bootstrap(*objects, blocks, n_iterations):
     # chunk size for dask arrays
     result = []
     for obj, ind, core_dims in zip(objects, indices, input_core_dims):
+        # Assume all variables have the same dtype
+        output_dtype = obj[list(obj.data_vars)[0]].dtype
+    
         result.append(
             xr.apply_ufunc(
                 _bootstrap,
@@ -344,7 +347,7 @@ def _iterative_blocked_bootstrap(*objects, blocks, n_iterations):
                 output_core_dims=[core_dims + ["iteration"]],
                 dask="parallelized",
                 dask_gufunc_kwargs=dict(output_sizes={"iteration": n_iterations}),
-                output_dtypes=[np.float32],
+                output_dtypes=[output_dtype],
             )
         )
 
