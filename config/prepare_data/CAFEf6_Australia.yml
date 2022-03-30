@@ -293,8 +293,37 @@ prepare:
 #         lead: 1
 #         member: -1
 
+#  Extremes - drought
+
+#   3-month.full.precip_Aus_NRM:
+#     uses:
+#       atmos_isobaric_month:
+#         - "precip"
+#     preprocess:
+#       normalise_by_days_in_month:
+#       convert_time_to_lead:
+#         time_freq: "months"
+#       truncate_latitudes:
+#       coarsen:
+#         window_size: 3
+#         dim: "lead"
+#     apply:
+#       rename:
+#         ensemble: "member"
+#       convert:
+#         precip:
+#           multiply_by: 86400
+#       round_to_start_of_month:
+#         dim: ["init", "time"]
+#       average_over_NRM_super_clusters:
+#       mask_CAFEf6_reduced_dt:
+#       rechunk:
+#         init: -1
+#         lead: 1
+#         member: -1
+
 #  Extremes - days of FFDI above 90th percentile
-  daily.full.ffdi_Aus_NRM:
+  daily.full.ffdi_global:
     uses:
       atmos_isobaric_daily:
         - "precip"
@@ -312,14 +341,25 @@ prepare:
     apply:
       rename:
         ensemble: "member"
-#       convert:
-#         t_ref:
-#           add: -273.15
-#       round_to_start_of_day:
-#         dim: ["init", "time"]
+      convert:
+        precip:
+          multiply_by: 86400
+        t_ref_max:
+          add: -273.15
+        u_ref:
+          multiply_by: 3.6
+        v_ref:
+          multiply_by: 3.6
+      calculate_ffdi:
+        clim_period: ["1991-01-01", "2020-12-31"]
+        wind_from_components: True
+      round_to_start_of_day:
+        dim: ["init", "time"]
 #       average_over_NRM_super_clusters:
-#       mask_CAFEf6_reduced_dt:
-#       rechunk:
-#         init: -1
-#         lead: 28
-#         member: -1
+      mask_CAFEf6_reduced_dt:
+      rechunk:
+        init: -1
+        lead: 28
+        member: -1
+        lat: 10
+        lon: 12

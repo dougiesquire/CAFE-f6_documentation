@@ -402,6 +402,7 @@ def calculate_wind_speed(u_v, u_name, v_name, lon_dim="lon", lat_dim="lat"):
     )
     return V
 
+
 def calculate_tmean_from_tmin_tmax(ds, tmin_name="tmin", tmax_name="tmax", tmean_name="tmean"):
     """
     Estimate tmean as the average of tmin and tmax
@@ -420,6 +421,113 @@ def calculate_tmean_from_tmin_tmax(ds, tmin_name="tmin", tmax_name="tmax", tmean
     tmean = ((ds[tmin_name] + ds[tmax_name]) / 2).to_dataset(name=tmean_name)
     tmean[tmean_name].attrs["long_name"] = "Daily mean air temperature"
     return tmean
+
+
+def calculate_ffdi(
+    ds,
+    clim_period,
+    wind_from_components,
+    precip_name="precip",
+    rh_name="rh",
+    tmax_name="t_ref_max",
+    wmax_name="V_ref_max",
+    u_name="u_ref",
+    v_name="v_ref",
+):
+    """
+    Returns the McArthur Forest Fire Danger Index following the formula provided
+    in Dowdy (2018):
+    FFDI = D ** 0.987 * exp (0.0338 * T - 0.0345 * H + 0.0234 * W + 0.243147)
+
+    Parameters
+    ----------
+    ds : xarray Dataset
+        Dataset containing the following variables
+        - precip; Daily total precipitation [mm]. This is used to estimate the
+        drought factor, D, as the 20-day accumulated rainfall scaled to lie between
+        0 and 10, with larger values indicating less precipitation (see Richardson
+        et al. (2021) and Squire et al. (2021)). The drought factor is used as D in
+        the above equation.
+        - tmax; Daily max 2 m temperature [deg C]. This is used as T in the above
+        equation.
+        - rh; Daily max relative humidity at 2m [%] (or similar, depending on data
+        availability). Richardson et al. (2021) uses mid-afternoon relative humidity
+        at 2 m, Squire et al. (2021) uses daily mean relative humidity at 1000 hPa.
+        This is used as H in the above equation.
+        - wmax; Daily max 10 m wind speed [km/h] (or similar, depending on data
+        availability). Squire et al. (2021) uses daily mean wind speed. This is used
+        as W in the above equation.
+    clim_period : iterable
+        Size 2 iterable containing strings indicating the start and end dates of the
+        climatological period used to calculate the drought factor
+    wind_from_components : boolean
+        Whether to calculate the wmax estimate from provided individual components of
+        wind or whether to use a provide max estimate. If True, variables with names
+        matching those provided as parameters 'u_name' and 'v_name' must exist in ds.
+        If False, uses for wmax the variable name provided as the `wmax_name`
+        parameter.
+    precip_name : str, optional
+        The name of the precip variable
+    rh_name : str, optional
+        The name of the rh variable
+    tmax_name : str, optional
+        The name of the tmax variable
+    wmax_name : str, optional
+        The name of the wmax variable. This is only used if wind_from_components=False
+        Otherwise an estimate of wmax is calculated from the variables u_name and
+        v_name
+    u_name : str, optional
+        The name of the u-component of wind variable to use to estimate wmax when
+        wind_from_components=True. Not used if wind_from_components=False.
+    v_name : str, optional
+        The name of the v-component of wind variable to use to estimate wmax when
+        wind_from_components=True. Not used if wind_from_components=False.
+
+    References
+    ----------
+    Dowdy, A. J. (2018). “Climatological Variability of Fire Weather in Australia”.
+    Journal of Applied Meteorology and Climatology 57.2, pp. 221–234. issn:
+    1558-8424. doi: 10.1175/JAMC-D-17-0167.1.
+    """
+
+    def _estimate_drought_factor(p20, clim_period, dim):
+        """
+        Estimate the drought factor from 20-day rainfall accumulations using the
+        approach of Richardson et al (2021)
+        """
+        p20_period = keep_period(p20, clim_period)
+        return (
+            -10
+            * (p20 - p20_period.min(dim))
+            / (p20_period.max(dim) - p20_period.min(dim))
+            + 10
+        )
+
+    if "time" in ds.dims:
+        rolling_dim = D_dim = "time"
+    elif "lead" in ds.dims:
+        rolling_dim = "lead"
+        D_dim = ["init", "lead", "member"]
+    else:
+        raise ValueError("I don't know how to compute the FFDI for this data")
+
+    p20 = ds[precip_name].rolling({rolling_dim: 20}).sum()
+    D = _estimate_drought_factor(p20, clim_period, D_dim)
+
+    T = ds[tmax_name]
+
+    H = ds[rh_name]
+
+    if wind_from_components:
+        W = calculate_wind_speed(ds[[u_name, v_name]], u_name, v_name)["V_tot"]
+    else:
+        W = ds[wmax_name]
+
+    FFDI = (
+        D**0.987 * np.exp(0.0338 * T - 0.0345 * H + 0.0234 * W + 0.243147)
+    ).to_dataset(name="FFDI")
+    FFDI["FFDI"].attrs = dict(long_name="Forest Fire Danger Index", units="-")
+    return FFDI
 
 
 def ensemble_mean(ds, ensemble_dim="member"):
@@ -628,7 +736,12 @@ def rename(ds, **names):
     """
     for k, v in names.items():
         if k in ds:
-            ds = ds.rename({k: v})
+            if v in ds:
+                # New name already exists
+                if all(ds[k].values==ds[v].values):
+                    ds = ds.assign_coords({v: (k, ds[v].values)}).swap_dims({k: v}).drop(k)
+            else:
+                ds = ds.rename({k: v})
     return ds
 
 
