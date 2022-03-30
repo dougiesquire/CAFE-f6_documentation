@@ -577,6 +577,22 @@ def rechunk(ds, chunks):
     return ds.chunk(chunks)
 
 
+def select(ds, **selection):
+    """
+    Returns a new dataset with each array indexed by tick labels along the 
+    specified dimension(s)
+    
+    Parameters
+    ----------
+    ds : xarray Dataset
+        A dataset to select from
+    selection : dict
+        A dict with keys matching dimensions and values given by scalars, 
+        slices or arrays of tick labels
+    """
+    return ds.sel(selection)
+
+
 def add_attrs(ds, attrs, variable=None):
     """
     Add attributes to a dataset
@@ -699,7 +715,10 @@ def _get_groupby_and_mean_dims(ds):
 
 def anomalise(ds, clim_period):
     """
-    Returns the anomalies of ds relative to its climatology over clim_period
+    Returns the anomalies of ds relative to its climatology over clim_period.
+    
+    Will not work for hindcasts with initialisation frequencies more regular
+    than monthly.
 
     Parameters
     ----------
@@ -719,7 +738,10 @@ def anomalise(ds, clim_period):
 
 def calculate_percentile_thresholds(ds, percentile, percentile_period):
     """
-    Returns the percentile values of ds over a provided period
+    Returns the percentile values of ds over a provided period.
+    
+    Will not work for hindcasts with initialisation frequencies more regular
+    than monthly.
 
     Parameters
     ----------
@@ -745,6 +767,9 @@ def over_percentile_threshold(ds, percentile, percentile_period):
     Find which values in the input array are over a specified percentile
     calculated over a specified period. Returns a boolean array with True
     where values are over the specified percentile and False elsewhere.
+    
+    Will not work for hindcasts with initialisation frequencies more regular
+    than monthly.
 
     Parameters
     ----------
@@ -770,6 +795,9 @@ def under_percentile_threshold(ds, percentile, percentile_period):
     Find which values in the input array are under a specified percentile
     calculated over a specified period. Returns a boolean array with True
     where values are under the specified percentile and False elsewhere.
+    
+    Will not work for hindcasts with initialisation frequencies more regular
+    than monthly.
 
     Parameters
     ----------
@@ -978,7 +1006,7 @@ def rolling_mean(ds, window_size, start_points=None, dim="time"):
     return xr.merge([result[var].astype(ds[var].dtype) for var in ds.data_vars])
 
 
-def resample(ds, freq, start_points=None, dim="time"):
+def resample(ds, freq, start_points=None, min_samples=None, dim="time"):
     """
     Resample data to a different temporal frequency by taking the mean
     over all values at the downsampled frequency and optionally starting
@@ -994,18 +1022,27 @@ def resample(ds, freq, start_points=None, dim="time"):
         Value(s) of coordinate `dim` to start the resampling from. If these fall
         outside the range of the coordinate, resampling starts at the beginning
         of the array
+    min_samples : int, optional
+        The minimum number of samples that must occur within a resampled group. If
+        there are less samples a nan will be assigned.
     dim : str, optional
         The name of the time dimension to resample along
     """
+    def mean_min_samples(ds, dim, min_samples):
+        """ Return mean only if there are more than min_samples along dim """
+        m = ds.mean(dim, skipna=False)
+        return m if len(ds[dim]) >= min_samples else np.nan*m
+
     if start_points is None:
         start_points = [None]
 
     dss = []
     for start_point in start_points:
-        dss.append(
-            ds.sel({dim: slice(start_point, None)}).resample({dim: freq}).mean(dim)
-        )
-
+        resampled = ds.sel({dim: slice(start_point, None)}).resample({dim: freq})
+        if min_samples is None:
+            dss.append(resampled.mean(dim))
+        else:
+            dss.append(resampled.apply(mean_min_samples, dim=dim, min_samples=min_samples))
     return xr.concat(dss, dim=dim).sortby(dim)
 
 

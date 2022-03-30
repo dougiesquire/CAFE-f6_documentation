@@ -11,24 +11,20 @@ import matplotlib.pyplot as plt
 from src import plot
 
 
-def plot_hindcasts(hindcasts, historicals, observations, timescale, variable, region=None):
+def plot_hindcasts(hindcasts, historicals, observations, timescale, variable, region=None, diagnostic="anom"):
     """
     Helper function for plotting hindcast timeseries. If the data are spatial, plots the global mean
     """
 
-    def _load_dataset(dataset, timescale, variable, region):
+    def _load_dataset(dataset, timescale, variable, region, diagnostic, train_period):
         """Load a skill metric"""
         import os
 
         DATA_DIR = "../data/processed/"
-        if "CAFE" in dataset:
-            anom_period = "1991-2020"
-        else:
-            anom_period = "1985-2014"
         if region is not None:
             region = f"_{region}"
         else: region = ""
-        file = f"{DATA_DIR}/{dataset}.{timescale}.anom_{anom_period}.{variable}{region}.zarr"
+        file = f"{DATA_DIR}/{dataset}.{timescale}.{diagnostic}_{train_period}.{variable}{region}.zarr"
         return xr.open_zarr(file)
 
     def global_mean(ds):
@@ -39,7 +35,7 @@ def plot_hindcasts(hindcasts, historicals, observations, timescale, variable, re
         )
 
     if region == "Aus_NRM":
-        fig = plt.figure(figsize=(5*len(hindcasts), 17.5))
+        fig = plt.figure(figsize=(15, 17.5))
         n_rows = 5
         n_columns = len(hindcasts)
         axs = np.array(fig.subplots(n_rows, n_columns)).T.flatten()
@@ -48,16 +44,21 @@ def plot_hindcasts(hindcasts, historicals, observations, timescale, variable, re
         n_rows = len(hindcasts)
         n_columns = 1
         axs = np.array(fig.subplots(n_rows, n_columns)).flatten()
-    
+        
     ax_n = 0
     for idx, hindcast in enumerate(hindcasts):
-        hindcast_data = _load_dataset(hindcast, timescale, variable, region)
+        if "CAFE" in hindcast:
+            train_period = "1991-2020"
+        else:
+            train_period = "1985-2014"
+        
+        hindcast_data = _load_dataset(hindcast, timescale, variable, region, diagnostic, train_period)
         if region == "global":
             hindcast_data = global_mean(hindcast_data)
         hindcast_dict = {hindcast: hindcast_data.compute()}
                          
         try:
-            historical_data = _load_dataset(historicals[idx], timescale, variable, region)
+            historical_data = _load_dataset(historicals[idx], timescale, variable, region, diagnostic, train_period)
             if region == "global":
                 historical_data = global_mean(historical_data)
             historical_dict = {historicals[idx]: historical_data.compute()}
@@ -66,7 +67,7 @@ def plot_hindcasts(hindcasts, historicals, observations, timescale, variable, re
 
         observations_dict = {}
         for observation in observations:
-            observation_data = _load_dataset(observation, timescale, variable, region)
+            observation_data = _load_dataset(observation, timescale, variable, region, diagnostic, train_period)
             if region == "global":
                 observation_data = global_mean(observation_data)
             observations_dict[observation] = observation_data.compute()
@@ -85,22 +86,22 @@ def plot_hindcasts(hindcasts, historicals, observations, timescale, variable, re
         
         
 def _load_skill_metric(
-    hindcast, reference, timescale, variable, metric, region, verif_period=None
+    hindcast, reference, timescale, variable, metric, region, diagnostic, verif_period=None
 ):
     """Load a skill metric"""
     SKILL_DIR = "../data/skill/"
     if hindcast == "CAFEf6":
-        anom_period = "1991-2020"
+        train_period = "1991-2020"
     else:
-        anom_period = "1985-2014"
+        train_period = "1985-2014"
     if verif_period is None:
-        verif_period = anom_period
+        verif_period = train_period
     if region is not None:
         region = f"_{region}"
     else:
         region = ""
     file = (
-        f"{SKILL_DIR}/{hindcast}.{reference}.{timescale}.anom_{anom_period}"
+        f"{SKILL_DIR}/{hindcast}.{reference}.{timescale}.{diagnostic}_{train_period}"
         f".{variable}{region}.{metric}_{verif_period}.zarr"
     )
     return xr.open_zarr(file).compute()
@@ -113,6 +114,7 @@ def plot_metrics(
     variable,
     metrics,
     region=None,
+    diagnostic="anom",
     verif_period=None,
 ):
     """
@@ -136,25 +138,26 @@ def plot_metrics(
             for hindcast in hindcasts:
                 model_metrics = {}
                 for metric in metrics:
-                    try:
-                        model_metric = _load_skill_metric(
-                            hindcast,
-                            reference,
-                            timescale,
-                            f"{variable}",
-                            metric,
-                            region,
-                            verif_period,
-                        ).isel(sel)
-                        model_metrics[metric] = model_metric
-                        if sel is not None:
-                            region_name = (
-                                f"{model_metric[list(sel.keys())[0]].item()}, "
-                            )
-                        else:
-                            region_name = ""
-                    except:
-                        pass
+#                     try:
+                    model_metric = _load_skill_metric(
+                        hindcast,
+                        reference,
+                        timescale,
+                        f"{variable}",
+                        metric,
+                        region,
+                        diagnostic,
+                        verif_period,
+                    ).isel(sel)
+                    model_metrics[metric] = model_metric
+                    if sel is not None:
+                        region_name = (
+                            f"{model_metric[list(sel.keys())[0]].item()}, "
+                        )
+                    else:
+                        region_name = ""
+#                     except:
+#                         pass
                 metric_dict[hindcast] = model_metrics
             row_list.append(metric_dict)
         panels.append(row_list)
@@ -194,6 +197,7 @@ def plot_metric_maps(
                     f"{variable}",
                     metric,
                     region="global",
+                    diagnostic="anom",
                     verif_period=verif_period,
                 )
             )
@@ -205,6 +209,7 @@ def plot_metric_maps(
                     f"{variable}",
                     metric,
                     region="global",
+                    diagnostic="anom",
                     verif_period=verif_period,
                 )
             )

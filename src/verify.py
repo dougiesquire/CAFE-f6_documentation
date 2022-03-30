@@ -35,7 +35,7 @@ dask.config.set(**{"array.slicing.split_large_chunks": False})
 # ===============================================
 
 
-def acc(hcst, obsv):
+def acc(hcst, obsv, correlation="pearson_r"):
     """
     Return the anomaly cross correlation between two timeseries
 
@@ -47,9 +47,14 @@ def acc(hcst, obsv):
         The observed timeseries
     """
 
-    return xs.pearson_r(hcst.mean("member"), obsv, dim="time", skipna=True)
+    if correlation == "pearson_r":
+        return xs.pearson_r(hcst.mean("member"), obsv, dim="time", skipna=True)
+    elif correlation == "spearman_r":
+        return xs.spearman_r(hcst.mean("member"), obsv, dim="time", skipna=True)
+    else:
+        raise ValueError("Unrecognised value for input 'correlation'")
 
-
+        
 def acc_initialised(hcst, obsv, hist):
     """
     Return the initialised component of anomaly cross correlation between
@@ -110,12 +115,10 @@ def msss_hist(hcst, obsv, hist):
     return _msss(hcst.mean("member"), obsv, hist.mean("member"))
 
 
-def msss_clim(hcst, obsv):
+def msss_clim(hcst, obsv, clim_baseline_value=0):
     """
     Return the mean squared skill score between a forecast and observations
     relative to climatology
-    
-    Note the inputs are expected to be anomalies
 
     Parameters
     ----------
@@ -123,8 +126,11 @@ def msss_clim(hcst, obsv):
         The forecast timeseries
     obsv : xarray Dataset
         The observed timeseries
+    clim_baseline_value : float, optional
+        The value to replicate for the climatological baseline. Defaults to 
+        zero, which is appropriate if hcst and obsv are anomalies
     """
-    return _msss(hcst.mean("member"), obsv, xr.zeros_like(obsv))
+    return _msss(hcst.mean("member"), obsv, clim_baseline_value * xr.ones_like(obsv))
 
 
 def crpss(hcst, obsv, ref):
@@ -589,6 +595,8 @@ def calculate_metric(
             verif_times = _common_set_of_verif_times(
                 hindcast_at_lead, *references, search_dim=None
             )
+            print(hindcast_at_lead.swap_dims({"init": "time"}))
+            print(references[0])
             verif_period = f"{verif_times[0].strftime('%Y-%m-%d')} - {verif_times[-1].strftime('%Y-%m-%d')}"
             hindcast_verif_times = hindcast_at_lead.swap_dims({"init": "time"}).sel(
                 time=verif_times

@@ -27,131 +27,229 @@
 name: "CAFE_hist"
 
 prepare:
-  annual.full.t_ref_Aus_NRM:
+#   annual.full.t_ref_Aus_NRM:
+#     uses:
+#       atmos_isobaric_month:
+#         - "t_ref"
+#     apply:
+#       rename:
+#         names: 
+#           ensemble: "member"
+#       truncate_latitudes:
+#       round_to_start_of_month:
+#         dim: "time"
+#       coarsen:
+#         window_size: 12
+#         start_points: ["1960-11-01"]
+#         dim: "time"
+#       average_over_NRM_super_clusters:
+#       rechunk:
+#         chunks: {"time": -1, "member": -1}
+
+#   annual.full.precip_Aus_NRM:
+#     uses:
+#       atmos_isobaric_month:
+#         - "precip"
+#     apply:
+#       rename:
+#         names:
+#           ensemble: "member"
+#       convert:
+#         conversion:
+#           precip:
+#             multiply_by: 86400
+#       truncate_latitudes:
+#       round_to_start_of_month:
+#         dim: "time"
+#       normalise_by_days_in_month:
+#       coarsen:
+#         window_size: 12
+#         start_points: ["1960-11-01"]
+#         dim: "time"
+#       average_over_NRM_super_clusters:
+#       rechunk:
+#         chunks: {"time": -1, "member": -1}
+        
+#   annual.full.V_tot_Aus_NRM:
+#     uses:
+#       atmos_isobaric_month:
+#         - "u_ref"
+#         - "v_ref"
+#     apply:
+#       rename:
+#         names: 
+#           ensemble: "member"
+#       truncate_latitudes:
+#       round_to_start_of_month:
+#         dim: "time"
+#       calculate_wind_speed:
+#         u_name: "u_ref"
+#         v_name: "v_ref"
+#       coarsen:
+#         window_size: 12
+#         start_points: ["1960-11-01"]
+#         dim: "time"
+#       average_over_NRM_super_clusters:
+#       rechunk:
+#         chunks: {"time": -1, "member": -1}
+      
+
+#   # Prepare anomalies from prepared datasets
+#   annual.anom_1991-2020.t_ref_Aus_NRM:
+#     uses:
+#       prepared:
+#         - "annual.full.t_ref_Aus_NRM"
+#     apply:
+#       anomalise:
+#         clim_period: ["1991-01-01", "2020-12-31"]
+#       rechunk:
+#         chunks: {"time": -1, "member": -1}
+        
+#   annual.anom_1991-2020.precip_Aus_NRM:
+#     uses:
+#       prepared:
+#         - "annual.full.precip_Aus_NRM"
+#     apply:
+#       anomalise:
+#         clim_period: ["1991-01-01", "2020-12-31"]
+#       rechunk:
+#         chunks: {"time": -1, "member": -1}
+        
+#   annual.anom_1991-2020.V_tot_Aus_NRM:
+#     uses:
+#       prepared:
+#         - "annual.full.V_tot_Aus_NRM"
+#     apply:
+#       anomalise:
+#         clim_period: ["1991-01-01", "2020-12-31"]
+#       rechunk:
+#         chunks: {"time": -1, "member": -1}
+        
+#   # Prepare 4-year-averages from prepared datasets
+#   4-year.anom_1991-2020.t_ref_Aus_NRM:
+#     uses:
+#       prepared:
+#         - "annual.anom_1991-2020.t_ref_Aus_NRM"
+#     apply:
+#       rolling_mean:
+#         window_size: 4
+#       rechunk:
+#         chunks: {"time": -1, "member": -1}
+        
+#   4-year.anom_1991-2020.precip_Aus_NRM:
+#     uses:
+#       prepared:
+#         - "annual.anom_1991-2020.precip_Aus_NRM"
+#     apply:
+#       rolling_mean:
+#         window_size: 4
+#       rechunk:
+#         chunks: {"time": -1, "member": -1}
+        
+#   4-year.anom_1991-2020.V_tot_Aus_NRM:
+#     uses:
+#       prepared:
+#         - "annual.anom_1991-2020.V_tot_Aus_NRM"
+#     apply:
+#       rolling_mean:
+#         window_size: 4
+#       rechunk:
+#         chunks: {"time": -1, "member": -1}
+
+# #  Extremes - days of max temp above 90th percentile
+#   daily.full.t_ref_max_Aus_NRM:
+#     uses:
+#       atmos_isobaric_daily:
+#         - "t_ref_max"
+#     apply:
+#       drop_Feb_29:
+#       rename:
+#         names: 
+#           ensemble: "member"
+#       truncate_latitudes:
+#       convert:
+#         conversion:
+#           t_ref_max:
+#             add: -273.15
+#       round_to_start_of_day:
+#         dim: "time"
+#       average_over_NRM_super_clusters:
+#       rechunk:
+#         chunks: {"time": -1, "member": -1}
+        
+#   annual.days_over_p90_1991-2020.t_ref_max_Aus_NRM:
+#     uses:
+#       prepared:
+#         - "daily.full.t_ref_max_Aus_NRM"
+#     apply:
+#       over_percentile_threshold:
+#         percentile: 0.9
+#         percentile_period: ["1991-01-01", "2020-12-31"]
+#       coarsen:
+#         window_size: 365
+#         start_points: ["1960-11-01"]
+#         dim: "time"
+#       round_to_start_of_month:
+#         dim: "time"
+#       rechunk:
+#         chunks: {"time": -1, "member": -1}
+        
+#   4-year.days_over_p90_1991-2020.t_ref_max_Aus_NRM:
+#     uses:
+#       prepared:
+#         - "annual.days_over_p90_1991-2020.t_ref_max_Aus_NRM"
+#     apply:
+#       rolling_mean:
+#         window_size: 4
+#         dim: "time"
+#       rechunk:
+#         chunks: {"time": -1, "member": -1}
+
+#  Extremes - days of rainfall above 90th percentile
+  daily.full.precip_Aus_NRM:
     uses:
-      atmos_isobaric_month:
-        - "t_ref"
+      atmos_isobaric_daily:
+        - "precip"
     apply:
+      drop_Feb_29:
       rename:
         names: 
           ensemble: "member"
       truncate_latitudes:
-      round_to_start_of_month:
-        dim: "time"
-      coarsen:
-        window_size: 12
-        start_points: ["1960-11-01"]
-        dim: "time"
-      average_over_NRM_super_clusters:
-      rechunk:
-        chunks: {"time": -1, "member": -1}
-
-  annual.full.precip_Aus_NRM:
-    uses:
-      atmos_isobaric_month:
-        - "precip"
-    apply:
-      rename:
-        names:
-          ensemble: "member"
       convert:
         conversion:
           precip:
             multiply_by: 86400
-      truncate_latitudes:
-      round_to_start_of_month:
-        dim: "time"
-      normalise_by_days_in_month:
-      coarsen:
-        window_size: 12
-        start_points: ["1960-11-01"]
+      round_to_start_of_day:
         dim: "time"
       average_over_NRM_super_clusters:
       rechunk:
         chunks: {"time": -1, "member": -1}
         
-  annual.full.V_tot_Aus_NRM:
+  annual.days_over_p90_1991-2020.precip_Aus_NRM:
     uses:
-      atmos_isobaric_month:
-        - "u_ref"
-        - "v_ref"
+      prepared:
+        - "daily.full.precip_Aus_NRM"
     apply:
-      rename:
-        names: 
-          ensemble: "member"
-      truncate_latitudes:
-      round_to_start_of_month:
-        dim: "time"
-      calculate_wind_speed:
-        u_name: "u_ref"
-        v_name: "v_ref"
+      over_percentile_threshold:
+        percentile: 0.9
+        percentile_period: ["1991-01-01", "2020-12-31"]
       coarsen:
-        window_size: 12
+        window_size: 365
         start_points: ["1960-11-01"]
         dim: "time"
-      average_over_NRM_super_clusters:
-      rechunk:
-        chunks: {"time": -1, "member": -1}
-      
-
-  # Prepare anomalies from prepared datasets
-  annual.anom_1991-2020.t_ref_Aus_NRM:
-    uses:
-      prepared:
-        - "annual.full.t_ref_Aus_NRM"
-    apply:
-      anomalise:
-        clim_period: ["1991-01-01", "2020-12-31"]
+      round_to_start_of_month:
+        dim: "time"
       rechunk:
         chunks: {"time": -1, "member": -1}
         
-  annual.anom_1991-2020.precip_Aus_NRM:
+  4-year.days_over_p90_1991-2020.precip_Aus_NRM:
     uses:
       prepared:
-        - "annual.full.precip_Aus_NRM"
-    apply:
-      anomalise:
-        clim_period: ["1991-01-01", "2020-12-31"]
-      rechunk:
-        chunks: {"time": -1, "member": -1}
-        
-  annual.anom_1991-2020.V_tot_Aus_NRM:
-    uses:
-      prepared:
-        - "annual.full.V_tot_Aus_NRM"
-    apply:
-      anomalise:
-        clim_period: ["1991-01-01", "2020-12-31"]
-      rechunk:
-        chunks: {"time": -1, "member": -1}
-        
-  # Prepare 4-year-averages from prepared datasets
-  4-year.anom_1991-2020.t_ref_Aus_NRM:
-    uses:
-      prepared:
-        - "annual.anom_1991-2020.t_ref_Aus_NRM"
+        - "annual.days_over_p90_1991-2020.precip_Aus_NRM"
     apply:
       rolling_mean:
         window_size: 4
-      rechunk:
-        chunks: {"time": -1, "member": -1}
-        
-  4-year.anom_1991-2020.precip_Aus_NRM:
-    uses:
-      prepared:
-        - "annual.anom_1991-2020.precip_Aus_NRM"
-    apply:
-      rolling_mean:
-        window_size: 4
-      rechunk:
-        chunks: {"time": -1, "member": -1}
-        
-  4-year.anom_1991-2020.V_tot_Aus_NRM:
-    uses:
-      prepared:
-        - "annual.anom_1991-2020.V_tot_Aus_NRM"
-    apply:
-      rolling_mean:
-        window_size: 4
+        dim: "time"
       rechunk:
         chunks: {"time": -1, "member": -1}
