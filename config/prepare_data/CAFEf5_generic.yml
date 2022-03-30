@@ -35,10 +35,9 @@ prepare:
 #       truncate_latitudes:
 #       add_CAFE_grid_info:
 #       rename:
-#         names: 
-#           ensemble: "member"
-#           init_date: "init"
-#           lead_time: "lead"
+#         ensemble: "member"
+#         init_date: "init"
+#         lead_time: "lead"
 #       add_attrs:
 #         attrs: {"units": "months"}
 #         variable: "lead"
@@ -48,7 +47,11 @@ prepare:
 #       round_to_start_of_month:
 #         dim: ["init", "time"]
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+#         init: -1
+#         lead: 1
+#         member: -1
+#         lat: 10
+#         lon: 12
         
 #   annual.full.precip_global:
 #     uses:
@@ -58,17 +61,15 @@ prepare:
 #       truncate_latitudes:
 #       add_CAFE_grid_info:
 #       rename:
-#         names:
-#           ensemble: "member"
-#           init_date: "init"
-#           lead_time: "lead"
+#         ensemble: "member"
+#         init_date: "init"
+#         lead_time: "lead"
 #       add_attrs:
 #         attrs: {"units": "months"}
 #         variable: "lead"
 #       convert:
-#         conversion:
-#           precip:
-#             multiply_by: 86400
+#         precip:
+#           multiply_by: 86400
 #       normalise_by_days_in_month:
 #       coarsen:
 #         window_size: 12
@@ -76,7 +77,11 @@ prepare:
 #       round_to_start_of_month:
 #         dim: ["init", "time"]
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+#         init: -1
+#         lead: 1
+#         member: -1
+#         lat: 10
+#         lon: 12
 
   annual.full.slp_global:
     uses:
@@ -86,24 +91,26 @@ prepare:
       truncate_latitudes:
       add_CAFE_grid_info:
       rename:
-        names:
-          ensemble: "member"
-          init_date: "init"
-          lead_time: "lead"
+        ensemble: "member"
+        init_date: "init"
+        lead_time: "lead"
       add_attrs:
         attrs: {"units": "months"}
         variable: "lead"
       convert:
-        conversion:
-          slp:
-            multiply_by: 100
+        slp:
+          multiply_by: 100
       coarsen:
         window_size: 12
         dim: "lead"
       round_to_start_of_month:
         dim: ["init", "time"]
       rechunk:
-        chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+        init: -1
+        lead: 1
+        member: -1
+        lat: 10
+        lon: 12
         
 #   annual.full.sst_global:
 #     uses:
@@ -112,14 +119,13 @@ prepare:
 #     apply:
 #       add_CAFE_grid_info:
 #       rename:
-#         names:
-#           ensemble: "member"
-#           init_date: "init"
-#           lead_time: "lead"
-#           xt_ocean: "x"
-#           yt_ocean: "y"
-#           geolon_t: "lon"
-#           geolat_t: "lat"
+#         ensemble: "member"
+#         init_date: "init"
+#         lead_time: "lead"
+#         xt_ocean: "x"
+#         yt_ocean: "y"
+#         geolon_t: "lon"
+#         geolat_t: "lat"
 #       add_attrs:
 #         attrs: {"units": "months"}
 #         variable: "lead"
@@ -131,7 +137,11 @@ prepare:
 #       interpolate_to_grid_from_file:
 #         file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+#         init: -1
+#         lead: 1
+#         member: -1
+#         lat: 10
+#         lon: 12
         
 #   annual.full.ohc300_global:
 #     uses:
@@ -140,22 +150,20 @@ prepare:
 #     apply:
 #       add_CAFE_grid_info:
 #       rename:
-#         names:
-#           ensemble: "member"
-#           init_date: "init"
-#           lead_time: "lead"
-#           xt_ocean: "x"
-#           yt_ocean: "y"
-#           st_ocean: "depth"
-#           geolon_t: "lon"
-#           geolat_t: "lat"
+#         ensemble: "member"
+#         init_date: "init"
+#         lead_time: "lead"
+#         xt_ocean: "x"
+#         yt_ocean: "y"
+#         st_ocean: "depth"
+#         geolon_t: "lon"
+#         geolat_t: "lat"
 #       add_attrs:
 #         attrs: {"units": "months"}
 #         variable: "lead"
 #       convert:
-#         conversion:
-#           temp:
-#             add: 273.15
+#         temp:
+#           add: 273.15
 #       coarsen:
 #         window_size: 12
 #         dim: "lead"
@@ -165,7 +173,11 @@ prepare:
 #       interpolate_to_grid_from_file:
 #         file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+#         init: -1
+#         lead: 1
+#         member: -1
+#         lat: 10
+#         lon: 12
         
 #   3-month.full.nino34:
 #     uses:
@@ -174,15 +186,14 @@ prepare:
 #     apply:
 #       add_CAFE_grid_info:
 #       rename:
-#         names:
-#           area_t: "area"
-#           ensemble: "member"
-#           init_date: "init"
-#           lead_time: "lead"
-#           xt_ocean: "x"
-#           yt_ocean: "y"
-#           geolon_t: "lon"
-#           geolat_t: "lat"
+#         area_t: "area"
+#         ensemble: "member"
+#         init_date: "init"
+#         lead_time: "lead"
+#         xt_ocean: "x"
+#         yt_ocean: "y"
+#         geolon_t: "lon"
+#         geolat_t: "lat"
 #       add_attrs:
 #         attrs: {"units": "months"}
 #         variable: "lead"
@@ -193,7 +204,9 @@ prepare:
 #       round_to_start_of_month:
 #         dim: ["init", "time"]
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1}
+#         init: -1
+#         lead: 1
+#         member: -1
         
 #   3-month.full.dmi:
 #     uses:
@@ -202,15 +215,14 @@ prepare:
 #     apply:
 #       add_CAFE_grid_info:
 #       rename:
-#         names:
-#           area_t: "area"
-#           ensemble: "member"
-#           init_date: "init"
-#           lead_time: "lead"
-#           xt_ocean: "x"
-#           yt_ocean: "y"
-#           geolon_t: "lon"
-#           geolat_t: "lat"
+#         area_t: "area"
+#         ensemble: "member"
+#         init_date: "init"
+#         lead_time: "lead"
+#         xt_ocean: "x"
+#         yt_ocean: "y"
+#         geolon_t: "lon"
+#         geolat_t: "lat"
 #       add_attrs:
 #         attrs: {"units": "months"}
 #         variable: "lead"
@@ -221,7 +233,9 @@ prepare:
 #       round_to_start_of_month:
 #         dim: ["init", "time"]
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1}
+#         init: -1
+#         lead: 1
+#         member: -1
         
 #   3-month.anom_1991-2020.sam:
 #     uses:
@@ -230,10 +244,9 @@ prepare:
 #     apply:
 #       truncate_latitudes:
 #       rename:
-#         names: 
-#           ensemble: "member"
-#           init_date: "init"
-#           lead_time: "lead"
+#         ensemble: "member"
+#         init_date: "init"
+#         lead_time: "lead"
 #       add_attrs:
 #         attrs: {"units": "months"}
 #         variable: "lead"
@@ -246,7 +259,9 @@ prepare:
 #       round_to_start_of_month:
 #         dim: ["init", "time"]
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1}
+#         init: -1
+#         lead: 1
+#         member: -1
         
 #   3-month.anom_1991-2020.nao:
 #     uses:
@@ -255,10 +270,9 @@ prepare:
 #     apply:
 #       truncate_latitudes:
 #       rename:
-#         names: 
-#           ensemble: "member"
-#           init_date: "init"
-#           lead_time: "lead"
+#         ensemble: "member"
+#         init_date: "init"
+#         lead_time: "lead"
 #       add_attrs:
 #         attrs: {"units": "months"}
 #         variable: "lead"
@@ -271,7 +285,9 @@ prepare:
 #       round_to_start_of_month:
 #         dim: ["init", "time"]
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1}
+#         init: -1
+#         lead: 1
+#         member: -1
         
 #   # Prepare anomalies from prepared datasets
 #   annual.anom_1991-2020.t_ref_global:
@@ -282,7 +298,11 @@ prepare:
 #       anomalise:
 #         clim_period: ["1991-01-01", "2020-12-31"]
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+#         init: -1
+#         lead: 1
+#         member: -1
+#         lat: 10
+#         lon: 12
         
 #   annual.anom_1991-2020.precip_global:
 #     uses:
@@ -292,7 +312,11 @@ prepare:
 #       anomalise:
 #         clim_period: ["1991-01-01", "2020-12-31"]
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+#         init: -1
+#         lead: 1
+#         member: -1
+#         lat: 10
+#         lon: 12
 
   annual.anom_1991-2020.slp_global:
     uses:
@@ -302,7 +326,11 @@ prepare:
       anomalise:
         clim_period: ["1991-01-01", "2020-12-31"]
       rechunk:
-        chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+        init: -1
+        lead: 1
+        member: -1
+        lat: 10
+        lon: 12
         
 #   annual.anom_1991-2020.sst_global:
 #     uses:
@@ -312,7 +340,11 @@ prepare:
 #       anomalise:
 #         clim_period: ["1991-01-01", "2020-12-31"]
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+#         init: -1
+#         lead: 1
+#         member: -1
+#         lat: 10
+#         lon: 12
         
 #   annual.anom_1991-2020.ohc300_global:
 #     uses:
@@ -322,7 +354,11 @@ prepare:
 #       anomalise:
 #         clim_period: ["1991-01-01", "2020-12-31"]
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+#         init: -1
+#         lead: 1
+#         member: -1
+#         lat: 10
+#         lon: 12
 
 #   3-month.anom_1991-2020.nino34:
 #     uses:
@@ -332,7 +368,9 @@ prepare:
 #       anomalise:
 #         clim_period: ["1991-01-01", "2020-12-31"]
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1}
+#         init: -1
+#         lead: 1
+#         member: -1
         
 #   3-month.anom_1991-2020.dmi:
 #     uses:
@@ -342,7 +380,9 @@ prepare:
 #       anomalise:
 #         clim_period: ["1991-01-01", "2020-12-31"]
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1}
+#         init: -1
+#         lead: 1
+#         member: -1
         
 #   # Prepare 4-year-averages from prepared datasets
 #   4-year.anom_1991-2020.t_ref_global:
@@ -354,7 +394,11 @@ prepare:
 #         window_size: 4
 #         dim: "lead"
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+#         init: -1
+#         lead: 1
+#         member: -1
+#         lat: 10
+#         lon: 12
         
 #   4-year.anom_1991-2020.precip_global:
 #     uses:
@@ -365,7 +409,11 @@ prepare:
 #         window_size: 4
 #         dim: "lead"
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+#         init: -1
+#         lead: 1
+#         member: -1
+#         lat: 10
+#         lon: 12
 
   4-year.anom_1991-2020.slp_global:
     uses:
@@ -376,7 +424,11 @@ prepare:
         window_size: 4
         dim: "lead"
       rechunk:
-        chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+        init: -1
+        lead: 1
+        member: -1
+        lat: 10
+        lon: 12
         
 #   4-year.anom_1991-2020.sst_global:
 #     uses:
@@ -387,7 +439,11 @@ prepare:
 #         window_size: 4
 #         dim: "lead"
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+#         init: -1
+#         lead: 1
+#         member: -1
+#         lat: 10
+#         lon: 12
         
 #   4-year.anom_1991-2020.ohc300_global:
 #     uses:
@@ -398,7 +454,11 @@ prepare:
 #         window_size: 4
 #         dim: "lead"
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+#         init: -1
+#         lead: 1
+#         member: -1
+#         lat: 10
+#         lon: 12
 
 #   # Prepare AMV, IPO from prepared datasets
 #   4-year.anom_1991-2020.amv:
@@ -408,7 +468,9 @@ prepare:
 #     apply:
 #       calculate_amv:
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1}
+#         init: -1
+#         lead: 1
+#         member: -1
         
 #   4-year.anom_1991-2020.ipo:
 #     uses:
@@ -417,4 +479,6 @@ prepare:
 #     apply:
 #       calculate_ipo:
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1}
+#         init: -1
+#         lead: 1
+#         member: -1

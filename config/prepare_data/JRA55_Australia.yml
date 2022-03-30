@@ -33,11 +33,10 @@ prepare:
         - "TMP_GDS0_HTGL"
     apply:
       rename:
-        names: 
-          TMP_GDS0_HTGL: "t_ref"
-          initial_time0_hours: "time"
-          g0_lat_1: "lat"
-          g0_lon_2: "lon"
+        TMP_GDS0_HTGL: "t_ref"
+        initial_time0_hours: "time"
+        g0_lat_1: "lat"
+        g0_lon_2: "lon"
       force_to_Julian_calendar:
       add_area_using_cdo_gridarea:
       coarsen:
@@ -46,7 +45,7 @@ prepare:
         dim: "time"
       average_over_NRM_super_clusters:
       rechunk:
-        chunks: {"time": -1}
+        time: -1
 
   annual-Nov.full.t_ref_Aus_NRM:
     uses:
@@ -54,11 +53,10 @@ prepare:
         - "TMP_GDS0_HTGL"
     apply:
       rename:
-        names: 
-          TMP_GDS0_HTGL: "t_ref"
-          initial_time0_hours: "time"
-          g0_lat_1: "lat"
-          g0_lon_2: "lon"
+        TMP_GDS0_HTGL: "t_ref"
+        initial_time0_hours: "time"
+        g0_lat_1: "lat"
+        g0_lon_2: "lon"
       force_to_Julian_calendar:
       add_area_using_cdo_gridarea:
       coarsen:
@@ -67,7 +65,7 @@ prepare:
         dim: "time"
       average_over_NRM_super_clusters:
       rechunk:
-        chunks: {"time": -1}
+        time: -1
         
   annual-Jan.full.V_tot_Aus_NRM:
     uses:
@@ -76,12 +74,11 @@ prepare:
         - "VGRD_GDS0_HTGL"
     apply:
       rename:
-        names: 
-          UGRD_GDS0_HTGL: "u_ref"
-          VGRD_GDS0_HTGL: "v_ref"
-          initial_time0_hours: "time"
-          g0_lat_1: "lat"
-          g0_lon_2: "lon"
+        UGRD_GDS0_HTGL: "u_ref"
+        VGRD_GDS0_HTGL: "v_ref"
+        initial_time0_hours: "time"
+        g0_lat_1: "lat"
+        g0_lon_2: "lon"
       force_to_Julian_calendar:
       add_area_using_cdo_gridarea:
       calculate_wind_speed:
@@ -93,7 +90,7 @@ prepare:
         dim: "time"
       average_over_NRM_super_clusters:
       rechunk:
-        chunks: {"time": -1}
+        time: -1
          
   annual-Nov.full.V_tot_Aus_NRM:
     uses:
@@ -102,12 +99,11 @@ prepare:
         - "VGRD_GDS0_HTGL"
     apply:
       rename:
-        names: 
-          UGRD_GDS0_HTGL: "u_ref"
-          VGRD_GDS0_HTGL: "v_ref"
-          initial_time0_hours: "time"
-          g0_lat_1: "lat"
-          g0_lon_2: "lon"
+        UGRD_GDS0_HTGL: "u_ref"
+        VGRD_GDS0_HTGL: "v_ref"
+        initial_time0_hours: "time"
+        g0_lat_1: "lat"
+        g0_lon_2: "lon"
       force_to_Julian_calendar:
       add_area_using_cdo_gridarea:
       calculate_wind_speed:
@@ -119,7 +115,7 @@ prepare:
         dim: "time"
       average_over_NRM_super_clusters:
       rechunk:
-        chunks: {"time": -1}
+        time: -1
         
   # Prepare anomalies from prepared datasets
   annual-Jan.anom_1991-2020.t_ref_Aus_NRM:
@@ -130,7 +126,7 @@ prepare:
       anomalise:
         clim_period: ["1991-01-01", "2020-12-31"]
       rechunk:
-        chunks: {"time": -1}
+        time: -1
         
   annual-Nov.anom_1991-2020.t_ref_Aus_NRM:
     uses:
@@ -140,7 +136,7 @@ prepare:
       anomalise:
         clim_period: ["1991-01-01", "2020-12-31"]
       rechunk:
-        chunks: {"time": -1}
+        time: -1
         
   annual.anom_1991-2020.t_ref_Aus_NRM:
     uses:
@@ -149,7 +145,7 @@ prepare:
         - "annual-Nov.anom_1991-2020.t_ref_Aus_NRM"
     apply:
       rechunk:
-        chunks: {"time": -1}
+        time: -1
         
   annual-Jan.anom_1985-2014.t_ref_Aus_NRM:
     uses:
@@ -159,7 +155,7 @@ prepare:
       anomalise:
         clim_period: ["1985-01-01", "2014-12-31"]
       rechunk:
-        chunks: {"time": -1}
+        time: -1
         
   annual-Nov.anom_1985-2014.t_ref_Aus_NRM:
     uses:
@@ -169,7 +165,7 @@ prepare:
       anomalise:
         clim_period: ["1985-01-01", "2014-12-31"]
       rechunk:
-        chunks: {"time": -1}
+        time: -1
         
   annual.anom_1985-2014.t_ref_Aus_NRM:
     uses:
@@ -178,7 +174,7 @@ prepare:
         - "annual-Nov.anom_1985-2014.t_ref_Aus_NRM"
     apply:
       rechunk:
-        chunks: {"time": -1}
+        time: -1
         
   annual-Jan.anom_1991-2020.V_tot_Aus_NRM:
     uses:
@@ -188,7 +184,7 @@ prepare:
       anomalise:
         clim_period: ["1991-01-01", "2020-12-31"]
       rechunk:
-        chunks: {"time": -1}
+        time: -1
         
   annual-Nov.anom_1991-2020.V_tot_Aus_NRM:
     uses:
@@ -198,7 +194,7 @@ prepare:
       anomalise:
         clim_period: ["1991-01-01", "2020-12-31"]
       rechunk:
-        chunks: {"time": -1}
+        time: -1
         
   annual.anom_1991-2020.V_tot_Aus_NRM:
     uses:
@@ -207,7 +203,7 @@ prepare:
         - "annual-Nov.anom_1991-2020.V_tot_Aus_NRM"
     apply:
       rechunk:
-        chunks: {"time": -1}
+        time: -1
         
   annual-Jan.anom_1985-2014.V_tot_Aus_NRM:
     uses:
@@ -217,7 +213,7 @@ prepare:
       anomalise:
         clim_period: ["1985-01-01", "2014-12-31"]
       rechunk:
-        chunks: {"time": -1}
+        time: -1
         
   annual-Nov.anom_1985-2014.V_tot_Aus_NRM:
     uses:
@@ -227,7 +223,7 @@ prepare:
       anomalise:
         clim_period: ["1985-01-01", "2014-12-31"]
       rechunk:
-        chunks: {"time": -1}
+        time: -1
         
   annual.anom_1985-2014.V_tot_Aus_NRM:
     uses:
@@ -236,7 +232,7 @@ prepare:
         - "annual-Nov.anom_1985-2014.V_tot_Aus_NRM"
     apply:
       rechunk:
-        chunks: {"time": -1}
+        time: -1
 
   # Prepare 4-year-averages from prepared datasets
   4-year-Jan.anom_1991-2020.t_ref_Aus_NRM:
@@ -247,7 +243,7 @@ prepare:
       rolling_mean:
         window_size: 4
       rechunk:
-        chunks: {"time": -1}
+        time: -1
         
   4-year-Nov.anom_1991-2020.t_ref_Aus_NRM:
     uses:
@@ -257,7 +253,7 @@ prepare:
       rolling_mean:
         window_size: 4
       rechunk:
-        chunks: {"time": -1}
+        time: -1
         
   4-year.anom_1991-2020.t_ref_Aus_NRM:
     uses:
@@ -266,7 +262,7 @@ prepare:
         - "4-year-Nov.anom_1991-2020.t_ref_Aus_NRM"
     apply:
       rechunk:
-        chunks: {"time": -1}
+        time: -1
         
   4-year-Jan.anom_1985-2014.t_ref_Aus_NRM:
     uses:
@@ -276,7 +272,7 @@ prepare:
       rolling_mean:
         window_size: 4
       rechunk:
-        chunks: {"time": -1}
+        time: -1
         
   4-year-Nov.anom_1985-2014.t_ref_Aus_NRM:
     uses:
@@ -286,7 +282,7 @@ prepare:
       rolling_mean:
         window_size: 4
       rechunk:
-        chunks: {"time": -1}
+        time: -1
         
   4-year.anom_1985-2014.t_ref_Aus_NRM:
     uses:
@@ -295,7 +291,7 @@ prepare:
         - "4-year-Nov.anom_1985-2014.t_ref_Aus_NRM"
     apply:
       rechunk:
-        chunks: {"time": -1}
+        time: -1
         
   4-year-Jan.anom_1991-2020.V_tot_Aus_NRM:
     uses:
@@ -305,7 +301,7 @@ prepare:
       rolling_mean:
         window_size: 4
       rechunk:
-        chunks: {"time": -1}
+        time: -1
         
   4-year-Nov.anom_1991-2020.V_tot_Aus_NRM:
     uses:
@@ -315,7 +311,7 @@ prepare:
       rolling_mean:
         window_size: 4
       rechunk:
-        chunks: {"time": -1}
+        time: -1
         
   4-year.anom_1991-2020.V_tot_Aus_NRM:
     uses:
@@ -324,7 +320,7 @@ prepare:
         - "4-year-Nov.anom_1991-2020.V_tot_Aus_NRM"
     apply:
       rechunk:
-        chunks: {"time": -1}
+        time: -1
         
   4-year-Jan.anom_1985-2014.V_tot_Aus_NRM:
     uses:
@@ -334,7 +330,7 @@ prepare:
       rolling_mean:
         window_size: 4
       rechunk:
-        chunks: {"time": -1}
+        time: -1
         
   4-year-Nov.anom_1985-2014.V_tot_Aus_NRM:
     uses:
@@ -344,7 +340,7 @@ prepare:
       rolling_mean:
         window_size: 4
       rechunk:
-        chunks: {"time": -1}
+        time: -1
         
   4-year.anom_1985-2014.V_tot_Aus_NRM:
     uses:
@@ -353,4 +349,4 @@ prepare:
         - "4-year-Nov.anom_1985-2014.V_tot_Aus_NRM"
     apply:
       rechunk:
-        chunks: {"time": -1}
+        time: -1

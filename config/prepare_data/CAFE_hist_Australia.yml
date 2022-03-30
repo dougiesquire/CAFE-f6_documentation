@@ -33,8 +33,7 @@ prepare:
 #         - "t_ref"
 #     apply:
 #       rename:
-#         names: 
-#           ensemble: "member"
+#         ensemble: "member"
 #       truncate_latitudes:
 #       round_to_start_of_month:
 #         dim: "time"
@@ -44,7 +43,8 @@ prepare:
 #         dim: "time"
 #       average_over_NRM_super_clusters:
 #       rechunk:
-#         chunks: {"time": -1, "member": -1}
+#         time: -1
+#         member: -1
 
 #   annual.full.precip_Aus_NRM:
 #     uses:
@@ -52,12 +52,10 @@ prepare:
 #         - "precip"
 #     apply:
 #       rename:
-#         names:
-#           ensemble: "member"
+#         ensemble: "member"
 #       convert:
-#         conversion:
-#           precip:
-#             multiply_by: 86400
+#         precip:
+#           multiply_by: 86400
 #       truncate_latitudes:
 #       round_to_start_of_month:
 #         dim: "time"
@@ -68,7 +66,8 @@ prepare:
 #         dim: "time"
 #       average_over_NRM_super_clusters:
 #       rechunk:
-#         chunks: {"time": -1, "member": -1}
+#         time: -1
+#         member: -1
         
 #   annual.full.V_tot_Aus_NRM:
 #     uses:
@@ -77,8 +76,7 @@ prepare:
 #         - "v_ref"
 #     apply:
 #       rename:
-#         names: 
-#           ensemble: "member"
+#         ensemble: "member"
 #       truncate_latitudes:
 #       round_to_start_of_month:
 #         dim: "time"
@@ -91,7 +89,8 @@ prepare:
 #         dim: "time"
 #       average_over_NRM_super_clusters:
 #       rechunk:
-#         chunks: {"time": -1, "member": -1}
+#         time: -1
+#         member: -1
       
 
 #   # Prepare anomalies from prepared datasets
@@ -103,7 +102,8 @@ prepare:
 #       anomalise:
 #         clim_period: ["1991-01-01", "2020-12-31"]
 #       rechunk:
-#         chunks: {"time": -1, "member": -1}
+#         time: -1
+#         member: -1
         
 #   annual.anom_1991-2020.precip_Aus_NRM:
 #     uses:
@@ -113,7 +113,8 @@ prepare:
 #       anomalise:
 #         clim_period: ["1991-01-01", "2020-12-31"]
 #       rechunk:
-#         chunks: {"time": -1, "member": -1}
+#         time: -1
+#         member: -1
         
 #   annual.anom_1991-2020.V_tot_Aus_NRM:
 #     uses:
@@ -123,7 +124,8 @@ prepare:
 #       anomalise:
 #         clim_period: ["1991-01-01", "2020-12-31"]
 #       rechunk:
-#         chunks: {"time": -1, "member": -1}
+#         time: -1
+#         member: -1
         
 #   # Prepare 4-year-averages from prepared datasets
 #   4-year.anom_1991-2020.t_ref_Aus_NRM:
@@ -134,7 +136,8 @@ prepare:
 #       rolling_mean:
 #         window_size: 4
 #       rechunk:
-#         chunks: {"time": -1, "member": -1}
+#         time: -1
+#         member: -1
         
 #   4-year.anom_1991-2020.precip_Aus_NRM:
 #     uses:
@@ -144,7 +147,8 @@ prepare:
 #       rolling_mean:
 #         window_size: 4
 #       rechunk:
-#         chunks: {"time": -1, "member": -1}
+#         time: -1
+#         member: -1
         
 #   4-year.anom_1991-2020.V_tot_Aus_NRM:
 #     uses:
@@ -154,7 +158,8 @@ prepare:
 #       rolling_mean:
 #         window_size: 4
 #       rechunk:
-#         chunks: {"time": -1, "member": -1}
+#         time: -1
+#         member: -1
 
 # #  Extremes - days of max temp above 90th percentile
 #   daily.full.t_ref_max_Aus_NRM:
@@ -164,18 +169,17 @@ prepare:
 #     apply:
 #       drop_Feb_29:
 #       rename:
-#         names: 
-#           ensemble: "member"
+#         ensemble: "member"
 #       truncate_latitudes:
 #       convert:
-#         conversion:
-#           t_ref_max:
-#             add: -273.15
+#         t_ref_max:
+#           add: -273.15
 #       round_to_start_of_day:
 #         dim: "time"
 #       average_over_NRM_super_clusters:
 #       rechunk:
-#         chunks: {"time": -1, "member": -1}
+#         time: -1
+#         member: -1
         
 #   annual.days_over_p90_1991-2020.t_ref_max_Aus_NRM:
 #     uses:
@@ -192,7 +196,8 @@ prepare:
 #       round_to_start_of_month:
 #         dim: "time"
 #       rechunk:
-#         chunks: {"time": -1, "member": -1}
+#         time: -1
+#         member: -1
         
 #   4-year.days_over_p90_1991-2020.t_ref_max_Aus_NRM:
 #     uses:
@@ -203,7 +208,8 @@ prepare:
 #         window_size: 4
 #         dim: "time"
 #       rechunk:
-#         chunks: {"time": -1, "member": -1}
+#         time: -1
+#         member: -1
 
 #  Extremes - days of rainfall above 90th percentile
   daily.full.precip_Aus_NRM:
@@ -213,18 +219,17 @@ prepare:
     apply:
       drop_Feb_29:
       rename:
-        names: 
-          ensemble: "member"
+        ensemble: "member"
       truncate_latitudes:
       convert:
-        conversion:
-          precip:
-            multiply_by: 86400
+        precip:
+          multiply_by: 86400
       round_to_start_of_day:
         dim: "time"
       average_over_NRM_super_clusters:
       rechunk:
-        chunks: {"time": -1, "member": -1}
+        time: -1
+        member: -1
         
   annual.days_over_p90_1991-2020.precip_Aus_NRM:
     uses:
@@ -241,7 +246,8 @@ prepare:
       round_to_start_of_month:
         dim: "time"
       rechunk:
-        chunks: {"time": -1, "member": -1}
+        time: -1
+        member: -1
         
   4-year.days_over_p90_1991-2020.precip_Aus_NRM:
     uses:
@@ -252,4 +258,5 @@ prepare:
         window_size: 4
         dim: "time"
       rechunk:
-        chunks: {"time": -1, "member": -1}
+        time: -1
+        member: -1

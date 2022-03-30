@@ -33,9 +33,8 @@ prepare:
 #         - "sst"
 #     apply:
 #       rename:
-#         names:
-#           latitude: "lat"
-#           longitude: "lon"
+#         latitude: "lat"
+#         longitude: "lon"
 #       round_to_start_of_month:
 #         dim: "time"
 #       force_to_Julian_calendar:
@@ -46,7 +45,9 @@ prepare:
 #       interpolate_to_grid_from_file:
 #         file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
 #       rechunk:
-#         chunks: {"time": -1, "lat": 10, "lon": 12}
+#         time: -1
+#         lat: 10
+#         lon: 12
 
 #   annual-Nov.full.sst_global:
 #     uses:
@@ -54,9 +55,8 @@ prepare:
 #         - "sst"
 #     apply:
 #       rename:
-#         names:
-#           latitude: "lat"
-#           longitude: "lon"
+#         latitude: "lat"
+#         longitude: "lon"
 #       round_to_start_of_month:
 #         dim: "time"
 #       force_to_Julian_calendar:
@@ -67,7 +67,9 @@ prepare:
 #       interpolate_to_grid_from_file:
 #         file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
 #       rechunk:
-#         chunks: {"time": -1, "lat": 10, "lon": 12}
+#         time: -1
+#         lat: 10
+#         lon: 12
         
   3-month.full.nino34:
     uses:
@@ -75,9 +77,8 @@ prepare:
         - "sst"
     apply:
       rename:
-        names:
-          latitude: "lat"
-          longitude: "lon"
+        latitude: "lat"
+        longitude: "lon"
       round_to_start_of_month:
         dim: "time"
       force_to_Julian_calendar:
@@ -88,7 +89,7 @@ prepare:
         start_points: ["1960-01-01"]
         dim: "time"
       rechunk:
-        chunks: {"time": -1}
+        time: -1
         
   3-month.full.dmi:
     uses:
@@ -96,9 +97,8 @@ prepare:
         - "sst"
     apply:
       rename:
-        names:
-          latitude: "lat"
-          longitude: "lon"
+        latitude: "lat"
+        longitude: "lon"
       round_to_start_of_month:
         dim: "time"
       force_to_Julian_calendar:
@@ -109,7 +109,7 @@ prepare:
         start_points: ["1960-01-01"]
         dim: "time"
       rechunk:
-        chunks: {"time": -1}
+        time: -1
         
 #   # Prepare anomalies from prepared datasets
 #   annual-Jan.anom_1991-2020.sst_global:
@@ -120,7 +120,9 @@ prepare:
 #       anomalise:
 #         clim_period: ["1991-01-01", "2020-12-31"]
 #       rechunk:
-#         chunks: {"time": -1, "lat": 10, "lon": 12}
+#         time: -1
+#         lat: 10
+#         lon: 12
         
 #   annual-Nov.anom_1991-2020.sst_global:
 #     uses:
@@ -130,7 +132,9 @@ prepare:
 #       anomalise:
 #         clim_period: ["1991-01-01", "2020-12-31"]
 #       rechunk:
-#         chunks: {"time": -1, "lat": 10, "lon": 12}
+#         time: -1
+#         lat: 10
+#         lon: 12
         
 #   annual.anom_1991-2020.sst_global:
 #     uses:
@@ -139,7 +143,9 @@ prepare:
 #         - "annual-Nov.anom_1991-2020.sst_global"
 #     apply:
 #       rechunk:
-#         chunks: {"time": -1, "lat": 10, "lon": 12}
+#         time: -1
+#         lat: 10
+#         lon: 12
         
 #   annual-Jan.anom_1985-2014.sst_global:
 #     uses:
@@ -149,7 +155,9 @@ prepare:
 #       anomalise:
 #         clim_period: ["1985-01-01", "2014-12-31"]
 #       rechunk:
-#         chunks: {"time": -1, "lat": 10, "lon": 12}
+#         time: -1
+#         lat: 10
+#         lon: 12
         
 #   annual-Nov.anom_1985-2014.sst_global:
 #     uses:
@@ -159,7 +167,9 @@ prepare:
 #       anomalise:
 #         clim_period: ["1985-01-01", "2014-12-31"]
 #       rechunk:
-#         chunks: {"time": -1, "lat": 10, "lon": 12}
+#         time: -1
+#         lat: 10
+#         lon: 12
         
 #   annual.anom_1985-2014.sst_global:
 #     uses:
@@ -168,7 +178,9 @@ prepare:
 #         - "annual-Nov.anom_1985-2014.sst_global"
 #     apply:
 #       rechunk:
-#         chunks: {"time": -1, "lat": 10, "lon": 12}
+#         time: -1
+#         lat: 10
+#         lon: 12
 
   3-month.anom_1991-2020.nino34:
     uses:
@@ -178,7 +190,7 @@ prepare:
       anomalise:
         clim_period: ["1991-01-01", "2020-12-31"]
       rechunk:
-        chunks: {"time": -1}
+        time: -1
         
   3-month.anom_1985-2014.nino34:
     uses:
@@ -188,7 +200,7 @@ prepare:
       anomalise:
         clim_period: ["1985-01-01", "2014-12-31"]
       rechunk:
-        chunks: {"time": -1}
+        time: -1
         
   3-month.anom_1991-2020.dmi:
     uses:
@@ -198,7 +210,7 @@ prepare:
       anomalise:
         clim_period: ["1991-01-01", "2020-12-31"]
       rechunk:
-        chunks: {"time": -1}
+        time: -1
         
   3-month.anom_1985-2014.dmi:
     uses:
@@ -208,7 +220,7 @@ prepare:
       anomalise:
         clim_period: ["1985-01-01", "2014-12-31"]
       rechunk:
-        chunks: {"time": -1}
+        time: -1
         
 #   # Prepare 4-year-averages from prepared datasets
 #   4-year-Jan.anom_1991-2020.sst_global:
@@ -219,7 +231,9 @@ prepare:
 #       rolling_mean:
 #         window_size: 4
 #       rechunk:
-#         chunks: {"time": -1, "lat": 10, "lon": 12}
+#         time: -1
+#         lat: 10
+#         lon: 12
         
 #   4-year-Nov.anom_1991-2020.sst_global:
 #     uses:
@@ -229,7 +243,9 @@ prepare:
 #       rolling_mean:
 #         window_size: 4
 #       rechunk:
-#         chunks: {"time": -1, "lat": 10, "lon": 12}
+#         time: -1
+#         lat: 10
+#         lon: 12
         
 #   4-year.anom_1991-2020.sst_global:
 #     uses:
@@ -238,7 +254,9 @@ prepare:
 #         - "4-year-Nov.anom_1991-2020.sst_global"
 #     apply:
 #       rechunk:
-#         chunks: {"time": -1, "lat": 10, "lon": 12}
+#         time: -1
+#         lat: 10
+#         lon: 12
         
 #   4-year-Jan.anom_1985-2014.sst_global:
 #     uses:
@@ -248,7 +266,9 @@ prepare:
 #       rolling_mean:
 #         window_size: 4
 #       rechunk:
-#         chunks: {"time": -1, "lat": 10, "lon": 12}
+#         time: -1
+#         lat: 10
+#         lon: 12}
         
 #   4-year-Nov.anom_1985-2014.sst_global:
 #     uses:
@@ -258,7 +278,9 @@ prepare:
 #       rolling_mean:
 #         window_size: 4
 #       rechunk:
-#         chunks: {"time": -1, "lat": 10, "lon": 12}
+#         time: -1
+#         lat: 10
+#         lon: 12
         
 #   4-year.anom_1985-2014.sst_global:
 #     uses:
@@ -267,7 +289,9 @@ prepare:
 #         - "4-year-Nov.anom_1985-2014.sst_global"
 #     apply:
 #       rechunk:
-#         chunks: {"time": -1, "lat": 10, "lon": 12}
+#         time: -1
+#         lat: 10
+#         lon: 12
         
 #   # Prepare AMV, IPO from prepared datasets
 #   4-year.anom_1991-2020.amv:
@@ -277,7 +301,7 @@ prepare:
 #     apply:
 #       calculate_amv:
 #       rechunk:
-#         chunks: {"time": -1}
+#         time: -1
         
 #   4-year.anom_1985-2014.amv:
 #     uses:
@@ -286,7 +310,7 @@ prepare:
 #     apply:
 #       calculate_amv:
 #       rechunk:
-#         chunks: {"time": -1}
+#         time: -1
         
 #   4-year.anom_1991-2020.ipo:
 #     uses:
@@ -295,7 +319,7 @@ prepare:
 #     apply:
 #       calculate_ipo:
 #       rechunk:
-#         chunks: {"time": -1}
+#         time: -1
         
 #   4-year.anom_1985-2014.ipo:
 #     uses:
@@ -304,4 +328,4 @@ prepare:
 #     apply:
 #       calculate_ipo:
 #       rechunk:
-#         chunks: {"time": -1}
+#         time: -1

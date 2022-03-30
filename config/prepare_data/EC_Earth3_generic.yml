@@ -33,16 +33,19 @@ prepare:
 #         - "tas"
 #     apply:
 #       rename:
-#         names: 
-#           tas: "t_ref"
-#           areacella: "area"
+#         tas: "t_ref"
+#         areacella: "area"
 #       coarsen:
 #         window_size: 12
 #         dim: "lead"
 #       interpolate_to_grid_from_file:
 #         file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+#         init: -1
+#         lead: 1
+#         member: -1
+#         lat: 10
+#         lon: 12
         
 #   annual.full.precip_global:
 #     uses:
@@ -50,20 +53,22 @@ prepare:
 #         - "pr"
 #     apply:
 #       rename:
-#         names: 
-#           pr: "precip"
-#           areacella: "area"
+#         pr: "precip"
+#         areacella: "area"
 #       convert:
-#         conversion:
-#           precip:
-#             multiply_by: 86400
+#         precip:
+#           multiply_by: 86400
 #       coarsen:
 #         window_size: 12
 #         dim: "lead"
 #       interpolate_to_grid_from_file:
 #         file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+#         init: -1
+#         lead: 1
+#         member: -1
+#         lat: 10
+#         lon: 12
 
   annual.full.slp_global:
     uses:
@@ -71,16 +76,19 @@ prepare:
         - "psl"
     apply:
       rename:
-        names: 
-          psl: "slp"
-          areacella: "area"
+        psl: "slp"
+        areacella: "area"
       coarsen:
         window_size: 12
         dim: "lead"
       interpolate_to_grid_from_file:
         file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
       rechunk:
-        chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+        init: -1
+        lead: 1
+        member: -1
+        lat: 10
+        lon: 12
       
 #   annual.full.sst_global:
 #     uses:
@@ -88,20 +96,23 @@ prepare:
 #         - "tos"
 #     apply:
 #       rename:
-#         names: 
-#           tos: "sst"
-#           areacello: "area"
-#           i: "x"
-#           j: "y"
-#           longitude: "lon"
-#           latitude: "lat"
+#         tos: "sst"
+#         areacello: "area"
+#         i: "x"
+#         j: "y"
+#         longitude: "lon"
+#         latitude: "lat"
 #       coarsen:
 #         window_size: 12
 #         dim: "lead"
 #       interpolate_to_grid_from_file:
 #         file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+#         init: -1
+#         lead: 1
+#         member: -1
+#         lat: 10
+#         lon: 12
         
 #   3-month.full.nino34:
 #     uses:
@@ -109,19 +120,20 @@ prepare:
 #         - "tos"
 #     apply:
 #       rename:
-#         names: 
-#           tos: "sst"
-#           areacello: "area"
-#           i: "x"
-#           j: "y"
-#           longitude: "lon"
-#           latitude: "lat"
+#         tos: "sst"
+#         areacello: "area"
+#         i: "x"
+#         j: "y"
+#         longitude: "lon"
+#         latitude: "lat"
 #       coarsen:
 #         window_size: 3
 #         dim: "lead"
 #       calculate_nino34:
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1}
+#         init: -1
+#         lead: 1
+#         member: -1
         
 #   3-month.full.dmi:
 #     uses:
@@ -129,19 +141,20 @@ prepare:
 #         - "tos"
 #     apply:
 #       rename:
-#         names: 
-#           tos: "sst"
-#           areacello: "area"
-#           i: "x"
-#           j: "y"
-#           longitude: "lon"
-#           latitude: "lat"
+#         tos: "sst"
+#         areacello: "area"
+#         i: "x"
+#         j: "y"
+#         longitude: "lon"
+#         latitude: "lat"
 #       coarsen:
 #         window_size: 3
 #         dim: "lead"
 #       calculate_dmi:
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1}
+#         init: -1
+#         lead: 1
+#         member: -1
         
 #   3-month.anom_1985-2014.sam:
 #     uses:
@@ -149,9 +162,8 @@ prepare:
 #         - "psl"
 #     apply:
 #       rename:
-#         names: 
-#           psl: "slp"
-#           areacella: "area"
+#         psl: "slp"
+#         areacella: "area"
 #       coarsen:
 #         window_size: 3
 #         dim: "lead"
@@ -159,7 +171,9 @@ prepare:
 #         clim_period: ["1985-01-01", "2014-12-31"]
 #         groupby_dim: "init"
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1}
+#         init: -1
+#         lead: 1
+#         member: -1
         
 #   3-month.anom_1985-2014.nao:
 #     uses:
@@ -167,9 +181,8 @@ prepare:
 #         - "psl"
 #     apply:
 #       rename:
-#         names: 
-#           psl: "slp"
-#           areacella: "area"
+#         psl: "slp"
+#         areacella: "area"
 #       coarsen:
 #         window_size: 3
 #         dim: "lead"
@@ -177,7 +190,9 @@ prepare:
 #         clim_period: ["1985-01-01", "2014-12-31"]
 #         groupby_dim: "init"
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1}
+#         init: -1
+#         lead: 1
+#         member: -1
         
 #   # Prepare anomalies from prepared datasets
 #   annual.anom_1985-2014.t_ref_global:
@@ -188,7 +203,11 @@ prepare:
 #       anomalise:
 #         clim_period: ["1985-01-01", "2014-12-31"]
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+#         init: -1
+#         lead: 1
+#         member: -1
+#         lat: 10
+#         lon: 12
         
 #   annual.anom_1985-2014.precip_global:
 #     uses:
@@ -198,7 +217,11 @@ prepare:
 #       anomalise:
 #         clim_period: ["1985-01-01", "2014-12-31"]
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+#         init: -1
+#         lead: 1
+#         member: -1
+#         lat: 10
+#         lon: 12
 
   annual.anom_1985-2014.slp_global:
     uses:
@@ -208,7 +231,11 @@ prepare:
       anomalise:
         clim_period: ["1985-01-01", "2014-12-31"]
       rechunk:
-        chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+        init: -1
+        lead: 1
+        member: -1
+        lat: 10
+        lon: 12
         
 #   annual.anom_1985-2014.sst_global:
 #     uses:
@@ -218,7 +245,11 @@ prepare:
 #       anomalise:
 #         clim_period: ["1985-01-01", "2014-12-31"]
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+#         init: -1
+#         lead: 1
+#         member: -1
+#         lat: 10
+#         lon: 12
         
 #   3-month.anom_1985-2014.nino34:
 #     uses:
@@ -228,7 +259,9 @@ prepare:
 #       anomalise:
 #         clim_period: ["1985-01-01", "2014-12-31"]
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1}
+#         init: -1
+#         lead: 1
+#         member: -1
         
 #   3-month.anom_1985-2014.dmi:
 #     uses:
@@ -238,7 +271,9 @@ prepare:
 #       anomalise:
 #         clim_period: ["1985-01-01", "2014-12-31"]
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1}
+#         init: -1
+#         lead: 1
+#         member: -1
         
 #   # Prepare 4-year-averages from prepared datasets
 #   4-year.anom_1985-2014.t_ref_global:
@@ -250,7 +285,11 @@ prepare:
 #         window_size: 4 
 #         dim: "lead"
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+#         init: -1
+#         lead: 1
+#         member: -1
+#         lat: 10
+#         lon: 12
         
 #   4-year.anom_1985-2014.precip_global:
 #     uses:
@@ -261,7 +300,11 @@ prepare:
 #         window_size: 4 
 #         dim: "lead"
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+#         init: -1
+#         lead: 1
+#         member: -1
+#         lat: 10
+#         lon: 12
 
   4-year.anom_1985-2014.slp_global:
     uses:
@@ -272,7 +315,11 @@ prepare:
         window_size: 4 
         dim: "lead"
       rechunk:
-        chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+        init: -1
+        lead: 1
+        member: -1
+        lat: 10
+        lon: 12
         
 #   4-year.anom_1985-2014.sst_global:
 #     uses:
@@ -283,7 +330,11 @@ prepare:
 #         window_size: 4 
 #         dim: "lead"
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+#         init: -1
+#         lead: 1
+#         member: -1
+#         lat: 10
+#         lon: 12
 
 #   # Prepare AMV, IPO from prepared datasets
 #   4-year.anom_1985-2014.amv:
@@ -293,7 +344,9 @@ prepare:
 #     apply:
 #       calculate_amv:
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1}
+#         init: -1
+#         lead: 1
+#         member: -1
         
 #   4-year.anom_1985-2014.ipo:
 #     uses:
@@ -302,4 +355,6 @@ prepare:
 #     apply:
 #       calculate_ipo:
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1}
+#         init: -1
+#         lead: 1
+#         member: -1

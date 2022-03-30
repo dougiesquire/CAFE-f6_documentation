@@ -32,8 +32,7 @@ prepare:
       - "temperature"
     apply:
       rename:
-        names: 
-          temperature: "temp"
+        temperature: "temp"
       round_to_start_of_month:
         dim: "time"
       force_to_Julian_calendar:
@@ -45,15 +44,16 @@ prepare:
       interpolate_to_grid_from_file:
         file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
       rechunk:
-        chunks: {"time": -1, "lat": 10, "lon": 12}
+        time: -1
+        lat: 10
+        lon: 12
         
   annual-Nov.full.ohc300_global:
     uses:
       - "temperature"
     apply:
       rename:
-        names: 
-          temperature: "temp"
+        temperature: "temp"
       round_to_start_of_month:
         dim: "time"
       force_to_Julian_calendar:
@@ -65,7 +65,9 @@ prepare:
       interpolate_to_grid_from_file:
         file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
       rechunk:
-        chunks: {"time": -1, "lat": 10, "lon": 12}
+        time: -1
+        lat: 10
+        lon: 12
         
   # Prepare anomalies from prepared datasets      
   annual-Jan.anom_1991-2020.ohc300_global:
@@ -76,7 +78,9 @@ prepare:
       anomalise:
         clim_period: ["1991-01-01", "2020-12-31"]
       rechunk:
-        chunks: {"time": -1, "lat": 10, "lon": 12}
+        time: -1
+        lat: 10
+        lon: 12
         
   annual-Nov.anom_1991-2020.ohc300_global:
     uses:
@@ -86,7 +90,9 @@ prepare:
       anomalise:
         clim_period: ["1991-01-01", "2020-12-31"]
       rechunk:
-        chunks: {"time": -1, "lat": 10, "lon": 12}
+        time: -1
+        lat: 10
+        lon: 12
         
   annual.anom_1991-2020.ohc300_global:
     uses:
@@ -95,7 +101,9 @@ prepare:
         - "annual-Nov.anom_1991-2020.ohc300_global"
     apply:
       rechunk:
-        chunks: {"time": -1, "lat": 10, "lon": 12}
+        time: -1
+        lat: 10
+        lon: 12
         
   annual-Jan.anom_1985-2014.ohc300_global:
     uses:
@@ -105,7 +113,9 @@ prepare:
       anomalise:
         clim_period: ["1985-01-01", "2014-12-31"]
       rechunk:
-        chunks: {"time": -1, "lat": 10, "lon": 12}
+        time: -1
+        lat: 10
+        lon: 12
         
   annual-Nov.anom_1985-2014.ohc300_global:
     uses:
@@ -115,7 +125,9 @@ prepare:
       anomalise:
         clim_period: ["1985-01-01", "2014-12-31"]
       rechunk:
-        chunks: {"time": -1, "lat": 10, "lon": 12}
+        time: -1
+        lat: 10
+        lon: 12
         
   annual.anom_1985-2014.ohc300_global:
     uses:
@@ -124,7 +136,9 @@ prepare:
         - "annual-Nov.anom_1985-2014.ohc300_global"
     apply:
       rechunk:
-        chunks: {"time": -1, "lat": 10, "lon": 12}
+        time: -1
+        lat: 10
+        lon: 12
         
   # Prepare 4-year-averages from prepared datasets
   4-year-Jan.anom_1991-2020.ohc300_global:
@@ -135,7 +149,9 @@ prepare:
       rolling_mean:
         window_size: 4
       rechunk:
-        chunks: {"time": -1, "lat": 10, "lon": 12}
+        time: -1
+        lat: 10
+        lon: 12
         
   4-year-Nov.anom_1991-2020.ohc300_global:
     uses:
@@ -145,7 +161,9 @@ prepare:
       rolling_mean:
         window_size: 4
       rechunk:
-        chunks: {"time": -1, "lat": 10, "lon": 12}
+        time: -1
+        lat: 10
+        lon: 12
         
   4-year.anom_1991-2020.ohc300_global:
     uses:
@@ -154,7 +172,9 @@ prepare:
         - "4-year-Nov.anom_1991-2020.ohc300_global"
     apply:
       rechunk:
-        chunks: {"time": -1, "lat": 10, "lon": 12}
+        time: -1
+        lat: 10
+        lon: 12
         
   4-year-Jan.anom_1985-2014.ohc300_global:
     uses:
@@ -164,7 +184,9 @@ prepare:
       rolling_mean:
         window_size: 4
       rechunk:
-        chunks: {"time": -1, "lat": 10, "lon": 12}
+        time: -1
+        lat: 10
+        lon: 12
         
   4-year-Nov.anom_1985-2014.ohc300_global:
     uses:
@@ -174,7 +196,9 @@ prepare:
       rolling_mean:
         window_size: 4
       rechunk:
-        chunks: {"time": -1, "lat": 10, "lon": 12}
+        time: -1
+        lat: 10
+        lon: 12
         
   4-year.anom_1985-2014.ohc300_global:
     uses:
@@ -183,4 +207,6 @@ prepare:
         - "4-year-Nov.anom_1985-2014.ohc300_global"
     apply:
       rechunk:
-        chunks: {"time": -1, "lat": 10, "lon": 12}
+        time: -1
+        lat: 10
+        lon: 12

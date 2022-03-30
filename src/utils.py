@@ -563,7 +563,7 @@ def drop_Feb_29(ds, time_dim="time"):
     return ds.where(keep, drop=True)
 
 
-def rechunk(ds, chunks):
+def rechunk(ds, **chunks):
     """
     Rechunk a dataset
 
@@ -615,7 +615,7 @@ def add_attrs(ds, attrs, variable=None):
     return ds
 
 
-def rename(ds, names):
+def rename(ds, **names):
     """
     Rename all variables etc that have an entry in names
 
@@ -632,7 +632,7 @@ def rename(ds, names):
     return ds
 
 
-def convert(ds, conversion):
+def convert(ds, **conversion):
     """
     Convert variables in a dataset according to provided dictionary
 

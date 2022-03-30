@@ -40,14 +40,15 @@ prepare:
 #         dim: "lead"
 #     apply:
 #       rename:
-#         names: 
-#           ensemble: "member"
+#         ensemble: "member"
 #       round_to_start_of_month:
 #         dim: ["init", "time"]
 #       average_over_NRM_super_clusters:
 #       mask_CAFEf6_reduced_dt:
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1}
+#         init: -1
+#         lead: 1
+#         member: -1
         
 #   annual.full.precip_Aus_NRM:
 #     uses:
@@ -63,18 +64,18 @@ prepare:
 #         dim: "lead"
 #     apply:
 #       rename:
-#         names:
-#           ensemble: "member"
+#         ensemble: "member"
 #       convert:
-#         conversion:
-#           precip:
-#             multiply_by: 86400
+#         precip:
+#           multiply_by: 86400
 #       round_to_start_of_month:
 #         dim: ["init", "time"]
 #       average_over_NRM_super_clusters:
 #       mask_CAFEf6_reduced_dt:
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1}
+#         init: -1
+#         lead: 1
+#         member: -1
         
 #   annual.full.V_tot_Aus_NRM:
 #     uses:
@@ -93,14 +94,15 @@ prepare:
 #         window_size: 12
 #         dim: "lead"
 #       rename:
-#         names: 
-#           ensemble: "member"
+#         ensemble: "member"
 #       round_to_start_of_month:
 #         dim: ["init", "time"]
 #       average_over_NRM_super_clusters:
 #       mask_CAFEf6_reduced_dt:
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1}
+#         init: -1
+#         lead: 1
+#         member: -1
         
 #   # Prepare anomalies from prepared datasets
 #   annual.anom_1991-2020.t_ref_Aus_NRM:
@@ -111,7 +113,9 @@ prepare:
 #       anomalise:
 #         clim_period: ["1991-01-01", "2020-12-31"]
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1}
+#         init: -1
+#         lead: 1
+#         member: -1
         
 #   annual.anom_1991-2020.precip_Aus_NRM:
 #     uses:
@@ -121,7 +125,9 @@ prepare:
 #       anomalise:
 #         clim_period: ["1991-01-01", "2020-12-31"]
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1}
+#         init: -1
+#         lead: 1
+#         member: -1
         
 #   annual.anom_1991-2020.V_tot_Aus_NRM:
 #     uses:
@@ -131,7 +137,9 @@ prepare:
 #       anomalise:
 #         clim_period: ["1991-01-01", "2020-12-31"]
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1}
+#         init: -1
+#         lead: 1
+#         member: -1
         
 #   # Prepare 4-year-averages from prepared datasets
 #   4-year.anom_1991-2020.t_ref_Aus_NRM:
@@ -143,7 +151,9 @@ prepare:
 #         window_size: 4 
 #         dim: "lead"
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1}
+#         init: -1
+#         lead: 1
+#         member: -1
         
 #   4-year.anom_1991-2020.precip_Aus_NRM:
 #     uses:
@@ -154,7 +164,9 @@ prepare:
 #         window_size: 4 
 #         dim: "lead"
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1}
+#         init: -1
+#         lead: 1
+#         member: -1
         
 #   4-year.anom_1991-2020.V_tot_Aus_NRM:
 #     uses:
@@ -165,7 +177,9 @@ prepare:
 #         window_size: 4 
 #         dim: "lead"
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1}
+#         init: -1
+#         lead: 1
+#         member: -1
 
 #  Extremes - days of max temp above 90th percentile
 #   daily.full.t_ref_max_Aus_NRM:
@@ -179,18 +193,18 @@ prepare:
 #       truncate_latitudes:
 #     apply:
 #       rename:
-#         names: 
-#           ensemble: "member"
+#         ensemble: "member"
 #       convert:
-#         conversion:
-#           t_ref_max:
-#             add: -273.15
+#         t_ref_max:
+#           add: -273.15
 #       round_to_start_of_day:
 #         dim: ["init", "time"]
 #       average_over_NRM_super_clusters:
 #       mask_CAFEf6_reduced_dt:
 #       rechunk:
-#         chunks: {"init": -1, "lead": 28, "member": -1}
+#         init: -1
+#         lead: 28
+#         member: -1
         
 #   annual.days_over_p90_1991-2020.t_ref_max_Aus_NRM:
 #     uses:
@@ -206,7 +220,9 @@ prepare:
 #       round_to_start_of_month:
 #         dim: "time"
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1}
+#         init: -1
+#         lead: 1
+#         member: -1
         
 #   4-year.days_over_p90_1991-2020.t_ref_max_Aus_NRM:
 #     uses:
@@ -217,7 +233,9 @@ prepare:
 #         window_size: 4
 #         dim: "lead"
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1}
+#         init: -1
+#         lead: 1
+#         member: -1
 
 #  Extremes - days of rainfall above 90th percentile
 #   daily.full.precip_Aus_NRM:
@@ -231,18 +249,18 @@ prepare:
 #       truncate_latitudes:
 #     apply:
 #       rename:
-#         names: 
-#           ensemble: "member"
+#         ensemble: "member"
 #       convert:
-#         conversion:
-#           precip:
-#             multiply_by: 86400
+#         precip:
+#           multiply_by: 86400
 #       round_to_start_of_day:
 #         dim: ["init", "time"]
 #       average_over_NRM_super_clusters:
 #       mask_CAFEf6_reduced_dt:
 #       rechunk:
-#         chunks: {"init": -1, "lead": 28, "member": -1}
+#         init: -1
+#         lead: 28
+#         member: -1
         
 #   annual.days_over_p90_1991-2020.precip_Aus_NRM:
 #     uses:
@@ -258,7 +276,9 @@ prepare:
 #       round_to_start_of_month:
 #         dim: "time"
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1}
+#         init: -1
+#         lead: 1
+#         member: -1
         
 #   4-year.days_over_p90_1991-2020.precip_Aus_NRM:
 #     uses:
@@ -269,7 +289,9 @@ prepare:
 #         window_size: 4
 #         dim: "lead"
 #       rechunk:
-#         chunks: {"init": -1, "lead": 1, "member": -1}
+#         init: -1
+#         lead: 1
+#         member: -1
 
 #  Extremes - days of FFDI above 90th percentile
   daily.full.ffdi_Aus_NRM:
@@ -289,15 +311,15 @@ prepare:
       truncate_latitudes:
     apply:
       rename:
-        names: 
-          ensemble: "member"
+        ensemble: "member"
 #       convert:
-#         conversion:
-#           t_ref:
-#             add: -273.15
+#         t_ref:
+#           add: -273.15
 #       round_to_start_of_day:
 #         dim: ["init", "time"]
 #       average_over_NRM_super_clusters:
 #       mask_CAFEf6_reduced_dt:
 #       rechunk:
-#         chunks: {"init": -1, "lead": 28, "member": -1}
+#         init: -1
+#         lead: 28
+#         member: -1
