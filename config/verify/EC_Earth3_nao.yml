@@ -25,7 +25,7 @@ prepare:
     observations: JRA55.3-month.anom_1985-2014.nao
     apply:
       all:
-        mask_period:
+        keep_period:
           period: ["1985-01-01", "2014-12-31"]
     verify:
       metric: "acc"

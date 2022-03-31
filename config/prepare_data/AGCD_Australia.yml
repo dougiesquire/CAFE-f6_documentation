@@ -416,43 +416,165 @@ prepare:
 #         time: -1
         
 #  Extremes - days of rainfall above 90th percentile
-  3-month-Nov.full.precip_Aus_NRM:
-    uses:
-      - "precip"
-    apply:
-      resample:
-        freq: "Q-JAN"
-        start_points: ["1960-11-01"]
-        min_samples: 90
-      round_to_start_of_month:
-        dim: "time"
-      force_to_Julian_calendar:
-      add_area_using_cdo_gridarea:
-      average_over_NRM_super_clusters:
-      rechunk:
-        time: -1
+#   month.full.precip_Aus_NRM:
+#     uses:
+#       - "precip"
+#     apply:
+#       resample:
+#         freq: "M"
+#         start_points: ["1960-01-01"]
+#         min_samples: 28
+#       round_to_start_of_month:
+#         dim: "time"
+#       force_to_Julian_calendar:
+#       add_area_using_cdo_gridarea:
+#       average_over_NRM_super_clusters:
+#       rechunk:
+#         time: -1
         
-  annual-Nov.3-months_over_p90_1991-2020.precip_Aus_NRM:
+#   3-month.full.precip_Aus_NRM:
+#     uses:
+#       prepared:
+#         - "month.full.precip_Aus_NRM"
+#     apply:
+#       rolling_mean:
+#         window_size: 3
+#         dim: "time"
+#       rechunk:
+#         time: -1
+        
+#   annual-Jan.3-months_under_p10_1991-2020.precip_Aus_NRM:
+#     uses:
+#       prepared:
+#         - "3-month.full.precip_Aus_NRM"
+#     apply:
+#       under_percentile_threshold:
+#         percentile: 0.1
+#         percentile_period: ["1991-01-01", "2020-12-31"]
+#       coarsen:
+#         window_size: 12
+#         start_points: ["1960-03-01"] # First 3-month mean for Jan forecast is Mar
+#         dim: "time"
+#       rechunk:
+#         time: -1
+        
+#   annual-Nov.3-months_under_p10_1991-2020.precip_Aus_NRM:
+#     uses:
+#       prepared:
+#         - "3-month.full.precip_Aus_NRM"
+#     apply:
+#       under_percentile_threshold:
+#         percentile: 0.1
+#         percentile_period: ["1991-01-01", "2020-12-31"]
+#       coarsen:
+#         window_size: 12
+#         start_points: ["1961-01-01"] # First 3-month mean for Nov forecast is Jan
+#         dim: "time"
+#       rechunk:
+#         time: -1
+        
+#   annual.3-months_under_p10_1991-2020.precip_Aus_NRM:
+#     uses:
+#       prepared:
+#         - "annual-Jan.3-months_under_p10_1991-2020.precip_Aus_NRM"
+#         - "annual-Nov.3-months_under_p10_1991-2020.precip_Aus_NRM"
+#     apply:
+#       rechunk:
+#         time: -1
+        
+  annual-Jan.3-months_under_p10_1985-2014.precip_Aus_NRM:
     uses:
       prepared:
-        - "3-month-Nov.full.precip_Aus_NRM"
+        - "3-month.full.precip_Aus_NRM"
     apply:
       under_percentile_threshold:
         percentile: 0.1
-        percentile_period: ["1991-01-01", "2020-12-31"]
+        percentile_period: ["1985-01-01", "2014-12-31"]
       coarsen:
-        window_size: 4
-        start_points: ["1961-01-01"]
+        window_size: 12
+        start_points: ["1960-03-01"] # First 3-month mean for Jan forecast is Mar
         dim: "time"
       rechunk:
         time: -1
         
-  4-year-Nov.3-months_over_p90_1991-2020.precip_Aus_NRM:
+  annual-Nov.3-months_under_p10_1985-2014.precip_Aus_NRM:
     uses:
       prepared:
-        - "annual-Nov.3-months_over_p90_1991-2020.precip_Aus_NRM"
+        - "3-month.full.precip_Aus_NRM"
+    apply:
+      under_percentile_threshold:
+        percentile: 0.1
+        percentile_period: ["1985-01-01", "2014-12-31"]
+      coarsen:
+        window_size: 12
+        start_points: ["1961-01-01"] # First 3-month mean for Nov forecast is Jan
+        dim: "time"
+      rechunk:
+        time: -1
+        
+  annual.3-months_under_p10_1985-2014.precip_Aus_NRM:
+    uses:
+      prepared:
+        - "annual-Jan.3-months_under_p10_1985-2014.precip_Aus_NRM"
+        - "annual-Nov.3-months_under_p10_1985-2014.precip_Aus_NRM"
+    apply:
+      rechunk:
+        time: -1
+        
+#   4-year-Jan.3-months_under_p10_1991-2020.precip_Aus_NRM:
+#     uses:
+#       prepared:
+#         - "annual-Jan.3-months_under_p10_1991-2020.precip_Aus_NRM"
+#     apply:
+#       rolling_mean:
+#         window_size: 4
+#       rechunk:
+#         time: -1
+        
+#   4-year-Nov.3-months_under_p10_1991-2020.precip_Aus_NRM:
+#     uses:
+#       prepared:
+#         - "annual-Nov.3-months_under_p10_1991-2020.precip_Aus_NRM"
+#     apply:
+#       rolling_mean:
+#         window_size: 4
+#       rechunk:
+#         time: -1
+        
+#   4-year.3-months_under_p10_1991-2020.precip_Aus_NRM:
+#     uses:
+#       prepared:
+#         - "4-year-Jan.3-months_under_p10_1991-2020.precip_Aus_NRM"
+#         - "4-year-Nov.3-months_under_p10_1991-2020.precip_Aus_NRM"
+#     apply:
+#       rechunk:
+#         time: -1
+        
+  4-year-Jan.3-months_under_p10_1985-2014.precip_Aus_NRM:
+    uses:
+      prepared:
+        - "annual-Jan.3-months_under_p10_1985-2014.precip_Aus_NRM"
     apply:
       rolling_mean:
         window_size: 4
+      rechunk:
+        time: -1
+        
+  4-year-Nov.3-months_under_p10_1985-2014.precip_Aus_NRM:
+    uses:
+      prepared:
+        - "annual-Nov.3-months_under_p10_1985-2014.precip_Aus_NRM"
+    apply:
+      rolling_mean:
+        window_size: 4
+      rechunk:
+        time: -1
+        
+  4-year.3-months_under_p10_1985-2014.precip_Aus_NRM:
+    uses:
+      prepared:
+        - "4-year-Jan.3-months_under_p10_1985-2014.precip_Aus_NRM"
+        - "4-year-Nov.3-months_under_p10_1985-2014.precip_Aus_NRM"
+    apply:
       rechunk:
         time: -1

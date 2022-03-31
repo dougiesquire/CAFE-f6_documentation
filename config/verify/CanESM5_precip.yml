@@ -26,7 +26,7 @@ prepare:
 #     observations: GPCP.annual.anom_1985-2014.precip_global
 #     apply:
 #       all:
-#         mask_period:
+#         keep_period:
 #           period: ["1985-01-01", "2014-12-31"]
 #     verify:
 #       metric: "acc"
@@ -39,7 +39,7 @@ prepare:
 #     observations: GPCP.4-year.anom_1985-2014.precip_global
 #     apply:
 #       all:
-#         mask_period:
+#         keep_period:
 #           period: ["1985-01-01", "2014-12-31"]
 #     verify:
 #       metric: "acc"
@@ -53,7 +53,7 @@ prepare:
 #     simulations: CanESM5_hist.annual.anom_1985-2014.precip_global
 #     apply:
 #       all:
-#         mask_period:
+#         keep_period:
 #           period: ["1985-01-01", "2014-12-31"]
 #     verify:
 #       metric: "acc_initialised"
@@ -67,7 +67,7 @@ prepare:
 #     simulations: CanESM5_hist.4-year.anom_1985-2014.precip_global
 #     apply:
 #       all:
-#         mask_period:
+#         keep_period:
 #           period: ["1985-01-01", "2014-12-31"]
 #     verify:
 #       metric: "acc_initialised"
@@ -81,7 +81,7 @@ prepare:
 #     simulations: CanESM5_hist.annual.anom_1985-2014.precip_global
 #     apply:
 #       all:
-#         mask_period:
+#         keep_period:
 #           period: ["1985-01-01", "2014-12-31"]
 #     verify:
 #       metric: "msss_hist"
@@ -94,36 +94,36 @@ prepare:
 #     simulations: CanESM5_hist.4-year.anom_1985-2014.precip_global
 #     apply:
 #       all:
-#         mask_period:
+#         keep_period:
 #           period: ["1985-01-01", "2014-12-31"]
 #     verify:
 #       metric: "msss_hist"
 #       significance: True
 #       alpha: 0.05
 
-  CanESM5.GPCP.annual.anom_1985-2014.precip_global.MSSS_clim_1985-2014:
-    hindcasts: CanESM5.annual.anom_1985-2014.precip_global
-    observations: GPCP.annual.anom_1985-2014.precip_global
-    apply:
-      all:
-        mask_period:
-          period: ["1985-01-01", "2014-12-31"]
-    verify:
-      metric: "msss_clim"
-      significance: True
-      alpha: 0.05
+#   CanESM5.GPCP.annual.anom_1985-2014.precip_global.MSSS_clim_1985-2014:
+#     hindcasts: CanESM5.annual.anom_1985-2014.precip_global
+#     observations: GPCP.annual.anom_1985-2014.precip_global
+#     apply:
+#       all:
+#         keep_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "msss_clim"
+#       significance: True
+#       alpha: 0.05
       
-  CanESM5.GPCP.4-year.anom_1985-2014.precip_global.MSSS_clim_1985-2014:
-    hindcasts: CanESM5.4-year.anom_1985-2014.precip_global
-    observations: GPCP.4-year.anom_1985-2014.precip_global
-    apply:
-      all:
-        mask_period:
-          period: ["1985-01-01", "2014-12-31"]
-    verify:
-      metric: "msss_clim"
-      significance: True
-      alpha: 0.05
+#   CanESM5.GPCP.4-year.anom_1985-2014.precip_global.MSSS_clim_1985-2014:
+#     hindcasts: CanESM5.4-year.anom_1985-2014.precip_global
+#     observations: GPCP.4-year.anom_1985-2014.precip_global
+#     apply:
+#       all:
+#         keep_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "msss_clim"
+#       significance: True
+#       alpha: 0.05
       
 #   CanESM5.GPCP.annual.anom_1985-2014.precip_global.CRPSS_hist_1985-2014:
 #     hindcasts: CanESM5.annual.anom_1985-2014.precip_global
@@ -131,7 +131,7 @@ prepare:
 #     simulations: CanESM5_hist.annual.anom_1985-2014.precip_global
 #     apply:
 #       all:
-#         mask_period:
+#         keep_period:
 #           period: ["1985-01-01", "2014-12-31"]
 #     verify:
 #       metric: "crpss"
@@ -144,7 +144,7 @@ prepare:
 #     simulations: CanESM5_hist.4-year.anom_1985-2014.precip_global
 #     apply:
 #       all:
-#         mask_period:
+#         keep_period:
 #           period: ["1985-01-01", "2014-12-31"]
 #     verify:
 #       metric: "crpss"
@@ -157,7 +157,7 @@ prepare:
 #     observations: AGCD.annual.anom_1985-2014.precip_Aus_NRM
 #     apply:
 #       all:
-#         mask_period:
+#         keep_period:
 #           period: ["1985-01-01", "2014-12-31"]
 #     verify:
 #       metric: "acc"
@@ -170,7 +170,7 @@ prepare:
 #     observations: AGCD.4-year.anom_1985-2014.precip_Aus_NRM
 #     apply:
 #       all:
-#         mask_period:
+#         keep_period:
 #           period: ["1985-01-01", "2014-12-31"]
 #     verify:
 #       metric: "acc"
@@ -184,7 +184,7 @@ prepare:
 #     simulations: CanESM5_hist.annual.anom_1985-2014.precip_Aus_NRM
 #     apply:
 #       all:
-#         mask_period:
+#         keep_period:
 #           period: ["1985-01-01", "2014-12-31"]
 #     verify:
 #       metric: "acc_initialised"
@@ -198,7 +198,7 @@ prepare:
 #     simulations: CanESM5_hist.4-year.anom_1985-2014.precip_Aus_NRM
 #     apply:
 #       all:
-#         mask_period:
+#         keep_period:
 #           period: ["1985-01-01", "2014-12-31"]
 #     verify:
 #       metric: "acc_initialised"
@@ -212,7 +212,7 @@ prepare:
 #     simulations: CanESM5_hist.annual.anom_1985-2014.precip_Aus_NRM
 #     apply:
 #       all:
-#         mask_period:
+#         keep_period:
 #           period: ["1985-01-01", "2014-12-31"]
 #     verify:
 #       metric: "msss_hist"
@@ -225,36 +225,36 @@ prepare:
 #     simulations: CanESM5_hist.4-year.anom_1985-2014.precip_Aus_NRM
 #     apply:
 #       all:
-#         mask_period:
+#         keep_period:
 #           period: ["1985-01-01", "2014-12-31"]
 #     verify:
 #       metric: "msss_hist"
 #       significance: True
 #       alpha: 0.05
 
-  CanESM5.AGCD.annual.anom_1985-2014.precip_Aus_NRM.MSSS_clim_1985-2014:
-    hindcasts: CanESM5.annual.anom_1985-2014.precip_Aus_NRM
-    observations: AGCD.annual.anom_1985-2014.precip_Aus_NRM
-    apply:
-      all:
-        mask_period:
-          period: ["1985-01-01", "2014-12-31"]
-    verify:
-      metric: "msss_clim"
-      significance: True
-      alpha: 0.05
+#   CanESM5.AGCD.annual.anom_1985-2014.precip_Aus_NRM.MSSS_clim_1985-2014:
+#     hindcasts: CanESM5.annual.anom_1985-2014.precip_Aus_NRM
+#     observations: AGCD.annual.anom_1985-2014.precip_Aus_NRM
+#     apply:
+#       all:
+#         keep_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "msss_clim"
+#       significance: True
+#       alpha: 0.05
       
-  CanESM5.AGCD.4-year.anom_1985-2014.precip_Aus_NRM.MSSS_clim_1985-2014:
-    hindcasts: CanESM5.4-year.anom_1985-2014.precip_Aus_NRM
-    observations: AGCD.4-year.anom_1985-2014.precip_Aus_NRM
-    apply:
-      all:
-        mask_period:
-          period: ["1985-01-01", "2014-12-31"]
-    verify:
-      metric: "msss_clim"
-      significance: True
-      alpha: 0.05
+#   CanESM5.AGCD.4-year.anom_1985-2014.precip_Aus_NRM.MSSS_clim_1985-2014:
+#     hindcasts: CanESM5.4-year.anom_1985-2014.precip_Aus_NRM
+#     observations: AGCD.4-year.anom_1985-2014.precip_Aus_NRM
+#     apply:
+#       all:
+#         keep_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "msss_clim"
+#       significance: True
+#       alpha: 0.05
       
 #   CanESM5.AGCD.annual.anom_1985-2014.precip_Aus_NRM.CRPSS_hist_1985-2014:
 #     hindcasts: CanESM5.annual.anom_1985-2014.precip_Aus_NRM
@@ -262,7 +262,7 @@ prepare:
 #     simulations: CanESM5_hist.annual.anom_1985-2014.precip_Aus_NRM
 #     apply:
 #       all:
-#         mask_period:
+#         keep_period:
 #           period: ["1985-01-01", "2014-12-31"]
 #     verify:
 #       metric: "crpss"
@@ -275,9 +275,116 @@ prepare:
 #     simulations: CanESM5_hist.4-year.anom_1985-2014.precip_Aus_NRM
 #     apply:
 #       all:
-#         mask_period:
+#         keep_period:
 #           period: ["1985-01-01", "2014-12-31"]
 #     verify:
 #       metric: "crpss"
 #       significance: True
 #       alpha: 0.05
+
+# Drought
+  CanESM5.AGCD.annual.3-months_under_p10_1985-2014.precip_Aus_NRM.rXY_1985-2014:
+    hindcasts: CanESM5.annual.3-months_under_p10_1985-2014.precip_Aus_NRM
+    observations: AGCD.annual.3-months_under_p10_1985-2014.precip_Aus_NRM
+    apply:
+      all:
+        keep_period:
+          period: ["1985-01-01", "2014-12-31"]
+    verify:
+      metric: "acc"
+      significance: True
+      transform: "Fisher_z"
+      alpha: 0.05
+      
+  CanESM5.AGCD.4-year.3-months_under_p10_1985-2014.precip_Aus_NRM.rXY_1985-2014:
+    hindcasts: CanESM5.4-year.3-months_under_p10_1985-2014.precip_Aus_NRM
+    observations: AGCD.4-year.3-months_under_p10_1985-2014.precip_Aus_NRM
+    apply:
+      all:
+        keep_period:
+          period: ["1985-01-01", "2014-12-31"]
+    verify:
+      metric: "acc"
+      significance: True
+      transform: "Fisher_z"
+      alpha: 0.05
+
+  CanESM5.AGCD.annual.3-months_under_p10_1985-2014.precip_Aus_NRM.MSSS_hist_1985-2014:
+    hindcasts: CanESM5.annual.3-months_under_p10_1985-2014.precip_Aus_NRM
+    observations: AGCD.annual.3-months_under_p10_1985-2014.precip_Aus_NRM
+    simulations: CanESM5_hist.annual.3-months_under_p10_1985-2014.precip_Aus_NRM
+    apply:
+      all:
+        keep_period:
+          period: ["1985-01-01", "2014-12-31"]
+    verify:
+      metric: "msss_hist"
+      significance: True
+      alpha: 0.05
+      
+  CanESM5.AGCD.4-year.3-months_under_p10_1985-2014.precip_Aus_NRM.MSSS_hist_1985-2014:
+    hindcasts: CanESM5.4-year.3-months_under_p10_1985-2014.precip_Aus_NRM
+    observations: AGCD.4-year.3-months_under_p10_1985-2014.precip_Aus_NRM
+    simulations: CanESM5_hist.4-year.3-months_under_p10_1985-2014.precip_Aus_NRM
+    apply:
+      all:
+        keep_period:
+          period: ["1985-01-01", "2014-12-31"]
+    verify:
+      metric: "msss_hist"
+      significance: True
+      alpha: 0.05
+
+  CanESM5.AGCD.annual.3-months_under_p10_1985-2014.precip_Aus_NRM.MSSS_clim_1985-2014:
+    hindcasts: CanESM5.annual.3-months_under_p10_1985-2014.precip_Aus_NRM
+    observations: AGCD.annual.3-months_under_p10_1985-2014.precip_Aus_NRM
+    apply:
+      all:
+        keep_period:
+          period: ["1985-01-01", "2014-12-31"]
+    verify:
+      metric: "msss_clim"
+      metric_kwargs:
+        clim_baseline_value: 0.1
+      significance: True
+      alpha: 0.05
+      
+  CanESM5.AGCD.4-year.3-months_under_p10_1985-2014.precip_Aus_NRM.MSSS_clim_1985-2014:
+    hindcasts: CanESM5.4-year.3-months_under_p10_1985-2014.precip_Aus_NRM
+    observations: AGCD.4-year.3-months_under_p10_1985-2014.precip_Aus_NRM
+    apply:
+      all:
+        keep_period:
+          period: ["1985-01-01", "2014-12-31"]
+    verify:
+      metric: "msss_clim"
+      metric_kwargs:
+        clim_baseline_value: 0.1
+      significance: True
+      alpha: 0.05
+      
+  CanESM5.AGCD.annual.3-months_under_p10_1985-2014.precip_Aus_NRM.CRPSS_hist_1985-2014:
+    hindcasts: CanESM5.annual.3-months_under_p10_1985-2014.precip_Aus_NRM
+    observations: AGCD.annual.3-months_under_p10_1985-2014.precip_Aus_NRM
+    simulations: CanESM5_hist.annual.3-months_under_p10_1985-2014.precip_Aus_NRM
+    apply:
+      all:
+        keep_period:
+          period: ["1985-01-01", "2014-12-31"]
+    verify:
+      metric: "crpss"
+      significance: True
+      alpha: 0.05
+      
+  CanESM5.AGCD.4-year.3-months_under_p10_1985-2014.precip_Aus_NRM.CRPSS_hist_1985-2014:
+    hindcasts: CanESM5.4-year.3-months_under_p10_1985-2014.precip_Aus_NRM
+    observations: AGCD.4-year.3-months_under_p10_1985-2014.precip_Aus_NRM
+    simulations: CanESM5_hist.4-year.3-months_under_p10_1985-2014.precip_Aus_NRM
+    apply:
+      all:
+        keep_period:
+          period: ["1985-01-01", "2014-12-31"]
+    verify:
+      metric: "crpss"
+      significance: True
+      alpha: 0.05

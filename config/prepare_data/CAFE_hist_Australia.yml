@@ -299,28 +299,79 @@ prepare:
 #         time: -1
 #         member: -1
         
-  annual.days_over_p90_1991-2020.ffdi_Aus_NRM:
+#   annual.days_over_p90_1991-2020.ffdi_Aus_NRM:
+#     uses:
+#       prepared:
+#         - "daily.full.ffdi_Aus_NRM"
+#     apply:
+#       over_percentile_threshold:
+#         percentile: 0.9
+#         percentile_period: ["1991-01-01", "2020-12-31"]
+#       coarsen:
+#         window_size: 365
+#         start_points: ["1960-11-01"]
+#         dim: "time"
+#       round_to_start_of_month:
+#         dim: "time"
+#       rechunk:
+#         time: -1
+#         member: -1
+        
+#   4-year.days_over_p90_1991-2020.ffdi_Aus_NRM:
+#     uses:
+#       prepared:
+#         - "annual.days_over_p90_1991-2020.ffdi_Aus_NRM"
+#     apply:
+#       rolling_mean:
+#         window_size: 4
+#         dim: "time"
+#       rechunk:
+#         time: -1
+#         member: -1
+
+#  Extremes - drought
+  3-month.full.precip_Aus_NRM:
+    uses:
+      atmos_isobaric_month:
+        - "precip"
+    apply:
+      rename:
+        ensemble: "member"
+      convert:
+        precip:
+          multiply_by: 86400
+      truncate_latitudes:
+      round_to_start_of_month:
+        dim: "time"
+      normalise_by_days_in_month:
+      rolling_mean:
+        window_size: 3
+        dim: "time"
+      average_over_NRM_super_clusters:
+      rechunk:
+        time: -1
+        member: -1
+        
+  annual.3-months_under_p10_1991-2020.precip_Aus_NRM:
     uses:
       prepared:
-        - "daily.full.ffdi_Aus_NRM"
+        - "3-month.full.precip_Aus_NRM"
     apply:
-      over_percentile_threshold:
-        percentile: 0.9
+      under_percentile_threshold:
+        percentile: 0.1
         percentile_period: ["1991-01-01", "2020-12-31"]
       coarsen:
-        window_size: 365
-        start_points: ["1960-11-01"]
-        dim: "time"
-      round_to_start_of_month:
+        window_size: 12
+        start_points: ["1961-01-01"] # First 3-month mean for Nov forecast is Jan
         dim: "time"
       rechunk:
         time: -1
         member: -1
         
-  4-year.days_over_p90_1991-2020.ffdi_Aus_NRM:
+  4-year.3-months_under_p10_1991-2020.precip_Aus_NRM:
     uses:
       prepared:
-        - "annual.days_over_p90_1991-2020.ffdi_Aus_NRM"
+        - "annual.3-months_under_p10_1991-2020.precip_Aus_NRM"
     apply:
       rolling_mean:
         window_size: 4

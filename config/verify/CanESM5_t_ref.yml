@@ -26,7 +26,7 @@ prepare:
 #     observations: JRA55.annual.anom_1985-2014.t_ref_global
 #     apply:
 #       all:
-#         mask_period:
+#         keep_period:
 #           period: ["1985-01-01", "2014-12-31"]
 #     verify:
 #       metric: "acc"
@@ -39,7 +39,7 @@ prepare:
 #     observations: JRA55.4-year.anom_1985-2014.t_ref_global
 #     apply:
 #       all:
-#         mask_period:
+#         keep_period:
 #           period: ["1985-01-01", "2014-12-31"]
 #     verify:
 #       metric: "acc"
@@ -53,7 +53,7 @@ prepare:
 #     simulations: CanESM5_hist.annual.anom_1985-2014.t_ref_global
 #     apply:
 #       all:
-#         mask_period:
+#         keep_period:
 #           period: ["1985-01-01", "2014-12-31"]
 #     verify:
 #       metric: "acc_initialised"
@@ -67,7 +67,7 @@ prepare:
 #     simulations: CanESM5_hist.4-year.anom_1985-2014.t_ref_global
 #     apply:
 #       all:
-#         mask_period:
+#         keep_period:
 #           period: ["1985-01-01", "2014-12-31"]
 #     verify:
 #       metric: "acc_initialised"
@@ -81,7 +81,7 @@ prepare:
 #     simulations: CanESM5_hist.annual.anom_1985-2014.t_ref_global
 #     apply:
 #       all:
-#         mask_period:
+#         keep_period:
 #           period: ["1985-01-01", "2014-12-31"]
 #     verify:
 #       metric: "msss_hist"
@@ -94,7 +94,7 @@ prepare:
 #     simulations: CanESM5_hist.4-year.anom_1985-2014.t_ref_global
 #     apply:
 #       all:
-#         mask_period:
+#         keep_period:
 #           period: ["1985-01-01", "2014-12-31"]
 #     verify:
 #       metric: "msss_hist"
@@ -106,7 +106,7 @@ prepare:
     observations: JRA55.annual.anom_1985-2014.t_ref_global
     apply:
       all:
-        mask_period:
+        keep_period:
           period: ["1985-01-01", "2014-12-31"]
     verify:
       metric: "msss_clim"
@@ -118,7 +118,7 @@ prepare:
     observations: JRA55.4-year.anom_1985-2014.t_ref_global
     apply:
       all:
-        mask_period:
+        keep_period:
           period: ["1985-01-01", "2014-12-31"]
     verify:
       metric: "msss_clim"
@@ -131,7 +131,7 @@ prepare:
 #     simulations: CanESM5_hist.annual.anom_1985-2014.t_ref_global
 #     apply:
 #       all:
-#         mask_period:
+#         keep_period:
 #           period: ["1985-01-01", "2014-12-31"]
 #     verify:
 #       metric: "crpss"
@@ -144,7 +144,7 @@ prepare:
 #     simulations: CanESM5_hist.4-year.anom_1985-2014.t_ref_global
 #     apply:
 #       all:
-#         mask_period:
+#         keep_period:
 #           period: ["1985-01-01", "2014-12-31"]
 #     verify:
 #       metric: "crpss"
@@ -157,7 +157,7 @@ prepare:
 #     observations: JRA55.annual.anom_1985-2014.t_ref_Aus_NRM
 #     apply:
 #       all:
-#         mask_period:
+#         keep_period:
 #           period: ["1985-01-01", "2014-12-31"]
 #     verify:
 #       metric: "acc"
@@ -170,7 +170,7 @@ prepare:
 #     observations: JRA55.4-year.anom_1985-2014.t_ref_Aus_NRM
 #     apply:
 #       all:
-#         mask_period:
+#         keep_period:
 #           period: ["1985-01-01", "2014-12-31"]
 #     verify:
 #       metric: "acc"
@@ -184,7 +184,7 @@ prepare:
 #     simulations: CanESM5_hist.annual.anom_1985-2014.t_ref_Aus_NRM
 #     apply:
 #       all:
-#         mask_period:
+#         keep_period:
 #           period: ["1985-01-01", "2014-12-31"]
 #     verify:
 #       metric: "acc_initialised"
@@ -198,7 +198,7 @@ prepare:
 #     simulations: CanESM5_hist.4-year.anom_1985-2014.t_ref_Aus_NRM
 #     apply:
 #       all:
-#         mask_period:
+#         keep_period:
 #           period: ["1985-01-01", "2014-12-31"]
 #     verify:
 #       metric: "acc_initialised"
@@ -212,7 +212,7 @@ prepare:
 #     simulations: CanESM5_hist.annual.anom_1985-2014.t_ref_Aus_NRM
 #     apply:
 #       all:
-#         mask_period:
+#         keep_period:
 #           period: ["1985-01-01", "2014-12-31"]
 #     verify:
 #       metric: "msss_hist"
@@ -225,7 +225,7 @@ prepare:
 #     simulations: CanESM5_hist.4-year.anom_1985-2014.t_ref_Aus_NRM
 #     apply:
 #       all:
-#         mask_period:
+#         keep_period:
 #           period: ["1985-01-01", "2014-12-31"]
 #     verify:
 #       metric: "msss_hist"
@@ -237,7 +237,7 @@ prepare:
     observations: JRA55.annual.anom_1985-2014.t_ref_Aus_NRM
     apply:
       all:
-        mask_period:
+        keep_period:
           period: ["1985-01-01", "2014-12-31"]
     verify:
       metric: "msss_clim"
@@ -249,7 +249,7 @@ prepare:
     observations: JRA55.4-year.anom_1985-2014.t_ref_Aus_NRM
     apply:
       all:
-        mask_period:
+        keep_period:
           period: ["1985-01-01", "2014-12-31"]
     verify:
       metric: "msss_clim"
@@ -262,7 +262,7 @@ prepare:
 #     simulations: CanESM5_hist.annual.anom_1985-2014.t_ref_Aus_NRM
 #     apply:
 #       all:
-#         mask_period:
+#         keep_period:
 #           period: ["1985-01-01", "2014-12-31"]
 #     verify:
 #       metric: "crpss"
@@ -275,7 +275,7 @@ prepare:
 #     simulations: CanESM5_hist.4-year.anom_1985-2014.t_ref_Aus_NRM
 #     apply:
 #       all:
-#         mask_period:
+#         keep_period:
 #           period: ["1985-01-01", "2014-12-31"]
 #     verify:
 #       metric: "crpss"

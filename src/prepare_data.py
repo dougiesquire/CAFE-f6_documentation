@@ -631,7 +631,9 @@ def prepare_dataset(config, save_dir, save=True):
                 if realm == "prepared":
                     ds.append(
                         xr.merge(
-                            xr.open_zarr(f"{save_dir}/{cfg['name']}.{v}.zarr")
+                            xr.open_zarr(
+                                f"{save_dir}/{cfg['name']}.{v}.zarr", use_cftime=True
+                            )
                             for v in var
                         )
                     )

@@ -26,7 +26,7 @@ prepare:
     observations: JRA55.annual.anom_1985-2014.slp_global
     apply:
       all:
-        mask_period:
+        keep_period:
           period: ["1985-01-01", "2014-12-31"]
     verify:
       metric: "acc"
@@ -39,7 +39,7 @@ prepare:
     observations: JRA55.4-year.anom_1985-2014.slp_global
     apply:
       all:
-        mask_period:
+        keep_period:
           period: ["1985-01-01", "2014-12-31"]
     verify:
       metric: "acc"
@@ -52,7 +52,7 @@ prepare:
     observations: JRA55.annual.anom_1985-2014.slp_global
     apply:
       all:
-        mask_period:
+        keep_period:
           period: ["1985-01-01", "2014-12-31"]
     verify:
       metric: "msss_clim"
@@ -64,7 +64,7 @@ prepare:
     observations: JRA55.4-year.anom_1985-2014.slp_global
     apply:
       all:
-        mask_period:
+        keep_period:
           period: ["1985-01-01", "2014-12-31"]
     verify:
       metric: "msss_clim"

@@ -242,10 +242,109 @@ prepare:
 #       significance: True
 #       alpha: 0.05
       
-  # Extreme precipitation
-  CAFEf6.AGCD.annual.days_over_p90_1991-2020.precip_Aus_NRM.rXY_1991-2020:
-    hindcasts: CAFEf6.annual.days_over_p90_1991-2020.precip_Aus_NRM
-    observations: AGCD.annual.days_over_p90_1991-2020.precip_Aus_NRM
+#   # Extreme precipitation
+#   CAFEf6.AGCD.annual.days_over_p90_1991-2020.precip_Aus_NRM.rXY_1991-2020:
+#     hindcasts: CAFEf6.annual.days_over_p90_1991-2020.precip_Aus_NRM
+#     observations: AGCD.annual.days_over_p90_1991-2020.precip_Aus_NRM
+#     verify:
+#       metric: "acc"
+#       metric_kwargs:
+#         correlation: "spearman_r"
+#       significance: True
+#       transform: "Fisher_z"
+#       alpha: 0.05
+      
+#   CAFEf6.AGCD.4-year.days_over_p90_1991-2020.precip_Aus_NRM.rXY_1991-2020:
+#     hindcasts: CAFEf6.4-year.days_over_p90_1991-2020.precip_Aus_NRM
+#     observations: AGCD.4-year.days_over_p90_1991-2020.precip_Aus_NRM
+#     apply:
+#       all:
+#         keep_period:
+#           period: ["1991-01-01", "2020-12-31"]
+#     verify:
+#       metric: "acc"
+#       metric_kwargs:
+#         correlation: "spearman_r"
+#       significance: True
+#       transform: "Fisher_z"
+#       alpha: 0.05
+
+#   CAFEf6.AGCD.annual.days_over_p90_1991-2020.precip_Aus_NRM.MSSS_hist_1991-2020:
+#     hindcasts: CAFEf6.annual.days_over_p90_1991-2020.precip_Aus_NRM
+#     observations: AGCD.annual.days_over_p90_1991-2020.precip_Aus_NRM
+#     simulations: CAFE_hist.annual.days_over_p90_1991-2020.precip_Aus_NRM
+#     verify:
+#       metric: "msss_hist"
+#       significance: True
+#       alpha: 0.05
+      
+#   CAFEf6.AGCD.4-year.days_over_p90_1991-2020.precip_Aus_NRM.MSSS_hist_1991-2020:
+#     hindcasts: CAFEf6.4-year.days_over_p90_1991-2020.precip_Aus_NRM
+#     observations: AGCD.4-year.days_over_p90_1991-2020.precip_Aus_NRM
+#     simulations: CAFE_hist.4-year.days_over_p90_1991-2020.precip_Aus_NRM
+#     apply:
+#       all:
+#         keep_period:
+#           period: ["1991-01-01", "2020-12-31"]
+#     verify:
+#       metric: "msss_hist"
+#       significance: True
+#       alpha: 0.05
+
+#   CAFEf6.AGCD.annual.days_over_p90_1991-2020.precip_Aus_NRM.MSSS_clim_1991-2020:
+#     hindcasts: CAFEf6.annual.days_over_p90_1991-2020.precip_Aus_NRM
+#     observations: AGCD.annual.days_over_p90_1991-2020.precip_Aus_NRM
+#     verify:
+#       metric: "msss_clim"
+#       metric_kwargs:
+#         clim_baseline_value: 0.1
+#       significance: True
+#       alpha: 0.05
+      
+#   CAFEf6.AGCD.4-year.days_over_p90_1991-2020.precip_Aus_NRM.MSSS_clim_1991-2020:
+#     hindcasts: CAFEf6.4-year.days_over_p90_1991-2020.precip_Aus_NRM
+#     observations: AGCD.4-year.days_over_p90_1991-2020.precip_Aus_NRM
+#     apply:
+#       all:
+#         keep_period:
+#           period: ["1991-01-01", "2020-12-31"]
+#     verify:
+#       metric: "msss_clim"
+#       metric_kwargs:
+#         clim_baseline_value: 0.1
+#       significance: True
+#       alpha: 0.05
+      
+#   CAFEf6.AGCD.annual.days_over_p90_1991-2020.precip_Aus_NRM.CRPSS_hist_1991-2020:
+#     hindcasts: CAFEf6.annual.days_over_p90_1991-2020.precip_Aus_NRM
+#     observations: AGCD.annual.days_over_p90_1991-2020.precip_Aus_NRM
+#     simulations: CAFE_hist.annual.days_over_p90_1991-2020.precip_Aus_NRM
+#     verify:
+#       metric: "crpss"
+#       significance: True
+#       alpha: 0.05
+      
+#   CAFEf6.AGCD.4-year.days_over_p90_1991-2020.precip_Aus_NRM.CRPSS_hist_1991-2020:
+#     hindcasts: CAFEf6.4-year.days_over_p90_1991-2020.precip_Aus_NRM
+#     observations: AGCD.4-year.days_over_p90_1991-2020.precip_Aus_NRM
+#     simulations: CAFE_hist.4-year.days_over_p90_1991-2020.precip_Aus_NRM
+#     apply:
+#       all:
+#         keep_period:
+#           period: ["1991-01-01", "2020-12-31"]
+#     verify:
+#       metric: "crpss"
+#       significance: True
+#       alpha: 0.05
+
+  # Drought
+  CAFEf6.AGCD.annual.3-months_under_p10_1991-2020.precip_Aus_NRM.rXY_1991-2020:
+    hindcasts: CAFEf6.annual.3-months_under_p10_1991-2020.precip_Aus_NRM
+    observations: AGCD.annual.3-months_under_p10_1991-2020.precip_Aus_NRM
+    apply:
+      all:
+        keep_period:
+          period: ["1991-01-01", "2020-12-31"]
     verify:
       metric: "acc"
       metric_kwargs:
@@ -254,9 +353,9 @@ prepare:
       transform: "Fisher_z"
       alpha: 0.05
       
-  CAFEf6.AGCD.4-year.days_over_p90_1991-2020.precip_Aus_NRM.rXY_1991-2020:
-    hindcasts: CAFEf6.4-year.days_over_p90_1991-2020.precip_Aus_NRM
-    observations: AGCD.4-year.days_over_p90_1991-2020.precip_Aus_NRM
+  CAFEf6.AGCD.4-year.3-months_under_p10_1991-2020.precip_Aus_NRM.rXY_1991-2020:
+    hindcasts: CAFEf6.4-year.3-months_under_p10_1991-2020.precip_Aus_NRM
+    observations: AGCD.4-year.3-months_under_p10_1991-2020.precip_Aus_NRM
     apply:
       all:
         keep_period:
@@ -269,19 +368,23 @@ prepare:
       transform: "Fisher_z"
       alpha: 0.05
 
-  CAFEf6.AGCD.annual.days_over_p90_1991-2020.precip_Aus_NRM.MSSS_hist_1991-2020:
-    hindcasts: CAFEf6.annual.days_over_p90_1991-2020.precip_Aus_NRM
-    observations: AGCD.annual.days_over_p90_1991-2020.precip_Aus_NRM
-    simulations: CAFE_hist.annual.days_over_p90_1991-2020.precip_Aus_NRM
+  CAFEf6.AGCD.annual.3-months_under_p10_1991-2020.precip_Aus_NRM.MSSS_hist_1991-2020:
+    hindcasts: CAFEf6.annual.3-months_under_p10_1991-2020.precip_Aus_NRM
+    observations: AGCD.annual.3-months_under_p10_1991-2020.precip_Aus_NRM
+    simulations: CAFE_hist.annual.3-months_under_p10_1991-2020.precip_Aus_NRM
+    apply:
+      all:
+        keep_period:
+          period: ["1991-01-01", "2020-12-31"]
     verify:
       metric: "msss_hist"
       significance: True
       alpha: 0.05
       
-  CAFEf6.AGCD.4-year.days_over_p90_1991-2020.precip_Aus_NRM.MSSS_hist_1991-2020:
-    hindcasts: CAFEf6.4-year.days_over_p90_1991-2020.precip_Aus_NRM
-    observations: AGCD.4-year.days_over_p90_1991-2020.precip_Aus_NRM
-    simulations: CAFE_hist.4-year.days_over_p90_1991-2020.precip_Aus_NRM
+  CAFEf6.AGCD.4-year.3-months_under_p10_1991-2020.precip_Aus_NRM.MSSS_hist_1991-2020:
+    hindcasts: CAFEf6.4-year.3-months_under_p10_1991-2020.precip_Aus_NRM
+    observations: AGCD.4-year.3-months_under_p10_1991-2020.precip_Aus_NRM
+    simulations: CAFE_hist.4-year.3-months_under_p10_1991-2020.precip_Aus_NRM
     apply:
       all:
         keep_period:
@@ -291,19 +394,9 @@ prepare:
       significance: True
       alpha: 0.05
 
-  CAFEf6.AGCD.annual.days_over_p90_1991-2020.precip_Aus_NRM.MSSS_clim_1991-2020:
-    hindcasts: CAFEf6.annual.days_over_p90_1991-2020.precip_Aus_NRM
-    observations: AGCD.annual.days_over_p90_1991-2020.precip_Aus_NRM
-    verify:
-      metric: "msss_clim"
-      metric_kwargs:
-        clim_baseline_value: 0.1
-      significance: True
-      alpha: 0.05
-      
-  CAFEf6.AGCD.4-year.days_over_p90_1991-2020.precip_Aus_NRM.MSSS_clim_1991-2020:
-    hindcasts: CAFEf6.4-year.days_over_p90_1991-2020.precip_Aus_NRM
-    observations: AGCD.4-year.days_over_p90_1991-2020.precip_Aus_NRM
+  CAFEf6.AGCD.annual.3-months_under_p10_1991-2020.precip_Aus_NRM.MSSS_clim_1991-2020:
+    hindcasts: CAFEf6.annual.3-months_under_p10_1991-2020.precip_Aus_NRM
+    observations: AGCD.annual.3-months_under_p10_1991-2020.precip_Aus_NRM
     apply:
       all:
         keep_period:
@@ -315,19 +408,37 @@ prepare:
       significance: True
       alpha: 0.05
       
-  CAFEf6.AGCD.annual.days_over_p90_1991-2020.precip_Aus_NRM.CRPSS_hist_1991-2020:
-    hindcasts: CAFEf6.annual.days_over_p90_1991-2020.precip_Aus_NRM
-    observations: AGCD.annual.days_over_p90_1991-2020.precip_Aus_NRM
-    simulations: CAFE_hist.annual.days_over_p90_1991-2020.precip_Aus_NRM
+  CAFEf6.AGCD.4-year.3-months_under_p10_1991-2020.precip_Aus_NRM.MSSS_clim_1991-2020:
+    hindcasts: CAFEf6.4-year.3-months_under_p10_1991-2020.precip_Aus_NRM
+    observations: AGCD.4-year.3-months_under_p10_1991-2020.precip_Aus_NRM
+    apply:
+      all:
+        keep_period:
+          period: ["1991-01-01", "2020-12-31"]
+    verify:
+      metric: "msss_clim"
+      metric_kwargs:
+        clim_baseline_value: 0.1
+      significance: True
+      alpha: 0.05
+      
+  CAFEf6.AGCD.annual.3-months_under_p10_1991-2020.precip_Aus_NRM.CRPSS_hist_1991-2020:
+    hindcasts: CAFEf6.annual.3-months_under_p10_1991-2020.precip_Aus_NRM
+    observations: AGCD.annual.3-months_under_p10_1991-2020.precip_Aus_NRM
+    simulations: CAFE_hist.annual.3-months_under_p10_1991-2020.precip_Aus_NRM
+    apply:
+      all:
+        keep_period:
+          period: ["1991-01-01", "2020-12-31"]
     verify:
       metric: "crpss"
       significance: True
       alpha: 0.05
       
-  CAFEf6.AGCD.4-year.days_over_p90_1991-2020.precip_Aus_NRM.CRPSS_hist_1991-2020:
-    hindcasts: CAFEf6.4-year.days_over_p90_1991-2020.precip_Aus_NRM
-    observations: AGCD.4-year.days_over_p90_1991-2020.precip_Aus_NRM
-    simulations: CAFE_hist.4-year.days_over_p90_1991-2020.precip_Aus_NRM
+  CAFEf6.AGCD.4-year.3-months_under_p10_1991-2020.precip_Aus_NRM.CRPSS_hist_1991-2020:
+    hindcasts: CAFEf6.4-year.3-months_under_p10_1991-2020.precip_Aus_NRM
+    observations: AGCD.4-year.3-months_under_p10_1991-2020.precip_Aus_NRM
+    simulations: CAFE_hist.4-year.3-months_under_p10_1991-2020.precip_Aus_NRM
     apply:
       all:
         keep_period:

@@ -25,7 +25,7 @@ prepare:
 #     observations: HadISST.annual.anom_1985-2014.sst_global
 #     apply:
 #       all:
-#         mask_period:
+#         keep_period:
 #           period: ["1985-01-01", "2014-12-31"]
 #     verify:
 #       metric: "acc"
@@ -38,7 +38,7 @@ prepare:
 #     observations: HadISST.annual.anom_1985-2014.sst_global
 #     apply:
 #       all:
-#         mask_period:
+#         keep_period:
 #           period: ["1971-01-01", "2017-12-31"]
 #     verify:
 #       metric: "acc"
@@ -51,7 +51,7 @@ prepare:
 #     observations: HadISST.4-year.anom_1985-2014.sst_global
 #     apply:
 #       all:
-#         mask_period:
+#         keep_period:
 #           period: ["1985-01-01", "2014-12-31"]
 #     verify:
 #       metric: "acc"
@@ -64,7 +64,7 @@ prepare:
 #     observations: HadISST.4-year.anom_1985-2014.sst_global
 #     apply:
 #       all:
-#         mask_period:
+#         keep_period:
 #           period: ["1971-01-01", "2017-12-31"]
 #     verify:
 #       metric: "acc"
@@ -78,7 +78,7 @@ prepare:
 #     simulations: EC_Earth3_hist.annual.anom_1985-2014.sst_global
 #     apply:
 #       all:
-#         mask_period:
+#         keep_period:
 #           period: ["1985-01-01", "2014-12-31"]
 #     verify:
 #       metric: "acc_initialised"
@@ -92,7 +92,7 @@ prepare:
 #     simulations: EC_Earth3_hist.4-year.anom_1985-2014.sst_global
 #     apply:
 #       all:
-#         mask_period:
+#         keep_period:
 #           period: ["1985-01-01", "2014-12-31"]
 #     verify:
 #       metric: "acc_initialised"
@@ -106,7 +106,7 @@ prepare:
 #     simulations: EC_Earth3_hist.annual.anom_1985-2014.sst_global
 #     apply:
 #       all:
-#         mask_period:
+#         keep_period:
 #           period: ["1985-01-01", "2014-12-31"]
 #     verify:
 #       metric: "msss_hist"
@@ -119,7 +119,7 @@ prepare:
 #     simulations: EC_Earth3_hist.4-year.anom_1985-2014.sst_global
 #     apply:
 #       all:
-#         mask_period:
+#         keep_period:
 #           period: ["1985-01-01", "2014-12-31"]
 #     verify:
 #       metric: "msss_hist"
@@ -131,7 +131,7 @@ prepare:
     observations: HadISST.annual.anom_1985-2014.sst_global
     apply:
       all:
-        mask_period:
+        keep_period:
           period: ["1985-01-01", "2014-12-31"]
     verify:
       metric: "msss_clim"
@@ -143,7 +143,7 @@ prepare:
     observations: HadISST.4-year.anom_1985-2014.sst_global
     apply:
       all:
-        mask_period:
+        keep_period:
           period: ["1985-01-01", "2014-12-31"]
     verify:
       metric: "msss_clim"
@@ -156,7 +156,7 @@ prepare:
 #     simulations: EC_Earth3_hist.annual.anom_1985-2014.sst_global
 #     apply:
 #       all:
-#         mask_period:
+#         keep_period:
 #           period: ["1985-01-01", "2014-12-31"]
 #     verify:
 #       metric: "crpss"
@@ -169,7 +169,7 @@ prepare:
 #     simulations: EC_Earth3_hist.4-year.anom_1985-2014.sst_global
 #     apply:
 #       all:
-#         mask_period:
+#         keep_period:
 #           period: ["1985-01-01", "2014-12-31"]
 #     verify:
 #       metric: "crpss"
