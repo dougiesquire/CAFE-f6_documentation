@@ -67,7 +67,8 @@ def hindcasts(hcsts, obsvs=None, hists=None, shade=False, ax=None, figsize=(15, 
         axs = fig.subplots(n_vars, 1, sharex=True)
         if n_vars == 1:
             axs = [axs]
-    else: axs = [ax]
+    else:
+        axs = [ax]
 
     # Plot the hindcasts
     colormaps = ["autumn", "winter", "cool"]
@@ -92,19 +93,25 @@ def hindcasts(hcsts, obsvs=None, hists=None, shade=False, ax=None, figsize=(15, 
                     h_mean = h.mean("member", keep_attrs=True)
                     for m in h.member:
                         axs[a].plot(
-                            h[hcst_time], 
-                            h.sel(member=m), 
-                            color=[0.8,0.8,0.8], 
-                            linestyle="-", 
+                            h[hcst_time],
+                            h.sel(member=m),
+                            color=[0.8, 0.8, 0.8],
+                            linestyle="-",
                             label="_nolabel_",
-                            zorder=-1
+                            zorder=-1,
                         )
                 else:
                     h_mean = h
                 axs[a].plot(
-                    h_mean[hcst_time][0], h_mean[0], color=c, marker="o", label="_nolabel_"
+                    h_mean[hcst_time][0],
+                    h_mean[0],
+                    color=c,
+                    marker="o",
+                    label="_nolabel_",
                 )
-                axs[a].plot(h_mean[hcst_time], h_mean, color=c, linestyle="-", label=label)
+                axs[a].plot(
+                    h_mean[hcst_time], h_mean, color=c, linestyle="-", label=label
+                )
     xlim = (hcst[hcst_time].min().item(), hcst[hcst_time].max().item())
 
     # Plot the observations
@@ -122,10 +129,12 @@ def hindcasts(hcsts, obsvs=None, hists=None, shade=False, ax=None, figsize=(15, 
     if hists is not None:
         for name, hist in hists.items():
             for a, var in enumerate(hist.data_vars):
-                h_mean = hist[var].mean("member", keep_attrs=True) if "member" in hist[var].dims else hist[var]
-                axs[a].plot(
-                    h_mean.time, h_mean, label=name
+                h_mean = (
+                    hist[var].mean("member", keep_attrs=True)
+                    if "member" in hist[var].dims
+                    else hist[var]
                 )
+                axs[a].plot(h_mean.time, h_mean, label=name)
 
     # Format plots
     ticks = xr.cftime_range(start=xlim[0], end=xlim[-1], freq="5AS", calendar="julian")
@@ -151,10 +160,13 @@ def hindcasts(hcsts, obsvs=None, hists=None, shade=False, ax=None, figsize=(15, 
     if ax is None:
         fig.patch.set_facecolor("w")
         return fig
-    else: return ax
+    else:
+        return ax
 
 
-def metric_maps(fields, variable, vrange, headings=None, add_colorbar=True, figsize=(15, 15)):
+def metric_maps(
+    fields, variable, vrange, headings=None, add_colorbar=True, figsize=(15, 15)
+):
     """
     Plot panels of skill score maps
 
@@ -175,7 +187,7 @@ def metric_maps(fields, variable, vrange, headings=None, add_colorbar=True, figs
     def _get_verif_period(ds):
         """Return a string of the verification period for a skill metric"""
         if "verification_period" in ds.coords:
-            if "lead" in ds['verification_period'].dims:
+            if "lead" in ds["verification_period"].dims:
                 return "Lead-dependent verification period"
             else:
                 return (
@@ -222,7 +234,7 @@ def metric_maps(fields, variable, vrange, headings=None, add_colorbar=True, figs
             add_colorbar=False,
         )
         p.axes.coastlines(color=[0.2, 0.2, 0.2], linewidth=0.75)
-        if f"{variable}_signif"in skill:
+        if f"{variable}_signif" in skill:
             ax.contourf(
                 lon,
                 lat,
@@ -328,7 +340,7 @@ def metrics(
                 )
                 metric_lines.append(p)
             plot_lines.append(metric_lines)
-            
+
             # if len(model_metrics) > 1:
             #     def logical_and(ds_1, ds_2):
             #         out = ds_1 & ds_2
@@ -346,7 +358,7 @@ def metrics(
             #     ).dropna(dim="lead")
             #     space = next(spacecycler)
             #     ax.plot(crosses.lead,[space]*len(crosses.lead), marker='x', linestyle="none", color=color)
-                
+
         if headings is not None:
             ax.set_title(headings[r][c])
 

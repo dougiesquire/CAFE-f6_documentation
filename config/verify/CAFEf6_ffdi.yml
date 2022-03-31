@@ -1,0 +1,116 @@
+# Config file for specifying skill assessment using src.verify()
+# ==================================================================================
+
+# prepare: required
+#    List of unique identifiers for skill metrics to prepare and save. This will 
+#    be used to save the prepared skill metric as {identifier}.zarr. Each identifier 
+#    can include the following:
+#
+#    hindcasts: required
+#        Name of collection in data/processed containing the hindcasts to assess. 
+#    observations: optional
+#        Name of collection in data/processed containing the observations.
+#    simulations: optional
+#        Name of collection in data/processed containing uninitialised simulations.
+#    apply: optional
+#        Functions and kwargs from src.utils to be applied sequentially to the 
+#        input data. Can be applied to all provided datasets using the key `all:`,
+#        or to individual datasets using, for example, `hindcasts: <functions>`
+#    verify: required
+#        Arguments to be passed to src.verify.calculate_metric
+
+prepare:
+  # Australian NRM region metrics vs JRA55
+  CAFEf6.JRA55.annual.days_over_p90_1991-2020.ffdi_Aus_NRM.rXY_1991-2020:
+    hindcasts: CAFEf6.annual.days_over_p90_1991-2020.ffdi_Aus_NRM
+    observations: JRA55.annual.days_over_p90_1991-2020.ffdi_Aus_NRM
+    verify:
+      metric: "acc"
+      metric_kwargs:
+        correlation: "spearman_r"
+      significance: True
+      transform: "Fisher_z"
+      alpha: 0.05
+      
+  CAFEf6.JRA55.4-year.days_over_p90_1991-2020.ffdi_Aus_NRM.rXY_1991-2020:
+    hindcasts: CAFEf6.4-year.days_over_p90_1991-2020.ffdi_Aus_NRM
+    observations: JRA55.4-year.days_over_p90_1991-2020.ffdi_Aus_NRM
+    apply:
+      all:
+        keep_period:
+          period: ["1991-01-01", "2020-12-31"]
+    verify:
+      metric: "acc"
+      metric_kwargs:
+        correlation: "spearman_r"
+      significance: True
+      transform: "Fisher_z"
+      alpha: 0.05
+
+  CAFEf6.JRA55.annual.days_over_p90_1991-2020.ffdi_Aus_NRM.MSSS_hist_1991-2020:
+    hindcasts: CAFEf6.annual.days_over_p90_1991-2020.ffdi_Aus_NRM
+    observations: JRA55.annual.days_over_p90_1991-2020.ffdi_Aus_NRM
+    simulations: CAFE_hist.annual.days_over_p90_1991-2020.ffdi_Aus_NRM
+    verify:
+      metric: "msss_hist"
+      significance: True
+      alpha: 0.05
+      
+  CAFEf6.JRA55.4-year.days_over_p90_1991-2020.ffdi_Aus_NRM.MSSS_hist_1991-2020:
+    hindcasts: CAFEf6.4-year.days_over_p90_1991-2020.ffdi_Aus_NRM
+    observations: JRA55.4-year.days_over_p90_1991-2020.ffdi_Aus_NRM
+    simulations: CAFE_hist.4-year.days_over_p90_1991-2020.ffdi_Aus_NRM
+    apply:
+      all:
+        keep_period:
+          period: ["1991-01-01", "2020-12-31"]
+    verify:
+      metric: "msss_hist"
+      significance: True
+      alpha: 0.05
+
+  CAFEf6.JRA55.annual.days_over_p90_1991-2020.ffdi_Aus_NRM.MSSS_clim_1991-2020:
+    hindcasts: CAFEf6.annual.days_over_p90_1991-2020.ffdi_Aus_NRM
+    observations: JRA55.annual.days_over_p90_1991-2020.ffdi_Aus_NRM
+    verify:
+      metric: "msss_clim"
+      metric_kwargs:
+        clim_baseline_value: 0.1
+      significance: True
+      alpha: 0.05
+      
+  CAFEf6.JRA55.4-year.days_over_p90_1991-2020.ffdi_Aus_NRM.MSSS_clim_1991-2020:
+    hindcasts: CAFEf6.4-year.days_over_p90_1991-2020.ffdi_Aus_NRM
+    observations: JRA55.4-year.days_over_p90_1991-2020.ffdi_Aus_NRM
+    apply:
+      all:
+        keep_period:
+          period: ["1991-01-01", "2020-12-31"]
+    verify:
+      metric: "msss_clim"
+      metric_kwargs:
+        clim_baseline_value: 0.1
+      significance: True
+      alpha: 0.05
+      
+  CAFEf6.JRA55.annual.days_over_p90_1991-2020.ffdi_Aus_NRM.CRPSS_hist_1991-2020:
+    hindcasts: CAFEf6.annual.days_over_p90_1991-2020.ffdi_Aus_NRM
+    observations: JRA55.annual.days_over_p90_1991-2020.ffdi_Aus_NRM
+    simulations: CAFE_hist.annual.days_over_p90_1991-2020.ffdi_Aus_NRM
+    verify:
+      metric: "crpss"
+      significance: True
+      alpha: 0.05
+      
+  CAFEf6.JRA55.4-year.days_over_p90_1991-2020.ffdi_Aus_NRM.CRPSS_hist_1991-2020:
+    hindcasts: CAFEf6.4-year.days_over_p90_1991-2020.ffdi_Aus_NRM
+    observations: JRA55.4-year.days_over_p90_1991-2020.ffdi_Aus_NRM
+    simulations: CAFE_hist.4-year.days_over_p90_1991-2020.ffdi_Aus_NRM
+    apply:
+      all:
+        keep_period:
+          period: ["1991-01-01", "2020-12-31"]
+    verify:
+      metric: "crpss"
+      significance: True
+      alpha: 0.05

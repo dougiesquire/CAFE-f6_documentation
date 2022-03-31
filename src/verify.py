@@ -54,7 +54,7 @@ def acc(hcst, obsv, correlation="pearson_r"):
     else:
         raise ValueError("Unrecognised value for input 'correlation'")
 
-        
+
 def acc_initialised(hcst, obsv, hist):
     """
     Return the initialised component of anomaly cross correlation between
@@ -127,7 +127,7 @@ def msss_clim(hcst, obsv, clim_baseline_value=0):
     obsv : xarray Dataset
         The observed timeseries
     clim_baseline_value : float, optional
-        The value to replicate for the climatological baseline. Defaults to 
+        The value to replicate for the climatological baseline. Defaults to
         zero, which is appropriate if hcst and obsv are anomalies
     """
     return _msss(hcst.mean("member"), obsv, clim_baseline_value * xr.ones_like(obsv))
@@ -341,7 +341,7 @@ def _iterative_blocked_bootstrap(*objects, blocks, n_iterations):
     for obj, ind, core_dims in zip(objects, indices, input_core_dims):
         # Assume all variables have the same dtype
         output_dtype = obj[list(obj.data_vars)[0]].dtype
-    
+
         result.append(
             xr.apply_ufunc(
                 _bootstrap,

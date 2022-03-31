@@ -56,11 +56,9 @@ def composite_function(function_dict):
     return composite(*funcs)
 
 
-def average_over_lon_lat_box(ds, box, lon_dim="lon", lat_dim="lat"):
+def extract_lon_lat_box(ds, box, weighted_average, lon_dim="lon", lat_dim="lat"):
     """
-    Return the average over a region specified by a range of longitudes and latitudes.
-
-    Longitude is assumed to range from 0-360 deg.
+    Return a region specified by a range of longitudes and latitudes.
 
     Parameters
     ----------
@@ -69,33 +67,29 @@ def average_over_lon_lat_box(ds, box, lon_dim="lon", lat_dim="lat"):
     box : iterable
         Iterable with the following elements in this order:
         [lon_lower, lon_upper, lat_lower, lat_upper]
+        where longitudes are specified between 0 and 360 deg E and latitudes
+        are specified between -90 and 90 deg N
+    weighted_average : boolean
+        If True, reture the area weighted average over the region, otherwise
+        return the region
     lon_dim : str, optional
         The name of the longitude dimension
     lat_dim : str, optional
         The name of the latitude dimension
     """
 
-    def _get_lat_lon_region(ds, box, lat_dim, lon_dim):
-        # Allow for regions that cross 360 deg
-        if box[0] > box[1]:
-            lon_region = (ds[lon_dim] >= box[0]) | (ds[lon_dim] <= box[1])
-        else:
-            lon_region = (ds[lon_dim] >= box[0]) & (ds[lon_dim] <= box[1])
-        lat_region = (ds[lat_dim] >= box[2]) & (ds[lat_dim] <= box[3])
-        region = lon_region & lat_region
-        return ds.where(region)
-
     # Force longitudues to range from 0-360
     ds = ds.assign_coords({lon_dim: (ds[lon_dim] + 360) % 360})
 
     if (lat_dim in ds.dims) and (lon_dim in ds.dims):
+        # Can extract region using indexing
         average_dims = [lat_dim, lon_dim]
+
         # Allow for regions that cross 360 deg
         if box[0] > box[1]:
             lon_logic_func = np.logical_or
         else:
             lon_logic_func = np.logical_and
-
         lon_inds = np.where(
             lon_logic_func(ds[lon_dim].values >= box[0], ds[lon_dim].values <= box[1])
         )[0]
@@ -104,14 +98,28 @@ def average_over_lon_lat_box(ds, box, lon_dim="lon", lat_dim="lat"):
         )[0]
         region = ds.isel({lon_dim: lon_inds, lat_dim: lat_inds})
     else:
+        # Use `where` to extract region
         if (lat_dim in ds.dims) and (lon_dim not in ds.dims):
             average_dims = set([lat_dim, *ds[lon_dim].dims])
         elif (lat_dim not in ds.dims) and (lon_dim in ds.dims):
             average_dims = set([*ds[lat_dim].dims, lon_dim])
         else:
             average_dims = set([*ds[lat_dim].dims, *ds[lon_dim].dims])
-        region = _get_lat_lon_region(ds, box, lat_dim, lon_dim)
-    return region.weighted(ds["area"].fillna(0)).mean(dim=average_dims, keep_attrs=True)
+
+        # Allow for regions that cross 360 deg
+        if box[0] > box[1]:
+            lon_region = (ds[lon_dim] >= box[0]) | (ds[lon_dim] <= box[1])
+        else:
+            lon_region = (ds[lon_dim] >= box[0]) & (ds[lon_dim] <= box[1])
+        lat_region = (ds[lat_dim] >= box[2]) & (ds[lat_dim] <= box[3])
+        region = ds.where(lon_region & lat_region, drop=True)
+
+    if weighted_average:
+        return region.weighted(ds["area"].fillna(0)).mean(
+            dim=average_dims, keep_attrs=True
+        )
+    else:
+        return region
 
 
 def calculate_nino34(sst_anom, sst_name="sst"):
@@ -128,7 +136,7 @@ def calculate_nino34(sst_anom, sst_name="sst"):
     """
 
     box = [190.0, 240.0, -5.0, 5.0]
-    nino34 = average_over_lon_lat_box(sst_anom, box)
+    nino34 = extract_lon_lat_box(sst_anom, box, weighted_average=True)
     nino34 = nino34.rename({sst_name: "nino34"})
     nino34["nino34"].attrs = dict(long_name="ENSO Nino 3.4 Index", units="degC")
     return nino34
@@ -151,9 +159,9 @@ def calculate_dmi(sst_anom, sst_name="sst"):
     region_W = [50.0, 70.0, -10.0, 10.0]
     region_E = [90.0, 110.0, -10.0, 0.0]
 
-    dmi = average_over_lon_lat_box(sst_anom, region_W) - average_over_lon_lat_box(
-        sst_anom, region_E
-    )
+    dmi = extract_lon_lat_box(
+        sst_anom, region_W, weighted_average=True
+    ) - extract_lon_lat_box(sst_anom, region_E, weighted_average=True)
     dmi = dmi.rename({sst_name: "dmi"})
     dmi["dmi"].attrs = dict(long_name="IOD Dipole Mode Index", units="degC")
     return dmi
@@ -310,9 +318,9 @@ def calculate_amv(sst_anom, sst_name="sst"):
     north_atlantic_box = [280.0, 360.0, 0.0, 60.0]
     global_box = [0.0, 360.0, -60.0, 60.0]
 
-    amv = average_over_lon_lat_box(
-        sst_anom, north_atlantic_box
-    ) - average_over_lon_lat_box(sst_anom, global_box)
+    amv = extract_lon_lat_box(
+        sst_anom, north_atlantic_box, weighted_average=True
+    ) - extract_lon_lat_box(sst_anom, global_box, weighted_average=True)
     amv = amv.rename({sst_name: "amv"})
     amv["amv"].attrs = dict(
         long_name="Atlantic multi-decadal variability", units="degC"
@@ -337,10 +345,10 @@ def calculate_ipo(sst_anom, sst_name="sst"):
     region_3 = [150.0, 200.0, -50.0, -15.0]
 
     ipo = (
-        average_over_lon_lat_box(sst_anom, region_2)
+        extract_lon_lat_box(sst_anom, region_2, weighted_average=True)
         - (
-            average_over_lon_lat_box(sst_anom, region_1)
-            + average_over_lon_lat_box(sst_anom, region_3)
+            extract_lon_lat_box(sst_anom, region_1, weighted_average=True)
+            + extract_lon_lat_box(sst_anom, region_3, weighted_average=True)
         )
         / 2
     )
@@ -403,7 +411,9 @@ def calculate_wind_speed(u_v, u_name, v_name, lon_dim="lon", lat_dim="lat"):
     return V
 
 
-def calculate_tmean_from_tmin_tmax(ds, tmin_name="tmin", tmax_name="tmax", tmean_name="tmean"):
+def calculate_tmean_from_tmin_tmax(
+    ds, tmin_name="tmin", tmax_name="tmax", tmean_name="tmean"
+):
     """
     Estimate tmean as the average of tmin and tmax
 
@@ -526,7 +536,7 @@ def calculate_ffdi(
     FFDI = (
         D**0.987 * np.exp(0.0338 * T - 0.0345 * H + 0.0234 * W + 0.243147)
     ).to_dataset(name="FFDI")
-    FFDI["FFDI"].attrs = dict(long_name="Forest Fire Danger Index", units="-")
+    FFDI["ffdi"].attrs = dict(long_name="Forest Fire Danger Index", units="-")
     return FFDI
 
 
@@ -659,7 +669,7 @@ def truncate_latitudes(ds, dp=10, lat_dim="lat"):
 def drop_Feb_29(ds, time_dim="time"):
     """
     Drop all occurences of Feb 29th
-    
+
     Parameters
     ----------
     ds : xarray Dataset
@@ -687,15 +697,15 @@ def rechunk(ds, **chunks):
 
 def select(ds, **selection):
     """
-    Returns a new dataset with each array indexed by tick labels along the 
+    Returns a new dataset with each array indexed by tick labels along the
     specified dimension(s)
-    
+
     Parameters
     ----------
     ds : xarray Dataset
         A dataset to select from
     selection : dict
-        A dict with keys matching dimensions and values given by scalars, 
+        A dict with keys matching dimensions and values given by scalars,
         slices or arrays of tick labels
     """
     return ds.sel(selection)
@@ -738,8 +748,12 @@ def rename(ds, **names):
         if k in ds:
             if v in ds:
                 # New name already exists
-                if all(ds[k].values==ds[v].values):
-                    ds = ds.assign_coords({v: (k, ds[v].values)}).swap_dims({k: v}).drop(k)
+                if all(ds[k].values == ds[v].values):
+                    ds = (
+                        ds.assign_coords({v: ds[v].rename({v: k})})
+                        .swap_dims({k: v})
+                        .drop(k)
+                    )
             else:
                 ds = ds.rename({k: v})
     return ds
@@ -829,7 +843,7 @@ def _get_groupby_and_mean_dims(ds):
 def anomalise(ds, clim_period):
     """
     Returns the anomalies of ds relative to its climatology over clim_period.
-    
+
     Will not work for hindcasts with initialisation frequencies more regular
     than monthly.
 
@@ -852,7 +866,7 @@ def anomalise(ds, clim_period):
 def calculate_percentile_thresholds(ds, percentile, percentile_period):
     """
     Returns the percentile values of ds over a provided period.
-    
+
     Will not work for hindcasts with initialisation frequencies more regular
     than monthly.
 
@@ -880,7 +894,7 @@ def over_percentile_threshold(ds, percentile, percentile_period):
     Find which values in the input array are over a specified percentile
     calculated over a specified period. Returns a boolean array with True
     where values are over the specified percentile and False elsewhere.
-    
+
     Will not work for hindcasts with initialisation frequencies more regular
     than monthly.
 
@@ -908,7 +922,7 @@ def under_percentile_threshold(ds, percentile, percentile_period):
     Find which values in the input array are under a specified percentile
     calculated over a specified period. Returns a boolean array with True
     where values are under the specified percentile and False elsewhere.
-    
+
     Will not work for hindcasts with initialisation frequencies more regular
     than monthly.
 
@@ -1141,10 +1155,11 @@ def resample(ds, freq, start_points=None, min_samples=None, dim="time"):
     dim : str, optional
         The name of the time dimension to resample along
     """
+
     def mean_min_samples(ds, dim, min_samples):
-        """ Return mean only if there are more than min_samples along dim """
+        """Return mean only if there are more than min_samples along dim"""
         m = ds.mean(dim, skipna=False)
-        return m if len(ds[dim]) >= min_samples else np.nan*m
+        return m if len(ds[dim]) >= min_samples else np.nan * m
 
     if start_points is None:
         start_points = [None]
@@ -1155,7 +1170,9 @@ def resample(ds, freq, start_points=None, min_samples=None, dim="time"):
         if min_samples is None:
             dss.append(resampled.mean(dim))
         else:
-            dss.append(resampled.apply(mean_min_samples, dim=dim, min_samples=min_samples))
+            dss.append(
+                resampled.apply(mean_min_samples, dim=dim, min_samples=min_samples)
+            )
     return xr.concat(dss, dim=dim).sortby(dim)
 
 
@@ -1253,8 +1270,10 @@ def add_area_using_cdo_gridarea(ds, lon_dim="lon", lat_dim="lat"):
     lat_dim : str, optional
         The name of the latitude dimension on ds
     """
-    other_dims = set(ds.dims) - set([lon_dim, lat_dim])
-    area = gridarea_cdo(ds.isel({d: 0 for d in other_dims}).load())
+    ds_minimum = ds[[list(ds.data_vars)[0]]]
+    other_dims = set(ds_minimum.dims) - set([lon_dim, lat_dim])
+    ds_minimum = ds_minimum.isel({d: 0 for d in other_dims}, drop=True).load()
+    area = gridarea_cdo(ds_minimum)
     return ds.assign_coords({"area": area})
 
 

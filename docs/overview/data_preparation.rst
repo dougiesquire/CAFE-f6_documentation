@@ -36,16 +36,18 @@ Steps for preparing the various datasets used in this project are specified in y
            dim: "lead"
        apply:                           # <- Functions and kwargs from src.utils to be
          rename:                        #    applied sequentially to the opened (and
-           names:                       #    concatenated/merge, where appropriate)
-             ensemble: "member"         #    dataset
-         convert:
-           conversion:
-             precip:
-               multiply_by: 86400
+           ensemble: "member"           #    concatenated/merge, where appropriate)
+         convert:                       #    dataset
+           precip:
+             multiply_by: 86400
          round_to_start_of_month:
            dim: ["init", "time"]
          rechunk:
-           chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+           init: -1
+           lead: 1
+           member: -1
+           lat: 10
+           lon: 12
 
      annual.anom_1991-2020.precip:
        uses:
@@ -55,7 +57,11 @@ Steps for preparing the various datasets used in this project are specified in y
          anomalise:
            clim_period: ["1991-01-01", "2020-12-31"]
          rechunk:
-           chunks: {"init": -1, "lead": 1, "member": -1, "lat": 10, "lon": 12}
+           init: -1
+           lead: 1
+           member: -1
+           lat: 10
+           lon: 12
 
 Code for preparing data from a specified yaml file is in ``src/prepare_data.py``:
 

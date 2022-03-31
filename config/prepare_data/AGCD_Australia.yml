@@ -374,43 +374,83 @@ prepare:
 #       rechunk:
 #         time: -1
         
+# #  Extremes - days of rainfall above 90th percentile
+#   daily.full.precip_Aus_NRM:
+#     uses:
+#       - "precip"
+#     apply:
+#       keep_period:
+#         period: ["1960-11-01", "2021-12-31"]
+#       force_to_Julian_calendar:
+#       drop_Feb_29:
+#       add_area_using_cdo_gridarea:
+#       average_over_NRM_super_clusters:
+#       rechunk:
+#         time: -1
+        
+#   annual.days_over_p90_1991-2020.precip_Aus_NRM:
+#     uses:
+#       prepared:
+#         - "daily.full.precip_Aus_NRM"
+#     apply:
+#       over_percentile_threshold:
+#         percentile: 0.9
+#         percentile_period: ["1991-01-01", "2020-12-31"]
+#       coarsen:
+#         window_size: 365
+#         start_points: ["1960-11-01"]
+#         dim: "time"
+#       round_to_start_of_month:
+#         dim: "time"
+#       rechunk:
+#         time: -1
+        
+#   4-year.days_over_p90_1991-2020.precip_Aus_NRM:
+#     uses:
+#       prepared:
+#         - "annual.days_over_p90_1991-2020.precip_Aus_NRM"
+#     apply:
+#       rolling_mean:
+#         window_size: 4
+#       rechunk:
+#         time: -1
+        
 #  Extremes - days of rainfall above 90th percentile
-  daily.full.precip_Aus_NRM:
+  3-month-Nov.full.precip_Aus_NRM:
     uses:
       - "precip"
     apply:
-      rename:
-        tmax: "precip"
-      keep_period:
-        period: ["1960-11-01", "2021-12-31"]
+      resample:
+        freq: "Q-JAN"
+        start_points: ["1960-11-01"]
+        min_samples: 90
+      round_to_start_of_month:
+        dim: "time"
       force_to_Julian_calendar:
-      drop_Feb_29:
       add_area_using_cdo_gridarea:
       average_over_NRM_super_clusters:
       rechunk:
         time: -1
         
-  annual.days_over_p90_1991-2020.precip_Aus_NRM:
+  annual-Nov.3-months_over_p90_1991-2020.precip_Aus_NRM:
     uses:
       prepared:
-        - "daily.full.precip_Aus_NRM"
+        - "3-month-Nov.full.precip_Aus_NRM"
     apply:
-      over_percentile_threshold:
-        percentile: 0.9
+      under_percentile_threshold:
+        percentile: 0.1
         percentile_period: ["1991-01-01", "2020-12-31"]
       coarsen:
-        window_size: 365
-        start_points: ["1960-11-01"]
-        dim: "time"
-      round_to_start_of_month:
+        window_size: 4
+        start_points: ["1961-01-01"]
         dim: "time"
       rechunk:
         time: -1
         
-  4-year.days_over_p90_1991-2020.precip_Aus_NRM:
+  4-year-Nov.3-months_over_p90_1991-2020.precip_Aus_NRM:
     uses:
       prepared:
-        - "annual.days_over_p90_1991-2020.precip_Aus_NRM"
+        - "annual-Nov.3-months_over_p90_1991-2020.precip_Aus_NRM"
     apply:
       rolling_mean:
         window_size: 4
