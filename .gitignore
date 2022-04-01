@@ -103,3 +103,6 @@ data/testing/*
 
 # Dask files
 dask-worker-space/
+
+# zarr files
+*.zarr
