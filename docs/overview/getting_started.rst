@@ -11,6 +11,7 @@ The structure of this project is as follows:
    ├── Makefile            <- Makefile with commands like `make data`
    ├── data
    │   ├── processed       <- The postprocessed data
+   │   ├── exploratory     <- Messy, uncurated data generated while exploring things
    │   ├── skill           <- Skill assessment of processed data
    │   ├── raw             <- The original, immutable data (or symlinks to them)
    │   └── testing         <- The data used while checking CAFE-f6 forecast reproducibility
