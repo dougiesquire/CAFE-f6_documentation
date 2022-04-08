@@ -361,24 +361,24 @@ prepare:
 #         member: -1
 
 #  Extremes - days of FFDI above 90th percentile
-  daily.full.ffdi_Aus_NRM:
-    uses:
-      atmos_isobaric_daily:
-        - "precip"
-        - "rh"
-        - "t_ref_max"
-        - "u_ref"
-        - "v_ref"
-    preprocess:
-      drop_Feb_29:
-      select:
-        level: 1000
-      convert_time_to_lead:
-        time_freq: "days"
-      truncate_latitudes:
-      extract_lon_lat_box:
-        box: [110, 155, -45, -9]
-        weighted_average: False
+#   daily.full.ffdi_Aus_NRM:
+#     uses:
+#       atmos_isobaric_daily:
+#         - "precip"
+#         - "rh"
+#         - "t_ref_max"
+#         - "u_ref"
+#         - "v_ref"
+#     preprocess:
+#       drop_Feb_29:
+#       select:
+#         level: 1000
+#       convert_time_to_lead:
+#         time_freq: "days"
+#       truncate_latitudes:
+#       extract_lon_lat_box:
+#         box: [110, 155, -45, -9]
+#         weighted_average: False
 #     apply:
 #       rename:
 #         ensemble: "member"
