@@ -403,6 +403,7 @@ prepare:
       over_percentile_threshold:
         percentile: 0.9
         percentile_period: ["1991-01-01", "2020-12-31"]
+        frequency: "month"
       coarsen:
         window_size: 365
         start_points: ["1960-11-01"]

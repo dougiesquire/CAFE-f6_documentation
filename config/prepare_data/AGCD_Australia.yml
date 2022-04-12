@@ -355,6 +355,7 @@ prepare:
 #       over_percentile_threshold:
 #         percentile: 0.9
 #         percentile_period: ["1991-01-01", "2020-12-31"]
+#         frequency: "month"
 #       coarsen:
 #         window_size: 365
 #         start_points: ["1960-11-01"]
@@ -396,6 +397,7 @@ prepare:
 #       over_percentile_threshold:
 #         percentile: 0.9
 #         percentile_period: ["1991-01-01", "2020-12-31"]
+#         frequency: "month"
 #       coarsen:
 #         window_size: 365
 #         start_points: ["1960-11-01"]
@@ -415,7 +417,7 @@ prepare:
 #       rechunk:
 #         time: -1
         
-#  Extremes - days of rainfall above 90th percentile
+#  Extremes - days of rainfall under 10th percentile
 #   month.full.precip_Aus_NRM:
 #     uses:
 #       - "precip"
@@ -451,6 +453,7 @@ prepare:
 #       under_percentile_threshold:
 #         percentile: 0.1
 #         percentile_period: ["1991-01-01", "2020-12-31"]
+#         frequency: "month"
 #       coarsen:
 #         window_size: 12
 #         start_points: ["1960-03-01"] # First 3-month mean for Jan forecast is Mar
@@ -466,6 +469,7 @@ prepare:
 #       under_percentile_threshold:
 #         percentile: 0.1
 #         percentile_period: ["1991-01-01", "2020-12-31"]
+#         frequency: "month"
 #       coarsen:
 #         window_size: 12
 #         start_points: ["1961-01-01"] # First 3-month mean for Nov forecast is Jan
@@ -490,6 +494,7 @@ prepare:
       under_percentile_threshold:
         percentile: 0.1
         percentile_period: ["1985-01-01", "2014-12-31"]
+        frequency: "month"
       coarsen:
         window_size: 12
         start_points: ["1960-03-01"] # First 3-month mean for Jan forecast is Mar
@@ -505,6 +510,7 @@ prepare:
       under_percentile_threshold:
         percentile: 0.1
         percentile_period: ["1985-01-01", "2014-12-31"]
+        frequency: "month"
       coarsen:
         window_size: 12
         start_points: ["1961-01-01"] # First 3-month mean for Nov forecast is Jan

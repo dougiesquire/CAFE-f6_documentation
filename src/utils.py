@@ -820,9 +820,9 @@ def keep_period(ds, period):
         raise ValueError("I don't know how to mask the time period for this data")
 
 
-def _get_groupby_and_mean_dims(ds):
+def _get_groupby_and_reduce_dims(ds):
     """
-    Get the groupby and averaging dimensions for performing operations like
+    Get the groupby and reduction dimensions for performing operations like
     calculating anomalies and percentile thresholds
     """
     if "time" in ds.dims:
@@ -830,14 +830,14 @@ def _get_groupby_and_mean_dims(ds):
     elif "init" in ds.dims:
         groupby_dim = "init"
     else:
-        raise ValueError("I don't know how to compute the percentiles for this data")
+        raise ValueError("I don't know how to perform a groupby on this data")
 
     if "member" in ds.dims:
-        mean_dim = [groupby_dim, "member"]
+        reduce_dim = [groupby_dim, "member"]
     else:
-        mean_dim = groupby_dim
+        reduce_dim = groupby_dim
 
-    return groupby_dim, mean_dim
+    return groupby_dim, reduce_dim
 
 
 def anomalise(ds, clim_period):
@@ -857,18 +857,15 @@ def anomalise(ds, clim_period):
     """
     ds_period = keep_period(ds, clim_period)
 
-    groupby_dim, mean_dim = _get_groupby_and_mean_dims(ds)
+    groupby_dim, reduce_dim = _get_groupby_and_reduce_dims(ds)
 
-    clim = ds_period.groupby(f"{groupby_dim}.month").mean(mean_dim)
+    clim = ds_period.groupby(f"{groupby_dim}.month").mean(reduce_dim)
     return (ds.groupby(f"{groupby_dim}.month") - clim).drop("month")
 
 
-def calculate_percentile_thresholds(ds, percentile, percentile_period):
+def calculate_percentile_thresholds(ds, percentile, percentile_period, percentile_dim=None, frequency=None):
     """
     Returns the percentile values of ds over a provided period.
-
-    Will not work for hindcasts with initialisation frequencies more regular
-    than monthly.
 
     Parameters
     ----------
@@ -879,25 +876,35 @@ def calculate_percentile_thresholds(ds, percentile, percentile_period):
     percentile_period : iterable
         Size 2 iterable containing strings indicating the start and end dates
         of the period over which to calculate the percentile thresholds
+    percentile_dim : str or list of str, optional
+        The dimension(s) over which to compute the percentile thresholds. If None,
+        these will determined automatically based on the type of input data:
+        - timeseries : percentile_dim = "time"
+        - forecasts : percentile_dim = "init" [, "member"]
+    frequency : str. optional
+        The frequency at which to bin the percentiles percentiles, e.g. per month. 
+        Must be an available attribute of the datetime accessor. Specify "None" to 
+        indicate no frequency (percentiles calculated over all times)
     """
     ds_period = keep_period(ds, percentile_period)
+    groupby_dim, reduce_dim = _get_groupby_and_reduce_dims(ds)
+    if percentile_dim is not None:
+        reduce_dim = percentile_dim
 
-    groupby_dim, mean_dim = _get_groupby_and_mean_dims(ds)
+    if frequency is None:
+        return ds_period.quantile(q=percentile, dim=reduce_dim)
+    else:
+        return ds_period.groupby(f"{groupby_dim}.{frequency}").quantile(
+            q=percentile, dim=reduce_dim
+        )
 
-    return ds_period.groupby(f"{groupby_dim}.month").quantile(
-        q=percentile, dim=mean_dim
-    )
 
-
-def over_percentile_threshold(ds, percentile, percentile_period):
+def over_percentile_threshold(ds, percentile, percentile_period, percentile_dim=None, frequency=None):
     """
     Find which values in the input array are over a specified percentile
     calculated over a specified period. Returns a boolean array with True
     where values are over the specified percentile and False elsewhere.
 
-    Will not work for hindcasts with initialisation frequencies more regular
-    than monthly.
-
     Parameters
     ----------
     ds : xarray Dataset
@@ -907,25 +914,27 @@ def over_percentile_threshold(ds, percentile, percentile_period):
     percentile_period : iterable
         Size 2 iterable containing strings indicating the start and end dates
         of the period over which to calculate the percentile thresholds
+    frequency : str. optional
+        The frequency at which to bin the percentiles percentiles, e.g. per month. 
+        Must be an available attribute of the datetime accessor. Specify "None" to 
+        indicate no frequency (percentiles calculated over all times)
     """
-    groupby_dim, _ = _get_groupby_and_mean_dims(ds)
-
     percentile_thresholds = calculate_percentile_thresholds(
-        ds, percentile, percentile_period
+        ds, percentile, percentile_period, percentile_dim, frequency
     )
+    if frequency is None:
+        return ds > percentile_thresholds
+    else:
+        groupby_dim, _ = _get_groupby_and_reduce_dims(ds)
+        return (ds.groupby(f"{groupby_dim}.{frequency}") > percentile_thresholds).drop(frequency)
 
-    return (ds.groupby(f"{groupby_dim}.month") > percentile_thresholds).drop("month")
 
-
-def under_percentile_threshold(ds, percentile, percentile_period):
+def under_percentile_threshold(ds, percentile, percentile_period, percentile_dim=None, frequency=None):
     """
     Find which values in the input array are under a specified percentile
     calculated over a specified period. Returns a boolean array with True
     where values are under the specified percentile and False elsewhere.
 
-    Will not work for hindcasts with initialisation frequencies more regular
-    than monthly.
-
     Parameters
     ----------
     ds : xarray Dataset
@@ -935,14 +944,20 @@ def under_percentile_threshold(ds, percentile, percentile_period):
     percentile_period : iterable
         Size 2 iterable containing strings indicating the start and end dates
         of the period over which to calculate the percentile thresholds
+    frequency : str. optional
+        The frequency at which to bin the percentiles percentiles, e.g. per month. 
+        Must be an available attribute of the datetime accessor. Specify "None" to 
+        indicate no frequency (percentiles calculated over all times)
     """
-    groupby_dim, _ = _get_groupby_and_mean_dims(ds)
-
     percentile_thresholds = calculate_percentile_thresholds(
-        ds, percentile, percentile_period
+        ds, percentile, percentile_period, percentile_dim, frequency
     )
-
-    return (ds.groupby(f"{groupby_dim}.month") < percentile_thresholds).drop("month")
+    
+    if frequency is None:
+        return ds < percentile_thresholds
+    else:
+        groupby_dim, _ = _get_groupby_and_reduce_dims(ds)
+        return (ds.groupby(f"{groupby_dim}.month") < percentile_thresholds).drop("month")
 
 
 def interpolate_to_grid_from_file(ds, file, add_area=True, ignore_degenerate=True):

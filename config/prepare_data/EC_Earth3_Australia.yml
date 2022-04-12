@@ -145,6 +145,7 @@ prepare:
       under_percentile_threshold:
         percentile: 0.1
         percentile_period: ["1985-01-01", "2014-12-31"]
+        frequency: "month"
       coarsen:
         window_size: 12
         dim: "lead"
