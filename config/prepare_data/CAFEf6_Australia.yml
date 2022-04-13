@@ -181,7 +181,34 @@ prepare:
 #         lead: 1
 #         member: -1
 
-#  Extremes - days of max temp above 90th percentile
+# Extremes - Excess heat factor
+  daily.mbc_1991-2020.t_ref_Aus:
+    uses:
+      atmos_isobaric_daily:
+        - "t_ref"
+    preprocess:
+      drop_Feb_29:
+      convert_time_to_lead:
+        time_freq: "days"
+      truncate_latitudes:
+      extract_lon_lat_box:
+        box: [110, 155, -45, -9]
+        weighted_average: False
+    apply:
+      rename:
+        ensemble: "member"
+      convert:
+        t_ref:
+          add: -273.15
+      round_to_start_of_day:
+        dim: ["init", "time"]
+      mask_CAFEf6_reduced_dt:
+      rechunk:
+        init: -1
+        lead: 28
+        member: -1
+
+# #  Extremes - days of max temp above 90th percentile
 #   daily.full.t_ref_max_Aus_NRM:
 #     uses:
 #       atmos_isobaric_daily:
