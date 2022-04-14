@@ -826,25 +826,25 @@ def _get_groupby_and_reduce_dims(ds, frequency):
     """
 
     def _same_group_per_lead(time, frequency):
-        return all(
-            [
-                (lambda a: (a == a[0]).all())(
-                    getattr(time.sel(lead=l).dt, frequency).values
-                )
-                for l in time.lead
-            ]
-        )
+        group_value = getattr(time.dt, frequency)
+        return (group_value == group_value.isel(init=0)).all()
 
     if "time" in ds.dims:
         groupby = f"time.{frequency}" if (frequency is not None) else None
         reduce_dim = "time"
     elif "init" in ds.dims:
-        # In the case of forecast data, if frequency is not None, all that 
-        # is done is to check that all the group values are the same for each
-        # lead
         if frequency is not None:
-            assert _same_group_per_lead(
-                ds.time.compute(), frequency
+            # In the case of forecast data, if frequency is not None, all that
+            # is done is to check that all the group values are the same for each
+            # lead
+            time = ds.time.compute()
+            same_group_per_lead = (
+                time.groupby("init.month")
+                .map(_same_group_per_lead, frequency=frequency)
+                .values
+            )
+            assert all(
+                same_group_per_lead
             ), "All group values are not the same for each lead"
         groupby = f"init.month"
         reduce_dim = "init"
