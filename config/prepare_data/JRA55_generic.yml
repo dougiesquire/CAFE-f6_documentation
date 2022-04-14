@@ -37,7 +37,8 @@ prepare:
 #         initial_time0_hours: "time"
 #         g0_lat_1: "lat"
 #         g0_lon_2: "lon"
-#       force_to_Julian_calendar:
+#       convert_calendar:
+#         calendar: "julian"
 #       coarsen:
 #         window_size: 12
 #         start_points: ["1960-01-01"]
@@ -59,7 +60,8 @@ prepare:
 #         initial_time0_hours: "time"
 #         g0_lat_1: "lat"
 #         g0_lon_2: "lon"
-#       force_to_Julian_calendar:
+#       convert_calendar:
+#         calendar: "julian"
 #       coarsen:
 #         window_size: 12
 #         start_points: ["1960-11-01"]
@@ -71,49 +73,51 @@ prepare:
 #         lat: 10
 #         lon: 12
 
-  annual-Jan.full.slp_global:
-    uses:
-      surface_month:
-        - "PRMSL_GDS0_MSL"
-    apply:
-      rename:
-        PRMSL_GDS0_MSL: "slp"
-        initial_time0_hours: "time"
-        g0_lat_1: "lat"
-        g0_lon_2: "lon"
-      force_to_Julian_calendar:
-      coarsen:
-        window_size: 12
-        start_points: ["1960-01-01"]
-        dim: "time"
-      interpolate_to_grid_from_file:
-        file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
-      rechunk:
-        time: -1
-        lat: 10
-        lon: 12
+#   annual-Jan.full.slp_global:
+#     uses:
+#       surface_month:
+#         - "PRMSL_GDS0_MSL"
+#     apply:
+#       rename:
+#         PRMSL_GDS0_MSL: "slp"
+#         initial_time0_hours: "time"
+#         g0_lat_1: "lat"
+#         g0_lon_2: "lon"
+#       convert_calendar:
+#         calendar: "julian"
+#       coarsen:
+#         window_size: 12
+#         start_points: ["1960-01-01"]
+#         dim: "time"
+#       interpolate_to_grid_from_file:
+#         file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
+#       rechunk:
+#         time: -1
+#         lat: 10
+#         lon: 12
         
-  annual-Nov.full.slp_global:
-    uses:
-      surface_month:
-        - "PRMSL_GDS0_MSL"
-    apply:
-      rename:
-        PRMSL_GDS0_MSL: "slp"
-        initial_time0_hours: "time"
-        g0_lat_1: "lat"
-        g0_lon_2: "lon"
-      force_to_Julian_calendar:
-      coarsen:
-        window_size: 12
-        start_points: ["1960-11-01"]
-        dim: "time"
-      interpolate_to_grid_from_file:
-        file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
-      rechunk:
-        time: -1
-        lat: 10
-        lon: 12
+#   annual-Nov.full.slp_global:
+#     uses:
+#       surface_month:
+#         - "PRMSL_GDS0_MSL"
+#     apply:
+#       rename:
+#         PRMSL_GDS0_MSL: "slp"
+#         initial_time0_hours: "time"
+#         g0_lat_1: "lat"
+#         g0_lon_2: "lon"
+#       convert_calendar:
+#         calendar: "julian"
+#       coarsen:
+#         window_size: 12
+#         start_points: ["1960-11-01"]
+#         dim: "time"
+#       interpolate_to_grid_from_file:
+#         file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
+#       rechunk:
+#         time: -1
+#         lat: 10
+#         lon: 12
 
 #   3-month.anom_1991-2020.sam:
 #     uses:
@@ -125,7 +129,8 @@ prepare:
 #         initial_time0_hours: "time"
 #         g0_lat_1: "lat"
 #         g0_lon_2: "lon"
-#       force_to_Julian_calendar:
+#       convert_calendar:
+#         calendar: "julian"
 #       calculate_sam:
 #         clim_period: ["1991-01-01", "2020-12-31"]
 #       rolling_mean:
@@ -145,7 +150,8 @@ prepare:
 #         initial_time0_hours: "time"
 #         g0_lat_1: "lat"
 #         g0_lon_2: "lon"
-#       force_to_Julian_calendar:
+#       convert_calendar:
+#         calendar: "julian"
 #       calculate_sam:
 #         clim_period: ["1985-01-01", "2014-12-31"]
 #       rolling_mean:
@@ -165,7 +171,8 @@ prepare:
 #         initial_time0_hours: "time"
 #         g0_lat_1: "lat"
 #         g0_lon_2: "lon"
-#       force_to_Julian_calendar:
+#       convert_calendar:
+#         calendar: "julian"
 #       calculate_nao:
 #         clim_period: ["1991-01-01", "2020-12-31"]
 #       rolling_mean:
@@ -185,7 +192,8 @@ prepare:
 #         initial_time0_hours: "time"
 #         g0_lat_1: "lat"
 #         g0_lon_2: "lon"
-#       force_to_Julian_calendar:
+#       convert_calendar:
+#         calendar: "julian"
 #       calculate_nao:
 #         clim_period: ["1985-01-01", "2014-12-31"]
 #       rolling_mean:
@@ -203,6 +211,7 @@ prepare:
 #     apply:
 #       anomalise:
 #         clim_period: ["1991-01-01", "2020-12-31"]
+#         frequency: "month"
 #       rechunk:
 #         time: -1
 #         lat: 10
@@ -215,6 +224,7 @@ prepare:
 #     apply:
 #       anomalise:
 #         clim_period: ["1991-01-01", "2020-12-31"]
+#         frequency: "month"
 #       rechunk:
 #         time: -1
 #         lat: 10
@@ -238,6 +248,7 @@ prepare:
 #     apply:
 #       anomalise:
 #         clim_period: ["1985-01-01", "2014-12-31"]
+#         frequency: "month"
 #       rechunk:
 #         time: -1
 #         lat: 10
@@ -250,6 +261,7 @@ prepare:
 #     apply:
 #       anomalise:
 #         clim_period: ["1985-01-01", "2014-12-31"]
+#         frequency: "month"
 #       rechunk:
 #         time: -1
 #         lat: 10
@@ -266,75 +278,79 @@ prepare:
 #         lat: 10
 #         lon: 12
 
-  annual-Jan.anom_1991-2020.slp_global:
-    uses:
-      prepared:
-        - "annual-Jan.full.slp_global"
-    apply:
-      anomalise:
-        clim_period: ["1991-01-01", "2020-12-31"]
-      rechunk:
-        time: -1
-        lat: 10
-        lon: 12
+#   annual-Jan.anom_1991-2020.slp_global:
+#     uses:
+#       prepared:
+#         - "annual-Jan.full.slp_global"
+#     apply:
+#       anomalise:
+#         clim_period: ["1991-01-01", "2020-12-31"]
+#         frequency: "month"
+#       rechunk:
+#         time: -1
+#         lat: 10
+#         lon: 12
         
-  annual-Nov.anom_1991-2020.slp_global:
-    uses:
-      prepared:
-        - "annual-Nov.full.slp_global"
-    apply:
-      anomalise:
-        clim_period: ["1991-01-01", "2020-12-31"]
-      rechunk:
-        time: -1
-        lat: 10
-        lon: 12
+#   annual-Nov.anom_1991-2020.slp_global:
+#     uses:
+#       prepared:
+#         - "annual-Nov.full.slp_global"
+#     apply:
+#       anomalise:
+#         clim_period: ["1991-01-01", "2020-12-31"]
+#         frequency: "month"
+#       rechunk:
+#         time: -1
+#         lat: 10
+#         lon: 12
         
-  annual.anom_1991-2020.slp_global:
-    uses:
-      prepared:
-        - "annual-Jan.anom_1991-2020.slp_global"
-        - "annual-Nov.anom_1991-2020.slp_global"
-    apply:
-      rechunk:
-        time: -1
-        lat: 10
-        lon: 12
+#   annual.anom_1991-2020.slp_global:
+#     uses:
+#       prepared:
+#         - "annual-Jan.anom_1991-2020.slp_global"
+#         - "annual-Nov.anom_1991-2020.slp_global"
+#     apply:
+#       rechunk:
+#         time: -1
+#         lat: 10
+#         lon: 12
         
-  annual-Jan.anom_1985-2014.slp_global:
-    uses:
-      prepared:
-        - "annual-Jan.full.slp_global"
-    apply:
-      anomalise:
-        clim_period: ["1985-01-01", "2014-12-31"]
-      rechunk:
-        time: -1
-        lat: 10
-        lon: 12
+#   annual-Jan.anom_1985-2014.slp_global:
+#     uses:
+#       prepared:
+#         - "annual-Jan.full.slp_global"
+#     apply:
+#       anomalise:
+#         clim_period: ["1985-01-01", "2014-12-31"]
+#         frequency: "month"
+#       rechunk:
+#         time: -1
+#         lat: 10
+#         lon: 12
         
-  annual-Nov.anom_1985-2014.slp_global:
-    uses:
-      prepared:
-        - "annual-Nov.full.slp_global"
-    apply:
-      anomalise:
-        clim_period: ["1985-01-01", "2014-12-31"]
-      rechunk:
-        time: -1
-        lat: 10
-        lon: 12
+#   annual-Nov.anom_1985-2014.slp_global:
+#     uses:
+#       prepared:
+#         - "annual-Nov.full.slp_global"
+#     apply:
+#       anomalise:
+#         clim_period: ["1985-01-01", "2014-12-31"]
+#         frequency: "month"
+#       rechunk:
+#         time: -1
+#         lat: 10
+#         lon: 12
         
-  annual.anom_1985-2014.slp_global:
-    uses:
-      prepared:
-        - "annual-Jan.anom_1985-2014.slp_global"
-        - "annual-Nov.anom_1985-2014.slp_global"
-    apply:
-      rechunk:
-        time: -1
-        lat: 10
-        lon: 12
+#   annual.anom_1985-2014.slp_global:
+#     uses:
+#       prepared:
+#         - "annual-Jan.anom_1985-2014.slp_global"
+#         - "annual-Nov.anom_1985-2014.slp_global"
+#     apply:
+#       rechunk:
+#         time: -1
+#         lat: 10
+#         lon: 12
            
 #   # Prepare 4-year-averages from prepared datasets
 #   4-year-Jan.anom_1991-2020.t_ref_global:
@@ -407,72 +423,72 @@ prepare:
 #         lat: 10
 #         lon: 12
 
-  4-year-Jan.anom_1991-2020.slp_global:
-    uses:
-      prepared:
-        - "annual-Jan.anom_1991-2020.slp_global"
-    apply:
-      rolling_mean:
-        window_size: 4
-      rechunk:
-        time: -1
-        lat: 10
-        lon: 12
+#   4-year-Jan.anom_1991-2020.slp_global:
+#     uses:
+#       prepared:
+#         - "annual-Jan.anom_1991-2020.slp_global"
+#     apply:
+#       rolling_mean:
+#         window_size: 4
+#       rechunk:
+#         time: -1
+#         lat: 10
+#         lon: 12
         
-  4-year-Nov.anom_1991-2020.slp_global:
-    uses:
-      prepared:
-        - "annual-Nov.anom_1991-2020.slp_global"
-    apply:
-      rolling_mean:
-        window_size: 4
-      rechunk:
-        time: -1
-        lat: 10
-        lon: 12
+#   4-year-Nov.anom_1991-2020.slp_global:
+#     uses:
+#       prepared:
+#         - "annual-Nov.anom_1991-2020.slp_global"
+#     apply:
+#       rolling_mean:
+#         window_size: 4
+#       rechunk:
+#         time: -1
+#         lat: 10
+#         lon: 12
         
-  4-year.anom_1991-2020.slp_global:
-    uses:
-      prepared:
-        - "4-year-Jan.anom_1991-2020.slp_global"
-        - "4-year-Nov.anom_1991-2020.slp_global"
-    apply:
-      rechunk:
-        time: -1
-        lat: 10
-        lon: 12
+#   4-year.anom_1991-2020.slp_global:
+#     uses:
+#       prepared:
+#         - "4-year-Jan.anom_1991-2020.slp_global"
+#         - "4-year-Nov.anom_1991-2020.slp_global"
+#     apply:
+#       rechunk:
+#         time: -1
+#         lat: 10
+#         lon: 12
         
-  4-year-Jan.anom_1985-2014.slp_global:
-    uses:
-      prepared:
-        - "annual-Jan.anom_1985-2014.slp_global"
-    apply:
-      rolling_mean:
-        window_size: 4
-      rechunk:
-        time: -1
-        lat: 10
-        lon: 12
+#   4-year-Jan.anom_1985-2014.slp_global:
+#     uses:
+#       prepared:
+#         - "annual-Jan.anom_1985-2014.slp_global"
+#     apply:
+#       rolling_mean:
+#         window_size: 4
+#       rechunk:
+#         time: -1
+#         lat: 10
+#         lon: 12
         
-  4-year-Nov.anom_1985-2014.slp_global:
-    uses:
-      prepared:
-        - "annual-Nov.anom_1985-2014.slp_global"
-    apply:
-      rolling_mean:
-        window_size: 4
-      rechunk:
-        time: -1
-        lat: 10
-        lon: 12
+#   4-year-Nov.anom_1985-2014.slp_global:
+#     uses:
+#       prepared:
+#         - "annual-Nov.anom_1985-2014.slp_global"
+#     apply:
+#       rolling_mean:
+#         window_size: 4
+#       rechunk:
+#         time: -1
+#         lat: 10
+#         lon: 12
         
-  4-year.anom_1985-2014.slp_global:
-    uses:
-      prepared:
-        - "4-year-Jan.anom_1985-2014.slp_global"
-        - "4-year-Nov.anom_1985-2014.slp_global"
-    apply:
-      rechunk:
-        time: -1
-        lat: 10
-        lon: 12
+#   4-year.anom_1985-2014.slp_global:
+#     uses:
+#       prepared:
+#         - "4-year-Jan.anom_1985-2014.slp_global"
+#         - "4-year-Nov.anom_1985-2014.slp_global"
+#     apply:
+#       rechunk:
+#         time: -1
+#         lat: 10
+#         lon: 12

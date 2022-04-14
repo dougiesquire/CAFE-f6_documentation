@@ -41,7 +41,8 @@ prepare:
 #         window_size: 12
 #         start_points: ["1960-01-01"]
 #         dim: "time"
-#       force_to_Julian_calendar:
+#       convert_calendar:
+#         calendar: "julian"
 #       interpolate_to_grid_from_file:
 #         file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
 #       rechunk:
@@ -67,7 +68,8 @@ prepare:
 #         window_size: 12
 #         start_points: ["1960-01-01"]
 #         dim: "time"
-#       force_to_Julian_calendar:
+#       convert_calendar:
+#         calendar: "julian"
 #       interpolate_to_grid_from_file:
 #         file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
 #       rechunk:
@@ -76,28 +78,29 @@ prepare:
 #         lat: 10
 #         lon: 12
 
-  annual.full.slp_global:
-    uses:
-      Amon:
-        - "psl"
-    apply:
-      rename:
-        psl: "slp"
-        areacella: "area"
-      round_to_start_of_month:
-        dim: "time"
-      coarsen:
-        window_size: 12
-        start_points: ["1960-01-01"]
-        dim: "time"
-      force_to_Julian_calendar:
-      interpolate_to_grid_from_file:
-        file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
-      rechunk:
-        time: -1
-        member: -1
-        lat: 10
-        lon: 12
+#   annual.full.slp_global:
+#     uses:
+#       Amon:
+#         - "psl"
+#     apply:
+#       rename:
+#         psl: "slp"
+#         areacella: "area"
+#       round_to_start_of_month:
+#         dim: "time"
+#       coarsen:
+#         window_size: 12
+#         start_points: ["1960-01-01"]
+#         dim: "time"
+#       convert_calendar:
+#         calendar: "julian"
+#       interpolate_to_grid_from_file:
+#         file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
+#       rechunk:
+#         time: -1
+#         member: -1
+#         lat: 10
+#         lon: 12
       
 #   annual.full.sst_global:
 #     uses:
@@ -117,7 +120,8 @@ prepare:
 #         window_size: 12
 #         start_points: ["1960-01-01"]
 #         dim: "time"
-#       force_to_Julian_calendar:
+#       convert_calendar:
+#         calendar: "julian"
 #       interpolate_to_grid_from_file:
 #         file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
 #       rechunk:
@@ -140,7 +144,8 @@ prepare:
 #         latitude: "lat"
 #       round_to_start_of_month:
 #         dim: "time"
-#       force_to_Julian_calendar:
+#       convert_calendar:
+#         calendar: "julian"
 #       calculate_nino34:
 #       rolling_mean:
 #         window_size: 3
@@ -164,7 +169,8 @@ prepare:
 #         latitude: "lat"
 #       round_to_start_of_month:
 #         dim: "time"
-#       force_to_Julian_calendar:
+#       convert_calendar:
+#         calendar: "julian"
 #       calculate_dmi:
 #       rolling_mean:
 #         window_size: 3
@@ -184,7 +190,8 @@ prepare:
 #         areacella: "area"
 #       round_to_start_of_month:
 #         dim: "time"
-#       force_to_Julian_calendar:
+#       convert_calendar:
+#         calendar: "julian"
 #       calculate_sam:
 #         clim_period: ["1985-01-01", "2014-12-31"]
 #       rolling_mean:
@@ -205,7 +212,8 @@ prepare:
 #         areacella: "area"
 #       round_to_start_of_month:
 #         dim: "time"
-#       force_to_Julian_calendar:
+#       convert_calendar:
+#         calendar: "julian"
 #       calculate_nao:
 #         clim_period: ["1985-01-01", "2014-12-31"]
 #       rolling_mean:
@@ -224,6 +232,7 @@ prepare:
 #     apply:
 #       anomalise:
 #         clim_period: ["1985-01-01", "2014-12-31"]
+#         frequency: "month"
 #       rechunk:
 #         time: -1
 #         member: -1
@@ -237,24 +246,26 @@ prepare:
 #     apply:
 #       anomalise:
 #         clim_period: ["1985-01-01", "2014-12-31"]
+#         frequency: "month"
 #       rechunk:
 #         time: -1
 #         member: -1
 #         lat: 10
 #         lon: 12
 
-  annual.anom_1985-2014.slp_global:
-    uses:
-      prepared:
-        - "annual.full.slp_global"
-    apply:
-      anomalise:
-        clim_period: ["1985-01-01", "2014-12-31"]
-      rechunk:
-        time: -1
-        member: -1
-        lat: 10
-        lon: 12
+#   annual.anom_1985-2014.slp_global:
+#     uses:
+#       prepared:
+#         - "annual.full.slp_global"
+#     apply:
+#       anomalise:
+#         clim_period: ["1985-01-01", "2014-12-31"]
+#         frequency: "month"
+#       rechunk:
+#         time: -1
+#         member: -1
+#         lat: 10
+#         lon: 12
         
 #   annual.anom_1985-2014.sst_global:
 #     uses:
@@ -263,6 +274,7 @@ prepare:
 #     apply:
 #       anomalise:
 #         clim_period: ["1985-01-01", "2014-12-31"]
+#         frequency: "month"
 #       rechunk:
 #         time: -1
 #         member: -1
@@ -276,6 +288,7 @@ prepare:
 #     apply:
 #       anomalise:
 #         clim_period: ["1985-01-01", "2014-12-31"]
+#         frequency: "month"
 #       rechunk:
 #         time: -1
 #         member: -1
@@ -287,6 +300,7 @@ prepare:
 #     apply:
 #       anomalise:
 #         clim_period: ["1985-01-01", "2014-12-31"]
+#         frequency: "month"
 #       rechunk:
 #         time: -1
 #         member: -1
@@ -318,18 +332,18 @@ prepare:
 #         lat: 10
 #         lon: 12
 
-  4-year.anom_1985-2014.slp_global:
-    uses:
-      prepared:
-        - "annual.anom_1985-2014.slp_global"
-    apply:
-      rolling_mean:
-        window_size: 4
-      rechunk:
-        time: -1
-        member: -1
-        lat: 10
-        lon: 12
+#   4-year.anom_1985-2014.slp_global:
+#     uses:
+#       prepared:
+#         - "annual.anom_1985-2014.slp_global"
+#     apply:
+#       rolling_mean:
+#         window_size: 4
+#       rechunk:
+#         time: -1
+#         member: -1
+#         lat: 10
+#         lon: 12
         
 #   4-year.anom_1985-2014.sst_global:
 #     uses:

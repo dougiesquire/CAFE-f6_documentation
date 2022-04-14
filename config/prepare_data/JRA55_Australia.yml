@@ -37,7 +37,8 @@ prepare:
 #         initial_time0_hours: "time"
 #         g0_lat_1: "lat"
 #         g0_lon_2: "lon"
-#       force_to_Julian_calendar:
+#       convert_calendar:
+#         calendar: "julian"
 #       add_area_using_cdo_gridarea:
 #       coarsen:
 #         window_size: 12
@@ -57,7 +58,8 @@ prepare:
 #         initial_time0_hours: "time"
 #         g0_lat_1: "lat"
 #         g0_lon_2: "lon"
-#       force_to_Julian_calendar:
+#       convert_calendar:
+#         calendar: "julian"
 #       add_area_using_cdo_gridarea:
 #       coarsen:
 #         window_size: 12
@@ -79,7 +81,8 @@ prepare:
 #         initial_time0_hours: "time"
 #         g0_lat_1: "lat"
 #         g0_lon_2: "lon"
-#       force_to_Julian_calendar:
+#       convert_calendar:
+#         calendar: "julian"
 #       add_area_using_cdo_gridarea:
 #       calculate_wind_speed:
 #         u_name: "u_ref"
@@ -104,7 +107,8 @@ prepare:
 #         initial_time0_hours: "time"
 #         g0_lat_1: "lat"
 #         g0_lon_2: "lon"
-#       force_to_Julian_calendar:
+#       convert_calendar:
+#         calendar: "julian"
 #       add_area_using_cdo_gridarea:
 #       calculate_wind_speed:
 #         u_name: "u_ref"
@@ -125,6 +129,7 @@ prepare:
 #     apply:
 #       anomalise:
 #         clim_period: ["1991-01-01", "2020-12-31"]
+#         frequency: "month"
 #       rechunk:
 #         time: -1
         
@@ -135,6 +140,7 @@ prepare:
 #     apply:
 #       anomalise:
 #         clim_period: ["1991-01-01", "2020-12-31"]
+#         frequency: "month"
 #       rechunk:
 #         time: -1
         
@@ -154,6 +160,7 @@ prepare:
 #     apply:
 #       anomalise:
 #         clim_period: ["1985-01-01", "2014-12-31"]
+#         frequency: "month"
 #       rechunk:
 #         time: -1
         
@@ -164,6 +171,7 @@ prepare:
 #     apply:
 #       anomalise:
 #         clim_period: ["1985-01-01", "2014-12-31"]
+#         frequency: "month"
 #       rechunk:
 #         time: -1
         
@@ -183,6 +191,7 @@ prepare:
 #     apply:
 #       anomalise:
 #         clim_period: ["1991-01-01", "2020-12-31"]
+#         frequency: "month"
 #       rechunk:
 #         time: -1
         
@@ -193,6 +202,7 @@ prepare:
 #     apply:
 #       anomalise:
 #         clim_period: ["1991-01-01", "2020-12-31"]
+#         frequency: "month"
 #       rechunk:
 #         time: -1
         
@@ -212,6 +222,7 @@ prepare:
 #     apply:
 #       anomalise:
 #         clim_period: ["1985-01-01", "2014-12-31"]
+#         frequency: "month"
 #       rechunk:
 #         time: -1
         
@@ -222,6 +233,7 @@ prepare:
 #     apply:
 #       anomalise:
 #         clim_period: ["1985-01-01", "2014-12-31"]
+#         frequency: "month"
 #       rechunk:
 #         time: -1
         
@@ -351,49 +363,49 @@ prepare:
 #       rechunk:
 #         time: -1
         
-# #  Extremes - days of FFDI above 90th percentile
-#   daily.full.ffdi_Aus_NRM:
-#     uses:
-#       surface_daily:
-#         - "TPRAT_GDS0_SFC"
-#         - "TMAX_GDS4_HTGL"
-#         - "UGRD_GDS0_HTGL"
-#         - "VGRD_GDS0_HTGL"
-#       isobaric_daily:
-#         - "RH_GDS0_ISBL"  
-#     apply:
-#       rename:
-#         TPRAT_GDS0_SFC: "precip"
-#         TMAX_GDS4_HTGL: "t_ref_max"
-#         RH_GDS0_ISBL: "rh"
-#         UGRD_GDS0_HTGL: "u_ref"
-#         VGRD_GDS0_HTGL: "v_ref"
-#         initial_time0_hours: "time"
-#         g0_lat_1: "lat"
-#         g0_lon_2: "lon"
-#         g0_lat_2: "lat"
-#         g0_lon_3: "lon"
-#         lv_ISBL1: "level"
-#       convert:
-#         t_ref_max:
-#           add: -273.15
-#         u_ref:
-#           multiply_by: 3.6
-#         v_ref:
-#           multiply_by: 3.6
-#       force_to_Julian_calendar:
-#       drop_Feb_29:
-#       select:
-#         level: 1000
-#       add_area_using_cdo_gridarea:
-#       calculate_ffdi:
-#         clim_period: ["1991-01-01", "2020-12-31"]
-#         wind_from_components: True
-#       round_to_start_of_day:
-#         dim: "time"
-#       average_over_NRM_super_clusters:
-#       rechunk:
-#         time: -1
+#  Extremes - days of FFDI above 90th percentile
+  daily.full.ffdi_Aus_NRM:
+    uses:
+      surface_daily:
+        - "TPRAT_GDS0_SFC"
+        - "TMAX_GDS4_HTGL"
+        - "UGRD_GDS0_HTGL"
+        - "VGRD_GDS0_HTGL"
+      isobaric_daily:
+        - "RH_GDS0_ISBL"  
+    apply:
+      rename:
+        TPRAT_GDS0_SFC: "precip"
+        TMAX_GDS4_HTGL: "t_ref_max"
+        RH_GDS0_ISBL: "rh"
+        UGRD_GDS0_HTGL: "u_ref"
+        VGRD_GDS0_HTGL: "v_ref"
+        initial_time0_hours: "time"
+        g0_lat_1: "lat"
+        g0_lon_2: "lon"
+        g0_lat_2: "lat"
+        g0_lon_3: "lon"
+        lv_ISBL1: "level"
+      convert:
+        t_ref_max:
+          add: -273.15
+        u_ref:
+          multiply_by: 3.6
+        v_ref:
+          multiply_by: 3.6
+      select:
+        level: 1000
+      convert_calendar:
+        calendar: "noleap"
+      add_area_using_cdo_gridarea:
+      calculate_ffdi:
+        clim_period: ["1991-01-01", "2020-12-31"]
+        wind_from_components: True
+      round_to_start_of_day:
+        dim: "time"
+      average_over_NRM_super_clusters:
+      rechunk:
+        time: -1
         
   annual.days_over_p90_1991-2020.ffdi_Aus_NRM:
     uses:
@@ -403,7 +415,7 @@ prepare:
       over_percentile_threshold:
         percentile: 0.9
         percentile_period: ["1991-01-01", "2020-12-31"]
-        frequency: "month"
+        frequency: "dayofyear"
       coarsen:
         window_size: 365
         start_points: ["1960-11-01"]

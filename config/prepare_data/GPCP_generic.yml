@@ -27,182 +27,188 @@
 name: "GPCP"
 
 prepare:
-  annual-Jan.full.precip_global:
-    uses:
-      - "precip"
-    apply:
-      rename:
-        latitude: "lat"
-        longitude: "lon"
-      force_to_Julian_calendar:
-      coarsen:
-        window_size: 12
-        start_points: ["1979-01-01"]
-        dim: "time"
-      interpolate_to_grid_from_file:
-        file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
-      rechunk:
-        time: -1
-        lat: 10
-        lon: 12
+#   annual-Jan.full.precip_global:
+#     uses:
+#       - "precip"
+#     apply:
+#       rename:
+#         latitude: "lat"
+#         longitude: "lon"
+#       convert_calendar:
+#         calendar: "julian"
+#       coarsen:
+#         window_size: 12
+#         start_points: ["1979-01-01"]
+#         dim: "time"
+#       interpolate_to_grid_from_file:
+#         file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
+#       rechunk:
+#         time: -1
+#         lat: 10
+#         lon: 12
         
-  annual-Nov.full.precip_global:
-    uses:
-      - "precip"
-    apply:
-      rename:
-        latitude: "lat"
-        longitude: "lon"
-      force_to_Julian_calendar:
-      coarsen:
-        window_size: 12
-        start_points: ["1979-11-01"]
-        dim: "time"
-      interpolate_to_grid_from_file:
-        file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
-      rechunk:
-        time: -1
-        lat: 10
-        lon: 12
+#   annual-Nov.full.precip_global:
+#     uses:
+#       - "precip"
+#     apply:
+#       rename:
+#         latitude: "lat"
+#         longitude: "lon"
+#       convert_calendar:
+#         calendar: "julian"
+#       coarsen:
+#         window_size: 12
+#         start_points: ["1979-11-01"]
+#         dim: "time"
+#       interpolate_to_grid_from_file:
+#         file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
+#       rechunk:
+#         time: -1
+#         lat: 10
+#         lon: 12
         
-  # Prepare anomalies from prepared datasets
-  annual-Jan.anom_1991-2020.precip_global:
-    uses:
-      prepared:
-        - "annual-Jan.full.precip_global"
-    apply:
-      anomalise:
-        clim_period: ["1991-01-01", "2020-12-31"]
-      rechunk:
-        time: -1
-        lat: 10
-        lon: 12
+#   # Prepare anomalies from prepared datasets
+#   annual-Jan.anom_1991-2020.precip_global:
+#     uses:
+#       prepared:
+#         - "annual-Jan.full.precip_global"
+#     apply:
+#       anomalise:
+#         clim_period: ["1991-01-01", "2020-12-31"]
+#         frequency: "month"
+#       rechunk:
+#         time: -1
+#         lat: 10
+#         lon: 12
     
-  annual-Nov.anom_1991-2020.precip_global:
-    uses:
-      prepared:
-        - "annual-Nov.full.precip_global"
-    apply:
-      anomalise:
-        clim_period: ["1991-01-01", "2020-12-31"]
-      rechunk:
-        time: -1
-        lat: 10
-        lon: 12
+#   annual-Nov.anom_1991-2020.precip_global:
+#     uses:
+#       prepared:
+#         - "annual-Nov.full.precip_global"
+#     apply:
+#       anomalise:
+#         clim_period: ["1991-01-01", "2020-12-31"]
+#         frequency: "month"
+#       rechunk:
+#         time: -1
+#         lat: 10
+#         lon: 12
         
-  annual.anom_1991-2020.precip_global:
-    uses:
-      prepared:
-        - "annual-Jan.anom_1991-2020.precip_global"
-        - "annual-Nov.anom_1991-2020.precip_global"
-    apply:
-      rechunk:
-        time: -1
-        lat: 10
-        lon: 12
+#   annual.anom_1991-2020.precip_global:
+#     uses:
+#       prepared:
+#         - "annual-Jan.anom_1991-2020.precip_global"
+#         - "annual-Nov.anom_1991-2020.precip_global"
+#     apply:
+#       rechunk:
+#         time: -1
+#         lat: 10
+#         lon: 12
         
-  annual-Jan.anom_1985-2014.precip_global:
-    uses:
-      prepared:
-        - "annual-Jan.full.precip_global"
-    apply:
-      anomalise:
-        clim_period: ["1985-01-01", "2014-12-31"]
-      rechunk:
-        time: -1
-        lat: 10
-        lon: 12
+#   annual-Jan.anom_1985-2014.precip_global:
+#     uses:
+#       prepared:
+#         - "annual-Jan.full.precip_global"
+#     apply:
+#       anomalise:
+#         clim_period: ["1985-01-01", "2014-12-31"]
+#         frequency: "month"
+#       rechunk:
+#         time: -1
+#         lat: 10
+#         lon: 12
         
-  annual-Nov.anom_1985-2014.precip_global:
-    uses:
-      prepared:
-        - "annual-Nov.full.precip_global"
-    apply:
-      anomalise:
-        clim_period: ["1985-01-01", "2014-12-31"]
-      rechunk:
-        time: -1
-        lat: 10
-        lon: 12
+#   annual-Nov.anom_1985-2014.precip_global:
+#     uses:
+#       prepared:
+#         - "annual-Nov.full.precip_global"
+#     apply:
+#       anomalise:
+#         clim_period: ["1985-01-01", "2014-12-31"]
+#         frequency: "month"
+#       rechunk:
+#         time: -1
+#         lat: 10
+#         lon: 12
         
-  annual.anom_1985-2014.precip_global:
-    uses:
-      prepared:
-        - "annual-Jan.anom_1985-2014.precip_global"
-        - "annual-Nov.anom_1985-2014.precip_global"
-    apply:
-      rechunk:
-        time: -1
-        lat: 10
-        lon: 12
+#   annual.anom_1985-2014.precip_global:
+#     uses:
+#       prepared:
+#         - "annual-Jan.anom_1985-2014.precip_global"
+#         - "annual-Nov.anom_1985-2014.precip_global"
+#     apply:
+#       rechunk:
+#         time: -1
+#         lat: 10
+#         lon: 12
         
-  # Prepare 4-year-averages from prepared datasets
-  4-year-Jan.anom_1991-2020.precip_global:
-    uses:
-      prepared:
-        - "annual-Jan.anom_1991-2020.precip_global"
-    apply:
-      rolling_mean:
-        window_size: 4
-      rechunk:
-        time: -1
-        lat: 10
-        lon: 12
+#   # Prepare 4-year-averages from prepared datasets
+#   4-year-Jan.anom_1991-2020.precip_global:
+#     uses:
+#       prepared:
+#         - "annual-Jan.anom_1991-2020.precip_global"
+#     apply:
+#       rolling_mean:
+#         window_size: 4
+#       rechunk:
+#         time: -1
+#         lat: 10
+#         lon: 12
         
-  4-year-Nov.anom_1991-2020.precip_global:
-    uses:
-      prepared:
-        - "annual-Nov.anom_1991-2020.precip_global"
-    apply:
-      rolling_mean:
-        window_size: 4
-      rechunk:
-        time: -1
-        lat: 10
-        lon: 12
+#   4-year-Nov.anom_1991-2020.precip_global:
+#     uses:
+#       prepared:
+#         - "annual-Nov.anom_1991-2020.precip_global"
+#     apply:
+#       rolling_mean:
+#         window_size: 4
+#       rechunk:
+#         time: -1
+#         lat: 10
+#         lon: 12
         
-  4-year.anom_1991-2020.precip_global:
-    uses:
-      prepared:
-        - "4-year-Jan.anom_1991-2020.precip_global"
-        - "4-year-Nov.anom_1991-2020.precip_global"
-    apply:
-      rechunk:
-        time: -1
-        lat: 10
-        lon: 12
+#   4-year.anom_1991-2020.precip_global:
+#     uses:
+#       prepared:
+#         - "4-year-Jan.anom_1991-2020.precip_global"
+#         - "4-year-Nov.anom_1991-2020.precip_global"
+#     apply:
+#       rechunk:
+#         time: -1
+#         lat: 10
+#         lon: 12
         
-  4-year-Jan.anom_1985-2014.precip_global:
-    uses:
-      prepared:
-        - "annual-Jan.anom_1985-2014.precip_global"
-    apply:
-      rolling_mean:
-        window_size: 4
-      rechunk:
-        time: -1
-        lat: 10
-        lon: 12
+#   4-year-Jan.anom_1985-2014.precip_global:
+#     uses:
+#       prepared:
+#         - "annual-Jan.anom_1985-2014.precip_global"
+#     apply:
+#       rolling_mean:
+#         window_size: 4
+#       rechunk:
+#         time: -1
+#         lat: 10
+#         lon: 12
         
-  4-year-Nov.anom_1985-2014.precip_global:
-    uses:
-      prepared:
-        - "annual-Nov.anom_1985-2014.precip_global"
-    apply:
-      rolling_mean:
-        window_size: 4
-      rechunk:
-        time: -1
-        lat: 10
-        lon: 12
+#   4-year-Nov.anom_1985-2014.precip_global:
+#     uses:
+#       prepared:
+#         - "annual-Nov.anom_1985-2014.precip_global"
+#     apply:
+#       rolling_mean:
+#         window_size: 4
+#       rechunk:
+#         time: -1
+#         lat: 10
+#         lon: 12
         
-  4-year.anom_1985-2014.precip_global:
-    uses:
-      prepared:
-        - "4-year-Jan.anom_1985-2014.precip_global"
-        - "4-year-Nov.anom_1985-2014.precip_global"
-    apply:
-      rechunk:
-        time: -1
-        lat: 10
-        lon: 12
+#   4-year.anom_1985-2014.precip_global:
+#     uses:
+#       prepared:
+#         - "4-year-Jan.anom_1985-2014.precip_global"
+#         - "4-year-Nov.anom_1985-2014.precip_global"
+#     apply:
+#       rechunk:
+#         time: -1
+#         lat: 10
+#         lon: 12

@@ -202,6 +202,7 @@ prepare:
 #     apply:
 #       anomalise:
 #         clim_period: ["1985-01-01", "2014-12-31"]
+#         frequency: "month"
 #       rechunk:
 #         init: -1
 #         lead: 1
@@ -216,6 +217,7 @@ prepare:
 #     apply:
 #       anomalise:
 #         clim_period: ["1985-01-01", "2014-12-31"]
+#         frequency: "month"
 #       rechunk:
 #         init: -1
 #         lead: 1
@@ -230,6 +232,7 @@ prepare:
     apply:
       anomalise:
         clim_period: ["1985-01-01", "2014-12-31"]
+        frequency: "month"
       rechunk:
         init: -1
         lead: 1
@@ -244,6 +247,7 @@ prepare:
 #     apply:
 #       anomalise:
 #         clim_period: ["1985-01-01", "2014-12-31"]
+#         frequency: "month"
 #       rechunk:
 #         init: -1
 #         lead: 1
@@ -258,6 +262,7 @@ prepare:
 #     apply:
 #       anomalise:
 #         clim_period: ["1985-01-01", "2014-12-31"]
+#         frequency: "month"
 #       rechunk:
 #         init: -1
 #         lead: 1
@@ -270,6 +275,7 @@ prepare:
 #     apply:
 #       anomalise:
 #         clim_period: ["1985-01-01", "2014-12-31"]
+#         frequency: "month"
 #       rechunk:
 #         init: -1
 #         lead: 1

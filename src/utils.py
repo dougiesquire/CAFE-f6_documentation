@@ -535,7 +535,7 @@ def calculate_ffdi(
 
     FFDI = (
         D**0.987 * np.exp(0.0338 * T - 0.0345 * H + 0.0234 * W + 0.243147)
-    ).to_dataset(name="FFDI")
+    ).to_dataset(name="ffdi")
     FFDI["ffdi"].attrs = dict(long_name="Forest Fire Danger Index", units="-")
     return FFDI
 
@@ -666,9 +666,9 @@ def truncate_latitudes(ds, dp=10, lat_dim="lat"):
     return ds
 
 
-def drop_Feb_29(ds, time_dim="time"):
+def convert_calendar(ds, calendar, time_dim="time"):
     """
-    Drop all occurences of Feb 29th
+    Convert calendar, dropping invalid/surplus dates or inserting missing dates
 
     Parameters
     ----------
@@ -677,8 +677,7 @@ def drop_Feb_29(ds, time_dim="time"):
     time_dim : str, optional
         The name of the time dimension
     """
-    keep = np.logical_not((ds[time_dim].dt.month == 2) & (ds[time_dim].dt.day == 29))
-    return ds.where(keep, drop=True)
+    return ds.convert_calendar(calendar=calendar, dim=time_dim, use_cftime=True)
 
 
 def rechunk(ds, **chunks):
@@ -820,32 +819,50 @@ def keep_period(ds, period):
         raise ValueError("I don't know how to mask the time period for this data")
 
 
-def _get_groupby_and_reduce_dims(ds):
+def _get_groupby_and_reduce_dims(ds, frequency):
     """
     Get the groupby and reduction dimensions for performing operations like
     calculating anomalies and percentile thresholds
     """
+
+    def _same_group_per_lead(time, frequency):
+        return all(
+            [
+                (lambda a: (a == a[0]).all())(
+                    getattr(time.sel(lead=l).dt, frequency).values
+                )
+                for l in time.lead
+            ]
+        )
+
     if "time" in ds.dims:
-        groupby_dim = "time"
+        groupby = f"time.{frequency}" if (frequency is not None) else None
+        reduce_dim = "time"
     elif "init" in ds.dims:
-        groupby_dim = "init"
+        # In the case of forecast data, if frequency is not None, all that 
+        # is done is to check that all the group values are the same for each
+        # lead
+        if frequency is not None:
+            assert _same_group_per_lead(
+                ds.time.compute(), frequency
+            ), "All group values are not the same for each lead"
+        groupby = f"init.month"
+        reduce_dim = "init"
     else:
-        raise ValueError("I don't know how to perform a groupby on this data")
+        raise ValueError("I can't work out how to apply groupby on this data")
 
     if "member" in ds.dims:
-        reduce_dim = [groupby_dim, "member"]
-    else:
-        reduce_dim = groupby_dim
+        reduce_dim = [reduce_dim, "member"]
 
-    return groupby_dim, reduce_dim
+    return groupby, reduce_dim
 
 
-def anomalise(ds, clim_period):
+def anomalise(ds, clim_period, frequency=None):
     """
     Returns the anomalies of ds relative to its climatology over clim_period.
 
-    Will not work for hindcasts with initialisation frequencies more regular
-    than monthly.
+    Uses a shortcut for calculating hindcast climatologies that will not work
+    for hindcasts with initialisation frequencies more regular than monthly.
 
     Parameters
     ----------
@@ -854,16 +871,26 @@ def anomalise(ds, clim_period):
     clim_period : iterable
         Size 2 iterable containing strings indicating the start and end dates
         of the climatological period
+    frequency : str, optional
+        The frequency at which to bin the climatology, e.g. per month. Must be 
+        an available attribute of the datetime accessor. Specify "None" to
+        indicate no frequency (climatology calculated by averaging all times)
     """
     ds_period = keep_period(ds, clim_period)
 
-    groupby_dim, reduce_dim = _get_groupby_and_reduce_dims(ds)
+    groupby, reduce_dim = _get_groupby_and_reduce_dims(ds, frequency)
 
-    clim = ds_period.groupby(f"{groupby_dim}.month").mean(reduce_dim)
-    return (ds.groupby(f"{groupby_dim}.month") - clim).drop("month")
+    if groupby is None:
+        clim = ds_period.mean(reduce_dim)
+        return ds - clim
+    else:
+        clim = ds_period.groupby(groupby).mean(reduce_dim)
+        return (ds.groupby(groupby) - clim).drop(groupby.split(".")[-1])
 
 
-def calculate_percentile_thresholds(ds, percentile, percentile_period, percentile_dim=None, frequency=None):
+def calculate_percentile_thresholds(
+    ds, percentile, percentile_period, percentile_dim=None, frequency=None
+):
     """
     Returns the percentile values of ds over a provided period.
 
@@ -881,25 +908,27 @@ def calculate_percentile_thresholds(ds, percentile, percentile_period, percentil
         these will determined automatically based on the type of input data:
         - timeseries : percentile_dim = "time"
         - forecasts : percentile_dim = "init" [, "member"]
-    frequency : str. optional
-        The frequency at which to bin the percentiles percentiles, e.g. per month. 
-        Must be an available attribute of the datetime accessor. Specify "None" to 
+    frequency : str, optional
+        The frequency at which to bin the percentiles percentiles, e.g. per month.
+        Must be an available attribute of the datetime accessor. Specify "None" to
         indicate no frequency (percentiles calculated over all times)
     """
     ds_period = keep_period(ds, percentile_period)
-    groupby_dim, reduce_dim = _get_groupby_and_reduce_dims(ds)
+
+    groupby, reduce_dim = _get_groupby_and_reduce_dims(ds, frequency)
+
     if percentile_dim is not None:
         reduce_dim = percentile_dim
 
-    if frequency is None:
+    if groupby is None:
         return ds_period.quantile(q=percentile, dim=reduce_dim)
     else:
-        return ds_period.groupby(f"{groupby_dim}.{frequency}").quantile(
-            q=percentile, dim=reduce_dim
-        )
-
-
-def over_percentile_threshold(ds, percentile, percentile_period, percentile_dim=None, frequency=None):
+        return ds_period.groupby(groupby).quantile(q=percentile, dim=reduce_dim)
+    
+    
+def over_percentile_threshold(
+    ds, percentile, percentile_period, percentile_dim=None, frequency=None
+):
     """
     Find which values in the input array are over a specified percentile
     calculated over a specified period. Returns a boolean array with True
@@ -914,22 +943,28 @@ def over_percentile_threshold(ds, percentile, percentile_period, percentile_dim=
     percentile_period : iterable
         Size 2 iterable containing strings indicating the start and end dates
         of the period over which to calculate the percentile thresholds
-    frequency : str. optional
-        The frequency at which to bin the percentiles percentiles, e.g. per month. 
-        Must be an available attribute of the datetime accessor. Specify "None" to 
+    frequency : str, optional
+        The frequency at which to bin the percentiles percentiles, e.g. per month.
+        Must be an available attribute of the datetime accessor. Specify "None" to
         indicate no frequency (percentiles calculated over all times)
     """
     percentile_thresholds = calculate_percentile_thresholds(
         ds, percentile, percentile_period, percentile_dim, frequency
     )
-    if frequency is None:
+
+    groupby, _ = _get_groupby_and_reduce_dims(ds, frequency)
+
+    if groupby is None:
         return ds > percentile_thresholds
     else:
-        groupby_dim, _ = _get_groupby_and_reduce_dims(ds)
-        return (ds.groupby(f"{groupby_dim}.{frequency}") > percentile_thresholds).drop(frequency)
-
-
-def under_percentile_threshold(ds, percentile, percentile_period, percentile_dim=None, frequency=None):
+        return (ds.groupby(groupby) > percentile_thresholds).drop(
+            groupby.split(".")[-1]
+        )
+    
+    
+def under_percentile_threshold(
+    ds, percentile, percentile_period, percentile_dim=None, frequency=None
+):
     """
     Find which values in the input array are under a specified percentile
     calculated over a specified period. Returns a boolean array with True
@@ -944,20 +979,24 @@ def under_percentile_threshold(ds, percentile, percentile_period, percentile_dim
     percentile_period : iterable
         Size 2 iterable containing strings indicating the start and end dates
         of the period over which to calculate the percentile thresholds
-    frequency : str. optional
-        The frequency at which to bin the percentiles percentiles, e.g. per month. 
-        Must be an available attribute of the datetime accessor. Specify "None" to 
+    frequency : str, optional
+        The frequency at which to bin the percentiles percentiles, e.g. per month.
+        Must be an available attribute of the datetime accessor. Specify "None" to
         indicate no frequency (percentiles calculated over all times)
     """
     percentile_thresholds = calculate_percentile_thresholds(
         ds, percentile, percentile_period, percentile_dim, frequency
     )
-    
-    if frequency is None:
+
+    groupby, _ = _get_groupby_and_reduce_dims(ds, frequency)
+    print(groupby)
+
+    if groupby is None:
         return ds < percentile_thresholds
     else:
-        groupby_dim, _ = _get_groupby_and_reduce_dims(ds)
-        return (ds.groupby(f"{groupby_dim}.month") < percentile_thresholds).drop("month")
+        return (ds.groupby(groupby) < percentile_thresholds).drop(
+            groupby.split(".")[-1]
+        )
 
 
 def interpolate_to_grid_from_file(ds, file, add_area=True, ignore_degenerate=True):
@@ -1011,29 +1050,6 @@ def interpolate_to_grid_from_file(ds, file, add_area=True, ignore_degenerate=Tru
         return ds_rg.assign_coords({"area": area})
     else:
         return ds_rg
-
-
-def force_to_Julian_calendar(ds, time_dim="time"):
-    """
-    Hard force calendar of time dimension to Julian
-
-    Parameters
-    ----------
-    ds : xarray Dataset
-        A dataset with a time dimension
-    time_dim : str
-        The name of the time dimension
-    """
-    return ds.assign_coords(
-        {
-            time_dim: xr.cftime_range(
-                start=ds.time[0].item().strftime(),
-                end=ds.time[-1].item().strftime(),
-                freq=xr.infer_freq(ds.time[:3]),
-                calendar="julian",
-            )
-        }
-    )
 
 
 def round_to_start_of_day(ds, dim):
@@ -1245,6 +1261,14 @@ def mask_CAFEf6_reduced_dt(ds):
     mask = xr.open_dataset(mask_file)["dt_atmos"] >= 1800
     mask = mask.rename({"init_date": "init", "ensemble": "member"})
     mask = mask.assign_coords({"init": mask.init.dt.floor("D")})
+    
+    # Allow for ds to be a different calendar (e.g. I convert daily data to noleap 
+    # for convenience)
+    if mask.init.dt.calendar != ds.init.dt.calendar:
+        mask = mask.convert_calendar(
+            calendar=ds.init.dt.calendar, dim="init", use_cftime=True
+        )
+        
     return ds.where(mask)
 
 

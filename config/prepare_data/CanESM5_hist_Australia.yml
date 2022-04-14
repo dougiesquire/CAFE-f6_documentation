@@ -41,7 +41,8 @@ prepare:
 #         window_size: 12
 #         start_points: ["1960-01-01"]
 #         dim: "time"
-#       force_to_Julian_calendar:
+#       convert_calendar:
+#         calendar: "julian"
 #       average_over_NRM_super_clusters:
 #       rechunk:
 #         time: -1
@@ -64,7 +65,8 @@ prepare:
 #         window_size: 12
 #         start_points: ["1960-01-01"]
 #         dim: "time"
-#       force_to_Julian_calendar:
+#       convert_calendar:
+#         calendar: "julian"
 #       average_over_NRM_super_clusters:
 #       rechunk:
 #         time: -1
@@ -78,6 +80,7 @@ prepare:
 #     apply:
 #       anomalise:
 #         clim_period: ["1985-01-01", "2014-12-31"]
+#         frequency: "month"
 #       rechunk:
 #         time: -1
 #         member: -1
@@ -89,6 +92,7 @@ prepare:
 #     apply:
 #       anomalise:
 #         clim_period: ["1985-01-01", "2014-12-31"]
+#         frequency: "month"
 #       rechunk:
 #         time: -1
 #         member: -1
@@ -117,53 +121,54 @@ prepare:
 #         member: -1
 
 #  Extremes - drought
-  3-month.full.precip_Aus_NRM:
-    uses:
-      Amon:
-        - "pr"
-    apply:
-      rename:
-        pr: "precip"
-        areacella: "area"
-      convert:
-        precip:
-          multiply_by: 86400
-      round_to_start_of_month:
-        dim: "time"
-      rolling_mean:
-        window_size: 3
-        dim: "time"
-      force_to_Julian_calendar:
-      average_over_NRM_super_clusters:
-      rechunk:
-        time: -1
-        member: -1
+#   3-month.full.precip_Aus_NRM:
+#     uses:
+#       Amon:
+#         - "pr"
+#     apply:
+#       rename:
+#         pr: "precip"
+#         areacella: "area"
+#       convert:
+#         precip:
+#           multiply_by: 86400
+#       round_to_start_of_month:
+#         dim: "time"
+#       rolling_mean:
+#         window_size: 3
+#         dim: "time"
+#       convert_calendar:
+#         calendar: "julian"
+#       average_over_NRM_super_clusters:
+#       rechunk:
+#         time: -1
+#         member: -1
         
-  annual.3-months_under_p10_1985-2014.precip_Aus_NRM:
-    uses:
-      prepared:
-        - "3-month.full.precip_Aus_NRM"
-    apply:
-      under_percentile_threshold:
-        percentile: 0.1
-        percentile_period: ["1985-01-01", "2014-12-31"]
-        frequency: "month"
-      coarsen:
-        window_size: 12
-        start_points: ["1960-03-01"] # First 3-month mean for Jan forecast is Mar
-        dim: "time"
-      rechunk:
-        time: -1
-        member: -1
+#   annual.3-months_under_p10_1985-2014.precip_Aus_NRM:
+#     uses:
+#       prepared:
+#         - "3-month.full.precip_Aus_NRM"
+#     apply:
+#       under_percentile_threshold:
+#         percentile: 0.1
+#         percentile_period: ["1985-01-01", "2014-12-31"]
+#         frequency: "month"
+#       coarsen:
+#         window_size: 12
+#         start_points: ["1960-03-01"] # First 3-month mean for Jan forecast is Mar
+#         dim: "time"
+#       rechunk:
+#         time: -1
+#         member: -1
         
-  4-year.3-months_under_p10_1985-2014.precip_Aus_NRM:
-    uses:
-      prepared:
-        - "annual.3-months_under_p10_1985-2014.precip_Aus_NRM"
-    apply:
-      rolling_mean:
-        window_size: 4
-        dim: "time"
-      rechunk:
-        time: -1
-        member: -1
+#   4-year.3-months_under_p10_1985-2014.precip_Aus_NRM:
+#     uses:
+#       prepared:
+#         - "annual.3-months_under_p10_1985-2014.precip_Aus_NRM"
+#     apply:
+#       rolling_mean:
+#         window_size: 4
+#         dim: "time"
+#       rechunk:
+#         time: -1
+#         member: -1

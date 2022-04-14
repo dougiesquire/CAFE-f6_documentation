@@ -297,6 +297,7 @@ prepare:
 #     apply:
 #       anomalise:
 #         clim_period: ["1991-01-01", "2020-12-31"]
+#         frequency: "month"
 #       rechunk:
 #         init: -1
 #         lead: 1
@@ -311,6 +312,7 @@ prepare:
 #     apply:
 #       anomalise:
 #         clim_period: ["1991-01-01", "2020-12-31"]
+#         frequency: "month"
 #       rechunk:
 #         init: -1
 #         lead: 1
@@ -325,6 +327,7 @@ prepare:
     apply:
       anomalise:
         clim_period: ["1991-01-01", "2020-12-31"]
+        frequency: "month"
       rechunk:
         init: -1
         lead: 1
@@ -339,6 +342,7 @@ prepare:
 #     apply:
 #       anomalise:
 #         clim_period: ["1991-01-01", "2020-12-31"]
+#         frequency: "month"
 #       rechunk:
 #         init: -1
 #         lead: 1
@@ -353,6 +357,7 @@ prepare:
 #     apply:
 #       anomalise:
 #         clim_period: ["1991-01-01", "2020-12-31"]
+#         frequency: "month"
 #       rechunk:
 #         init: -1
 #         lead: 1
@@ -367,6 +372,7 @@ prepare:
 #     apply:
 #       anomalise:
 #         clim_period: ["1991-01-01", "2020-12-31"]
+#         frequency: "month"
 #       rechunk:
 #         init: -1
 #         lead: 1
@@ -379,6 +385,7 @@ prepare:
 #     apply:
 #       anomalise:
 #         clim_period: ["1991-01-01", "2020-12-31"]
+#         frequency: "month"
 #       rechunk:
 #         init: -1
 #         lead: 1
