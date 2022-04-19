@@ -540,6 +540,185 @@ def calculate_ffdi(
     return FFDI
 
 
+def calculate_EHF(
+    T,
+    T_p95_file=None,
+    T_p95_period=None,
+    T_p95_dim=None,
+    rolling_dim="time",
+    T_name="t_ref",
+):
+    """
+    Calculate the Excess Heat Factor (EHF) index, defined as:
+
+        EHF = max(0, EHI_sig) * max(1, EHI_accl)
+
+    with
+
+        EHI_sig = (T_i + T_i+1 + T_i+2) / 3 – T_p95
+        EHI_accl = (T_i + T_i+1 + T_i+2) / 3 – (T_i–1 + ... + T_i–30) / 30
+
+    T is the daily mean temperature (commonly calculated as the mean of the min and max
+    daily temperatures, usually with daily maximum typically preceding the daily minimum,
+    and the two observations relate to the same 9am-to-9am 24-h period) and T_p95 is the 95th
+    percentile of T using all days in the year.
+
+    Parameters
+    ----------
+    T : xarray DataArray
+        Array of daily mean temperature
+    T_p95_file : xarray DataArray, optional
+        Path to a file with the 95th percentiles of T using all days in the year. This should be
+        relative to the project directory. If not provided, T_p95_period and T_p95_dim must be
+        provided
+    T_p95_period : list of str, optional
+        Size 2 iterable containing strings indicating the start and end dates of the period over
+        which to calculate T_p95. Only used if T_p95 is None
+    T_p95_dim : str or list of str, optional
+        The dimension(s) over which to calculate T_p95. Only used if T_p95 is None
+    rolling_dim : str, optional
+        The dimension over which to compute the rolling averages in the definition of EHF
+    T_name : str, optional
+        The name of the temperature variable in T
+    References
+    ----------
+    Nairn et al. 2015: https://doi.org/10.3390/ijerph120100227
+    """
+
+    if T_p95_file is None:
+        if (T_p95_period is not None) & (T_p95_dim is not None):
+            T_p95 = calculate_percentile_thresholds(
+                T, 0.95, T_p95_period, T_p95_dim, frequency=None
+            )
+        else:
+            raise ValueError(
+                (
+                    "Must provide either thresholds of the 95th percentile of temperature (T_p95) "
+                    "or details of the climatological period and dimensions to use to calculate these "
+                    "thresholds (T_p95_period and T_p95_dim)"
+                )
+            )
+    else:
+        T_p95_file = PROJECT_DIR / T_p95_file
+        T_p95 = xr.open_zarr(T_p95_file)
+
+    T_3d = (
+        T.rolling({rolling_dim: 3}, min_periods=3).mean().shift({rolling_dim: -2})
+    )  # Shift so that referenced to first day in window
+    T_30d = (
+        T.rolling({rolling_dim: 30}, min_periods=30).mean().shift({rolling_dim: 1})
+    )  # Shift so that referenced to day after last day in window
+
+    EHI_sig = T_3d - T_p95
+    EHI_accl = T_3d - T_30d
+    EHF = EHI_sig * EHI_accl.where(EHI_accl > 1, 1)
+
+    EHF = EHF.rename({T_name: "EHF"})
+    EHF["EHF"].attrs["long_name"] = "Excess Heat Factor"
+    EHF["EHF"].attrs["standard_name"] = "excess_heat_factor"
+    EHF["EHF"].attrs["units"] = "K^2"
+
+    return EHF
+
+
+def calculate_EHF_severity(
+    T,
+    T_p95_file=None,
+    EHF_p85_file=None,
+    T_p95_period=None,
+    T_p95_dim=None,
+    EHF_p85_period=None,
+    EHF_p85_dim=None,
+    rolling_dim="time",
+    T_name="t_ref",
+):
+    """
+    Calculate the severity of the Excess Heat Factor index, defined as:
+
+        EHF_severity = EHF / EHF_p85
+
+    where "_p85" denotes the 85th percentile of all positive values using all days in the
+    year and the Excess Heat Factor (EHF) is defined as:
+
+        EHF = max(0, EHI_sig) * max(1, EHI_accl)
+
+    with
+
+        EHI_sig = (T_i + T_i+1 + T_i+2) / 3 – T_p95
+        EHI_accl = (T_i + T_i+1 + T_i+2) / 3 – (T_i–1 + ... + T_i–30) / 30
+
+    T is the daily mean temperature (commonly calculated as the mean of the min and max
+    daily temperatures, usually with daily maximum typically preceding the daily minimum,
+    and the two observations relate to the same 9am-to-9am 24-h period) and T_p95 is the 95th
+    percentile of T using all days in the year.
+
+    Parameters
+    ----------
+    T : xarray DataArray
+        Array of daily mean temperature
+    T_p95_file : xarray DataArray, optional
+        Path to a file with the 95th percentiles of T using all days in the year. This should be
+        relative to the project directory. If not provided, T_p95_period and T_p95_dim must be
+        provided
+    EHF_p85_file : xarray DataArray, optional
+        Path to a file with the 85th percentiles of positive EHF using all days in the year. This
+        should be relative to the project directory. If not provided, EHF_p85_period and
+        EHF_p85_dim must be provided
+    T_p95_period : list of str, optional
+        Size 2 iterable containing strings indicating the start and end dates of the period over
+        which to calculate T_p95. Only used if T_p95 is None
+    T_p95_dim : str or list of str, optional
+        The dimension(s) over which to calculate T_p95. Only used if T_p95 is None
+    EHF_p85_period : list of str, optional
+        Size 2 iterable containing strings indicating the start and end dates of the period over
+        which to calculate EHF_p85. Only used if EHF_p85 is None
+    EHF_p85_dim : str or list of str, optional
+        The dimension(s) over which to calculate EHF_p85. Only used if EHF_p85 is None
+    rolling_dim : str, optional
+        The dimension over which to compute the rolling averages in the definition of EHF
+    T_name : str, optional
+        The name of the temperature variable in T
+
+    References
+    ----------
+    Nairn et al. 2015: https://doi.org/10.3390/ijerph120100227
+    """
+
+    if EHF_p85_file is None:
+        if (EHF_p85_period is not None) & (EHF_p85_dim is not None):
+            calculate_EHF_p85 = True
+        else:
+            raise ValueError(
+                (
+                    "Must provide either thresholds of the 85th percentile of EHF (E_p85) or details "
+                    "of the climatological period and dimensions to use to calculate these thresholds "
+                    "(EHF_p85_period and EHF_p85_dim)"
+                )
+            )
+    else:
+        EHF_p85_file = PROJECT_DIR / EHF_p85_file
+        EHF_p85 = xr.open_zarr(EHF_p85_file)
+        calculate_EHF_p85 = False
+
+    EHF = calculate_EHF(
+        T, T_p95_file, T_p95_period, T_p95_dim, rolling_dim, T_name
+    )
+
+    if calculate_EHF_p85:
+        EHF_p85 = calculate_percentile_thresholds(
+            EHF.where(EHF > 0), 0.85, EHF_p85_period, EHF_p85_dim, frequency=None
+        )
+
+    EHF_sev = EHF / EHF_p85
+
+    EHF_sev = EHF_sev.rename({"EHF": "EHF_severity"})
+    EHF_sev["EHF_severity"].attrs["long_name"] = "Severity of the Excess Heat Factor"
+    EHF_sev["EHF_severity"].attrs["standard_name"] = "excess_heat_factor_severity"
+    EHF_sev["EHF_severity"].attrs["units"] = "-"
+
+    return EHF_sev
+
+
 def ensemble_mean(ds, ensemble_dim="member"):
     """Return the ensemble mean of the input array
 
@@ -551,6 +730,31 @@ def ensemble_mean(ds, ensemble_dim="member"):
         The name of the ensemble dimension
     """
     return ds.mean(ensemble_dim)
+
+
+def greater_than(ds, value):
+    """ Return a boolean array with True where elements > value
+    
+    Parameters:
+    -----------
+    ds: xarray Dataset
+        The array to mask
+    value: float, xarray Dataset
+        The value(s) to use to mask ds
+    """
+    return ds > value
+
+def where_greater_than(ds, value):
+    """ Return array with elements <= value masked to nan
+    
+    Parameters:
+    -----------
+    ds: xarray Dataset
+        The array to mask
+    value: float, xarray Dataset
+        The value(s) to use to mask ds
+    """
+    return ds.where(greater_than(ds, value))
 
 
 def add_CAFE_grid_info(ds):
@@ -874,7 +1078,9 @@ def anomalise(ds, clim_period, frequency=None):
     frequency : str, optional
         The frequency at which to bin the climatology, e.g. per month. Must be 
         an available attribute of the datetime accessor. Specify "None" to
-        indicate no frequency (climatology calculated by averaging all times)
+        indicate no frequency (climatology calculated by averaging all times).
+        Note, setting to "None" for hindcast data can be dangerous, since only
+        certain times may be available at each lead.
     """
     ds_period = keep_period(ds, clim_period)
 
@@ -911,7 +1117,9 @@ def calculate_percentile_thresholds(
     frequency : str, optional
         The frequency at which to bin the percentiles percentiles, e.g. per month.
         Must be an available attribute of the datetime accessor. Specify "None" to
-        indicate no frequency (percentiles calculated over all times)
+        indicate no frequency (percentiles calculated over all times). Note, setting 
+        to "None" for hindcast data can be dangerous, since only certain times may 
+        be available at each lead.
     """
     ds_period = keep_period(ds, percentile_period)
 
@@ -946,7 +1154,9 @@ def over_percentile_threshold(
     frequency : str, optional
         The frequency at which to bin the percentiles percentiles, e.g. per month.
         Must be an available attribute of the datetime accessor. Specify "None" to
-        indicate no frequency (percentiles calculated over all times)
+        indicate no frequency (percentiles calculated over all times). Note, setting 
+        to "None" for hindcast data can be dangerous, since only certain times may 
+        be available at each lead.
     """
     percentile_thresholds = calculate_percentile_thresholds(
         ds, percentile, percentile_period, percentile_dim, frequency
@@ -982,14 +1192,15 @@ def under_percentile_threshold(
     frequency : str, optional
         The frequency at which to bin the percentiles percentiles, e.g. per month.
         Must be an available attribute of the datetime accessor. Specify "None" to
-        indicate no frequency (percentiles calculated over all times)
+        indicate no frequency (percentiles calculated over all times). Note, setting 
+        to "None" for hindcast data can be dangerous, since only certain times may 
+        be available at each lead.
     """
     percentile_thresholds = calculate_percentile_thresholds(
         ds, percentile, percentile_period, percentile_dim, frequency
     )
 
     groupby, _ = _get_groupby_and_reduce_dims(ds, frequency)
-    print(groupby)
 
     if groupby is None:
         return ds < percentile_thresholds
@@ -999,12 +1210,92 @@ def under_percentile_threshold(
         )
 
 
+def correct_bias_additive(ds, obsv_file, period, frequency):
+    """
+    Correct the mean bias of ds relative to observations in an additive
+    manner over a provided period
+
+    Will not work for hindcasts with initialisation frequencies more regular
+    than monthly.
+
+    Parameters
+    ----------
+    ds : xarray Dataset
+        The hindcast data to correct
+    obsv_file : str
+        Path to a file with the appropriate observation data to correct to.
+        This should be relative to the project directory
+    period : iterable
+        Size 2 iterable containing strings indicating period over which to
+        calculate the biases
+    frequency : str, optional
+        The frequency at which to bin the biases, e.g. per month. Must be an
+        available attribute of the datetime accessor. Specify "None" to indicate
+        no frequency (climatology calculated by averaging all times). Note,
+        setting to "None" can be dangerous, since only certain times may be
+        available at each lead and there is no check that the same times are
+        available between the observations and forecasts.
+    """
+
+    def _get_hcst_bias(hcst, obsv_clim, frequency, reduce_dim):
+        """Calculate the mean bias between hcst and obsv_clim"""
+        if frequency is None:
+            obsv_clim_aligned = obsv_clim
+        else:
+            # _get_groupby_and_reduce_dims has checked that group values are the
+            # same for each lead
+            obsv_clim_groups = getattr(obsv_clim, frequency).values
+            hcst_groups = getattr(hcst.time.isel(init=0).compute().dt, frequency).values
+
+            # Align the observed climatology groups with the hindcasts
+            indices = np.searchsorted(obsv_clim_groups, hcst_groups)
+            obsv_clim_aligned = obsv_clim.isel({frequency: indices})
+
+            obsv_clim_aligned_groups = getattr(obsv_clim_aligned, frequency).values
+            assert all(hcst_groups == obsv_clim_aligned_groups)
+            obsv_clim_aligned = obsv_clim_aligned.assign_coords(
+                {frequency: hcst.lead.values}
+            ).rename({frequency: "lead"})
+
+        return hcst.mean(reduce_dim) - obsv_clim_aligned
+
+    obsv_file = PROJECT_DIR / obsv_file
+    obsv = xr.open_zarr(obsv_file, use_cftime=True)
+
+    obsv_period = keep_period(obsv, period)
+    ds_period = keep_period(ds, period)
+
+    obsv_groupby, obsv_reduce_dim = _get_groupby_and_reduce_dims(obsv, frequency)
+    ds_groupby, ds_reduce_dim = _get_groupby_and_reduce_dims(ds, frequency)
+
+    if obsv_groupby is None:
+        obsv_clim = obsv_period.mean(obsv_reduce_dim)
+    else:
+        obsv_clim = obsv_period.groupby(obsv_groupby).mean(obsv_reduce_dim)
+
+    if "init" in ds_groupby:
+        # Correct hindcasts per lead
+        bias = ds_period.groupby(ds_groupby).map(
+            _get_hcst_bias,
+            obsv_clim=obsv_clim,
+            frequency=frequency,
+            reduce_dim=ds_reduce_dim,
+        )
+    else:
+        if ds_groupby is None:
+            ds_clim = ds_period.mean(ds_reduce_dim)
+        else:
+            ds_clim = ds_period.groupby(ds_groupby).mean(ds_reduce_dim)
+        bias = ds_clim - obsv_clim
+
+    return (ds.groupby(ds_groupby) - bias).drop(ds_groupby.split(".")[-1])
+
+
 def interpolate_to_grid_from_file(ds, file, add_area=True, ignore_degenerate=True):
     import xesmf
 
     """
     Interpolate to a grid read from a file using xesmf
-    file path should be relative to the project directory
 
     Note, xESMF puts zeros where there is no data to interpolate. Here we
     add an offset to ensure no zeros, mask zeros, and then remove offset
@@ -1017,7 +1308,8 @@ def interpolate_to_grid_from_file(ds, file, add_area=True, ignore_degenerate=Tru
     ds : xarray Dataset
         The data to interpolate
     file : str
-        Path to a file with the grid to interpolate to
+        Path to a file with the grid to interpolate to. This should be relative to 
+        the project directory
     add_area : bool, optional
         If True (default) add a coordinate for the cell areas
     ignore_degenerate : bool, optional

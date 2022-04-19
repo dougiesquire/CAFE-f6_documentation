@@ -268,75 +268,75 @@ prepare:
 #         time: -1
 #         member: -1
         
-#  Extremes - days of FFDI above 90th percentile
-  daily.full.ffdi_Aus_NRM:
-    uses:
-      atmos_isobaric_daily:
-        - "precip"
-        - "rh"
-        - "t_ref_max"
-        - "u_ref"
-        - "v_ref"
-    apply:
-      convert_calendar:
-        calendar: "noleap"
-      select:
-        level: 1000
-      extract_lon_lat_box:
-        box: [110, 155, -45, -9]
-        weighted_average: False
-      rename:
-        ensemble: "member"
-      truncate_latitudes:
-      convert:
-        precip:
-          multiply_by: 86400
-        t_ref_max:
-          add: -273.15
-        u_ref:
-          multiply_by: 3.6
-        v_ref:
-          multiply_by: 3.6
-      calculate_ffdi:
-        clim_period: ["1991-01-01", "2020-12-31"]
-        wind_from_components: True
-      round_to_start_of_day:
-        dim: "time"
-      average_over_NRM_super_clusters:
-      rechunk:
-        time: -1
-        member: -1
+# #  Extremes - days of FFDI above 90th percentile
+#   daily.full.ffdi_Aus_NRM:
+#     uses:
+#       atmos_isobaric_daily:
+#         - "precip"
+#         - "rh"
+#         - "t_ref_max"
+#         - "u_ref"
+#         - "v_ref"
+#     apply:
+#       convert_calendar:
+#         calendar: "noleap"
+#       select:
+#         level: 1000
+#       extract_lon_lat_box:
+#         box: [110, 155, -45, -9]
+#         weighted_average: False
+#       rename:
+#         ensemble: "member"
+#       truncate_latitudes:
+#       convert:
+#         precip:
+#           multiply_by: 86400
+#         t_ref_max:
+#           add: -273.15
+#         u_ref:
+#           multiply_by: 3.6
+#         v_ref:
+#           multiply_by: 3.6
+#       calculate_ffdi:
+#         clim_period: ["1991-01-01", "2020-12-31"]
+#         wind_from_components: True
+#       round_to_start_of_day:
+#         dim: "time"
+#       average_over_NRM_super_clusters:
+#       rechunk:
+#         time: -1
+#         member: -1
         
-  annual.days_over_p90_1991-2020.ffdi_Aus_NRM:
-    uses:
-      prepared:
-        - "daily.full.ffdi_Aus_NRM"
-    apply:
-      over_percentile_threshold:
-        percentile: 0.9
-        percentile_period: ["1991-01-01", "2020-12-31"]
-        frequency: "dayofyear"
-      coarsen:
-        window_size: 365
-        start_points: ["1960-11-01"]
-        dim: "time"
-      round_to_start_of_month:
-        dim: "time"
-      rechunk:
-        time: -1
-        member: -1
+#   annual.days_over_p90_1991-2020.ffdi_Aus_NRM:
+#     uses:
+#       prepared:
+#         - "daily.full.ffdi_Aus_NRM"
+#     apply:
+#       over_percentile_threshold:
+#         percentile: 0.9
+#         percentile_period: ["1991-01-01", "2020-12-31"]
+#         frequency: "dayofyear"
+#       coarsen:
+#         window_size: 365
+#         start_points: ["1960-11-01"]
+#         dim: "time"
+#       round_to_start_of_month:
+#         dim: "time"
+#       rechunk:
+#         time: -1
+#         member: -1
         
-  4-year.days_over_p90_1991-2020.ffdi_Aus_NRM:
-    uses:
-      prepared:
-        - "annual.days_over_p90_1991-2020.ffdi_Aus_NRM"
-    apply:
-      rolling_mean:
-        window_size: 4
-        dim: "time"
-      rechunk:
-        time: -1
-        member: -1
+#   4-year.days_over_p90_1991-2020.ffdi_Aus_NRM:
+#     uses:
+#       prepared:
+#         - "annual.days_over_p90_1991-2020.ffdi_Aus_NRM"
+#     apply:
+#       rolling_mean:
+#         window_size: 4
+#         dim: "time"
+#       rechunk:
+#         time: -1
+#         member: -1
 
 # #  Extremes - drought
 #   3-month.full.precip_Aus_NRM:
@@ -389,3 +389,71 @@ prepare:
 #       rechunk:
 #         time: -1
 #         member: -1
+
+# Extremes - Excess heat factor
+  daily.abc_1991-2020.t_ref_Aus:
+    uses:
+      atmos_isobaric_daily:
+        - "t_ref"
+    apply:
+      convert_calendar:
+        calendar: "noleap"
+      extract_lon_lat_box:
+        box: [110, 155, -45, -9]
+        weighted_average: False
+      rename:
+        ensemble: "member"
+      truncate_latitudes:
+      convert:
+        t_ref:
+          add: -273.15
+      round_to_start_of_day:
+        dim: "time"
+      correct_bias_additive:
+        obsv_file: "data/processed/AGCD.daily.full.t_ref_Aus.zarr"
+        period: ["1991-01-01", "2020-12-31"]
+        frequency: "dayofyear"
+      rechunk:
+        time: -1
+        member: -1
+        
+  daily.full.EHF_sev_Aus:
+    uses:
+      prepared:
+        - "daily.abc_1991-2020.t_ref_Aus"
+    apply:
+      calculate_EHF_severity:
+        T_p95_file: "data/processed/AGCD.daily.p95_1971-2000.t_ref_Aus.zarr"
+        EHF_p85_file: "data/processed/AGCD.daily.p85_1958-2011.EHF_Aus.zarr"
+      rechunk:
+        time: -1
+        member: -1
+        
+  annual.days_over_1.EHF_sev_Aus:
+    uses:
+      prepared:
+        - "daily.full.EHF_sev_Aus"
+    apply:
+      greater_than:
+        value: 1
+      coarsen:
+        window_size: 365
+        start_points: ["1960-11-01"]
+        dim: "time"
+      round_to_start_of_month:
+        dim: "time"
+      rechunk:
+        time: -1
+        member: -1
+        
+  4-year.days_over_1.EHF_sev_Aus:
+    uses:
+      prepared:
+        - "annual.days_over_1.EHF_sev_Aus"
+    apply:
+      rolling_mean:
+        window_size: 4
+        dim: "time"
+      rechunk:
+        time: -1
+        member: -1

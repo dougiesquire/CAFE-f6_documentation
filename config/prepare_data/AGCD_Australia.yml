@@ -343,91 +343,91 @@ prepare:
 #       rechunk:
 #         time: -1
 
-#  Extremes - days of max temp above 90th percentile
-  daily.full.t_ref_max_Aus_NRM:
-    uses:
-      - "tmax"
-    apply:
-      rename:
-        tmax: "t_ref_max"
-      keep_period:
-        period: ["1960-11-01", "2021-12-31"]
-      convert_calendar:
-        calendar: "noleap"
-      add_area_using_cdo_gridarea:
-      average_over_NRM_super_clusters:
-      rechunk:
-        time: -1
+# #  Extremes - days of max temp above 90th percentile
+#   daily.full.t_ref_max_Aus_NRM:
+#     uses:
+#       - "tmax"
+#     apply:
+#       rename:
+#         tmax: "t_ref_max"
+#       keep_period:
+#         period: ["1960-11-01", "2021-12-31"]
+#       convert_calendar:
+#         calendar: "noleap"
+#       add_area_using_cdo_gridarea:
+#       average_over_NRM_super_clusters:
+#       rechunk:
+#         time: -1
 
-  annual.days_over_p90_1991-2020.t_ref_max_Aus_NRM:
-    uses:
-      prepared:
-        - "daily.full.t_ref_max_Aus_NRM"
-    apply:
-      over_percentile_threshold:
-        percentile: 0.9
-        percentile_period: ["1991-01-01", "2020-12-31"]
-        frequency: "dayofyear"
-      coarsen:
-        window_size: 365
-        start_points: ["1960-11-01"]
-        dim: "time"
-      round_to_start_of_month:
-        dim: "time"
-      rechunk:
-        time: -1
+#   annual.days_over_p90_1991-2020.t_ref_max_Aus_NRM:
+#     uses:
+#       prepared:
+#         - "daily.full.t_ref_max_Aus_NRM"
+#     apply:
+#       over_percentile_threshold:
+#         percentile: 0.9
+#         percentile_period: ["1991-01-01", "2020-12-31"]
+#         frequency: "dayofyear"
+#       coarsen:
+#         window_size: 365
+#         start_points: ["1960-11-01"]
+#         dim: "time"
+#       round_to_start_of_month:
+#         dim: "time"
+#       rechunk:
+#         time: -1
         
-  4-year.days_over_p90_1991-2020.t_ref_max_Aus_NRM:
-    uses:
-      prepared:
-        - "annual.days_over_p90_1991-2020.t_ref_max_Aus_NRM"
-    apply:
-      rolling_mean:
-        window_size: 4
-      rechunk:
-        time: -1
+#   4-year.days_over_p90_1991-2020.t_ref_max_Aus_NRM:
+#     uses:
+#       prepared:
+#         - "annual.days_over_p90_1991-2020.t_ref_max_Aus_NRM"
+#     apply:
+#       rolling_mean:
+#         window_size: 4
+#       rechunk:
+#         time: -1
         
-#  Extremes - days of rainfall above 90th percentile
-  daily.full.precip_Aus_NRM:
-    uses:
-      - "precip"
-    apply:
-      keep_period:
-        period: ["1960-11-01", "2021-12-31"]
-      convert_calendar:
-        calendar: "noleap"
-      add_area_using_cdo_gridarea:
-      average_over_NRM_super_clusters:
-      rechunk:
-        time: -1
+# #  Extremes - days of rainfall above 90th percentile
+#   daily.full.precip_Aus_NRM:
+#     uses:
+#       - "precip"
+#     apply:
+#       keep_period:
+#         period: ["1960-11-01", "2021-12-31"]
+#       convert_calendar:
+#         calendar: "noleap"
+#       add_area_using_cdo_gridarea:
+#       average_over_NRM_super_clusters:
+#       rechunk:
+#         time: -1
         
-  annual.days_over_p90_1991-2020.precip_Aus_NRM:
-    uses:
-      prepared:
-        - "daily.full.precip_Aus_NRM"
-    apply:
-      over_percentile_threshold:
-        percentile: 0.9
-        percentile_period: ["1991-01-01", "2020-12-31"]
-        frequency: "dayofyear"
-      coarsen:
-        window_size: 365
-        start_points: ["1960-11-01"]
-        dim: "time"
-      round_to_start_of_month:
-        dim: "time"
-      rechunk:
-        time: -1
+#   annual.days_over_p90_1991-2020.precip_Aus_NRM:
+#     uses:
+#       prepared:
+#         - "daily.full.precip_Aus_NRM"
+#     apply:
+#       over_percentile_threshold:
+#         percentile: 0.9
+#         percentile_period: ["1991-01-01", "2020-12-31"]
+#         frequency: "dayofyear"
+#       coarsen:
+#         window_size: 365
+#         start_points: ["1960-11-01"]
+#         dim: "time"
+#       round_to_start_of_month:
+#         dim: "time"
+#       rechunk:
+#         time: -1
         
-  4-year.days_over_p90_1991-2020.precip_Aus_NRM:
-    uses:
-      prepared:
-        - "annual.days_over_p90_1991-2020.precip_Aus_NRM"
-    apply:
-      rolling_mean:
-        window_size: 4
-      rechunk:
-        time: -1
+#   4-year.days_over_p90_1991-2020.precip_Aus_NRM:
+#     uses:
+#       prepared:
+#         - "annual.days_over_p90_1991-2020.precip_Aus_NRM"
+#     apply:
+#       rolling_mean:
+#         window_size: 4
+#       rechunk:
+#         time: -1
         
 #  Extremes - days of rainfall under 10th percentile
 #   month.full.precip_Aus_NRM:
@@ -595,5 +595,93 @@ prepare:
 #         - "4-year-Jan.3-months_under_p10_1985-2014.precip_Aus_NRM"
 #         - "4-year-Nov.3-months_under_p10_1985-2014.precip_Aus_NRM"
 #     apply:
+#       rechunk:
+#         time: -1
+
+# #  Extremes - excess heat factor
+#   daily.full.t_ref_Aus:
+#     uses:
+#       - "tmin"
+#       - "tmax"
+#     preprocess:
+#       rechunk:
+#         time: 50
+#         lat: -1
+#         lon: -1
+#     apply:
+#       calculate_tmean_from_tmin_tmax:
+#         tmean_name: "t_ref"
+#       convert_calendar:
+#         calendar: "noleap"
+#       round_to_start_of_day:
+#         dim: "time"
+#       interpolate_to_grid_from_file:
+#         file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
+#       extract_lon_lat_box:
+#         box: [110, 155, -45, -9]
+#         weighted_average: False
+#       rechunk:
+#         time: -1
+        
+#   daily.p95_1971-2000.t_ref_Aus:
+#     uses:
+#       prepared:
+#         - "daily.full.t_ref_Aus"
+#     apply:
+#       calculate_percentile_thresholds:
+#         percentile: 0.95
+#         percentile_period: ["1971-01-01", "2000-12-31"]
+
+#   daily.full.EHF_Aus:
+#     uses:
+#       prepared:
+#         - "daily.full.t_ref_Aus"
+#     apply:
+#       calculate_EHF:
+#         T_p95_file: "data/processed/AGCD.daily.p95_1971-2000.t_ref_Aus.zarr"
+        
+#   daily.p85_1958-2011.EHF_Aus:
+#     uses:
+#       prepared:
+#         - "daily.full.EHF_Aus"
+#     apply:
+#       where_greater_than:
+#         value: 0
+#       calculate_percentile_thresholds:
+#         percentile: 0.85
+#         percentile_period: ["1958-01-01", "2011-12-31"]
+        
+#   daily.full.EHF_sev_Aus:
+#     uses:
+#       prepared:
+#         - "daily.full.t_ref_Aus"
+#     apply:
+#       calculate_EHF_severity:
+#         T_p95_file: "data/processed/AGCD.daily.p95_1971-2000.t_ref_Aus.zarr"
+#         EHF_p85_file: "data/processed/AGCD.daily.p85_1958-2011.EHF_Aus.zarr"
+        
+#   annual.days_over_1.EHF_sev_Aus:
+#     uses:
+#       prepared:
+#         - "daily.full.EHF_sev_Aus"
+#     apply:
+#       greater_than:
+#         value: 1
+#       coarsen:
+#         window_size: 365
+#         start_points: ["1960-11-01"]
+#         dim: "time"
+#       round_to_start_of_month:
+#         dim: "time"
+#       rechunk:
+#         time: -1
+        
+#   4-year.days_over_1.EHF_sev_Aus:
+#     uses:
+#       prepared:
+#         - "annual.days_over_1.EHF_sev_Aus"
+#     apply:
+#       rolling_mean:
+#         window_size: 4
 #       rechunk:
 #         time: -1

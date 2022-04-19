@@ -184,34 +184,6 @@ prepare:
 #         lead: 1
 #         member: -1
 
-# Extremes - Excess heat factor
-  daily.mbc_1991-2020.t_ref_Aus:
-    uses:
-      atmos_isobaric_daily:
-        - "t_ref"
-    preprocess:
-      convert_calendar:
-        calendar: "noleap"
-      convert_time_to_lead:
-        time_freq: "days"
-      truncate_latitudes:
-      extract_lon_lat_box:
-        box: [110, 155, -45, -9]
-        weighted_average: False
-    apply:
-      rename:
-        ensemble: "member"
-      convert:
-        t_ref:
-          add: -273.15
-      round_to_start_of_day:
-        dim: ["init", "time"]
-      mask_CAFEf6_reduced_dt:
-      rechunk:
-        init: -1
-        lead: 28
-        member: -1
-
 # #  Extremes - days of max temp above 90th percentile
 #   daily.full.t_ref_max_Aus_NRM:
 #     uses:
@@ -475,3 +447,78 @@ prepare:
 #         init: -1
 #         lead: 1
 #         member: -1
+
+# # Extremes - Excess heat factor
+#   daily.abc_1991-2020.t_ref_Aus:
+#     uses:
+#       atmos_isobaric_daily:
+#         - "t_ref"
+#     preprocess:
+#       convert_calendar:
+#         calendar: "noleap"
+#       convert_time_to_lead:
+#         time_freq: "days"
+#       truncate_latitudes:
+#       extract_lon_lat_box:
+#         box: [110, 155, -45, -9]
+#         weighted_average: False
+#     apply:
+#       rename:
+#         ensemble: "member"
+#       convert:
+#         t_ref:
+#           add: -273.15
+#       round_to_start_of_day:
+#         dim: ["init", "time"]
+#       correct_bias_additive:
+#         obsv_file: "data/processed/AGCD.daily.full.t_ref_Aus.zarr"
+#         period: ["1991-01-01", "2020-12-31"]
+#         frequency: "dayofyear"
+#       mask_CAFEf6_reduced_dt:
+#       rechunk:
+#         init: -1
+#         lead: 28
+        
+  daily.full.EHF_sev_Aus:
+    uses:
+      prepared:
+        - "daily.abc_1991-2020.t_ref_Aus"
+    apply:
+      calculate_EHF_severity:
+        T_p95_file: "data/processed/AGCD.daily.p95_1971-2000.t_ref_Aus.zarr"
+        EHF_p85_file: "data/processed/AGCD.daily.p85_1958-2011.EHF_Aus.zarr"
+        rolling_dim: "lead"
+      rechunk:
+        init: -1
+        lead: 1
+        member: -1
+        
+  annual.days_over_1.EHF_sev_Aus:
+    uses:
+      prepared:
+        - "daily.full.EHF_sev_Aus"
+    apply:
+      greater_than:
+        value: 1
+      coarsen:
+        window_size: 365
+        dim: "lead"
+      round_to_start_of_month:
+        dim: "time"
+      rechunk:
+        init: -1
+        lead: 1
+        member: -1
+        
+  4-year.days_over_1.EHF_sev_Aus:
+    uses:
+      prepared:
+        - "annual.days_over_1.EHF_sev_Aus"
+    apply:
+      rolling_mean:
+        window_size: 4
+        dim: "lead"
+      rechunk:
+        init: -1
+        lead: 1
+        member: -1

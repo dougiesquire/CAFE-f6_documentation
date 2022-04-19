@@ -694,6 +694,7 @@ def verify(config, save_dir, save=True):
                     ds[var].encoding = {}
                 ds.to_zarr(f"{save_dir}/{identifier}.zarr", mode="w")
 
+        logger.info(f"Succeeded calculating all verification metrics")
         return prepared
     else:
         raise ValueError(f"No skill metrics were specified to prepare")
