@@ -18,23 +18,41 @@ def plot_hindcasts(hindcasts, historicals, observations, timescale, variable, re
 
     def _load_dataset(dataset, timescale, variable, region, diagnostic, train_period):
         """Load a skill metric"""
-        import os
 
         DATA_DIR = "../data/processed/"
+        
         if region is not None:
             region = f"_{region}"
         else: region = ""
-        file = f"{DATA_DIR}/{dataset}.{timescale}.{diagnostic}_{train_period}.{variable}{region}.zarr"
-        return xr.open_zarr(file)
+        
+        try:
+            file1 = f"{DATA_DIR}/{dataset}.{timescale}.{diagnostic}.{variable}{region}.zarr"
+            return xr.open_zarr(file1)
+        except:
+            if "CAFE" in dataset:
+                train_period = "1991-2020"
+            else:
+                train_period = "1985-2014"
+            
+            try:
+                file2 = f"{DATA_DIR}/{dataset}.{timescale}.{diagnostic}_{train_period}.{variable}{region}.zarr"
+                return xr.open_zarr(file2)
+            except:
+                raise OSError(f"Could not find {file1} or {file2}")
 
-    def global_mean(ds):
+    def area_mean(ds):
         return (
             ds.sel(lat=slice(-60, 60))
             .weighted(ds["area"])
             .mean(["lon", "lat"], keep_attrs=True)
         )
-
+    
     if region == "Aus_NRM":
+        regional = True
+    else:
+        regional = False
+
+    if regional:
         fig = plt.figure(figsize=(15, 17.5))
         n_rows = 5
         n_columns = len(hindcasts)
@@ -47,32 +65,28 @@ def plot_hindcasts(hindcasts, historicals, observations, timescale, variable, re
         
     ax_n = 0
     for idx, hindcast in enumerate(hindcasts):
-        if "CAFE" in hindcast:
-            train_period = "1991-2020"
-        else:
-            train_period = "1985-2014"
         
-        hindcast_data = _load_dataset(hindcast, timescale, variable, region, diagnostic, train_period)
-        if region == "global":
-            hindcast_data = global_mean(hindcast_data)
+        hindcast_data = _load_dataset(hindcast, timescale, variable, region, diagnostic)
+        if not regional:
+            hindcast_data = area_mean(hindcast_data)
         hindcast_dict = {hindcast: hindcast_data.compute()}
                          
         try:
-            historical_data = _load_dataset(historicals[idx], timescale, variable, region, diagnostic, train_period)
-            if region == "global":
-                historical_data = global_mean(historical_data)
+            historical_data = _load_dataset(historicals[idx], timescale, variable, region, diagnostic)
+            if not regional:
+                historical_data = area_mean(historical_data)
             historical_dict = {historicals[idx]: historical_data.compute()}
         except IndexError:
             historical_dict = None
 
         observations_dict = {}
         for observation in observations:
-            observation_data = _load_dataset(observation, timescale, variable, region, diagnostic, train_period)
-            if region == "global":
-                observation_data = global_mean(observation_data)
+            observation_data = _load_dataset(observation, timescale, variable, region, diagnostic)
+            if not regional:
+                observation_data = area_mean(observation_data)
             observations_dict[observation] = observation_data.compute()
 
-        if region == "Aus_NRM":
+        if regional:
             for reg in hindcast_dict[list(hindcast_dict.keys())[0]].region:
                 hindcast_dict_region = {k: v.sel(region=reg) for k,v in hindcast_dict.items()}
                 historical_dict_region = {k: v.sel(region=reg) for k,v in historical_dict.items()}
@@ -90,21 +104,38 @@ def _load_skill_metric(
 ):
     """Load a skill metric"""
     SKILL_DIR = "../data/skill/"
-    if hindcast == "CAFEf6":
-        train_period = "1991-2020"
-    else:
-        train_period = "1985-2014"
+
     if verif_period is None:
-        verif_period = train_period
+        if hindcast == "CAFEf6":
+            verif_period = "1991-2020"
+        else:
+            verif_period = "1985-2014"
+            
     if region is not None:
         region = f"_{region}"
     else:
         region = ""
-    file = (
-        f"{SKILL_DIR}/{hindcast}.{reference}.{timescale}.{diagnostic}_{train_period}"
-        f".{variable}{region}.{metric}_{verif_period}.zarr"
-    )
-    return xr.open_zarr(file).compute()
+        
+    try:
+        file1 = (
+            f"{SKILL_DIR}/{hindcast}.{reference}.{timescale}.{diagnostic}"
+            f".{variable}{region}.{metric}_{verif_period}.zarr"
+        )
+        return xr.open_zarr(file1).compute()
+    except:
+        if hindcast == "CAFEf6":
+            train_period = "1991-2020"
+        else:
+            train_period = "1985-2014"
+            
+        try:
+            file2 = (
+                f"{SKILL_DIR}/{hindcast}.{reference}.{timescale}.{diagnostic}_{train_period}"
+                f".{variable}{region}.{metric}_{verif_period}.zarr"
+            )
+            return xr.open_zarr(file2).compute()
+        except:
+            raise OSError(f"Could not find {file1} or {file2}")
 
 
 def plot_metrics(
@@ -120,7 +151,7 @@ def plot_metrics(
     """
     Helper function for plotting some skill metrics.
     """
-
+    
     if region == "Aus_NRM":
         n_regions = 5
         selections = [{"region": i} for i in range(5)]
@@ -170,6 +201,8 @@ def plot_metric_maps(
     reference,
     variable,
     metrics,
+    region="global",
+    diagnostic="anom",
     verif_period=None,
 ):
     """
@@ -196,8 +229,8 @@ def plot_metric_maps(
                     "annual",
                     f"{variable}",
                     metric,
-                    region="global",
-                    diagnostic="anom",
+                    region=region,
+                    diagnostic=diagnostic,
                     verif_period=verif_period,
                 )
             )
@@ -208,8 +241,8 @@ def plot_metric_maps(
                     "4-year",
                     f"{variable}",
                     metric,
-                    region="global",
-                    diagnostic="anom",
+                    region=region,
+                    diagnostic=diagnostic,
                     verif_period=verif_period,
                 )
             )

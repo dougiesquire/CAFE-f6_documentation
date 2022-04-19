@@ -613,10 +613,10 @@ def calculate_EHF(
     EHI_accl = T_3d - T_30d
     EHF = EHI_sig * EHI_accl.where(EHI_accl > 1, 1)
 
-    EHF = EHF.rename({T_name: "EHF"})
-    EHF["EHF"].attrs["long_name"] = "Excess Heat Factor"
-    EHF["EHF"].attrs["standard_name"] = "excess_heat_factor"
-    EHF["EHF"].attrs["units"] = "K^2"
+    EHF = EHF.rename({T_name: "ehf"})
+    EHF["ehf"].attrs["long_name"] = "Excess Heat Factor"
+    EHF["ehf"].attrs["standard_name"] = "excess_heat_factor"
+    EHF["ehf"].attrs["units"] = "K^2"
 
     return EHF
 
@@ -711,10 +711,10 @@ def calculate_EHF_severity(
 
     EHF_sev = EHF / EHF_p85
 
-    EHF_sev = EHF_sev.rename({"EHF": "EHF_severity"})
-    EHF_sev["EHF_severity"].attrs["long_name"] = "Severity of the Excess Heat Factor"
-    EHF_sev["EHF_severity"].attrs["standard_name"] = "excess_heat_factor_severity"
-    EHF_sev["EHF_severity"].attrs["units"] = "-"
+    EHF_sev = EHF_sev.rename({"ehf": "ehf_severity"})
+    EHF_sev["ehf_severity"].attrs["long_name"] = "Severity of the Excess Heat Factor"
+    EHF_sev["ehf_severity"].attrs["standard_name"] = "excess_heat_factor_severity"
+    EHF_sev["ehf_severity"].attrs["units"] = "-"
 
     return EHF_sev
 

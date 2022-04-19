@@ -595,8 +595,6 @@ def calculate_metric(
             verif_times = _common_set_of_verif_times(
                 hindcast_at_lead, *references, search_dim=None
             )
-            print(hindcast_at_lead.swap_dims({"init": "time"}))
-            print(references[0])
             verif_period = f"{verif_times[0].strftime('%Y-%m-%d')} - {verif_times[-1].strftime('%Y-%m-%d')}"
             hindcast_verif_times = hindcast_at_lead.swap_dims({"init": "time"}).sel(
                 time=verif_times

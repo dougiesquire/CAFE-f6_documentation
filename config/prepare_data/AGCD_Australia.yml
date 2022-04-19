@@ -623,65 +623,65 @@ prepare:
 #       rechunk:
 #         time: -1
         
-#   daily.p95_1971-2000.t_ref_Aus:
-#     uses:
-#       prepared:
-#         - "daily.full.t_ref_Aus"
-#     apply:
-#       calculate_percentile_thresholds:
-#         percentile: 0.95
-#         percentile_period: ["1971-01-01", "2000-12-31"]
+  daily.p95_1971-2000.t_ref_Aus:
+    uses:
+      prepared:
+        - "daily.full.t_ref_Aus"
+    apply:
+      calculate_percentile_thresholds:
+        percentile: 0.95
+        percentile_period: ["1971-01-01", "2000-12-31"]
 
-#   daily.full.EHF_Aus:
-#     uses:
-#       prepared:
-#         - "daily.full.t_ref_Aus"
-#     apply:
-#       calculate_EHF:
-#         T_p95_file: "data/processed/AGCD.daily.p95_1971-2000.t_ref_Aus.zarr"
+  daily.full.ehf_Aus:
+    uses:
+      prepared:
+        - "daily.full.t_ref_Aus"
+    apply:
+      calculate_ehf:
+        T_p95_file: "data/processed/AGCD.daily.p95_1971-2000.t_ref_Aus.zarr"
         
-#   daily.p85_1958-2011.EHF_Aus:
-#     uses:
-#       prepared:
-#         - "daily.full.EHF_Aus"
-#     apply:
-#       where_greater_than:
-#         value: 0
-#       calculate_percentile_thresholds:
-#         percentile: 0.85
-#         percentile_period: ["1958-01-01", "2011-12-31"]
+  daily.p85_1958-2011.ehf_Aus:
+    uses:
+      prepared:
+        - "daily.full.ehf_Aus"
+    apply:
+      where_greater_than:
+        value: 0
+      calculate_percentile_thresholds:
+        percentile: 0.85
+        percentile_period: ["1958-01-01", "2011-12-31"]
         
-#   daily.full.EHF_sev_Aus:
-#     uses:
-#       prepared:
-#         - "daily.full.t_ref_Aus"
-#     apply:
-#       calculate_EHF_severity:
-#         T_p95_file: "data/processed/AGCD.daily.p95_1971-2000.t_ref_Aus.zarr"
-#         EHF_p85_file: "data/processed/AGCD.daily.p85_1958-2011.EHF_Aus.zarr"
+  daily.full.ehf_severity_Aus:
+    uses:
+      prepared:
+        - "daily.full.t_ref_Aus"
+    apply:
+      calculate_ehf_severity:
+        T_p95_file: "data/processed/AGCD.daily.p95_1971-2000.t_ref_Aus.zarr"
+        EHF_p85_file: "data/processed/AGCD.daily.p85_1958-2011.ehf_Aus.zarr"
         
-#   annual.days_over_1.EHF_sev_Aus:
-#     uses:
-#       prepared:
-#         - "daily.full.EHF_sev_Aus"
-#     apply:
-#       greater_than:
-#         value: 1
-#       coarsen:
-#         window_size: 365
-#         start_points: ["1960-11-01"]
-#         dim: "time"
-#       round_to_start_of_month:
-#         dim: "time"
-#       rechunk:
-#         time: -1
+  annual.days_over_1.ehf_severity_Aus:
+    uses:
+      prepared:
+        - "daily.full.ehf_severity_Aus"
+    apply:
+      greater_than:
+        value: 1
+      coarsen:
+        window_size: 365
+        start_points: ["1960-11-01"]
+        dim: "time"
+      round_to_start_of_month:
+        dim: "time"
+      rechunk:
+        time: -1
         
-#   4-year.days_over_1.EHF_sev_Aus:
-#     uses:
-#       prepared:
-#         - "annual.days_over_1.EHF_sev_Aus"
-#     apply:
-#       rolling_mean:
-#         window_size: 4
-#       rechunk:
-#         time: -1
+  4-year.days_over_1.ehf_severity_Aus:
+    uses:
+      prepared:
+        - "annual.days_over_1.ehf_severity_Aus"
+    apply:
+      rolling_mean:
+        window_size: 4
+      rechunk:
+        time: -1

@@ -390,49 +390,49 @@ prepare:
 #         time: -1
 #         member: -1
 
-# Extremes - Excess heat factor
-  daily.abc_1991-2020.t_ref_Aus:
-    uses:
-      atmos_isobaric_daily:
-        - "t_ref"
-    apply:
-      convert_calendar:
-        calendar: "noleap"
-      extract_lon_lat_box:
-        box: [110, 155, -45, -9]
-        weighted_average: False
-      rename:
-        ensemble: "member"
-      truncate_latitudes:
-      convert:
-        t_ref:
-          add: -273.15
-      round_to_start_of_day:
-        dim: "time"
-      correct_bias_additive:
-        obsv_file: "data/processed/AGCD.daily.full.t_ref_Aus.zarr"
-        period: ["1991-01-01", "2020-12-31"]
-        frequency: "dayofyear"
-      rechunk:
-        time: -1
-        member: -1
+# # Extremes - Excess heat factor
+#   daily.abc_1991-2020.t_ref_Aus:
+#     uses:
+#       atmos_isobaric_daily:
+#         - "t_ref"
+#     apply:
+#       convert_calendar:
+#         calendar: "noleap"
+#       extract_lon_lat_box:
+#         box: [110, 155, -45, -9]
+#         weighted_average: False
+#       rename:
+#         ensemble: "member"
+#       truncate_latitudes:
+#       convert:
+#         t_ref:
+#           add: -273.15
+#       round_to_start_of_day:
+#         dim: "time"
+#       correct_bias_additive:
+#         obsv_file: "data/processed/AGCD.daily.full.t_ref_Aus.zarr"
+#         period: ["1991-01-01", "2020-12-31"]
+#         frequency: "dayofyear"
+#       rechunk:
+#         time: 365
+#         member: -1
         
-  daily.full.EHF_sev_Aus:
+  daily.full.ehf_severity_Aus:
     uses:
       prepared:
         - "daily.abc_1991-2020.t_ref_Aus"
     apply:
       calculate_EHF_severity:
         T_p95_file: "data/processed/AGCD.daily.p95_1971-2000.t_ref_Aus.zarr"
-        EHF_p85_file: "data/processed/AGCD.daily.p85_1958-2011.EHF_Aus.zarr"
+        EHF_p85_file: "data/processed/AGCD.daily.p85_1958-2011.ehf_Aus.zarr"
       rechunk:
-        time: -1
+        time: 365
         member: -1
         
-  annual.days_over_1.EHF_sev_Aus:
+  annual.days_over_1.ehf_severity_Aus:
     uses:
       prepared:
-        - "daily.full.EHF_sev_Aus"
+        - "daily.full.ehf_severity_Aus"
     apply:
       greater_than:
         value: 1
@@ -446,10 +446,10 @@ prepare:
         time: -1
         member: -1
         
-  4-year.days_over_1.EHF_sev_Aus:
+  4-year.days_over_1.ehf_severity_Aus:
     uses:
       prepared:
-        - "annual.days_over_1.EHF_sev_Aus"
+        - "annual.days_over_1.ehf_severity_Aus"
     apply:
       rolling_mean:
         window_size: 4
