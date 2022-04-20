@@ -243,6 +243,7 @@ def metric_maps(
                 colors="none",
                 hatches=[None, "///", None],
                 transform=ccrs.PlateCarree(),
+                extend='lower'
             )
 
         if headings is not None:

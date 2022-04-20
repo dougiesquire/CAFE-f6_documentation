@@ -21,9 +21,9 @@
 
 prepare:
   # Australian metrics vs AGCD
-  CAFEf6.AGCD.annual.days_over_1.EHF_sev_Aus.rXY_1991-2020:
-    hindcasts: CAFEf6.annual.days_over_1.EHF_sev_Aus
-    observations: AGCD.annual.days_over_1.EHF_sev_Aus
+  CAFEf6.AGCD.annual.days_over_0.ehf_severity_Aus.rXY_1991-2020:
+    hindcasts: CAFEf6.annual.days_over_0.ehf_severity_Aus
+    observations: AGCD.annual.days_over_0.ehf_severity_Aus
     verify:
       metric: "acc"
       metric_kwargs:
@@ -32,9 +32,9 @@ prepare:
       transform: "Fisher_z"
       alpha: 0.05
       
-  CAFEf6.AGCD.4-year.days_over_1.EHF_sev_Aus.rXY_1991-2020:
-    hindcasts: CAFEf6.4-year.days_over_1.EHF_sev_Aus
-    observations: AGCD.4-year.days_over_1.EHF_sev_Aus
+  CAFEf6.AGCD.4-year.days_over_0.ehf_severity_Aus.rXY_1991-2020:
+    hindcasts: CAFEf6.4-year.days_over_0.ehf_severity_Aus
+    observations: AGCD.4-year.days_over_0.ehf_severity_Aus
     apply:
       all:
         keep_period:
@@ -47,19 +47,19 @@ prepare:
       transform: "Fisher_z"
       alpha: 0.05
 
-  CAFEf6.AGCD.annual.days_over_1.EHF_sev_Aus.MSSS_hist_1991-2020:
-    hindcasts: CAFEf6.annual.days_over_1.EHF_sev_Aus
-    observations: AGCD.annual.days_over_1.EHF_sev_Aus
-    simulations: CAFE_hist.annual.days_over_1.EHF_sev_Aus
+  CAFEf6.AGCD.annual.days_over_0.ehf_severity_Aus.MSSS_hist_1991-2020:
+    hindcasts: CAFEf6.annual.days_over_0.ehf_severity_Aus
+    observations: AGCD.annual.days_over_0.ehf_severity_Aus
+    simulations: CAFE_hist.annual.days_over_0.ehf_severity_Aus
     verify:
       metric: "msss_hist"
       significance: True
       alpha: 0.05
       
-  CAFEf6.AGCD.4-year.days_over_1.EHF_sev_Aus.MSSS_hist_1991-2020:
-    hindcasts: CAFEf6.4-year.days_over_1.EHF_sev_Aus
-    observations: AGCD.4-year.days_over_1.EHF_sev_Aus
-    simulations: CAFE_hist.4-year.days_over_1.EHF_sev_Aus
+  CAFEf6.AGCD.4-year.days_over_0.ehf_severity_Aus.MSSS_hist_1991-2020:
+    hindcasts: CAFEf6.4-year.days_over_0.ehf_severity_Aus
+    observations: AGCD.4-year.days_over_0.ehf_severity_Aus
+    simulations: CAFE_hist.4-year.days_over_0.ehf_severity_Aus
     apply:
       all:
         keep_period:
@@ -69,19 +69,19 @@ prepare:
       significance: True
       alpha: 0.05
 
-  CAFEf6.AGCD.annual.days_over_1.EHF_sev_Aus.MSSS_clim_1991-2020:
-    hindcasts: CAFEf6.annual.days_over_1.EHF_sev_Aus
-    observations: AGCD.annual.days_over_1.EHF_sev_Aus
+  CAFEf6.AGCD.annual.days_over_0.ehf_severity_Aus.MSSS_clim_1991-2020:
+    hindcasts: CAFEf6.annual.days_over_0.ehf_severity_Aus
+    observations: AGCD.annual.days_over_0.ehf_severity_Aus
     verify:
       metric: "msss_clim"
       metric_kwargs:
-        clim_baseline_value: 0.01
+        clim_baseline_value: 0.05
       significance: True
       alpha: 0.05
       
-  CAFEf6.AGCD.4-year.days_over_1.EHF_sev_Aus.MSSS_clim_1991-2020:
-    hindcasts: CAFEf6.4-year.days_over_1.EHF_sev_Aus
-    observations: AGCD.4-year.days_over_1.EHF_sev_Aus
+  CAFEf6.AGCD.4-year.days_over_0.ehf_severity_Aus.MSSS_clim_1991-2020:
+    hindcasts: CAFEf6.4-year.days_over_0.ehf_severity_Aus
+    observations: AGCD.4-year.days_over_0.ehf_severity_Aus
     apply:
       all:
         keep_period:
@@ -89,23 +89,23 @@ prepare:
     verify:
       metric: "msss_clim"
       metric_kwargs:
-        clim_baseline_value: 0.01
+        clim_baseline_value: 0.05
       significance: True
       alpha: 0.05
       
-  CAFEf6.AGCD.annual.days_over_1.EHF_sev_Aus.CRPSS_hist_1991-2020:
-    hindcasts: CAFEf6.annual.days_over_1.EHF_sev_Aus
-    observations: AGCD.annual.days_over_1.EHF_sev_Aus
-    simulations: CAFE_hist.annual.days_over_1.EHF_sev_Aus
+  CAFEf6.AGCD.annual.days_over_0.ehf_severity_Aus.CRPSS_hist_1991-2020:
+    hindcasts: CAFEf6.annual.days_over_0.ehf_severity_Aus
+    observations: AGCD.annual.days_over_0.ehf_severity_Aus
+    simulations: CAFE_hist.annual.days_over_0.ehf_severity_Aus
     verify:
       metric: "crpss"
       significance: True
       alpha: 0.05
       
-  CAFEf6.AGCD.4-year.days_over_1.EHF_sev_Aus.CRPSS_hist_1991-2020:
-    hindcasts: CAFEf6.4-year.days_over_1.EHF_sev_Aus
-    observations: AGCD.4-year.days_over_1.EHF_sev_Aus
-    simulations: CAFE_hist.4-year.days_over_1.EHF_sev_Aus
+  CAFEf6.AGCD.4-year.days_over_0.ehf_severity_Aus.CRPSS_hist_1991-2020:
+    hindcasts: CAFEf6.4-year.days_over_0.ehf_severity_Aus
+    observations: AGCD.4-year.days_over_0.ehf_severity_Aus
+    simulations: CAFE_hist.4-year.days_over_0.ehf_severity_Aus
     apply:
       all:
         keep_period:

@@ -1210,10 +1210,9 @@ def under_percentile_threshold(
         )
 
 
-def correct_bias_additive(ds, obsv_file, period, frequency):
+def correct_bias(ds, obsv_file, period, frequency, method):
     """
-    Correct the mean bias of ds relative to observations in an additive
-    manner over a provided period
+    Correct the mean bias of ds relative to observations over a provided period
 
     Will not work for hindcasts with initialisation frequencies more regular
     than monthly.
@@ -1228,16 +1227,22 @@ def correct_bias_additive(ds, obsv_file, period, frequency):
     period : iterable
         Size 2 iterable containing strings indicating period over which to
         calculate the biases
-    frequency : str, optional
+    frequency : str
         The frequency at which to bin the biases, e.g. per month. Must be an
         available attribute of the datetime accessor. Specify "None" to indicate
         no frequency (climatology calculated by averaging all times). Note,
         setting to "None" can be dangerous, since only certain times may be
         available at each lead and there is no check that the same times are
         available between the observations and forecasts.
+    method : str
+        The method to use to correct the mean bias. Options are:
+        - "additive": the  difference between the ds and obsv climatology is
+            subtracted from ds
+        - "multiplicative": ds is divided by the ratio of the ds and obsv
+            climatologies
     """
 
-    def _get_hcst_bias(hcst, obsv_clim, frequency, reduce_dim):
+    def _get_hcst_bias(hcst, obsv_clim, frequency, reduce_dim, method):
         """Calculate the mean bias between hcst and obsv_clim"""
         if frequency is None:
             obsv_clim_aligned = obsv_clim
@@ -1257,7 +1262,13 @@ def correct_bias_additive(ds, obsv_file, period, frequency):
                 {frequency: hcst.lead.values}
             ).rename({frequency: "lead"})
 
-        return hcst.mean(reduce_dim) - obsv_clim_aligned
+        if method == "additive":
+            return hcst.mean(reduce_dim) - obsv_clim_aligned
+        elif method == "multiplicative":
+            return hcst.mean(reduce_dim) / obsv_clim_aligned
+
+    if method not in ["additive", "multiplicative"]:
+        raise ValueError("Unrecognised input for `method`")
 
     obsv_file = PROJECT_DIR / obsv_file
     obsv = xr.open_zarr(obsv_file, use_cftime=True)
@@ -1280,6 +1291,7 @@ def correct_bias_additive(ds, obsv_file, period, frequency):
             obsv_clim=obsv_clim,
             frequency=frequency,
             reduce_dim=ds_reduce_dim,
+            method=method,
         )
     else:
         if ds_groupby is None:
@@ -1288,7 +1300,10 @@ def correct_bias_additive(ds, obsv_file, period, frequency):
             ds_clim = ds_period.groupby(ds_groupby).mean(ds_reduce_dim)
         bias = ds_clim - obsv_clim
 
-    return (ds.groupby(ds_groupby) - bias).drop(ds_groupby.split(".")[-1])
+    if method == "additive":
+        return (ds.groupby(ds_groupby) - bias).drop(ds_groupby.split(".")[-1])
+    elif method == "multiplicative":
+        return (ds.groupby(ds_groupby) / bias).drop(ds_groupby.split(".")[-1])
 
 
 def interpolate_to_grid_from_file(ds, file, add_area=True, ignore_degenerate=True):

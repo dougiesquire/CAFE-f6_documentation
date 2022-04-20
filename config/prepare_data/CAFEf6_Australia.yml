@@ -470,10 +470,11 @@ prepare:
 #           add: -273.15
 #       round_to_start_of_day:
 #         dim: ["init", "time"]
-#       correct_bias_additive:
+#       correct_bias:
 #         obsv_file: "data/processed/AGCD.daily.full.t_ref_Aus.zarr"
 #         period: ["1991-01-01", "2020-12-31"]
 #         frequency: "dayofyear"
+#         method: "additive"
 #       mask_CAFEf6_reduced_dt:
 #       rechunk:
 #         init: -1
@@ -493,13 +494,13 @@ prepare:
         lead: 1
         member: -1
         
-  annual.days_over_1.ehf_severity_Aus:
+  annual.days_over_0.ehf_severity_Aus:
     uses:
       prepared:
         - "daily.full.ehf_severity_Aus"
     apply:
       greater_than:
-        value: 1
+        value: 0
       coarsen:
         window_size: 365
         dim: "lead"
@@ -510,10 +511,10 @@ prepare:
         lead: 1
         member: -1
         
-  4-year.days_over_1.ehf_severity_Aus:
+  4-year.days_over_0.ehf_severity_Aus:
     uses:
       prepared:
-        - "annual.days_over_1.ehf_severity_Aus"
+        - "annual.days_over_0.ehf_severity_Aus"
     apply:
       rolling_mean:
         window_size: 4

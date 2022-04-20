@@ -16,7 +16,7 @@ def plot_hindcasts(hindcasts, historicals, observations, timescale, variable, re
     Helper function for plotting hindcast timeseries. If the data are spatial, plots the global mean
     """
 
-    def _load_dataset(dataset, timescale, variable, region, diagnostic, train_period):
+    def _load_dataset(dataset, timescale, variable, region, diagnostic):
         """Load a skill metric"""
 
         DATA_DIR = "../data/processed/"
@@ -29,11 +29,6 @@ def plot_hindcasts(hindcasts, historicals, observations, timescale, variable, re
             file1 = f"{DATA_DIR}/{dataset}.{timescale}.{diagnostic}.{variable}{region}.zarr"
             return xr.open_zarr(file1)
         except:
-            if "CAFE" in dataset:
-                train_period = "1991-2020"
-            else:
-                train_period = "1985-2014"
-            
             try:
                 file2 = f"{DATA_DIR}/{dataset}.{timescale}.{diagnostic}_{train_period}.{variable}{region}.zarr"
                 return xr.open_zarr(file2)
@@ -65,7 +60,11 @@ def plot_hindcasts(hindcasts, historicals, observations, timescale, variable, re
         
     ax_n = 0
     for idx, hindcast in enumerate(hindcasts):
-        
+        if "CAFE" in hindcast:
+            train_period = "1991-2020"
+        else:
+            train_period = "1985-2014"
+                
         hindcast_data = _load_dataset(hindcast, timescale, variable, region, diagnostic)
         if not regional:
             hindcast_data = area_mean(hindcast_data)
@@ -204,6 +203,7 @@ def plot_metric_maps(
     region="global",
     diagnostic="anom",
     verif_period=None,
+    figsize=None
 ):
     """
     Helper function for plotting some skill maps. Edit this function to change which
@@ -276,21 +276,22 @@ def plot_metric_maps(
 
         # Change this to change what leads are plotted
         to_plot = {
-            "year 1": annual.sel(lead=23),
-            "years 1-4": quadrennial.sel(lead=59),
-            "years 5-8": quadrennial.sel(lead=107),
+            "year 1": annual.isel(lead=1), #.sel(lead=23),
+            "years 1-4": quadrennial.isel(lead=1), #.sel(lead=59),
+            "years 5-8": quadrennial.isel(lead=5), #.sel(lead=107),
         }
         fields.append(list(to_plot.values()))
         headings.append(
             [f"{hindcast} | {metric} | {timescale}" for timescale in to_plot.keys()]
         )
 
-    if len(hindcasts) >= 3:
-        figsize = (15, 9.1)
-    elif len(hindcasts) == 2:
-        figsize = (15, 6.1)
-    else:
-        figsize = (15, 3.2)
+    if figsize is None:
+        if len(hindcasts) >= 3:
+            figsize = (15, 9.1)
+        elif len(hindcasts) == 2:
+            figsize = (15, 6.1)
+        else:
+            figsize = (15, 3.2)
     return plot.metric_maps(
         fields,
         variable=variable,
