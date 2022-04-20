@@ -528,7 +528,7 @@ def calculate_metric(
         """
         Get the common set of verification times available at all leads
 
-        Stolen from climpred.alignment._same_verifs_alignment
+        Stolen and adapted from climpred.alignment._same_verifs_alignment
         """
         hcst_times = hcst.time.compute()
         if len(refs) > 1:
