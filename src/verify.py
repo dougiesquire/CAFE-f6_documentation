@@ -79,7 +79,7 @@ def acc_initialised(hcst, obsv, hist):
     return rXY - ru
 
 
-def _msss(hcst, obsv, ref):
+def msss(hcst, obsv, ref, ensemble_mean=True):
     """
     Return the mean squared skill score between a forecast and observations
     relative to a reference dataset
@@ -92,7 +92,14 @@ def _msss(hcst, obsv, ref):
         The observed timeseries
     ref : xarray Dataset
         The reference timeseries
+    ensemble_mean: boolean, optional
+        If true, take the mean across the "member" dimension of hcst and ref
+        (if it exists) prior to calculating the MSSS
     """
+    if ensemble_mean:
+        hcst = hcst.mean("member")
+        ref = ref.mean("member") if "member" in ref.dims else ref
+    
     num = xs.mse(hcst, obsv, dim="time", skipna=True)
     den = xs.mse(ref, obsv, dim="time", skipna=True)
     return 1 - num / den
