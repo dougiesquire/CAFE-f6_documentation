@@ -12,9 +12,8 @@ NCI_PROJECT = xv83
 RAW_DATA_DIR = ./data/raw/
 TEST_DATA_DIR = ./data/testing/
 
-data_config = CAFE60v1_generic.yml CAFEf5_generic.yml CAFEf6_generic.yml CAFE_hist_generic.yml CanESM5_hist_generic.yml CanESM5_generic.yml EC_Earth3_generic.yml EC_Earth3_hist_generic.yml EN422_generic.yml GPCP_generic.yml HadISST_generic.yml JRA55_generic.yml
-
-skill_config = CAFEf6_sst.yml CanESM5_sst.yml EC_Earth3_sst.yml CAFEf6_t_ref.yml CanESM5_t_ref.yml EC_Earth3_t_ref.yml CAFEf6_precip.yml CanESM5_precip.yml EC_Earth3_precip.yml CAFEf6_amv.yml CanESM5_amv.yml EC_Earth3_amv.yml CAFEf6_ipo.yml CanESM5_ipo.yml EC_Earth3_ipo.yml CAFEf6_nino34.yml CanESM5_nino34.yml EC_Earth3_nino34.yml CAFEf6_dmi.yml CanESM5_dmi.yml EC_Earth3_dmi.yml CAFEf6_sam.yml CAFEf6_nao.yml CAFEf6_ohc300.yml
+data_config := $(shell (cd ./config/prepare_data && ls *.yml))
+skill_config := $(shell (cd ./config/verify && ls *.yml))
 
 ifeq (,$(shell which conda))
 HAS_CONDA=False

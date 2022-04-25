@@ -1,0 +1,246 @@
+# Config file for specifying processing using src.prepare_data()
+# ==================================================================================
+
+# name: required
+#    The name of the dataset. Must match a method in src.prepare_data._open
+#
+# prepare: required
+#    List of unique identifiers for output variables to prepare and save. This will 
+#    be used to save the prepared output variable(s) as {name}.{identifier}.zarr. 
+#    Each identifier can include the following:
+#
+#    uses: required
+#        List of input variables required to compute the output variable(s). For 
+#        some datasets, this should be further broken into subkeys indicating the 
+#        realm for each list of variables (e.g. ocean_month). Alternatively, users 
+#        can provide the identifier of a previously prepared dataset by entering
+#        `prepared: <identifier>`.
+#    preprocess: optional
+#        Functions and kwargs from src.utils to be applied sequentially prior to 
+#        concatenation (for datasets comprised of multiple concatenated files) 
+#        and/or prior to merging input variables from multiple realms where more 
+#        than one are specified.
+#    apply: optional
+#        Functions and kwargs from src.utils to be applied sequentially to opened 
+#        (and concatenated/merge, where appropriate) dataset.
+
+name: "AGCD"
+
+prepare:
+
+  # Prepare anomalies over NRM regions
+  # ================================================
+  
+  # Annual average
+  
+  annual-Jan.full.precip_Aus_NRM:
+    uses:
+      - "precip"
+    apply:
+      resample:
+        freq: "A-DEC"
+        start_points: ["1960-01-01"]
+        min_samples: 365
+      round_to_start_of_month:
+        dim: "time"
+      convert_calendar:
+        calendar: "julian"
+      add_area_using_cdo_gridarea:
+      average_over_NRM_super_clusters:
+      rechunk:
+        time: -1
+        
+  annual-Nov.full.precip_Aus_NRM:
+    uses:
+      - "precip"
+    apply:
+      resample:
+        freq: "A-OCT"
+        start_points: ["1960-11-01"]
+        min_samples: 365
+      round_to_start_of_month:
+        dim: "time"
+      convert_calendar:
+        calendar: "julian"
+      add_area_using_cdo_gridarea:
+      average_over_NRM_super_clusters:
+      rechunk:
+        time: -1
+        
+  # Annual anomalies - 1991-2020 climatology
+  
+  annual-Jan.anom_1991-2020.precip_Aus_NRM:
+    uses:
+      prepared:
+        - "annual-Jan.full.precip_Aus_NRM"
+    apply:
+      anomalise:
+        clim_period: ["1991-01-01", "2020-12-31"]
+        frequency: "month"
+      rechunk:
+        time: -1
+        
+  annual-Nov.anom_1991-2020.precip_Aus_NRM:
+    uses:
+      prepared:
+        - "annual-Nov.full.precip_Aus_NRM"
+    apply:
+      anomalise:
+        clim_period: ["1991-01-01", "2020-12-31"]
+        frequency: "month"
+      rechunk:
+        time: -1
+        
+  annual.anom_1991-2020.precip_Aus_NRM:
+    uses:
+      prepared:
+        - "annual-Jan.anom_1991-2020.precip_Aus_NRM"
+        - "annual-Nov.anom_1991-2020.precip_Aus_NRM"
+    apply:
+      rechunk:
+        time: -1
+        
+  # Annual anomalies - 1985-2014 climatology
+  
+  annual-Jan.anom_1985-2014.precip_Aus_NRM:
+    uses:
+      prepared:
+        - "annual-Jan.full.precip_Aus_NRM"
+    apply:
+      anomalise:
+        clim_period: ["1985-01-01", "2014-12-31"]
+        frequency: "month"
+      rechunk:
+        time: -1
+        
+  annual-Nov.anom_1985-2014.precip_Aus_NRM:
+    uses:
+      prepared:
+        - "annual-Nov.full.precip_Aus_NRM"
+    apply:
+      anomalise:
+        clim_period: ["1985-01-01", "2014-12-31"]
+        frequency: "month"
+      rechunk:
+        time: -1
+        
+  annual.anom_1985-2014.precip_Aus_NRM:
+    uses:
+      prepared:
+        - "annual-Jan.anom_1985-2014.precip_Aus_NRM"
+        - "annual-Nov.anom_1985-2014.precip_Aus_NRM"
+    apply:
+      rechunk:
+        time: -1
+        
+  # 4-year anomalies - 1991-2020 climatology
+
+  4-year-Jan.anom_1991-2020.precip_Aus_NRM:
+    uses:
+      prepared:
+        - "annual-Jan.anom_1991-2020.precip_Aus_NRM"
+    apply:
+      rolling_mean:
+        window_size: 4
+      rechunk:
+        time: -1
+        
+  4-year-Nov.anom_1991-2020.precip_Aus_NRM:
+    uses:
+      prepared:
+        - "annual-Nov.anom_1991-2020.precip_Aus_NRM"
+    apply:
+      rolling_mean:
+        window_size: 4
+      rechunk:
+        time: -1
+        
+  4-year.anom_1991-2020.precip_Aus_NRM:
+    uses:
+      prepared:
+        - "4-year-Jan.anom_1991-2020.precip_Aus_NRM"
+        - "4-year-Nov.anom_1991-2020.precip_Aus_NRM"
+    apply:
+      rechunk:
+        time: -1
+        
+  # 4-year anomalies - 1985-2014 climatology
+
+  4-year-Jan.anom_1985-2014.precip_Aus_NRM:
+    uses:
+      prepared:
+        - "annual-Jan.anom_1985-2014.precip_Aus_NRM"
+    apply:
+      rolling_mean:
+        window_size: 4
+      rechunk:
+        time: -1
+        
+  4-year-Nov.anom_1985-2014.precip_Aus_NRM:
+    uses:
+      prepared:
+        - "annual-Nov.anom_1985-2014.precip_Aus_NRM"
+    apply:
+      rolling_mean:
+        window_size: 4
+      rechunk:
+        time: -1
+        
+  4-year.anom_1985-2014.precip_Aus_NRM:
+    uses:
+      prepared:
+        - "4-year-Jan.anom_1985-2014.precip_Aus_NRM"
+        - "4-year-Nov.anom_1985-2014.precip_Aus_NRM"
+    apply:
+      rechunk:
+        time: -1
+        
+  # Prepare days over p90 over NRM regions
+  # ================================================
+  
+  # Daily
+  
+  daily.full.precip_Aus_NRM:
+    uses:
+      - "precip"
+    apply:
+      keep_period:
+        period: ["1960-11-01", "2021-12-31"]
+      convert_calendar:
+        calendar: "noleap"
+      add_area_using_cdo_gridarea:
+      average_over_NRM_super_clusters:
+      rechunk:
+        time: -1
+        
+  # Annual days over p90 - 1991-2020 climatology
+  
+  annual.days_over_p90_1991-2020.precip_Aus_NRM:
+    uses:
+      prepared:
+        - "daily.full.precip_Aus_NRM"
+    apply:
+      over_percentile_threshold:
+        percentile: 0.9
+        percentile_period: ["1991-01-01", "2020-12-31"]
+        frequency: "dayofyear"
+      coarsen:
+        window_size: 365
+        start_points: ["1960-11-01"]
+        dim: "time"
+      round_to_start_of_month:
+        dim: "time"
+      rechunk:
+        time: -1
+        
+  # 4-year days over p90 - 1991-2020 climatology
+        
+  4-year.days_over_p90_1991-2020.precip_Aus_NRM:
+    uses:
+      prepared:
+        - "annual.days_over_p90_1991-2020.precip_Aus_NRM"
+    apply:
+      rolling_mean:
+        window_size: 4
+      rechunk:
+        time: -1

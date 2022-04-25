@@ -700,9 +700,7 @@ def calculate_EHF_severity(
         EHF_p85 = xr.open_zarr(EHF_p85_file)
         calculate_EHF_p85 = False
 
-    EHF = calculate_EHF(
-        T, T_p95_file, T_p95_period, T_p95_dim, rolling_dim, T_name
-    )
+    EHF = calculate_EHF(T, T_p95_file, T_p95_period, T_p95_dim, rolling_dim, T_name)
 
     if calculate_EHF_p85:
         EHF_p85 = calculate_percentile_thresholds(
@@ -733,8 +731,8 @@ def ensemble_mean(ds, ensemble_dim="member"):
 
 
 def greater_than(ds, value):
-    """ Return a boolean array with True where elements > value
-    
+    """Return a boolean array with True where elements > value
+
     Parameters:
     -----------
     ds: xarray Dataset
@@ -744,9 +742,10 @@ def greater_than(ds, value):
     """
     return ds > value
 
+
 def where_greater_than(ds, value):
-    """ Return array with elements <= value masked to nan
-    
+    """Return array with elements <= value masked to nan
+
     Parameters:
     -----------
     ds: xarray Dataset
@@ -1076,7 +1075,7 @@ def anomalise(ds, clim_period, frequency=None):
         Size 2 iterable containing strings indicating the start and end dates
         of the climatological period
     frequency : str, optional
-        The frequency at which to bin the climatology, e.g. per month. Must be 
+        The frequency at which to bin the climatology, e.g. per month. Must be
         an available attribute of the datetime accessor. Specify "None" to
         indicate no frequency (climatology calculated by averaging all times).
         Note, setting to "None" for hindcast data can be dangerous, since only
@@ -1117,8 +1116,8 @@ def calculate_percentile_thresholds(
     frequency : str, optional
         The frequency at which to bin the percentiles percentiles, e.g. per month.
         Must be an available attribute of the datetime accessor. Specify "None" to
-        indicate no frequency (percentiles calculated over all times). Note, setting 
-        to "None" for hindcast data can be dangerous, since only certain times may 
+        indicate no frequency (percentiles calculated over all times). Note, setting
+        to "None" for hindcast data can be dangerous, since only certain times may
         be available at each lead.
     """
     ds_period = keep_period(ds, percentile_period)
@@ -1132,8 +1131,8 @@ def calculate_percentile_thresholds(
         return ds_period.quantile(q=percentile, dim=reduce_dim)
     else:
         return ds_period.groupby(groupby).quantile(q=percentile, dim=reduce_dim)
-    
-    
+
+
 def over_percentile_threshold(
     ds, percentile, percentile_period, percentile_dim=None, frequency=None
 ):
@@ -1154,8 +1153,8 @@ def over_percentile_threshold(
     frequency : str, optional
         The frequency at which to bin the percentiles percentiles, e.g. per month.
         Must be an available attribute of the datetime accessor. Specify "None" to
-        indicate no frequency (percentiles calculated over all times). Note, setting 
-        to "None" for hindcast data can be dangerous, since only certain times may 
+        indicate no frequency (percentiles calculated over all times). Note, setting
+        to "None" for hindcast data can be dangerous, since only certain times may
         be available at each lead.
     """
     percentile_thresholds = calculate_percentile_thresholds(
@@ -1170,8 +1169,8 @@ def over_percentile_threshold(
         return (ds.groupby(groupby) > percentile_thresholds).drop(
             groupby.split(".")[-1]
         )
-    
-    
+
+
 def under_percentile_threshold(
     ds, percentile, percentile_period, percentile_dim=None, frequency=None
 ):
@@ -1192,8 +1191,8 @@ def under_percentile_threshold(
     frequency : str, optional
         The frequency at which to bin the percentiles percentiles, e.g. per month.
         Must be an available attribute of the datetime accessor. Specify "None" to
-        indicate no frequency (percentiles calculated over all times). Note, setting 
-        to "None" for hindcast data can be dangerous, since only certain times may 
+        indicate no frequency (percentiles calculated over all times). Note, setting
+        to "None" for hindcast data can be dangerous, since only certain times may
         be available at each lead.
     """
     percentile_thresholds = calculate_percentile_thresholds(
@@ -1464,7 +1463,7 @@ def rolling_mean(ds, window_size, start_points=None, dim="time"):
             .mean()
         )
 
-        dss.append(rolling_mean.dropna(dim=dim, how="all"))
+        dss.append(rolling_mean)
     result = xr.concat(dss, dim=dim).sortby(dim)
 
     # For reasons I don't understand, rolling sometimes promotes float32 to float64
@@ -1568,14 +1567,14 @@ def mask_CAFEf6_reduced_dt(ds):
     mask = xr.open_dataset(mask_file)["dt_atmos"] >= 1800
     mask = mask.rename({"init_date": "init", "ensemble": "member"})
     mask = mask.assign_coords({"init": mask.init.dt.floor("D")})
-    
-    # Allow for ds to be a different calendar (e.g. I convert daily data to noleap 
+
+    # Allow for ds to be a different calendar (e.g. I convert daily data to noleap
     # for convenience)
     if mask.init.dt.calendar != ds.init.dt.calendar:
         mask = mask.convert_calendar(
             calendar=ds.init.dt.calendar, dim="init", use_cftime=True
         )
-        
+
     return ds.where(mask)
 
 

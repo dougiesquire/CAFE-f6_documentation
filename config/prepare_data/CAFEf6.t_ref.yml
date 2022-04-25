@@ -1,0 +1,150 @@
+# Config file for specifying processing using src.prepare_data()
+# ==================================================================================
+
+# name: required
+#    The name of the dataset. Must match a method in src.prepare_data._open
+#
+# prepare: required
+#    List of unique identifiers for output variables to prepare and save. This will 
+#    be used to save the prepared output variable(s) as {name}.{identifier}.zarr. 
+#    Each identifier can include the following:
+#
+#    uses: required
+#        List of input variables required to compute the output variable(s). For 
+#        some datasets, this should be further broken into subkeys indicating the 
+#        realm for each list of variables (e.g. ocean_month). Alternatively, users 
+#        can provide the identifier of a previously prepared dataset by entering
+#        `prepared: <identifier>`.
+#    preprocess: optional
+#        Functions and kwargs from src.utils to be applied sequentially prior to 
+#        concatenation (for datasets comprised of multiple concatenated files) 
+#        and/or prior to merging input variables from multiple realms where more 
+#        than one are specified.
+#    apply: optional
+#        Functions and kwargs from src.utils to be applied sequentially to opened 
+#        (and concatenated/merge, where appropriate) dataset.
+
+name: "CAFEf6"
+
+prepare:
+
+  # Prepare anomalies over globe
+  # ================================================
+
+  # Annual average
+  
+  annual.full.t_ref_global:
+    uses:
+      atmos_isobaric_month:
+        - "t_ref"
+    preprocess:
+      convert_time_to_lead:
+        time_freq: "months"
+      truncate_latitudes:
+      coarsen:
+        window_size: 12
+        dim: "lead"
+    apply:
+      rename:
+        ensemble: "member"
+      round_to_start_of_month:
+        dim: ["init", "time"]
+      mask_CAFEf6_reduced_dt:
+      rechunk:
+        init: -1
+        lead: 1
+        member: -1
+        lat: 10
+        lon: 12
+  
+  # Annual anomalies - 1991-2020 climatology
+  
+  annual.anom_1991-2020.t_ref_global:
+    uses:
+      prepared:
+        - "annual.full.t_ref_global"
+    apply:
+      anomalise:
+        clim_period: ["1991-01-01", "2020-12-31"]
+        frequency: "month"
+      rechunk:
+        init: -1
+        lead: 1
+        member: -1
+        lat: 10
+        lon: 12
+        
+  # 4-year anomalies - 1991-2020 climatology
+  
+  4-year.anom_1991-2020.t_ref_global:
+    uses:
+      prepared:
+        - "annual.anom_1991-2020.t_ref_global"
+    apply:
+      rolling_mean:
+        window_size: 4 
+        dim: "lead"
+      rechunk:
+        init: -1
+        lead: 1
+        member: -1
+        lat: 10
+        lon: 12
+  
+  # Prepare anomalies over NRM regions
+  # ================================================
+
+  # Annual average
+  
+  annual.full.t_ref_Aus_NRM:
+    uses:
+      atmos_isobaric_month:
+        - "t_ref"
+    preprocess:
+      convert_time_to_lead:
+        time_freq: "months"
+      truncate_latitudes:
+      coarsen:
+        window_size: 12
+        dim: "lead"
+    apply:
+      rename:
+        ensemble: "member"
+      round_to_start_of_month:
+        dim: ["init", "time"]
+      average_over_NRM_super_clusters:
+      mask_CAFEf6_reduced_dt:
+      rechunk:
+        init: -1
+        lead: 1
+        member: -1
+        
+  # Annual anomalies - 1991-2020 climatology
+  
+  annual.anom_1991-2020.t_ref_Aus_NRM:
+    uses:
+      prepared:
+        - "annual.full.t_ref_Aus_NRM"
+    apply:
+      anomalise:
+        clim_period: ["1991-01-01", "2020-12-31"]
+        frequency: "month"
+      rechunk:
+        init: -1
+        lead: 1
+        member: -1
+        
+  # 4-year anomalies - 1991-2020 climatology
+  
+  4-year.anom_1991-2020.t_ref_Aus_NRM:
+    uses:
+      prepared:
+        - "annual.anom_1991-2020.t_ref_Aus_NRM"
+    apply:
+      rolling_mean:
+        window_size: 4 
+        dim: "lead"
+      rechunk:
+        init: -1
+        lead: 1
+        member: -1

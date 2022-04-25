@@ -66,13 +66,13 @@ def plot_hindcasts(hindcasts, historicals, observations, timescale, variable, re
             train_period = "1985-2014"
                 
         hindcast_data = _load_dataset(hindcast, timescale, variable, region, diagnostic)
-        if not regional:
+        if (not regional) & (region is not None):
             hindcast_data = area_mean(hindcast_data)
         hindcast_dict = {hindcast: hindcast_data.compute()}
                          
         try:
             historical_data = _load_dataset(historicals[idx], timescale, variable, region, diagnostic)
-            if not regional:
+            if (not regional) & (region is not None):
                 historical_data = area_mean(historical_data)
             historical_dict = {historicals[idx]: historical_data.compute()}
         except IndexError:
@@ -81,7 +81,7 @@ def plot_hindcasts(hindcasts, historicals, observations, timescale, variable, re
         observations_dict = {}
         for observation in observations:
             observation_data = _load_dataset(observation, timescale, variable, region, diagnostic)
-            if not regional:
+            if (not regional) & (region is not None):
                 observation_data = area_mean(observation_data)
             observations_dict[observation] = observation_data.compute()
 

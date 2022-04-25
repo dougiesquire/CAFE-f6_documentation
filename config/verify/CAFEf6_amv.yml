@@ -10,8 +10,9 @@
 #        Name of collection in data/processed containing the hindcasts to assess. 
 #    observations: optional
 #        Name of collection in data/processed containing the observations.
-#    simulations: optional
-#        Name of collection in data/processed containing uninitialised simulations.
+#    reference: optional
+#        Name of collection in data/processed containing a dataset to baseline against.
+#        Alternatively, users can specify "climatology" or "persistence" baselines.
 #    apply: optional
 #        Functions and kwargs from src.utils to be applied sequentially to the 
 #        input data. Can be applied to all provided datasets using the key `all:`,
@@ -21,24 +22,24 @@
 
 prepare:
   CAFEf6.HadISST.4-year.anom_1991-2020.amv.rXY_1991-2020:
-    hindcasts: CAFEf6.4-year.anom_1991-2020.amv
-    observations: HadISST.4-year.anom_1991-2020.amv
+    hindcast: CAFEf6.4-year.anom_1991-2020.amv
+    observation: HadISST.4-year.anom_1991-2020.amv
     apply:
-      all:
+      hindcast:
         keep_period:
           period: ["1991-01-01", "2020-12-31"]
     verify:
-      metric: "acc"
+      metric: "rXY"
       significance: True
       transform: "Fisher_z"
       alpha: 0.05
 
   CAFEf6.HadISST.4-year.anom_1991-2020.amv.ri_1991-2020:
-    hindcasts: CAFEf6.4-year.anom_1991-2020.amv
-    observations: HadISST.4-year.anom_1991-2020.amv
-    simulations: CAFE_hist.4-year.anom_1991-2020.amv
+    hindcast: CAFEf6.4-year.anom_1991-2020.amv
+    observation: HadISST.4-year.anom_1991-2020.amv
+    reference: CAFE_hist.4-year.anom_1991-2020.amv
     apply:
-      all:
+      hindcast:
         keep_period:
           period: ["1991-01-01", "2020-12-31"]
     verify:
@@ -48,39 +49,40 @@ prepare:
       alpha: 0.05
 
   CAFEf6.HadISST.4-year.anom_1991-2020.amv.MSSS_hist_1991-2020:
-    hindcasts: CAFEf6.4-year.anom_1991-2020.amv
-    observations: HadISST.4-year.anom_1991-2020.amv
-    simulations: CAFE_hist.4-year.anom_1991-2020.amv
+    hindcast: CAFEf6.4-year.anom_1991-2020.amv
+    observation: HadISST.4-year.anom_1991-2020.amv
+    reference: CAFE_hist.4-year.anom_1991-2020.amv
     apply:
-      all:
+      hindcast:
         keep_period:
           period: ["1991-01-01", "2020-12-31"]
     verify:
-      metric: "msss_hist"
+      metric: "msss"
       significance: True
       alpha: 0.05
 
   CAFEf6.HadISST.4-year.anom_1991-2020.amv.MSSS_clim_1991-2020:
-    hindcasts: CAFEf6.4-year.anom_1991-2020.amv
-    observations: HadISST.4-year.anom_1991-2020.amv
+    hindcast: CAFEf6.4-year.anom_1991-2020.amv
+    observation: HadISST.4-year.anom_1991-2020.amv
+    reference: "climatology"
     apply:
-      all:
+      hindcast:
         keep_period:
           period: ["1991-01-01", "2020-12-31"]
     verify:
-      metric: "msss_clim"
+      metric: "msss"
       significance: True
       alpha: 0.05
       
-  CAFEf6.HadISST.4-year.anom_1991-2020.amv.CRPSS_hist_1991-2020:
-    hindcasts: CAFEf6.4-year.anom_1991-2020.amv
-    observations: HadISST.4-year.anom_1991-2020.amv
-    simulations: CAFE_hist.4-year.anom_1991-2020.amv
+  CAFEf6.HadISST.4-year.anom_1991-2020.amv.MSSS_pers_1991-2020:
+    hindcast: CAFEf6.4-year.anom_1991-2020.amv
+    observation: HadISST.4-year.anom_1991-2020.amv
+    reference: "persistence"
     apply:
-      all:
+      hindcast:
         keep_period:
           period: ["1991-01-01", "2020-12-31"]
     verify:
-      metric: "crpss"
+      metric: "msss"
       significance: True
       alpha: 0.05

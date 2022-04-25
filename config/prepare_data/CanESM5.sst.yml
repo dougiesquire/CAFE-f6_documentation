@@ -1,0 +1,120 @@
+# Config file for specifying processing using src.prepare_data()
+# ==================================================================================
+
+# name: required
+#    The name of the dataset. Must match a method in src.prepare_data._open
+#
+# prepare: required
+#    List of unique identifiers for output variables to prepare and save. This will 
+#    be used to save the prepared output variable(s) as {name}.{identifier}.zarr. 
+#    Each identifier can include the following:
+#
+#    uses: required
+#        List of input variables required to compute the output variable(s). For 
+#        some datasets, this should be further broken into subkeys indicating the 
+#        realm for each list of variables (e.g. ocean_month). Alternatively, users 
+#        can provide the identifier of a previously prepared dataset by entering
+#        `prepared: <identifier>`.
+#    preprocess: optional
+#        Functions and kwargs from src.utils to be applied sequentially prior to 
+#        concatenation (for datasets comprised of multiple concatenated files) 
+#        and/or prior to merging input variables from multiple realms where more 
+#        than one are specified.
+#    apply: optional
+#        Functions and kwargs from src.utils to be applied sequentially to opened 
+#        (and concatenated/merge, where appropriate) dataset.
+
+name: "CanESM5"
+
+prepare:
+
+  # Prepare anomalies over globe
+  # ================================================
+
+  # Annual average
+  
+  annual.full.sst_global:
+    uses:
+      Omon:
+        - "tos"
+    apply:
+      rename:
+        tos: "sst"
+        areacello: "area"
+        i: "x"
+        j: "y"
+        longitude: "lon"
+        latitude: "lat"
+      coarsen:
+        window_size: 12
+        dim: "lead"
+      interpolate_to_grid_from_file:
+        file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
+      rechunk:
+        init: -1
+        lead: 1
+        member: -1
+        lat: 10
+        lon: 12
+  
+  # Annual anomalies - 1985-2014 climatology
+  
+  annual.anom_1985-2014.sst_global:
+    uses:
+      prepared:
+        - "annual.full.sst_global"
+    apply:
+      anomalise:
+        clim_period: ["1985-01-01", "2014-12-31"]
+        frequency: "month"
+      rechunk:
+        init: -1
+        lead: 1
+        member: -1
+        lat: 10
+        lon: 12
+  
+  # 4-year anomalies - 1985-2014 climatology
+  
+  4-year.anom_1985-2014.sst_global:
+    uses:
+      prepared:
+        - "annual.anom_1985-2014.sst_global"
+    apply:
+      rolling_mean:
+        window_size: 4 
+        dim: "lead"
+      rechunk:
+        init: -1
+        lead: 1
+        member: -1
+        lat: 10
+        lon: 12
+
+  # Prepare 4-year average AMV
+  # ================================================
+  
+  4-year.anom_1985-2014.amv:
+    uses:
+      prepared:
+        - "4-year.anom_1985-2014.sst_global"
+    apply:
+      calculate_amv:
+      rechunk:
+        init: -1
+        lead: 1
+        member: -1
+        
+  # Prepare 4-year average IPO
+  # ================================================
+  
+  4-year.anom_1985-2014.ipo:
+    uses:
+      prepared:
+        - "4-year.anom_1985-2014.sst_global"
+    apply:
+      calculate_ipo:
+      rechunk:
+        init: -1
+        lead: 1
+        member: -1

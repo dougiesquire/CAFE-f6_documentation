@@ -35,7 +35,7 @@ dask.config.set(**{"array.slicing.split_large_chunks": False})
 # ===============================================
 
 
-def acc(hcst, obsv, correlation="pearson_r"):
+def rXY(hcst, obsv, correlation="pearson_r"):
     """
     Return the anomaly cross correlation between two timeseries
 
@@ -55,10 +55,10 @@ def acc(hcst, obsv, correlation="pearson_r"):
         raise ValueError("Unrecognised value for input 'correlation'")
 
 
-def acc_initialised(hcst, obsv, hist):
+def ri(hcst, obsv, hist):
     """
-    Return the initialised component of anomaly cross correlation between
-    a forecast and observations
+    Return the initialised component of Pearson anomaly cross correlation
+    between a forecast and observations
 
     Parameters
     ----------
@@ -99,45 +99,10 @@ def msss(hcst, obsv, ref, ensemble_mean=True):
     if ensemble_mean:
         hcst = hcst.mean("member")
         ref = ref.mean("member") if "member" in ref.dims else ref
-    
+
     num = xs.mse(hcst, obsv, dim="time", skipna=True)
     den = xs.mse(ref, obsv, dim="time", skipna=True)
     return 1 - num / den
-
-
-def msss_hist(hcst, obsv, hist):
-    """
-    Return the mean squared skill score between a forecast and observations
-    relative to historical simulations
-
-    Parameters
-    ----------
-    hcst : xarray Dataset
-        The forecast timeseries
-    obsv : xarray Dataset
-        The observed timeseries
-    hist : xarray Dataset
-        The historical simulation timeseries
-    """
-    return _msss(hcst.mean("member"), obsv, hist.mean("member"))
-
-
-def msss_clim(hcst, obsv, clim_baseline_value=0):
-    """
-    Return the mean squared skill score between a forecast and observations
-    relative to climatology
-
-    Parameters
-    ----------
-    hcst : xarray Dataset
-        The forecast timeseries
-    obsv : xarray Dataset
-        The observed timeseries
-    clim_baseline_value : float, optional
-        The value to replicate for the climatological baseline. Defaults to
-        zero, which is appropriate if hcst and obsv are anomalies
-    """
-    return _msss(hcst.mean("member"), obsv, clim_baseline_value * xr.ones_like(obsv))
 
 
 def crpss(hcst, obsv, ref):
@@ -490,8 +455,9 @@ def _calculate_metric_from_timeseries(
 
 def calculate_metric(
     hindcast,
-    *references,
+    observation,
     metric,
+    reference=None,
     metric_kwargs={},
     significance=False,
     transform=None,
@@ -508,13 +474,21 @@ def calculate_metric(
     ----------
     hindcast : xarray Dataset
         The hindcast data to verify. Must have "init" and "lead" dimensions
-    references : xarray Dataset(s)
-        The data to verify against. Multiple datasets can be provided for skill
-        metrics that require it, e.g. metrics that use both the observations
-        and the historical simulations
+    observation : xarray Dataset
+        The data to verify against. Must have a "time" dimension
     metric : str
         The name of the metric to apply to apply to the timeseries. Will look
         for function in src.verify.
+    reference : str or xarray Dataset, optional
+        The skill baseline. Can be an xarray Dataset with a "time" dimension
+        (e.g. an historical simulation) that will be passed on to the `metric`
+        function. Alternatively, users can specify one of the following
+        methods to automatically create the appropriate baseline timeseries
+        to be passed on to the `metric` function:
+        - "persistence": hindcasts skill is baselined against the most recent
+          observation at the time of forecast initialisation
+        - "climatology": hindcasts skill is baselined against the monthly
+          climatological mean of the observations over the verification period
     metric_kwargs : dict
         kwargs to pass to the function `metric`
     significance : boolean, optional
@@ -530,6 +504,49 @@ def calculate_metric(
         bootstrapped distribution below (above) zero--defining the p-values
         --is less than or equal to alpha.)
     """
+
+    def _generate_persistence_hindcast(hindcast, observation):
+        """
+        Generate a persistence hindcast using the most recent observation at
+        the time of forecast initialisation
+        """
+        # Use the index increment between the times at lead 0 and lead 1 in the
+        # observations to determine how much we need to shift the observations
+        # to get the most recent observation at the time of initialisation
+        lead_increment = np.diff(np.insert(hindcast.lead, 0, -1))
+        assert all(
+            lead_increment == lead_increment[0]
+        ), "lead increment must be the same for all leads for persistence baseline"
+        times_of_lead_0 = hindcast.time.isel(lead=0)
+        lead_0_indices = np.searchsorted(observation.time, times_of_lead_0.values)
+        lead_1_index = np.searchsorted(
+            observation.time, hindcast.time.isel(lead=1, init=0).values
+        )
+        shift = lead_1_index - lead_0_indices[0]
+
+        # Get the most recent observation at the time of forecast initialisation
+        lead_0_spacing = np.diff(lead_0_indices)
+        assert all(
+            lead_0_spacing == lead_0_spacing[0]
+        ), "time spacing along observation must be regular for persistence baseline"
+        persistence_lead_0 = observation.isel(time=lead_0_indices - shift)
+
+        # Replicate the most recent observations at all leads
+        persistence = (
+            persistence_lead_0.rename({"time": "init"})
+            .assign_coords({"init": hindcast.init})
+            .broadcast_like(hindcast, exclude=["member"])
+            .assign_coords({"time": hindcast.time})
+            .assign_coords({PERSIST_TIME_DIM: ("init", persistence_lead_0.time.values)})
+        )
+        return persistence
+
+    def _generate_climatology_timeseries(observation):
+        """
+        Generate a timeseries of monthly climatological values
+        """
+        clim = observation.groupby("time.month").mean("time")
+        return (xr.zeros_like(observation).groupby("time.month") + clim).drop("month")
 
     def _common_set_of_verif_times(hcst, *refs, search_dim="lead"):
         """
@@ -554,13 +571,33 @@ def calculate_metric(
         """
         result = []
         for lead in hindcast["lead"]:
-            hcst = hindcast.sel({"lead": lead}).swap_dims({"init": "time"})
+            hcst = hindcast.sel({"lead": lead}).swap_dims({"init": "time"}).drop("init")
             result.append(hcst)
         return xr.concat(result, dim="lead")
 
+    TIME_INDEX_DIM = "i"
+    VERIF_TIME_DIM = "verification_time"
+    PERSIST_TIME_DIM = "persistence_time"
+
     logger = logging.getLogger(__name__)
 
+    persistence_reference = False
+    climatology_reference = False
+    if isinstance(reference, xr.Dataset):
+        assert "time" in reference.dims, "Reference Dataset must have a time dimension"
+        references = [observation, reference]
+    else:
+        if isinstance(reference, str) & (reference == "persistence"):
+            persistence_reference = True
+        elif isinstance(reference, str) & (reference == "climatology"):
+            climatology_reference = True
+        elif reference is not None:
+            raise ValueError("Unrecognised input for `reference`")
+        references = [observation]
     verif_times = _common_set_of_verif_times(hindcast, *references)
+
+    if persistence_reference:
+        persistence_hindcast = _generate_persistence_hindcast(hindcast, observation)
 
     # Look for metric and transform in this module
     metric = getattr(sys.modules[__name__], metric)
@@ -568,15 +605,30 @@ def calculate_metric(
         transform = getattr(sys.modules[__name__], transform)
 
     if len(verif_times) > 0:
-        verif_period = f"{verif_times[0].strftime('%Y-%m-%d')} - {verif_times[-1].strftime('%Y-%m-%d')}"
-        references_verif_times = [ref.sel(time=verif_times) for ref in references]
+        references_verif_times = [r.sel(time=verif_times) for r in references]
         hindcast_verif_times = _reindex_hindcast(hindcast).sel(time=verif_times)
+
+        if persistence_reference:
+            persistence_verif_times = _reindex_hindcast(persistence_hindcast).sel(
+                time=verif_times
+            )
+            references_verif_times.append(persistence_verif_times)
+
+        if climatology_reference:
+            observation_verif_times = references_verif_times[0]
+            climatology_verif_times = _generate_climatology_timeseries(
+                observation_verif_times
+            )
+            references_verif_times.append(climatology_verif_times)
+
         logger.info(
             (
-                f"Performing verification over {verif_period} "
-                f"using a common set of verification times at all lead"
+                f"Performing verification over {verif_times[0].strftime('%Y-%m-%d')} "
+                f"- {verif_times[-1].strftime('%Y-%m-%d')} using a common set of "
+                f"verification times at all lead"
             )
         )
+
         skill = _calculate_metric_from_timeseries(
             hindcast_verif_times,
             *references_verif_times,
@@ -586,8 +638,22 @@ def calculate_metric(
             transform=transform,
             alpha=alpha,
         )
-        skill = skill.assign_coords({"verification_period": verif_period})
 
+        # Add verification time information into dataset
+        skill = skill.assign_coords(
+            {
+                VERIF_TIME_DIM: xr.DataArray(
+                    verif_times, coords={TIME_INDEX_DIM: range(len(verif_times))}
+                )
+            }
+        )
+        if persistence_reference:
+            persistence_time = (
+                persistence_verif_times[PERSIST_TIME_DIM]
+                .assign_coords({"time": range(len(verif_times))})
+                .rename({"time": TIME_INDEX_DIM})
+            )
+            skill = skill.assign_coords({PERSIST_TIME_DIM: persistence_time})
     else:
         # If can't find common verif times, validate over all available times at each lead
         warnings.warn(
@@ -599,14 +665,31 @@ def calculate_metric(
         skill = []
         for lead in hindcast.lead:
             hindcast_at_lead = hindcast.sel(lead=lead).dropna(dim="init", how="all")
+
             verif_times = _common_set_of_verif_times(
                 hindcast_at_lead, *references, search_dim=None
             )
-            verif_period = f"{verif_times[0].strftime('%Y-%m-%d')} - {verif_times[-1].strftime('%Y-%m-%d')}"
             hindcast_verif_times = hindcast_at_lead.swap_dims({"init": "time"}).sel(
                 time=verif_times
             )
-            references_verif_times = [ref.sel(time=verif_times) for ref in references]
+            references_verif_times = [r.sel(time=verif_times) for r in references]
+
+            if persistence_reference:
+                persistence_verif_times = (
+                    persistence_hindcast.sel(lead=lead)
+                    .swap_dims({"init": "time"})
+                    .sel(time=verif_times)
+                    .drop("init")
+                )
+                references_verif_times.append(persistence_verif_times)
+
+            if climatology_reference:
+                observation_verif_times = references_verif_times[0]
+                climatology_verif_times = _generate_climatology_timeseries(
+                    observation_verif_times
+                )
+                references_verif_times.append(climatology_verif_times)
+
             skill_at_lead = _calculate_metric_from_timeseries(
                 hindcast_verif_times,
                 *references_verif_times,
@@ -617,9 +700,19 @@ def calculate_metric(
                 alpha=alpha,
             )
 
+            # Add verification time information into dataset
             skill_at_lead = skill_at_lead.assign_coords(
-                {"verification_period": verif_period}
+                {
+                    VERIF_TIME_DIM: xr.DataArray(
+                        verif_times, coords={TIME_INDEX_DIM: range(len(verif_times))}
+                    )
+                }
             )
+            if persistence_reference:
+                persistence_time = persistence_verif_times[PERSIST_TIME_DIM].values
+                skill_at_lead = skill_at_lead.assign_coords(
+                    {PERSIST_TIME_DIM: (TIME_INDEX_DIM, persistence_time)}
+                )
             skill.append(skill_at_lead)
         skill = xr.concat(skill, dim="lead")
 
@@ -655,46 +748,53 @@ def verify(config, save_dir, save=True):
         for identifier, params in cfg["prepare"].items():
             if "apply" in params:
                 if "all" in params["apply"]:
-                    params["apply"]["hindcasts"] = params["apply"]["all"]
-                    params["apply"]["observations"] = params["apply"]["all"]
-                    if "simulations" in params:
-                        params["apply"]["simulations"] = params["apply"]["all"]
+                    params["apply"]["hindcast"] = params["apply"]["all"]
+                    params["apply"]["observation"] = params["apply"]["all"]
+                    if "reference" in params:
+                        if params["reference"] not in ["persistence", "climatology"]:
+                            params["apply"]["reference"] = params["apply"]["all"]
             else:
                 params["apply"] = []
 
             hindcast = xr.open_zarr(
-                f"{DATA_DIR}/{params['hindcasts']}.zarr"
+                f"{DATA_DIR}/{params['hindcast']}.zarr"
             ).unify_chunks()
-            if "hindcasts" in params["apply"]:
-                hindcast = utils.composite_function(params["apply"]["hindcasts"])(
+            if "hindcast" in params["apply"]:
+                hindcast = utils.composite_function(params["apply"]["hindcast"])(
                     hindcast
                 )
 
-            observations = xr.open_zarr(
-                f"{DATA_DIR}/{params['observations']}.zarr"
+            observation = xr.open_zarr(
+                f"{DATA_DIR}/{params['observation']}.zarr"
             ).unify_chunks()
-            if "observations" in params["apply"]:
-                observations = utils.composite_function(
-                    params["apply"]["observations"]
-                )(observations)
-            references = [observations]
+            if "observation" in params["apply"]:
+                observation = utils.composite_function(params["apply"]["observation"])(
+                    observation
+                )
 
-            if "simulations" in params:
-                historical = xr.open_zarr(
-                    f"{DATA_DIR}/{params['simulations']}.zarr"
-                ).unify_chunks()
-                if "simulations" in params["apply"]:
-                    historical = utils.composite_function(
-                        params["apply"]["simulations"]
-                    )(historical)
-                references.append(historical)
+            if "reference" in params:
+                if params["reference"] in ["persistence", "climatology"]:
+                    reference = params["reference"]
+                else:
+                    reference = xr.open_zarr(
+                        f"{DATA_DIR}/{params['reference']}.zarr"
+                    ).unify_chunks()
+
+                    if "reference" in params["apply"]:
+                        reference = utils.composite_function(
+                            params["apply"]["reference"]
+                        )(reference)
+            else:
+                reference = None
 
             logger.info(f"Processing {identifier}")
-            ds = calculate_metric(hindcast, *references, **params["verify"])
+            ds = calculate_metric(
+                hindcast, observation, reference=reference, **params["verify"]
+            )
 
             prepared.append(ds)
             if save:
-                ds = ds.chunk("auto").unify_chunks()
+                ds = ds.chunk({}).unify_chunks()
                 for var in ds.variables:
                     ds[var].encoding = {}
                 ds.to_zarr(f"{save_dir}/{identifier}.zarr", mode="w")

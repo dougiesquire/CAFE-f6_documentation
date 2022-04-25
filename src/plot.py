@@ -186,7 +186,15 @@ def metric_maps(
 
     def _get_verif_period(ds):
         """Return a string of the verification period for a skill metric"""
-        if "verification_period" in ds.coords:
+        if "verification_time" in ds.coords:
+            if "lead" in ds["verification_time"].dims:
+                return "Lead-dependent verification period"
+            else:
+                return (
+                    f"{ds['verification_time'].values[0].strftime('%Y')}-"
+                    f"{ds['verification_time'].values[-1].strftime('%Y')}"
+                )
+        elif "verification_period" in ds.coords:
             if "lead" in ds["verification_period"].dims:
                 return "Lead-dependent verification period"
             else:
@@ -243,7 +251,7 @@ def metric_maps(
                 colors="none",
                 hatches=[None, "///", None],
                 transform=ccrs.PlateCarree(),
-                extend='lower'
+                extend="lower",
             )
 
         if headings is not None:

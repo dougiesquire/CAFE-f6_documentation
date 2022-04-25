@@ -1,0 +1,111 @@
+# Config file for specifying processing using src.prepare_data()
+# ==================================================================================
+
+# name: required
+#    The name of the dataset. Must match a method in src.prepare_data._open
+#
+# prepare: required
+#    List of unique identifiers for output variables to prepare and save. This will 
+#    be used to save the prepared output variable(s) as {name}.{identifier}.zarr. 
+#    Each identifier can include the following:
+#
+#    uses: required
+#        List of input variables required to compute the output variable(s). For 
+#        some datasets, this should be further broken into subkeys indicating the 
+#        realm for each list of variables (e.g. ocean_month). Alternatively, users 
+#        can provide the identifier of a previously prepared dataset by entering
+#        `prepared: <identifier>`.
+#    preprocess: optional
+#        Functions and kwargs from src.utils to be applied sequentially prior to 
+#        concatenation (for datasets comprised of multiple concatenated files) 
+#        and/or prior to merging input variables from multiple realms where more 
+#        than one are specified.
+#    apply: optional
+#        Functions and kwargs from src.utils to be applied sequentially to opened 
+#        (and concatenated/merge, where appropriate) dataset.
+
+name: "JRA55"
+
+prepare:
+
+
+  # Prepare days over p90 over NRM regions
+  # ================================================
+  
+  #  Daily
+  
+  daily.full.ffdi_Aus_NRM:
+    uses:
+      surface_daily:
+        - "TPRAT_GDS0_SFC"
+        - "TMAX_GDS4_HTGL"
+        - "UGRD_GDS0_HTGL"
+        - "VGRD_GDS0_HTGL"
+      isobaric_daily:
+        - "RH_GDS0_ISBL"  
+    apply:
+      rename:
+        TPRAT_GDS0_SFC: "precip"
+        TMAX_GDS4_HTGL: "t_ref_max"
+        RH_GDS0_ISBL: "rh"
+        UGRD_GDS0_HTGL: "u_ref"
+        VGRD_GDS0_HTGL: "v_ref"
+        initial_time0_hours: "time"
+        g0_lat_1: "lat"
+        g0_lon_2: "lon"
+        g0_lat_2: "lat"
+        g0_lon_3: "lon"
+        lv_ISBL1: "level"
+      convert:
+        t_ref_max:
+          add: -273.15
+        u_ref:
+          multiply_by: 3.6
+        v_ref:
+          multiply_by: 3.6
+      select:
+        level: 1000
+      convert_calendar:
+        calendar: "noleap"
+      add_area_using_cdo_gridarea:
+      calculate_ffdi:
+        clim_period: ["1991-01-01", "2020-12-31"]
+        wind_from_components: True
+      round_to_start_of_day:
+        dim: "time"
+      average_over_NRM_super_clusters:
+      rechunk:
+        time: -1
+        
+  # Annual days over p90 - 1991-2020 climatology
+
+  annual.days_over_p90_1991-2020.ffdi_Aus_NRM:
+    uses:
+      prepared:
+        - "daily.full.ffdi_Aus_NRM"
+    apply:
+      over_percentile_threshold:
+        percentile: 0.9
+        percentile_period: ["1991-01-01", "2020-12-31"]
+        frequency: "dayofyear"
+      coarsen:
+        window_size: 365
+        start_points: ["1960-11-01"]
+        dim: "time"
+      round_to_start_of_month:
+        dim: "time"
+      rechunk:
+        time: -1
+        
+  # 4-year days over p90 - 1991-2020 climatology
+        
+  4-year.days_over_p90_1991-2020.ffdi_Aus_NRM:
+    uses:
+      prepared:
+        - "annual.days_over_p90_1991-2020.ffdi_Aus_NRM"
+    apply:
+      rolling_mean:
+        window_size: 4
+        dim: "time"
+      rechunk:
+        time: -1

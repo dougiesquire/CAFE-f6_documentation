@@ -465,7 +465,7 @@ class _open:
         # Member 19 has very few variables replicated for Omon
         # Members 101-150 only span 197001-201412
         members = [1, 2, 4, 6, 7, 9, 10, 12, 14, 16]  # , 17, 18] + list(range(20, 26))
-        version = "v20200???" #"latest"
+        version = "latest"  # "v20200???"
         ds = _open._cmip6_historical(
             model, variant_id, grid, variables, realm, members, version
         )

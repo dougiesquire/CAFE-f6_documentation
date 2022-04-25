@@ -1,0 +1,108 @@
+# Config file for specifying processing using src.prepare_data()
+# ==================================================================================
+
+# name: required
+#    The name of the dataset. Must match a method in src.prepare_data._open
+#
+# prepare: required
+#    List of unique identifiers for output variables to prepare and save. This will 
+#    be used to save the prepared output variable(s) as {name}.{identifier}.zarr. 
+#    Each identifier can include the following:
+#
+#    uses: required
+#        List of input variables required to compute the output variable(s). For 
+#        some datasets, this should be further broken into subkeys indicating the 
+#        realm for each list of variables (e.g. ocean_month). Alternatively, users 
+#        can provide the identifier of a previously prepared dataset by entering
+#        `prepared: <identifier>`.
+#    preprocess: optional
+#        Functions and kwargs from src.utils to be applied sequentially prior to 
+#        concatenation (for datasets comprised of multiple concatenated files) 
+#        and/or prior to merging input variables from multiple realms where more 
+#        than one are specified.
+#    apply: optional
+#        Functions and kwargs from src.utils to be applied sequentially to opened 
+#        (and concatenated/merge, where appropriate) dataset.
+
+name: "CAFE_hist"
+
+prepare:
+
+
+  # Prepare days over p90 over NRM regions
+  # ================================================
+  
+  #  Daily
+  
+  daily.full.ffdi_Aus_NRM:
+    uses:
+      atmos_isobaric_daily:
+        - "precip"
+        - "rh"
+        - "t_ref_max"
+        - "u_ref"
+        - "v_ref"
+    apply:
+      convert_calendar:
+        calendar: "noleap"
+      select:
+        level: 1000
+      extract_lon_lat_box:
+        box: [110, 155, -45, -9]
+        weighted_average: False
+      rename:
+        ensemble: "member"
+      truncate_latitudes:
+      convert:
+        precip:
+          multiply_by: 86400
+        t_ref_max:
+          add: -273.15
+        u_ref:
+          multiply_by: 3.6
+        v_ref:
+          multiply_by: 3.6
+      calculate_ffdi:
+        clim_period: ["1991-01-01", "2020-12-31"]
+        wind_from_components: True
+      round_to_start_of_day:
+        dim: "time"
+      average_over_NRM_super_clusters:
+      rechunk:
+        time: -1
+        member: -1
+        
+  # Annual days over p90 - 1991-2020 climatology
+
+  annual.days_over_p90_1991-2020.ffdi_Aus_NRM:
+    uses:
+      prepared:
+        - "daily.full.ffdi_Aus_NRM"
+    apply:
+      over_percentile_threshold:
+        percentile: 0.9
+        percentile_period: ["1991-01-01", "2020-12-31"]
+        frequency: "dayofyear"
+      coarsen:
+        window_size: 365
+        start_points: ["1960-11-01"]
+        dim: "time"
+      round_to_start_of_month:
+        dim: "time"
+      rechunk:
+        time: -1
+        member: -1
+        
+  # 4-year days over p90 - 1991-2020 climatology
+        
+  4-year.days_over_p90_1991-2020.ffdi_Aus_NRM:
+    uses:
+      prepared:
+        - "annual.days_over_p90_1991-2020.ffdi_Aus_NRM"
+    apply:
+      rolling_mean:
+        window_size: 4
+        dim: "time"
+      rechunk:
+        time: -1
+        member: -1

@@ -10,8 +10,9 @@
 #        Name of collection in data/processed containing the hindcasts to assess. 
 #    observations: optional
 #        Name of collection in data/processed containing the observations.
-#    simulations: optional
-#        Name of collection in data/processed containing uninitialised simulations.
+#    reference: optional
+#        Name of collection in data/processed containing a dataset to baseline against.
+#        Alternatively, users can specify "climatology" or "persistence" baselines.
 #    apply: optional
 #        Functions and kwargs from src.utils to be applied sequentially to the 
 #        input data. Can be applied to all provided datasets using the key `all:`,
@@ -20,67 +21,68 @@
 #        Arguments to be passed to src.verify.calculate_metric
 
 prepare:
-#   EC_Earth3.HadISST.4-year.anom_1985-2014.amv.rXY_1985-2014:
-#     hindcasts: EC_Earth3.4-year.anom_1985-2014.amv
-#     observations: HadISST.4-year.anom_1985-2014.amv
-#     apply:
-#       all:
-#         keep_period:
-#           period: ["1985-01-01", "2014-12-31"]
-#     verify:
-#       metric: "acc"
-#       significance: True
-#       transform: "Fisher_z"
-#       alpha: 0.05
-
-#   EC_Earth3.HadISST.4-year.anom_1985-2014.amv.ri_1985-2014:
-#     hindcasts: EC_Earth3.4-year.anom_1985-2014.amv
-#     observations: HadISST.4-year.anom_1985-2014.amv
-#     simulations: EC_Earth3_hist.4-year.anom_1985-2014.amv
-#     apply:
-#       all:
-#         keep_period:
-#           period: ["1985-01-01", "2014-12-31"]
-#     verify:
-#       metric: "acc_initialised"
-#       significance: True
-#       transform: "Fisher_z"
-#       alpha: 0.05
-
-#   EC_Earth3.HadISST.4-year.anom_1985-2014.amv.MSSS_hist_1985-2014:
-#     hindcasts: EC_Earth3.4-year.anom_1985-2014.amv
-#     observations: HadISST.4-year.anom_1985-2014.amv
-#     simulations: EC_Earth3_hist.4-year.anom_1985-2014.amv
-#     apply:
-#       all:
-#         keep_period:
-#           period: ["1985-01-01", "2014-12-31"]
-#     verify:
-#       metric: "msss_hist"
-#       significance: True
-#       alpha: 0.05
-
-  EC_Earth3.HadISST.4-year.anom_1985-2014.amv.MSSS_clim_1985-2014:
-    hindcasts: EC_Earth3.4-year.anom_1985-2014.amv
-    observations: HadISST.4-year.anom_1985-2014.amv
+  EC_Earth3.HadISST.4-year.anom_1985-2014.amv.rXY_1985-2014:
+    hindcast: EC_Earth3.4-year.anom_1985-2014.amv
+    observation: HadISST.4-year.anom_1985-2014.amv
     apply:
-      all:
+      hindcast:
         keep_period:
           period: ["1985-01-01", "2014-12-31"]
     verify:
-      metric: "msss_clim"
+      metric: "rXY"
+      significance: True
+      transform: "Fisher_z"
+      alpha: 0.05
+
+  EC_Earth3.HadISST.4-year.anom_1985-2014.amv.ri_1985-2014:
+    hindcast: EC_Earth3.4-year.anom_1985-2014.amv
+    observation: HadISST.4-year.anom_1985-2014.amv
+    reference: EC_Earth3_hist.4-year.anom_1985-2014.amv
+    apply:
+      hindcast:
+        keep_period:
+          period: ["1985-01-01", "2014-12-31"]
+    verify:
+      metric: "ri"
+      significance: True
+      transform: "Fisher_z"
+      alpha: 0.05
+
+  EC_Earth3.HadISST.4-year.anom_1985-2014.amv.MSSS_hist_1985-2014:
+    hindcast: EC_Earth3.4-year.anom_1985-2014.amv
+    observation: HadISST.4-year.anom_1985-2014.amv
+    reference: EC_Earth3_hist.4-year.anom_1985-2014.amv
+    apply:
+      hindcast:
+        keep_period:
+          period: ["1985-01-01", "2014-12-31"]
+    verify:
+      metric: "msss"
+      significance: True
+      alpha: 0.05
+
+  EC_Earth3.HadISST.4-year.anom_1985-2014.amv.MSSS_clim_1985-2014:
+    hindcast: EC_Earth3.4-year.anom_1985-2014.amv
+    observation: HadISST.4-year.anom_1985-2014.amv
+    reference: "climatology"
+    apply:
+      hindcast:
+        keep_period:
+          period: ["1985-01-01", "2014-12-31"]
+    verify:
+      metric: "msss"
       significance: True
       alpha: 0.05
       
-#   EC_Earth3.HadISST.4-year.anom_1985-2014.amv.CRPSS_hist_1985-2014:
-#     hindcasts: EC_Earth3.4-year.anom_1985-2014.amv
-#     observations: HadISST.4-year.anom_1985-2014.amv
-#     simulations: EC_Earth3_hist.4-year.anom_1985-2014.amv
-#     apply:
-#       all:
-#         keep_period:
-#           period: ["1985-01-01", "2014-12-31"]
-#     verify:
-#       metric: "crpss"
-#       significance: True
-#       alpha: 0.05
+  EC_Earth3.HadISST.4-year.anom_1985-2014.amv.MSSS_pers_1985-2014:
+    hindcast: EC_Earth3.4-year.anom_1985-2014.amv
+    observation: HadISST.4-year.anom_1985-2014.amv
+    reference: "persistence"
+    apply:
+      hindcast:
+        keep_period:
+          period: ["1985-01-01", "2014-12-31"]
+    verify:
+      metric: "msss"
+      significance: True
+      alpha: 0.05

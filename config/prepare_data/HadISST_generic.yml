@@ -280,7 +280,7 @@ prepare:
 #       rechunk:
 #         time: -1
 #         lat: 10
-#         lon: 12}
+#         lon: 12
         
 #   4-year-Nov.anom_1985-2014.sst_global:
 #     uses:
@@ -305,39 +305,39 @@ prepare:
 #         lat: 10
 #         lon: 12
         
-#   # Prepare AMV, IPO from prepared datasets
-#   4-year.anom_1991-2020.amv:
-#     uses:
-#       prepared:
-#         - "4-year.anom_1991-2020.sst"
-#     apply:
-#       calculate_amv:
-#       rechunk:
-#         time: -1
+  # Prepare AMV, IPO from prepared datasets
+  4-year.anom_1991-2020.amv:
+    uses:
+      prepared:
+        - "4-year.anom_1991-2020.sst_global"
+    apply:
+      calculate_amv:
+      rechunk:
+        time: -1
         
-#   4-year.anom_1985-2014.amv:
-#     uses:
-#       prepared:
-#         - "4-year.anom_1985-2014.sst"
-#     apply:
-#       calculate_amv:
-#       rechunk:
-#         time: -1
+  4-year.anom_1985-2014.amv:
+    uses:
+      prepared:
+        - "4-year.anom_1985-2014.sst_global"
+    apply:
+      calculate_amv:
+      rechunk:
+        time: -1
         
-#   4-year.anom_1991-2020.ipo:
-#     uses:
-#       prepared:
-#         - "4-year.anom_1991-2020.sst"
-#     apply:
-#       calculate_ipo:
-#       rechunk:
-#         time: -1
+  4-year.anom_1991-2020.ipo:
+    uses:
+      prepared:
+        - "4-year.anom_1991-2020.sst_global"
+    apply:
+      calculate_ipo:
+      rechunk:
+        time: -1
         
-#   4-year.anom_1985-2014.ipo:
-#     uses:
-#       prepared:
-#         - "4-year.anom_1985-2014.sst"
-#     apply:
-#       calculate_ipo:
-#       rechunk:
-#         time: -1
+  4-year.anom_1985-2014.ipo:
+    uses:
+      prepared:
+        - "4-year.anom_1985-2014.sst_global"
+    apply:
+      calculate_ipo:
+      rechunk:
+        time: -1
