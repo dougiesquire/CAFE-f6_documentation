@@ -1,0 +1,88 @@
+# Config file for specifying skill assessment using src.verify()
+# ==================================================================================
+
+# prepare: required
+#    List of unique identifiers for skill metrics to prepare and save. This will 
+#    be used to save the prepared skill metric as {identifier}.zarr. Each identifier 
+#    can include the following:
+#
+#    hindcasts: required
+#        Name of collection in data/processed containing the hindcasts to assess. 
+#    observations: optional
+#        Name of collection in data/processed containing the observations.
+#    reference: optional
+#        Name of collection in data/processed containing a dataset to baseline against.
+#        Alternatively, users can specify "climatology" or "persistence" baselines.
+#    apply: optional
+#        Functions and kwargs from src.utils to be applied sequentially to the 
+#        input data. Can be applied to all provided datasets using the key `all:`,
+#        or to individual datasets using, for example, `hindcasts: <functions>`
+#    verify: required
+#        Arguments to be passed to src.verify.calculate_metric
+
+prepare:
+  CAFEf6.HadISST.3-month.anom_1991-2020.nino34.rXY_1991-2020:
+    hindcast: CAFEf6.3-month.anom_1991-2020.nino34
+    observation: HadISST.3-month.anom_1991-2020.nino34
+    apply:
+      hindcast:
+        keep_period:
+          period: ["1991-01-01", "2020-12-31"]
+    verify:
+      metric: "rXY"
+      significance: True
+      transform: "Fisher_z"
+      alpha: 0.05
+
+  CAFEf6.HadISST.3-month.anom_1991-2020.nino34.ri_1991-2020:
+    hindcast: CAFEf6.3-month.anom_1991-2020.nino34
+    observation: HadISST.3-month.anom_1991-2020.nino34
+    reference: CAFE_hist.3-month.anom_1991-2020.nino34
+    apply:
+      hindcast:
+        keep_period:
+          period: ["1991-01-01", "2020-12-31"]
+    verify:
+      metric: "ri"
+      significance: True
+      transform: "Fisher_z"
+      alpha: 0.05
+
+  CAFEf6.HadISST.3-month.anom_1991-2020.nino34.MSSS_hist_1991-2020:
+    hindcast: CAFEf6.3-month.anom_1991-2020.nino34
+    observation: HadISST.3-month.anom_1991-2020.nino34
+    reference: CAFE_hist.3-month.anom_1991-2020.nino34
+    apply:
+      hindcast:
+        keep_period:
+          period: ["1991-01-01", "2020-12-31"]
+    verify:
+      metric: "msss"
+      significance: True
+      alpha: 0.05
+      
+  CAFEf6.HadISST.3-month.anom_1991-2020.nino34.MSSS_clim_1991-2020:
+    hindcast: CAFEf6.3-month.anom_1991-2020.nino34
+    observation: HadISST.3-month.anom_1991-2020.nino34
+    reference: "climatology"
+    apply:
+      hindcast:
+        keep_period:
+          period: ["1991-01-01", "2020-12-31"]
+    verify:
+      metric: "msss"
+      significance: True
+      alpha: 0.05
+      
+  CAFEf6.HadISST.3-month.anom_1991-2020.nino34.MSSS_pers_1991-2020:
+    hindcast: CAFEf6.3-month.anom_1991-2020.nino34
+    observation: HadISST.3-month.anom_1991-2020.nino34
+    reference: "persistence"
+    apply:
+      hindcast:
+        keep_period:
+          period: ["1991-01-01", "2020-12-31"]
+    verify:
+      metric: "msss"
+      significance: True
+      alpha: 0.05

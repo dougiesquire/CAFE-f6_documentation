@@ -13,15 +13,17 @@ Steps for calculating skill metrics from a set of prepared datasets are also spe
                                                           #    metric being calculated.
                                                           #    This will be used to save
                                                           #    the metric.
-       hindcasts: CAFEf6.annual.anom_1991-2020.sst        # <- The name of the prepared
+       hindcast: CAFEf6.annual.anom_1991-2020.sst         # <- The name of the prepared
                                                           #    hindcast data to verify.
-       observations: HadISST.annual.anom_1991-2020.sst    # <- The name of the prepared
+       observation: HadISST.annual.anom_1991-2020.sst     # <- The name of the prepared
                                                           #    observation data to verify
                                                           #    against.
-       simulations: CAFE_hist.annual.anom_1991-2020.sst   # <- The name of the prepared
+       reference: CAFE_hist.annual.anom_1991-2020.sst     # <- The name of the prepared
                                                           #    historical data to use as
-                                                          #    a baseline.
-       verify:                                             
+                                                          #    a baseline. Alternatively
+                                                          #    users can specify
+                                                          #    "climatology" or 
+       verify:                                            #    "persistence" baselines
          metric: "acc_initialised"                        # <- The name of the metric. A
                                                           #    corresponding method must
                                                           #    exist in src.verify.
