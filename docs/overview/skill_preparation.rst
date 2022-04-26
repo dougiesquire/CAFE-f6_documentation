@@ -24,7 +24,7 @@ Steps for calculating skill metrics from a set of prepared datasets are also spe
                                                           #    users can specify
                                                           #    "climatology" or 
        verify:                                            #    "persistence" baselines
-         metric: "acc_initialised"                        # <- The name of the metric. A
+         metric: "ri"                                     # <- The name of the metric. A
                                                           #    corresponding method must
                                                           #    exist in src.verify.
          significance: True                               # <- Whether or not to block
