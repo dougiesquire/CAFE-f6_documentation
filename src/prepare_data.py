@@ -465,7 +465,7 @@ class _open:
         # Member 19 has very few variables replicated for Omon
         # Members 101-150 only span 197001-201412
         members = [1, 2, 4, 6, 7, 9, 10, 12, 14, 16]  # , 17, 18] + list(range(20, 26))
-        version = "v20200???" # "latest"  # "v20200???"
+        version = "v20200???"  # "latest"  # "v20200???"
         ds = _open._cmip6_historical(
             model, variant_id, grid, variables, realm, members, version
         )
@@ -632,8 +632,8 @@ def prepare_dataset(config, save_dir, save=True):
                     ds.append(
                         xr.merge(
                             xr.open_zarr(
-                                f"{save_dir}/{cfg['name']}.{v}.zarr", 
-                                decode_timedelta=False, 
+                                f"{save_dir}/{cfg['name']}.{v}.zarr",
+                                decode_timedelta=False,
                                 use_cftime=True,
                             )
                             for v in var

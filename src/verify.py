@@ -594,9 +594,9 @@ def calculate_metric(
         elif reference is not None:
             raise ValueError("Unrecognised input for `reference`")
         references = [observation]
-        
+
     verif_times = _common_set_of_verif_times(hindcast, *references)
-    
+
     if persistence_reference:
         persistence_hindcast = _generate_persistence_hindcast(hindcast, observation)
 
@@ -674,7 +674,7 @@ def calculate_metric(
                 time=verif_times
             )
             references_verif_times = [r.sel(time=verif_times) for r in references]
-            
+
             if persistence_reference:
                 persistence_verif_times = (
                     persistence_hindcast.sel(lead=lead)

@@ -277,8 +277,8 @@ def plot_metric_maps(
         # Change this to change what leads are plotted
         to_plot = {
             "year 1": annual.isel(lead=1), #.sel(lead=23),
-            "years 1-4": quadrennial.isel(lead=1), #.sel(lead=59),
-            "years 5-8": quadrennial.isel(lead=5), #.sel(lead=107),
+            "years 1-4": quadrennial.isel(lead=4), #.sel(lead=59),
+            "years 5-8": quadrennial.isel(lead=8), #.sel(lead=107),
         }
         fields.append(list(to_plot.values()))
         headings.append(
