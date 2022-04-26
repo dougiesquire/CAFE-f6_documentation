@@ -44,7 +44,7 @@ prepare:
       convert:
         precip:
           multiply_by: 86400
-      rolling_mean:
+      coarsen:
         window_size: 3
         dim: "lead"
       average_over_NRM_super_clusters:
@@ -65,7 +65,7 @@ prepare:
         percentile_period: ["1985-01-01", "2014-12-31"]
         frequency: "month"
       coarsen:
-        window_size: 12
+        window_size: 4
         dim: "lead"
       rechunk:
         init: -1

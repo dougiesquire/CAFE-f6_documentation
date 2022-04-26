@@ -46,8 +46,9 @@ prepare:
           multiply_by: 86400
       round_to_start_of_month:
         dim: "time"
-      rolling_mean:
+      coarsen:
         window_size: 3
+        start_points: ["1960-11-01"]
         dim: "time"
       convert_calendar:
         calendar: "julian"
@@ -68,7 +69,7 @@ prepare:
         percentile_period: ["1985-01-01", "2014-12-31"]
         frequency: "month"
       coarsen:
-        window_size: 12
+        window_size: 4
         start_points: ["1961-01-01"] # First 3-month mean for Nov forecast is Jan
         dim: "time"
       rechunk:

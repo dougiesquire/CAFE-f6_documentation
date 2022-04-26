@@ -594,8 +594,9 @@ def calculate_metric(
         elif reference is not None:
             raise ValueError("Unrecognised input for `reference`")
         references = [observation]
+        
     verif_times = _common_set_of_verif_times(hindcast, *references)
-
+    
     if persistence_reference:
         persistence_hindcast = _generate_persistence_hindcast(hindcast, observation)
 
@@ -673,7 +674,7 @@ def calculate_metric(
                 time=verif_times
             )
             references_verif_times = [r.sel(time=verif_times) for r in references]
-
+            
             if persistence_reference:
                 persistence_verif_times = (
                     persistence_hindcast.sel(lead=lead)
@@ -757,7 +758,8 @@ def verify(config, save_dir, save=True):
                 params["apply"] = []
 
             hindcast = xr.open_zarr(
-                f"{DATA_DIR}/{params['hindcast']}.zarr"
+                f"{DATA_DIR}/{params['hindcast']}.zarr",
+                decode_timedelta=False,
             ).unify_chunks()
             if "hindcast" in params["apply"]:
                 hindcast = utils.composite_function(params["apply"]["hindcast"])(
@@ -765,7 +767,8 @@ def verify(config, save_dir, save=True):
                 )
 
             observation = xr.open_zarr(
-                f"{DATA_DIR}/{params['observation']}.zarr"
+                f"{DATA_DIR}/{params['observation']}.zarr",
+                decode_timedelta=False,
             ).unify_chunks()
             if "observation" in params["apply"]:
                 observation = utils.composite_function(params["apply"]["observation"])(
@@ -777,7 +780,8 @@ def verify(config, save_dir, save=True):
                     reference = params["reference"]
                 else:
                     reference = xr.open_zarr(
-                        f"{DATA_DIR}/{params['reference']}.zarr"
+                        f"{DATA_DIR}/{params['reference']}.zarr",
+                        decode_timedelta=False,
                     ).unify_chunks()
 
                     if "reference" in params["apply"]:

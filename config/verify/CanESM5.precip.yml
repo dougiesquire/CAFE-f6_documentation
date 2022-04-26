@@ -138,7 +138,7 @@ prepare:
     apply:
       hindcast:
         keep_period:
-          period: ["1985-01-01", "2014-12-31"]
+          period: ["1988-01-01", "2014-12-31"] # GPCP begins 1979, 10 year hindcast
     verify:
       metric: "msss"
       significance: True
@@ -151,7 +151,7 @@ prepare:
     apply:
       hindcast:
         keep_period:
-          period: ["1985-01-01", "2014-12-31"]
+          period: ["1988-01-01", "2014-12-31"] # GPCP begins 1979, 10 year hindcast
     verify:
       metric: "msss"
       significance: True
@@ -273,7 +273,7 @@ prepare:
     apply:
       hindcast:
         keep_period:
-          period: ["1985-01-01", "2014-12-31"]
+          period: ["1988-01-01", "2014-12-31"] # GPCP begins 1979, 10 year hindcast
     verify:
       metric: "msss"
       significance: True
@@ -286,7 +286,7 @@ prepare:
     apply:
       hindcast:
         keep_period:
-          period: ["1985-01-01", "2014-12-31"]
+          period: ["1988-01-01", "2014-12-31"] # GPCP begins 1979, 10 year hindcast
     verify:
       metric: "msss"
       significance: True

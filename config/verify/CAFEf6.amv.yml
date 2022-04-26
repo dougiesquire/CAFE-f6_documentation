@@ -44,7 +44,7 @@ prepare:
         keep_period:
           period: ["1991-01-01", "2020-12-31"]
     verify:
-      metric: "acc_initialised"
+      metric: "ri"
       significance: True
       transform: "Fisher_z"
       alpha: 0.05

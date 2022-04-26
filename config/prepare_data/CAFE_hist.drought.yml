@@ -47,8 +47,9 @@ prepare:
       round_to_start_of_month:
         dim: "time"
       normalise_by_days_in_month:
-      rolling_mean:
+      coarsen:
         window_size: 3
+        start_points: ["1960-11-01"]
         dim: "time"
       average_over_NRM_super_clusters:
       rechunk:
@@ -67,7 +68,7 @@ prepare:
         percentile_period: ["1991-01-01", "2020-12-31"]
         frequency: "month"
       coarsen:
-        window_size: 12
+        window_size: 4
         start_points: ["1961-01-01"] # First 3-month mean for Nov forecast is Jan
         dim: "time"
       rechunk:

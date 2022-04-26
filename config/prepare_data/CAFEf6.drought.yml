@@ -62,7 +62,7 @@ prepare:
       prepared:
         - "month.full.precip_Aus_NRM"
     apply:
-      rolling_mean:
+      coarsen:
         window_size: 3
         dim: "lead"
       rechunk:
@@ -82,7 +82,7 @@ prepare:
         percentile_period: ["1991-01-01", "2020-12-31"]
         frequency: "month"
       coarsen:
-        window_size: 12
+        window_size: 4
         dim: "lead"
       rechunk:
         init: -1
