@@ -202,11 +202,13 @@ def metric_maps(
                     f"{ds['verification_period'].item()[:4]}-"
                     f"{ds['verification_period'].item()[13:17]}"
                 )
-        else:
+        elif "verification period start" in ds.coords:
             return (
                 f"{ds.attrs['verification period start'][:4]}-"
                 f"{ds.attrs['verification period end'][:4]}"
             )
+        else:
+            return "Unknown period"
 
     fig = plt.figure(figsize=figsize)
     n_rows = len(fields)

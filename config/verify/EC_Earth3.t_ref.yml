@@ -160,9 +160,9 @@ prepare:
   # NRM regions - means
   # =================================================
   
-  EC_Earth3.JRA55.annual.anom_1985-2014.t_ref_Aus_NRM.rXY_1985-2014:
+  EC_Earth3.AGCD.annual.anom_1985-2014.t_ref_Aus_NRM.rXY_1985-2014:
     hindcast: EC_Earth3.annual.anom_1985-2014.t_ref_Aus_NRM
-    observation: JRA55.annual.anom_1985-2014.t_ref_Aus_NRM
+    observation: AGCD.annual.anom_1985-2014.t_ref_Aus_NRM
     apply:
       hindcast:
         keep_period:
@@ -173,9 +173,9 @@ prepare:
       transform: "Fisher_z"
       alpha: 0.05
       
-  EC_Earth3.JRA55.4-year.anom_1985-2014.t_ref_Aus_NRM.rXY_1985-2014:
+  EC_Earth3.AGCD.4-year.anom_1985-2014.t_ref_Aus_NRM.rXY_1985-2014:
     hindcast: EC_Earth3.4-year.anom_1985-2014.t_ref_Aus_NRM
-    observation: JRA55.4-year.anom_1985-2014.t_ref_Aus_NRM
+    observation: AGCD.4-year.anom_1985-2014.t_ref_Aus_NRM
     apply:
       hindcast:
         keep_period:
@@ -186,9 +186,9 @@ prepare:
       transform: "Fisher_z"
       alpha: 0.05
 
-  EC_Earth3.JRA55.annual.anom_1985-2014.t_ref_Aus_NRM.ri_1985-2014:
+  EC_Earth3.AGCD.annual.anom_1985-2014.t_ref_Aus_NRM.ri_1985-2014:
     hindcast: EC_Earth3.annual.anom_1985-2014.t_ref_Aus_NRM
-    observation: JRA55.annual.anom_1985-2014.t_ref_Aus_NRM
+    observation: AGCD.annual.anom_1985-2014.t_ref_Aus_NRM
     reference: EC_Earth3_hist.annual.anom_1985-2014.t_ref_Aus_NRM
     apply:
       hindcast:
@@ -200,9 +200,9 @@ prepare:
       transform: "Fisher_z"
       alpha: 0.05
       
-  EC_Earth3.JRA55.4-year.anom_1985-2014.t_ref_Aus_NRM.ri_1985-2014:
+  EC_Earth3.AGCD.4-year.anom_1985-2014.t_ref_Aus_NRM.ri_1985-2014:
     hindcast: EC_Earth3.4-year.anom_1985-2014.t_ref_Aus_NRM
-    observation: JRA55.4-year.anom_1985-2014.t_ref_Aus_NRM
+    observation: AGCD.4-year.anom_1985-2014.t_ref_Aus_NRM
     reference: EC_Earth3_hist.4-year.anom_1985-2014.t_ref_Aus_NRM
     apply:
       hindcast:
@@ -214,9 +214,9 @@ prepare:
       transform: "Fisher_z"
       alpha: 0.05
 
-  EC_Earth3.JRA55.annual.anom_1985-2014.t_ref_Aus_NRM.MSSS_hist_1985-2014:
+  EC_Earth3.AGCD.annual.anom_1985-2014.t_ref_Aus_NRM.MSSS_hist_1985-2014:
     hindcast: EC_Earth3.annual.anom_1985-2014.t_ref_Aus_NRM
-    observation: JRA55.annual.anom_1985-2014.t_ref_Aus_NRM
+    observation: AGCD.annual.anom_1985-2014.t_ref_Aus_NRM
     reference: EC_Earth3_hist.annual.anom_1985-2014.t_ref_Aus_NRM
     apply:
       hindcast:
@@ -227,9 +227,9 @@ prepare:
       significance: True
       alpha: 0.05
       
-  EC_Earth3.JRA55.4-year.anom_1985-2014.t_ref_Aus_NRM.MSSS_hist_1985-2014:
+  EC_Earth3.AGCD.4-year.anom_1985-2014.t_ref_Aus_NRM.MSSS_hist_1985-2014:
     hindcast: EC_Earth3.4-year.anom_1985-2014.t_ref_Aus_NRM
-    observation: JRA55.4-year.anom_1985-2014.t_ref_Aus_NRM
+    observation: AGCD.4-year.anom_1985-2014.t_ref_Aus_NRM
     reference: EC_Earth3_hist.4-year.anom_1985-2014.t_ref_Aus_NRM
     apply:
       hindcast:
@@ -240,9 +240,9 @@ prepare:
       significance: True
       alpha: 0.05
 
-  EC_Earth3.JRA55.annual.anom_1985-2014.t_ref_Aus_NRM.MSSS_clim_1985-2014:
+  EC_Earth3.AGCD.annual.anom_1985-2014.t_ref_Aus_NRM.MSSS_clim_1985-2014:
     hindcast: EC_Earth3.annual.anom_1985-2014.t_ref_Aus_NRM
-    observation: JRA55.annual.anom_1985-2014.t_ref_Aus_NRM
+    observation: AGCD.annual.anom_1985-2014.t_ref_Aus_NRM
     reference: "climatology"
     apply:
       hindcast:
@@ -253,9 +253,9 @@ prepare:
       significance: True
       alpha: 0.05
       
-  EC_Earth3.JRA55.4-year.anom_1985-2014.t_ref_Aus_NRM.MSSS_clim_1985-2014:
+  EC_Earth3.AGCD.4-year.anom_1985-2014.t_ref_Aus_NRM.MSSS_clim_1985-2014:
     hindcast: EC_Earth3.4-year.anom_1985-2014.t_ref_Aus_NRM
-    observation: JRA55.4-year.anom_1985-2014.t_ref_Aus_NRM
+    observation: AGCD.4-year.anom_1985-2014.t_ref_Aus_NRM
     reference: "climatology"
     apply:
       hindcast:
@@ -266,9 +266,9 @@ prepare:
       significance: True
       alpha: 0.05
       
-  EC_Earth3.JRA55.annual.anom_1985-2014.t_ref_Aus_NRM.MSSS_pers_1985-2014:
+  EC_Earth3.AGCD.annual.anom_1985-2014.t_ref_Aus_NRM.MSSS_pers_1985-2014:
     hindcast: EC_Earth3.annual.anom_1985-2014.t_ref_Aus_NRM
-    observation: JRA55.annual.anom_1985-2014.t_ref_Aus_NRM
+    observation: AGCD.annual.anom_1985-2014.t_ref_Aus_NRM
     reference: "persistence"
     apply:
       hindcast:
@@ -279,9 +279,9 @@ prepare:
       significance: True
       alpha: 0.05
       
-  EC_Earth3.JRA55.4-year.anom_1985-2014.t_ref_Aus_NRM.MSSS_pers_1985-2014:
+  EC_Earth3.AGCD.4-year.anom_1985-2014.t_ref_Aus_NRM.MSSS_pers_1985-2014:
     hindcast: EC_Earth3.4-year.anom_1985-2014.t_ref_Aus_NRM
-    observation: JRA55.4-year.anom_1985-2014.t_ref_Aus_NRM
+    observation: AGCD.4-year.anom_1985-2014.t_ref_Aus_NRM
     reference: "persistence"
     apply:
       hindcast:

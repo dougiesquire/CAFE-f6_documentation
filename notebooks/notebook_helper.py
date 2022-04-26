@@ -27,11 +27,11 @@ def plot_hindcasts(hindcasts, historicals, observations, timescale, variable, re
         
         try:
             file1 = f"{DATA_DIR}/{dataset}.{timescale}.{diagnostic}.{variable}{region}.zarr"
-            return xr.open_zarr(file1)
+            return xr.open_zarr(file1, decode_timedelta=False)
         except:
             try:
                 file2 = f"{DATA_DIR}/{dataset}.{timescale}.{diagnostic}_{train_period}.{variable}{region}.zarr"
-                return xr.open_zarr(file2)
+                return xr.open_zarr(file2, decode_timedelta=False)
             except:
                 raise OSError(f"Could not find {file1} or {file2}")
 
@@ -120,7 +120,7 @@ def _load_skill_metric(
             f"{SKILL_DIR}/{hindcast}.{reference}.{timescale}.{diagnostic}"
             f".{variable}{region}.{metric}_{verif_period}.zarr"
         )
-        return xr.open_zarr(file1).compute()
+        return xr.open_zarr(file1, decode_timedelta=False).compute()
     except:
         if hindcast == "CAFEf6":
             train_period = "1991-2020"
@@ -132,7 +132,7 @@ def _load_skill_metric(
                 f"{SKILL_DIR}/{hindcast}.{reference}.{timescale}.{diagnostic}_{train_period}"
                 f".{variable}{region}.{metric}_{verif_period}.zarr"
             )
-            return xr.open_zarr(file2).compute()
+            return xr.open_zarr(file2, decode_timedelta=False).compute()
         except:
             raise OSError(f"Could not find {file1} or {file2}")
 
@@ -168,26 +168,26 @@ def plot_metrics(
             for hindcast in hindcasts:
                 model_metrics = {}
                 for metric in metrics:
-#                     try:
-                    model_metric = _load_skill_metric(
-                        hindcast,
-                        reference,
-                        timescale,
-                        f"{variable}",
-                        metric,
-                        region,
-                        diagnostic,
-                        verif_period,
-                    ).isel(sel)
-                    model_metrics[metric] = model_metric
-                    if sel is not None:
-                        region_name = (
-                            f"{model_metric[list(sel.keys())[0]].item()}, "
-                        )
-                    else:
-                        region_name = ""
-#                     except:
-#                         pass
+                    try:
+                        model_metric = _load_skill_metric(
+                            hindcast,
+                            reference,
+                            timescale,
+                            f"{variable}",
+                            metric,
+                            region,
+                            diagnostic,
+                            verif_period,
+                        ).isel(sel)
+                        model_metrics[metric] = model_metric
+                        if sel is not None:
+                            region_name = (
+                                f"{model_metric[list(sel.keys())[0]].item()}, "
+                            )
+                        else:
+                            region_name = ""
+                    except:
+                        pass
                 metric_dict[hindcast] = model_metrics
             row_list.append(metric_dict)
         panels.append(row_list)
