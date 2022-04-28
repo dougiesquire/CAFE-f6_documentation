@@ -8,7 +8,7 @@ import xarray as xr
  
 import matplotlib.pyplot as plt
 
-from src import plot
+from src import plot, utils
 
 
 def plot_hindcasts(hindcasts, historicals, observations, timescale, variable, region=None, diagnostic="anom"):
@@ -203,6 +203,7 @@ def plot_metric_maps(
     region="global",
     diagnostic="anom",
     verif_period=None,
+    vrange=(-1,1),
     figsize=None
 ):
     """
@@ -273,6 +274,16 @@ def plot_metric_maps(
                 both_pos_and_signif, [pos_and_signif(ds) for ds in quadrennial_metrics]
             )
             add_colorbar = False
+            
+        if region == "Aus":
+            # Mask out land
+            shapefile = "../data/raw/NRM_super_clusters/NRM_super_clusters.shp"
+            mask = utils.get_region_masks_from_shp(
+                annual, shapefile, "label"
+            ).sum("region").assign_coords({"region": "Australia"})
+            annual = annual.where(mask)
+            quadrennial = quadrennial.where(mask)
+            
 
         # Change this to change what leads are plotted
         to_plot = {
@@ -295,7 +306,7 @@ def plot_metric_maps(
     return plot.metric_maps(
         fields,
         variable=variable,
-        vrange=(-1, 1),
+        vrange=vrange,
         headings=headings,
         add_colorbar=add_colorbar,
         figsize=figsize,

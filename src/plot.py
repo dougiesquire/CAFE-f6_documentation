@@ -9,7 +9,7 @@ import cftime
 import numpy as np
 import xarray as xr
 
-import matplotlib.cm as cm
+from matplotlib import cm, colors
 import matplotlib.pyplot as plt
 from matplotlib.dates import date2num
 import matplotlib.patches as mpatches
@@ -25,6 +25,17 @@ cartopy.config["pre_existing_data_dir"] = PROJECT_DIR / "data/cartopy-data"
 cartopy.config["data_dir"] = PROJECT_DIR / "data/cartopy-data"
 
 
+class MidpointNormalize(colors.Normalize):
+    """Normalise the colorbar."""
+    def __init__(self, vmin=None, vmax=None, midpoint=None, clip=False):
+        self.midpoint = midpoint
+        colors.Normalize.__init__(self, vmin, vmax, clip)
+
+    def __call__(self, value, clip=None):
+        x, y = [self.vmin, self.midpoint, self.vmax], [0, 0.5, 1]
+        return np.ma.masked_array(np.interp(value, x, y), np.isnan(value))
+    
+    
 def hindcasts(hcsts, obsvs=None, hists=None, shade=False, ax=None, figsize=(15, 4)):
     """
     Plot sets of hindcasts. Where multiple variables are provided, it is
@@ -227,7 +238,8 @@ def metric_maps(
     elif n_columns == 1:
         axs = [[ax] for ax in axs]
 
-    cmap = cm.get_cmap("PiYG", 12)
+    bounds = np.concatenate((np.linspace(vrange[0], 0, 7)[:-1], np.linspace(0, vrange[1], 7)))
+    norm = colors.BoundaryNorm(boundaries=bounds, ncolors=12)
 
     for r, c in itertools.product(range(n_rows), range(n_columns)):
         ax = axs[r][c]
@@ -238,9 +250,8 @@ def metric_maps(
         p = skill[variable].plot(
             ax=ax,
             transform=ccrs.PlateCarree(),
-            vmin=vrange[0],
-            vmax=vrange[1],
-            cmap=cmap,
+            norm=norm,
+            cmap="PiYG",
             add_colorbar=False,
         )
         p.axes.coastlines(color=[0.2, 0.2, 0.2], linewidth=0.75)
