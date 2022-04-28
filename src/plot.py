@@ -238,8 +238,11 @@ def metric_maps(
     elif n_columns == 1:
         axs = [[ax] for ax in axs]
 
-    bounds = np.concatenate((np.linspace(vrange[0], 0, 7)[:-1], np.linspace(0, vrange[1], 7)))
-    norm = colors.BoundaryNorm(boundaries=bounds, ncolors=12)
+    if vrange[0] == -vrange[1]:
+        bounds = np.linspace(vrange[0], vrange[1], 13)
+    else:
+        bounds = np.concatenate((np.linspace(vrange[0], 0, 6)[:-1], np.linspace(0, vrange[1], 7)))
+    norm = colors.BoundaryNorm(boundaries=bounds, ncolors=len(bounds)-1)
 
     for r, c in itertools.product(range(n_rows), range(n_columns)):
         ax = axs[r][c]

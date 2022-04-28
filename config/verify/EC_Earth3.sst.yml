@@ -22,159 +22,217 @@
 
 prepare:
 
-  EC_Earth3.HadISST.annual.anom_1985-2014.sst_global.rXY_1985-2014:
-    hindcast: EC_Earth3.annual.anom_1985-2014.sst_global
-    observation: HadISST.annual.anom_1985-2014.sst_global
-    apply:
-      hindcast:
-        keep_period:
-          period: ["1985-01-01", "2014-12-31"]
-    verify:
-      metric: "rXY"
-      significance: True
-      transform: "Fisher_z"
-      alpha: 0.05
+  # Global - means
+  # ================================================
+  
+#   EC_Earth3.HadISST.annual.anom_1985-2014.sst_global.rXY_1985-2014:
+#     hindcast: EC_Earth3.annual.anom_1985-2014.sst_global
+#     observation: HadISST.annual.anom_1985-2014.sst_global
+#     apply:
+#       hindcast:
+#         keep_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "rXY"
+#       significance: True
+#       transform: "Fisher_z"
+#       alpha: 0.05
       
-  EC_Earth3.HadISST.annual.anom_1985-2014.sst_global.rXY_1971-2017:
-    hindcast: EC_Earth3.annual.anom_1985-2014.sst_global
-    observation: HadISST.annual.anom_1985-2014.sst_global
-    apply:
-      hindcast:
-        keep_period:
-          period: ["1971-01-01", "2017-12-31"]
-    verify:
-      metric: "rXY"
-      significance: True
-      transform: "Fisher_z"
-      alpha: 0.05
-      
-  EC_Earth3.HadISST.4-year.anom_1985-2014.sst_global.rXY_1985-2014:
-    hindcast: EC_Earth3.4-year.anom_1985-2014.sst_global
-    observation: HadISST.4-year.anom_1985-2014.sst_global
-    apply:
-      hindcast:
-        keep_period:
-          period: ["1985-01-01", "2014-12-31"]
-    verify:
-      metric: "rXY"
-      significance: True
-      transform: "Fisher_z"
-      alpha: 0.05
-      
-  EC_Earth3.HadISST.4-year.anom_1985-2014.sst_global.rXY_1971-2017:
-    hindcast: EC_Earth3.4-year.anom_1985-2014.sst_global
-    observation: HadISST.4-year.anom_1985-2014.sst_global
-    apply:
-      hindcast:
-        keep_period:
-          period: ["1971-01-01", "2017-12-31"]
-    verify:
-      metric: "rXY"
-      significance: True
-      transform: "Fisher_z"
-      alpha: 0.05
+#   EC_Earth3.HadISST.4-year.anom_1985-2014.sst_global.rXY_1985-2014:
+#     hindcast: EC_Earth3.4-year.anom_1985-2014.sst_global
+#     observation: HadISST.4-year.anom_1985-2014.sst_global
+#     apply:
+#       hindcast:
+#         keep_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "rXY"
+#       significance: True
+#       transform: "Fisher_z"
+#       alpha: 0.05
 
-  EC_Earth3.HadISST.annual.anom_1985-2014.sst_global.ri_1985-2014:
-    hindcast: EC_Earth3.annual.anom_1985-2014.sst_global
-    observation: HadISST.annual.anom_1985-2014.sst_global
-    reference: EC_Earth3_hist.annual.anom_1985-2014.sst_global
-    apply:
-      hindcast:
-        keep_period:
-          period: ["1985-01-01", "2014-12-31"]
-    verify:
-      metric: "ri"
-      significance: True
-      transform: "Fisher_z"
-      alpha: 0.05
+#   EC_Earth3.HadISST.annual.anom_1985-2014.sst_global.ri_1985-2014:
+#     hindcast: EC_Earth3.annual.anom_1985-2014.sst_global
+#     observation: HadISST.annual.anom_1985-2014.sst_global
+#     reference: EC_Earth3_hist.annual.anom_1985-2014.sst_global
+#     apply:
+#       hindcast:
+#         keep_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "ri"
+#       significance: True
+#       transform: "Fisher_z"
+#       alpha: 0.05
       
-  EC_Earth3.HadISST.4-year.anom_1985-2014.sst_global.ri_1985-2014:
-    hindcast: EC_Earth3.4-year.anom_1985-2014.sst_global
-    observation: HadISST.4-year.anom_1985-2014.sst_global
-    reference: EC_Earth3_hist.4-year.anom_1985-2014.sst_global
-    apply:
-      hindcast:
-        keep_period:
-          period: ["1985-01-01", "2014-12-31"]
-    verify:
-      metric: "ri"
-      significance: True
-      transform: "Fisher_z"
-      alpha: 0.05
+#   EC_Earth3.HadISST.4-year.anom_1985-2014.sst_global.ri_1985-2014:
+#     hindcast: EC_Earth3.4-year.anom_1985-2014.sst_global
+#     observation: HadISST.4-year.anom_1985-2014.sst_global
+#     reference: EC_Earth3_hist.4-year.anom_1985-2014.sst_global
+#     apply:
+#       hindcast:
+#         keep_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "ri"
+#       significance: True
+#       transform: "Fisher_z"
+#       alpha: 0.05
 
-  EC_Earth3.HadISST.annual.anom_1985-2014.sst_global.MSSS_hist_1985-2014:
-    hindcast: EC_Earth3.annual.anom_1985-2014.sst_global
-    observation: HadISST.annual.anom_1985-2014.sst_global
-    reference: EC_Earth3_hist.annual.anom_1985-2014.sst_global
-    apply:
-      hindcast:
-        keep_period:
-          period: ["1985-01-01", "2014-12-31"]
-    verify:
-      metric: "msss"
-      significance: True
-      alpha: 0.05
+#   EC_Earth3.HadISST.annual.anom_1985-2014.sst_global.MSSS_hist_1985-2014:
+#     hindcast: EC_Earth3.annual.anom_1985-2014.sst_global
+#     observation: HadISST.annual.anom_1985-2014.sst_global
+#     reference: EC_Earth3_hist.annual.anom_1985-2014.sst_global
+#     apply:
+#       hindcast:
+#         keep_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "msss"
+#       significance: True
+#       alpha: 0.05
       
-  EC_Earth3.HadISST.4-year.anom_1985-2014.sst_global.MSSS_hist_1985-2014:
-    hindcast: EC_Earth3.4-year.anom_1985-2014.sst_global
-    observation: HadISST.4-year.anom_1985-2014.sst_global
-    reference: EC_Earth3_hist.4-year.anom_1985-2014.sst_global
-    apply:
-      hindcast:
-        keep_period:
-          period: ["1985-01-01", "2014-12-31"]
-    verify:
-      metric: "msss"
-      significance: True
-      alpha: 0.05
+#   EC_Earth3.HadISST.4-year.anom_1985-2014.sst_global.MSSS_hist_1985-2014:
+#     hindcast: EC_Earth3.4-year.anom_1985-2014.sst_global
+#     observation: HadISST.4-year.anom_1985-2014.sst_global
+#     reference: EC_Earth3_hist.4-year.anom_1985-2014.sst_global
+#     apply:
+#       hindcast:
+#         keep_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "msss"
+#       significance: True
+#       alpha: 0.05
 
-  EC_Earth3.HadISST.annual.anom_1985-2014.sst_global.MSSS_clim_1985-2014:
+#   EC_Earth3.HadISST.annual.anom_1985-2014.sst_global.MSSS_clim_1985-2014:
+#     hindcast: EC_Earth3.annual.anom_1985-2014.sst_global
+#     observation: HadISST.annual.anom_1985-2014.sst_global
+#     reference: "climatology"
+#     apply:
+#       hindcast:
+#         keep_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "msss"
+#       significance: True
+#       alpha: 0.05
+      
+#   EC_Earth3.HadISST.4-year.anom_1985-2014.sst_global.MSSS_clim_1985-2014:
+#     hindcast: EC_Earth3.4-year.anom_1985-2014.sst_global
+#     observation: HadISST.4-year.anom_1985-2014.sst_global
+#     reference: "climatology"
+#     apply:
+#       hindcast:
+#         keep_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "msss"
+#       significance: True
+#       alpha: 0.05
+      
+#   EC_Earth3.HadISST.annual.anom_1985-2014.sst_global.MSSS_pers_1985-2014:
+#     hindcast: EC_Earth3.annual.anom_1985-2014.sst_global
+#     observation: HadISST.annual.anom_1985-2014.sst_global
+#     reference: "persistence"
+#     apply:
+#       hindcast:
+#         keep_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "msss"
+#       significance: True
+#       alpha: 0.05
+      
+#   EC_Earth3.HadISST.4-year.anom_1985-2014.sst_global.MSSS_pers_1985-2014:
+#     hindcast: EC_Earth3.4-year.anom_1985-2014.sst_global
+#     observation: HadISST.4-year.anom_1985-2014.sst_global
+#     reference: "persistence"
+#     apply:
+#       hindcast:
+#         keep_period:
+#           period: ["1985-01-01", "2014-12-31"]
+#     verify:
+#       metric: "msss"
+#       significance: True
+#       alpha: 0.05
+      
+  # Global - means, full available verif period
+  # ================================================
+      
+#   EC_Earth3.HadISST.annual.anom_1985-2014.sst_global.rXY_1971-2017:
+#     hindcast: EC_Earth3.annual.anom_1985-2014.sst_global
+#     observation: HadISST.annual.anom_1985-2014.sst_global
+#     apply:
+#       hindcast:
+#         keep_period:
+#           period: ["1971-01-01", "2017-12-31"]
+#     verify:
+#       metric: "rXY"
+#       significance: True
+#       transform: "Fisher_z"
+#       alpha: 0.05
+      
+#   EC_Earth3.HadISST.4-year.anom_1985-2014.sst_global.rXY_1971-2017:
+#     hindcast: EC_Earth3.4-year.anom_1985-2014.sst_global
+#     observation: HadISST.4-year.anom_1985-2014.sst_global
+#     apply:
+#       hindcast:
+#         keep_period:
+#           period: ["1971-01-01", "2017-12-31"]
+#     verify:
+#       metric: "rXY"
+#       significance: True
+#       transform: "Fisher_z"
+#       alpha: 0.05
+      
+  EC_Earth3.HadISST.annual.anom_1985-2014.sst_global.MSSS_clim_1971-2017:
     hindcast: EC_Earth3.annual.anom_1985-2014.sst_global
     observation: HadISST.annual.anom_1985-2014.sst_global
     reference: "climatology"
     apply:
       hindcast:
         keep_period:
-          period: ["1985-01-01", "2014-12-31"]
+          period: ["1971-01-01", "2017-12-31"]
     verify:
       metric: "msss"
       significance: True
       alpha: 0.05
       
-  EC_Earth3.HadISST.4-year.anom_1985-2014.sst_global.MSSS_clim_1985-2014:
+  EC_Earth3.HadISST.4-year.anom_1985-2014.sst_global.MSSS_clim_1971-2017:
     hindcast: EC_Earth3.4-year.anom_1985-2014.sst_global
     observation: HadISST.4-year.anom_1985-2014.sst_global
     reference: "climatology"
     apply:
       hindcast:
         keep_period:
-          period: ["1985-01-01", "2014-12-31"]
+          period: ["1971-01-01", "2017-12-31"]
     verify:
       metric: "msss"
       significance: True
       alpha: 0.05
       
-  EC_Earth3.HadISST.annual.anom_1985-2014.sst_global.MSSS_pers_1985-2014:
+  EC_Earth3.HadISST.annual.anom_1985-2014.sst_global.MSSS_pers_1971-2017:
     hindcast: EC_Earth3.annual.anom_1985-2014.sst_global
     observation: HadISST.annual.anom_1985-2014.sst_global
     reference: "persistence"
     apply:
       hindcast:
         keep_period:
-          period: ["1985-01-01", "2014-12-31"]
+          period: ["1971-01-01", "2017-12-31"]
     verify:
       metric: "msss"
       significance: True
       alpha: 0.05
       
-  EC_Earth3.HadISST.4-year.anom_1985-2014.sst_global.MSSS_pers_1985-2014:
+  EC_Earth3.HadISST.4-year.anom_1985-2014.sst_global.MSSS_pers_1971-2017:
     hindcast: EC_Earth3.4-year.anom_1985-2014.sst_global
     observation: HadISST.4-year.anom_1985-2014.sst_global
     reference: "persistence"
     apply:
       hindcast:
         keep_period:
-          period: ["1985-01-01", "2014-12-31"]
+          period: ["1971-01-01", "2017-12-31"]
     verify:
       metric: "msss"
       significance: True

@@ -63,7 +63,7 @@ def plot_hindcasts(hindcasts, historicals, observations, timescale, variable, re
         n_columns = len(hindcasts)
         axs = np.array(fig.subplots(n_rows, n_columns)).T.flatten()
     else:
-        fig = plt.figure(figsize=(15, 3.5*len(hindcasts)))
+        fig = plt.figure(figsize=(15, 4*len(hindcasts)))
         n_rows = len(hindcasts)
         n_columns = 1
         axs = np.array(fig.subplots(n_rows, n_columns)).flatten()
