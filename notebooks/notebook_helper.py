@@ -27,13 +27,23 @@ def plot_hindcasts(hindcasts, historicals, observations, timescale, variable, re
         
         try:
             file1 = f"{DATA_DIR}/{dataset}.{timescale}.{diagnostic}.{variable}{region}.zarr"
-            return xr.open_zarr(file1, decode_timedelta=False)
+            ds = xr.open_zarr(file1, decode_timedelta=False)
         except:
             try:
                 file2 = f"{DATA_DIR}/{dataset}.{timescale}.{diagnostic}_{train_period}.{variable}{region}.zarr"
-                return xr.open_zarr(file2, decode_timedelta=False)
+                ds = xr.open_zarr(file2, decode_timedelta=False)
             except:
                 raise OSError(f"Could not find {file1} or {file2}")
+        
+        if region == "_Aus":
+            # Mask out land
+            shapefile = "../data/raw/NRM_super_clusters/NRM_super_clusters.shp"
+            mask = utils.get_region_masks_from_shp(
+                ds, shapefile, "label"
+            ).sum("region")
+            ds = ds.where(mask)
+        
+        return ds
 
     def area_mean(ds):
         return (
@@ -120,7 +130,7 @@ def _load_skill_metric(
             f"{SKILL_DIR}/{hindcast}.{reference}.{timescale}.{diagnostic}"
             f".{variable}{region}.{metric}_{verif_period}.zarr"
         )
-        return xr.open_zarr(file1, decode_timedelta=False).compute()
+        ds = xr.open_zarr(file1, decode_timedelta=False).compute()
     except:
         if hindcast == "CAFEf6":
             train_period = "1991-2020"
@@ -132,9 +142,19 @@ def _load_skill_metric(
                 f"{SKILL_DIR}/{hindcast}.{reference}.{timescale}.{diagnostic}_{train_period}"
                 f".{variable}{region}.{metric}_{verif_period}.zarr"
             )
-            return xr.open_zarr(file2, decode_timedelta=False).compute()
+            ds = xr.open_zarr(file2, decode_timedelta=False).compute()
         except:
             raise OSError(f"Could not find {file1} or {file2}")
+            
+    if region == "_Aus":
+        # Mask out land
+        shapefile = "../data/raw/NRM_super_clusters/NRM_super_clusters.shp"
+        mask = utils.get_region_masks_from_shp(
+            ds, shapefile, "label"
+        ).sum("region").assign_coords({"region": "Australia"})
+        ds = ds.where(mask)
+            
+    return ds
 
 
 def plot_metrics(
@@ -265,7 +285,9 @@ def plot_metric_maps(
                 """How to select regions when multiple metrics are provided"""
                 positive = ds[[variable]] > 0
                 significant = ds[f"{variable}_signif"]
-                return (1 * positive + xr.where(positive & significant, 1, 0)) / 2
+                # Deal with nans
+                significant = xr.where(significant.notnull(), significant.astype(bool), False)
+                return (positive + xr.where(positive & significant, 1, 0)) / 2
 
             annual = functools.reduce(
                 both_pos_and_signif, [pos_and_signif(ds) for ds in annual_metrics]
@@ -274,16 +296,6 @@ def plot_metric_maps(
                 both_pos_and_signif, [pos_and_signif(ds) for ds in quadrennial_metrics]
             )
             add_colorbar = False
-            
-        if region == "Aus":
-            # Mask out land
-            shapefile = "../data/raw/NRM_super_clusters/NRM_super_clusters.shp"
-            mask = utils.get_region_masks_from_shp(
-                annual, shapefile, "label"
-            ).sum("region").assign_coords({"region": "Australia"})
-            annual = annual.where(mask)
-            quadrennial = quadrennial.where(mask)
-            
 
         # Change this to change what leads are plotted
         to_plot = {
