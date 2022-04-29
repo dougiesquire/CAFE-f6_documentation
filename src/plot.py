@@ -240,9 +240,9 @@ def metric_maps(
 
     if cbar_bounds is None:
         if vrange[0] == -vrange[1]:
-            bounds = np.linspace(vrange[0], vrange[1], 13)
+            bounds = np.linspace(vrange[0]-1e-6, vrange[1]+1e-6, 13)
         else:
-            bounds = np.concatenate((np.linspace(vrange[0], 0, 6)[:-1], np.linspace(0, vrange[1], 7)))
+            bounds = np.concatenate((np.linspace(vrange[0]-1e-6, 0, 6)[:-1], np.linspace(0, vrange[1]+1e-6, 7)))
     else:
         bounds = cbar_bounds
     norm = colors.BoundaryNorm(boundaries=bounds, ncolors=len(bounds)-1)
