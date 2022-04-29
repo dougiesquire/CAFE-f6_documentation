@@ -268,7 +268,7 @@ def metric_maps(
                 1 * skill[f"{variable}_signif"],
                 [0, 0.5, 1],
                 colors="none",
-                hatches=[None, "....", None],
+                hatches=[None, "///", None],
                 transform=ccrs.PlateCarree(),
                 extend="lower",
             )
