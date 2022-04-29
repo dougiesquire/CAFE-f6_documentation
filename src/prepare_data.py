@@ -51,10 +51,9 @@ class _open:
     @staticmethod
     def HadISST(variables, realm, preprocess):
         """Open HadISST variables from specified realm"""
-        file = DATA_DIR / f"HadISST/{realm}.zarr"
+        file = DATA_DIR / f"HadISST/HadISST_sst.nc"
         ds = xr.open_dataset(
             file,
-            engine="zarr",
             chunks={},
             use_cftime=True,
         )[variables]

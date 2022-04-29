@@ -1,5 +1,7 @@
 # Some functions for producing plots in the notebooks. Putting here to keep notebooks nice and clean
 
+from pathlib import Path
+
 import functools
 
 import numpy as np
@@ -10,6 +12,8 @@ import matplotlib.pyplot as plt
 
 from src import plot, utils
 
+PROJECT_DIR = Path(__file__).resolve().parents[1]
+DATA_DIR = PROJECT_DIR / "data"
 
 def plot_hindcasts(hindcasts, historicals, observations, timescale, variable, region=None, diagnostic="anom"):
     """
@@ -18,26 +22,24 @@ def plot_hindcasts(hindcasts, historicals, observations, timescale, variable, re
 
     def _load_dataset(dataset, timescale, variable, region, diagnostic):
         """Load a skill metric"""
-
-        DATA_DIR = "../data/processed/"
         
         if region is not None:
             region = f"_{region}"
         else: region = ""
         
         try:
-            file1 = f"{DATA_DIR}/{dataset}.{timescale}.{diagnostic}.{variable}{region}.zarr"
-            ds = xr.open_zarr(file1, decode_timedelta=False)
+            file1 = f"{DATA_DIR}/processed/{dataset}.{timescale}.{diagnostic}.{variable}{region}.zarr"
+            ds = xr.open_zarr(file1, consolidated=True, decode_timedelta=False)
         except:
             try:
-                file2 = f"{DATA_DIR}/{dataset}.{timescale}.{diagnostic}_{train_period}.{variable}{region}.zarr"
-                ds = xr.open_zarr(file2, decode_timedelta=False)
+                file2 = f"{DATA_DIR}/processed/{dataset}.{timescale}.{diagnostic}_{train_period}.{variable}{region}.zarr"
+                ds = xr.open_zarr(file2, consolidated=True, decode_timedelta=False)
             except:
                 raise OSError(f"Could not find {file1} or {file2}")
         
         if region == "_Aus":
             # Mask out land
-            shapefile = "../data/raw/NRM_super_clusters/NRM_super_clusters.shp"
+            shapefile = f"{DATA_DIR}/raw/NRM_super_clusters/NRM_super_clusters.shp"
             mask = utils.get_region_masks_from_shp(
                 ds, shapefile, "label"
             ).sum("region")
@@ -112,7 +114,6 @@ def _load_skill_metric(
     hindcast, reference, timescale, variable, metric, region, diagnostic, verif_period=None
 ):
     """Load a skill metric"""
-    SKILL_DIR = "../data/skill/"
 
     if verif_period is None:
         if hindcast == "CAFEf6":
@@ -127,10 +128,10 @@ def _load_skill_metric(
         
     try:
         file1 = (
-            f"{SKILL_DIR}/{hindcast}.{reference}.{timescale}.{diagnostic}"
+            f"{DATA_DIR}/skill/{hindcast}.{reference}.{timescale}.{diagnostic}"
             f".{variable}{region}.{metric}_{verif_period}.zarr"
         )
-        ds = xr.open_zarr(file1, decode_timedelta=False).compute()
+        ds = xr.open_zarr(file1, consolidated=True, decode_timedelta=False).compute()
     except:
         if hindcast == "CAFEf6":
             train_period = "1991-2020"
@@ -139,16 +140,16 @@ def _load_skill_metric(
             
         try:
             file2 = (
-                f"{SKILL_DIR}/{hindcast}.{reference}.{timescale}.{diagnostic}_{train_period}"
+                f"{DATA_DIR}/skill/{hindcast}.{reference}.{timescale}.{diagnostic}_{train_period}"
                 f".{variable}{region}.{metric}_{verif_period}.zarr"
             )
-            ds = xr.open_zarr(file2, decode_timedelta=False).compute()
+            ds = xr.open_zarr(file2, consolidated=True, decode_timedelta=False).compute()
         except:
             raise OSError(f"Could not find {file1} or {file2}")
             
     if region == "_Aus":
         # Mask out land
-        shapefile = "../data/raw/NRM_super_clusters/NRM_super_clusters.shp"
+        shapefile = f"{DATA_DIR}/raw/NRM_super_clusters/NRM_super_clusters.shp"
         mask = utils.get_region_masks_from_shp(
             ds, shapefile, "label"
         ).sum("region").assign_coords({"region": "Australia"})
@@ -224,6 +225,10 @@ def plot_metric_maps(
     diagnostic="anom",
     verif_period=None,
     vrange=(-1,1),
+    add_colorbar=True,
+    cbar_bounds=None,
+    cmap="PiYG",
+    central_longitude=180,
     figsize=None
 ):
     """
@@ -271,7 +276,6 @@ def plot_metric_maps(
         if len(metrics) == 1:
             annual = annual_metrics[0]
             quadrennial = quadrennial_metrics[0]
-            add_colorbar = True
         else:
 
             def both_pos_and_signif(ds_1, ds_2):
@@ -287,7 +291,7 @@ def plot_metric_maps(
                 significant = ds[f"{variable}_signif"]
                 # Deal with nans
                 significant = xr.where(significant.notnull(), significant.astype(bool), False)
-                return (positive + xr.where(positive & significant, 1, 0)) / 2
+                return ((1*positive) + xr.where(positive & significant, 1, 0)) / 2
 
             annual = functools.reduce(
                 both_pos_and_signif, [pos_and_signif(ds) for ds in annual_metrics]
@@ -321,5 +325,8 @@ def plot_metric_maps(
         vrange=vrange,
         headings=headings,
         add_colorbar=add_colorbar,
+        cbar_bounds=cbar_bounds,
+        cmap=cmap,
+        central_longitude=central_longitude,
         figsize=figsize,
     )

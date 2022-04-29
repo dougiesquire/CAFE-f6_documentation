@@ -35,8 +35,7 @@ prepare:
   
   3-month.full.nino34:
     uses:
-      ocean_month:
-        - "sst"
+      - "sst"
     apply:
       rename:
         latitude: "lat"

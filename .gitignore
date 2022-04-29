@@ -95,7 +95,6 @@ data/testing/*
 
 # figures and videos
 *.pdf
-*.png
 *.mp4
 
 # MOM executable

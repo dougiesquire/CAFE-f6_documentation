@@ -176,7 +176,7 @@ def hindcasts(hcsts, obsvs=None, hists=None, shade=False, ax=None, figsize=(15, 
 
 
 def metric_maps(
-    fields, variable, vrange, headings=None, add_colorbar=True, figsize=(15, 15)
+    fields, variable, vrange, headings=None, add_colorbar=True, cbar_bounds=None, cmap="PiYG", central_longitude=180, figsize=(15, 15)
 ):
     """
     Plot panels of skill score maps
@@ -229,7 +229,7 @@ def metric_maps(
         n_columns,
         sharex=True,
         sharey=True,
-        subplot_kw=dict(projection=ccrs.PlateCarree(180)),
+        subplot_kw=dict(projection=ccrs.PlateCarree(central_longitude)),
     )
     if n_rows == 1:
         axs = [axs]
@@ -238,10 +238,13 @@ def metric_maps(
     elif n_columns == 1:
         axs = [[ax] for ax in axs]
 
-    if vrange[0] == -vrange[1]:
-        bounds = np.linspace(vrange[0], vrange[1], 13)
+    if cbar_bounds is None:
+        if vrange[0] == -vrange[1]:
+            bounds = np.linspace(vrange[0], vrange[1], 13)
+        else:
+            bounds = np.concatenate((np.linspace(vrange[0], 0, 6)[:-1], np.linspace(0, vrange[1], 7)))
     else:
-        bounds = np.concatenate((np.linspace(vrange[0], 0, 6)[:-1], np.linspace(0, vrange[1], 7)))
+        bounds = cbar_bounds
     norm = colors.BoundaryNorm(boundaries=bounds, ncolors=len(bounds)-1)
 
     for r, c in itertools.product(range(n_rows), range(n_columns)):
@@ -254,7 +257,7 @@ def metric_maps(
             ax=ax,
             transform=ccrs.PlateCarree(),
             norm=norm,
-            cmap="PiYG",
+            cmap=cmap,
             add_colorbar=False,
         )
         p.axes.coastlines(color=[0.2, 0.2, 0.2], linewidth=0.75)
@@ -265,7 +268,7 @@ def metric_maps(
                 1 * skill[f"{variable}_signif"],
                 [0, 0.5, 1],
                 colors="none",
-                hatches=[None, "///", None],
+                hatches=[None, "....", None],
                 transform=ccrs.PlateCarree(),
                 extend="lower",
             )

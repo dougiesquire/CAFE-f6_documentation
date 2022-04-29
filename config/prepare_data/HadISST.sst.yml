@@ -35,8 +35,7 @@ prepare:
   
   annual-Jan.full.sst_global:
     uses:
-      ocean_month:
-        - "sst"
+      - "sst"
     apply:
       rename:
         latitude: "lat"
@@ -58,8 +57,7 @@ prepare:
 
   annual-Nov.full.sst_global:
     uses:
-      ocean_month:
-        - "sst"
+      - "sst"
     apply:
       rename:
         latitude: "lat"
