@@ -46,11 +46,14 @@ def rXY(hcst, obsv, correlation="pearson_r"):
     obsv : xarray Dataset
         The observed timeseries
     """
+    
+    obsv = obsv.mean("member") if "member" in obsv.dims else obsv
+    hcst = hcst.mean("member") if "member" in hcst.dims else hcst
 
     if correlation == "pearson_r":
-        return xs.pearson_r(hcst.mean("member"), obsv, dim="time", skipna=True)
+        return xs.pearson_r(hcst, obsv, dim="time", skipna=True)
     elif correlation == "spearman_r":
-        return xs.spearman_r(hcst.mean("member"), obsv, dim="time", skipna=True)
+        return xs.spearman_r(hcst, obsv, dim="time", skipna=True)
     else:
         raise ValueError("Unrecognised value for input 'correlation'")
 
@@ -69,11 +72,14 @@ def ri(hcst, obsv, hist):
     hist : xarray Dataset
         The historical simulation timeseries
     """
-    rXY = xs.pearson_r(hcst.mean("member"), obsv, dim="time", skipna=True)
-    rXU = xs.pearson_r(obsv, hist.mean("member"), dim="time", skipna=True)
-    rYU = xs.pearson_r(
-        hcst.mean("member"), hist.mean("member"), dim="time", skipna=True
-    )
+    
+    obsv = obsv.mean("member") if "member" in obsv.dims else obsv
+    hcst = hcst.mean("member") if "member" in hcst.dims else hcst
+    hist = hist.mean("member") if "member" in hist.dims else hist
+    
+    rXY = xs.pearson_r(hcst, obsv, dim="time", skipna=True)
+    rXU = xs.pearson_r(obsv, hist, dim="time", skipna=True)
+    rYU = xs.pearson_r(hcst, hist, dim="time", skipna=True)
     θ = xr.where(rYU < 0, 0, 1, keep_attrs=False)
     ru = θ * rXU * rYU
     return rXY - ru
@@ -97,7 +103,8 @@ def msss(hcst, obsv, ref, ensemble_mean=True):
         (if it exists) prior to calculating the MSSS
     """
     if ensemble_mean:
-        hcst = hcst.mean("member")
+        hcst = hcst.mean("member") if "member" in hcst.dims else hcst
+        obsv = obsv.mean("member") if "member" in obsv.dims else obsv
         ref = ref.mean("member") if "member" in ref.dims else ref
 
     num = xs.mse(hcst, obsv, dim="time", skipna=True)
@@ -248,7 +255,7 @@ def _iterative_blocked_bootstrap(*objects, blocks, n_iterations):
 
     Parameters
     ----------
-    objects : iterable of Datasets
+    objects : xarray Dataset(s)
         The data to bootstrap. Multiple datasets can be passed to be bootstrapped
         in the same way. Where multiple datasets are passed, all datasets need not
         contain all bootstrapped dimensions. However, because of the bootstrapping
@@ -273,6 +280,13 @@ def _iterative_blocked_bootstrap(*objects, blocks, n_iterations):
     dim = list(blocks.keys())
     if isinstance(dim, str):
         dim = [dim]
+
+    # Check that boostrapped dimensions are the same size on all objects
+    for d in blocks.keys():
+        dim_sizes = [o.sizes[d] for o in objects if d in o.dims]
+        assert all(
+            s == dim_sizes[0] for s in dim_sizes
+        ), f"Block dimension {d} is not the same size on all input objects"
 
     # Get the sizes of the bootstrap dimensions
     sizes = None
@@ -342,7 +356,7 @@ def iterative_blocked_bootstrap(*objects, blocks, n_iterations):
 
     Parameters
     ----------
-    objects : iterable of Datasets
+    objects : xarray Dataset(s)
         The data to bootstrap. Multiple datasets can be passed to be bootstrapped
         in the same way. Where multiple datasets are passed, all datasets need not
         contain all bootstrapped dimensions. However, because of the bootstrapping
@@ -526,6 +540,7 @@ def calculate_metric(
 
         # Get the most recent observation at the time of forecast initialisation
         lead_0_spacing = np.diff(lead_0_indices)
+        print(observation.time.values)
         assert all(
             lead_0_spacing == lead_0_spacing[0]
         ), "time spacing along observation must be regular for persistence baseline"

@@ -57,15 +57,15 @@ prepare:
         time: -1
         member: -1
         
-  # 3-month anomalies - 1991-2020 climatology
+  # 3-month anomalies - 1991-2019 climatology
   
-  3-month.anom_1991-2020.nino34:
+  3-month.anom_1991-2019.nino34:
     uses:
       prepared:
         - "3-month.full.nino34"
     apply:
       anomalise:
-        clim_period: ["1991-01-01", "2020-12-31"]
+        clim_period: ["1991-01-01", "2019-12-31"]
         frequency: "month"
       rechunk:
         time: -1

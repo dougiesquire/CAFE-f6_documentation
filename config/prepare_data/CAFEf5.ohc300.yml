@@ -24,31 +24,81 @@
 #        Functions and kwargs from src.utils to be applied sequentially to opened 
 #        (and concatenated/merge, where appropriate) dataset.
 
-name: "CAFE60v1"
+name: "CAFEf5"
 
 prepare:
 
-  # Prepare anomalies
+  # Prepare anomalies over globe
   # ================================================
-        
-  # 3-month anomalies - 1991-2019 climatology
-  
-  3-month.anom_1991-2019.sam:
+
+  # Annual average
+
+  annual.full.ohc300_global:
     uses:
-      atmos_isobaric_month:
-        - "slp"
+      ocean_month:
+        - "temp"
     apply:
-      truncate_latitudes:
+      add_CAFE_grid_info:
       rename:
         ensemble: "member"
+        init_date: "init"
+        lead_time: "lead"
+        xt_ocean: "x"
+        yt_ocean: "y"
+        st_ocean: "depth"
+        geolon_t: "lon"
+        geolat_t: "lat"
+      add_attrs:
+        attrs: {"units": "months"}
+        variable: "lead"
+      convert:
+        temp:
+          add: 273.15
+      coarsen:
+        window_size: 12
+        dim: "lead"
       round_to_start_of_month:
-        dim: "time"
-      calculate_sam:
-        clim_period: ["1991-01-01", "2019-12-31"]
-      rolling_mean:
-        window_size: 3
-        start_points: ["1960-11-01"]
-        dim: "time"
+        dim: ["init", "time"]
+      calculate_ohc300:
+      interpolate_to_grid_from_file:
+        file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
       rechunk:
-        time: -1
+        init: -1
+        lead: 1
         member: -1
+        lat: 10
+        lon: 12
+        
+  # Annual anomalies - 1991-2020 climatology
+        
+  annual.anom_1991-2020.ohc300_global:
+    uses:
+      prepared:
+        - "annual.full.ohc300_global"
+    apply:
+      anomalise:
+        clim_period: ["1991-01-01", "2020-12-31"]
+        frequency: "month"
+      rechunk:
+        init: -1
+        lead: 1
+        member: -1
+        lat: 10
+        lon: 12
+        
+  # 4-year anomalies - 1991-2020 climatology
+  
+  4-year.anom_1991-2020.ohc300_global:
+    uses:
+      prepared:
+        - "annual.anom_1991-2020.ohc300_global"
+    apply:
+      rolling_mean:
+        window_size: 4
+        dim: "lead"
+      rechunk:
+        init: -1
+        lead: 1
+        member: -1
+        lat: 10
+        lon: 12

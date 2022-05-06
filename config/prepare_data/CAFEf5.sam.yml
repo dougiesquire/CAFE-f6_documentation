@@ -24,16 +24,16 @@
 #        Functions and kwargs from src.utils to be applied sequentially to opened 
 #        (and concatenated/merge, where appropriate) dataset.
 
-name: "CAFE60v1"
+name: "CAFEf6"
 
 prepare:
 
   # Prepare anomalies
   # ================================================
-        
-  # 3-month anomalies - 1991-2019 climatology
-  
-  3-month.anom_1991-2019.sam:
+
+  # 3-month anomalies - 1991-2020 climatology
+
+  3-month.anom_1991-2020.sam:
     uses:
       atmos_isobaric_month:
         - "slp"
@@ -41,14 +41,20 @@ prepare:
       truncate_latitudes:
       rename:
         ensemble: "member"
-      round_to_start_of_month:
-        dim: "time"
+        init_date: "init"
+        lead_time: "lead"
+      add_attrs:
+        attrs: {"units": "months"}
+        variable: "lead"
       calculate_sam:
-        clim_period: ["1991-01-01", "2019-12-31"]
-      rolling_mean:
+        clim_period: ["1991-01-01", "2020-12-31"]
+        groupby_dim: "init"
+      coarsen:
         window_size: 3
-        start_points: ["1960-11-01"]
-        dim: "time"
+        dim: "lead"
+      round_to_start_of_month:
+        dim: ["init", "time"]
       rechunk:
-        time: -1
-        member: -1
+        init: -1
+        lead: 1
+        member: -1 

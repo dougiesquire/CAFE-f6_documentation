@@ -32,29 +32,8 @@ prepare:
   # ================================================
 
   # Annual average
-  
-  annual-Jan.full.t_ref_global:
-    uses:
-      atmos_isobaric_month:
-        - "t_ref"
-    apply:
-      truncate_latitudes:
-      add_CAFE_grid_info:
-      rename:
-        ensemble: "member"
-      round_to_start_of_month:
-        dim: "time"
-      coarsen:
-        window_size: 12
-        start_points: ["1960-01-01"]
-        dim: "time"
-      rechunk:
-        time: -1
-        member: -1
-        lat: 10
-        lon: 12
         
-  annual-Nov.full.t_ref_global:
+  annual.full.t_ref_global:
     uses:
       atmos_isobaric_month:
         - "t_ref"
@@ -75,15 +54,15 @@ prepare:
         lat: 10
         lon: 12
 
-  # Annual anomalies - 1991-2020 climatology
-  
-  annual-Jan.anom_1991-2020.t_ref_global:
+  # Annual anomalies - 1991-2019 climatology
+    
+  annual.anom_1991-2019.t_ref_global:
     uses:
       prepared:
-        - "annual-Jan.full.t_ref_global"
+        - "annual.full.t_ref_global"
     apply:
       anomalise:
-        clim_period: ["1991-01-01", "2020-12-31"]
+        clim_period: ["1991-01-01", "2019-12-31"]
         frequency: "month"
       rechunk:
         time: -1
@@ -91,66 +70,15 @@ prepare:
         lat: 10
         lon: 12
     
-  annual-Nov.anom_1991-2020.t_ref_global:
-    uses:
-      prepared:
-        - "annual-Nov.full.t_ref_global"
-    apply:
-      anomalise:
-        clim_period: ["1991-01-01", "2020-12-31"]
-        frequency: "month"
-      rechunk:
-        time: -1
-        member: -1
-        lat: 10
-        lon: 12
+  # 4-year anomalies - 1991-2019 climatology
         
-  annual.anom_1991-2020.t_ref_global:
+  4-year.anom_1991-2019.t_ref_global:
     uses:
       prepared:
-        - "annual-Jan.anom_1991-2020.t_ref_global"
-        - "annual-Nov.anom_1991-2020.t_ref_global"
-    apply:
-      rechunk:
-        time: -1
-        member: -1
-        lat: 10
-        lon: 12
-    
-  # 4-year anomalies - 1991-2020 climatology
-  
-  4-year-Jan.anom_1991-2020.t_ref_global:
-    uses:
-      prepared:
-        - "annual-Jan.anom_1991-2020.t_ref_global"
+        - "annual.anom_1991-2019.t_ref_global"
     apply:
       rolling_mean:
         window_size: 4
-      rechunk:
-        time: -1
-        member: -1
-        lat: 10
-        lon: 12
-        
-  4-year-Nov.anom_1991-2020.t_ref_global:
-    uses:
-      prepared:
-        - "annual-Nov.anom_1991-2020.t_ref_global"
-    apply:
-      rolling_mean:
-        window_size: 4
-      rechunk:
-        time: -1
-        member: -1
-        lat: 10
-        lon: 12
-        
-  4-year.anom_1991-2020.t_ref_global:
-    uses:
-      prepared:
-        - "4-year-Jan.anom_1991-2020.t_ref_global"
-        - "4-year-Nov.anom_1991-2020.t_ref_global"
-    apply:
       rechunk:
         time: -1
         member: -1

@@ -31,9 +31,9 @@ prepare:
   # Prepare anomalies
   # ================================================
         
-  # 3-month anomalies - 1991-2020 climatology
+  # 3-month anomalies - 1991-2019 climatology
   
-  3-month.anom_1991-2020.nao:
+  3-month.anom_1991-2019.nao:
     uses:
       atmos_isobaric_month:
         - "slp"
@@ -44,7 +44,7 @@ prepare:
       round_to_start_of_month:
         dim: "time"
       calculate_nao:
-        clim_period: ["1991-01-01", "2020-12-31"]
+        clim_period: ["1991-01-01", "2019-12-31"]
       rolling_mean:
         window_size: 3
         start_points: ["1960-11-01"]

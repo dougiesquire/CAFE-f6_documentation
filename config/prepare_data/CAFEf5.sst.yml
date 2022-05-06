@@ -24,7 +24,7 @@
 #        Functions and kwargs from src.utils to be applied sequentially to opened 
 #        (and concatenated/merge, where appropriate) dataset.
 
-name: "CAFE60v1"
+name: "CAFEf5"
 
 prepare:
 
@@ -32,65 +32,96 @@ prepare:
   # ================================================
 
   # Annual average
-        
-  annual.full.ohc300_global:
+
+  annual.full.sst_global:
     uses:
       ocean_month:
-        - "temp"
+        - "sst"
     apply:
       add_CAFE_grid_info:
       rename:
         ensemble: "member"
+        init_date: "init"
+        lead_time: "lead"
         xt_ocean: "x"
         yt_ocean: "y"
-        st_ocean: "depth"
         geolon_t: "lon"
         geolat_t: "lat"
-      convert:
-        temp:
-          add: 273.15
-      round_to_start_of_month:
-        dim: "time"
+      add_attrs:
+        attrs: {"units": "months"}
+        variable: "lead"
       coarsen:
         window_size: 12
-        start_points: ["1960-11-01"]
-        dim: "time"
-      calculate_ohc300:
+        dim: "lead"
+      round_to_start_of_month:
+        dim: ["init", "time"]
       interpolate_to_grid_from_file:
         file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
       rechunk:
-        time: -1
+        init: -1
+        lead: 1
         member: -1
         lat: 10
         lon: 12
-
-  # Annual anomalies - 1991-2019 climatology
         
-  annual.anom_1991-2019.ohc300_global:
+  # Annual anomalies - 1991-2020 climatology
+        
+  annual.anom_1991-2020.sst_global:
     uses:
       prepared:
-        - "annual.full.ohc300_global"
+        - "annual.full.sst_global"
     apply:
       anomalise:
-        clim_period: ["1991-01-01", "2019-12-31"]
+        clim_period: ["1991-01-01", "2020-12-31"]
         frequency: "month"
       rechunk:
-        time: -1
+        init: -1
+        lead: 1
         member: -1
         lat: 10
         lon: 12
-    
-  # 4-year anomalies - 1991-2019 climatology
+        
+  # 4-year anomalies - 1991-2020 climatology
   
-  4-year.anom_1991-2019.ohc300_global:
+  4-year.anom_1991-2020.sst_global:
     uses:
       prepared:
-        - "annual.anom_1991-2019.ohc300_global"
+        - "annual.anom_1991-2020.sst_global"
     apply:
       rolling_mean:
         window_size: 4
+        dim: "lead"
       rechunk:
-        time: -1
+        init: -1
+        lead: 1
         member: -1
         lat: 10
         lon: 12
+        
+  # Prepare 4-year average AMV
+  # ================================================
+        
+  4-year.anom_1991-2020.amv:
+    uses:
+      prepared:
+        - "4-year.anom_1991-2020.sst_global"
+    apply:
+      calculate_amv:
+      rechunk:
+        init: -1
+        lead: 1
+        member: -1
+        
+  # Prepare 4-year average IPO
+  # ================================================
+  
+  4-year.anom_1991-2020.ipo:
+    uses:
+      prepared:
+        - "4-year.anom_1991-2020.sst_global"
+    apply:
+      calculate_ipo:
+      rechunk:
+        init: -1
+        lead: 1
+        member: -1

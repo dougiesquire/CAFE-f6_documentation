@@ -33,147 +33,70 @@ prepare:
 
 #   # Annual average
   
-#   annual-Jan.full.sst_global:
-#     uses:
-#       ocean_month:
-#         - "sst"
-#     apply:
-#       add_CAFE_grid_info:
-#       rename:
-#         ensemble: "member"
-#         xt_ocean: "x"
-#         yt_ocean: "y"
-#         geolon_t: "lon"
-#         geolat_t: "lat"
-#       round_to_start_of_month:
-#         dim: "time"
-#       coarsen:
-#         window_size: 12
-#         start_points: ["1960-01-01"]
-#         dim: "time"
-#       interpolate_to_grid_from_file:
-#         file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
-#       rechunk:
-#         time: -1
-#         member: -1
-#         lat: 10
-#         lon: 12
-        
-#   annual-Nov.full.sst_global:
-#     uses:
-#       ocean_month:
-#         - "sst"
-#     apply:
-#       add_CAFE_grid_info:
-#       rename:
-#         ensemble: "member"
-#         xt_ocean: "x"
-#         yt_ocean: "y"
-#         geolon_t: "lon"
-#         geolat_t: "lat"
-#       round_to_start_of_month:
-#         dim: "time"
-#       coarsen:
-#         window_size: 12
-#         start_points: ["1960-11-01"]
-#         dim: "time"
-#       interpolate_to_grid_from_file:
-#         file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
-#       rechunk:
-#         time: -1
-#         member: -1
-#         lat: 10
-#         lon: 12
+  annual.full.sst_global:
+    uses:
+      ocean_month:
+        - "sst"
+    apply:
+      add_CAFE_grid_info:
+      rename:
+        ensemble: "member"
+        xt_ocean: "x"
+        yt_ocean: "y"
+        geolon_t: "lon"
+        geolat_t: "lat"
+      round_to_start_of_month:
+        dim: "time"
+      coarsen:
+        window_size: 12
+        start_points: ["1960-11-01"]
+        dim: "time"
+      interpolate_to_grid_from_file:
+        file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
+      rechunk:
+        time: -1
+        member: -1
+        lat: 10
+        lon: 12
 
-#   # Annual anomalies - 1991-2020 climatology
-  
-#   annual-Jan.anom_1991-2020.sst_global:
-#     uses:
-#       prepared:
-#         - "annual-Jan.full.sst_global"
-#     apply:
-#       anomalise:
-#         clim_period: ["1991-01-01", "2020-12-31"]
-#         frequency: "month"
-#       rechunk:
-#         time: -1
-#         member: -1
-#         lat: 10
-#         lon: 12
+  # Annual anomalies - 1991-2019 climatology
         
-#   annual-Nov.anom_1991-2020.sst_global:
-#     uses:
-#       prepared:
-#         - "annual-Nov.full.sst_global"
-#     apply:
-#       anomalise:
-#         clim_period: ["1991-01-01", "2020-12-31"]
-#         frequency: "month"
-#       rechunk:
-#         time: -1
-#         member: -1
-#         lat: 10
-#         lon: 12
-        
-#   annual.anom_1991-2020.sst_global:
-#     uses:
-#       prepared:
-#         - "annual-Jan.anom_1991-2020.sst_global"
-#         - "annual-Nov.anom_1991-2020.sst_global"
-#     apply:
-#       rechunk:
-#         time: -1
-#         member: -1
-#         lat: 10
-#         lon: 12
+  annual.anom_1991-2019.sst_global:
+    uses:
+      prepared:
+        - "annual.full.sst_global"
+    apply:
+      anomalise:
+        clim_period: ["1991-01-01", "2019-12-31"]
+        frequency: "month"
+      rechunk:
+        time: -1
+        member: -1
+        lat: 10
+        lon: 12
     
-#   # 4-year anomalies - 1991-2020 climatology
-  
-#   4-year-Jan.anom_1991-2020.sst_global:
-#     uses:
-#       prepared:
-#         - "annual-Jan.anom_1991-2020.sst_global"
-#     apply:
-#       rolling_mean:
-#         window_size: 4
-#       rechunk:
-#         time: -1
-#         member: -1
-#         lat: 10
-#         lon: 12
+  # 4-year anomalies - 1991-2019 climatology
         
-#   4-year-Nov.anom_1991-2020.sst_global:
-#     uses:
-#       prepared:
-#         - "annual-Nov.anom_1991-2020.sst_global"
-#     apply:
-#       rolling_mean:
-#         window_size: 4
-#       rechunk:
-#         time: -1
-#         member: -1
-#         lat: 10
-#         lon: 12
-        
-#   4-year.anom_1991-2020.sst_global:
-#     uses:
-#       prepared:
-#         - "4-year-Jan.anom_1991-2020.sst_global"
-#         - "4-year-Nov.anom_1991-2020.sst_global"
-#     apply:
-#       rechunk:
-#         time: -1
-#         member: -1
-#         lat: 10
-#         lon: 12
+  4-year.anom_1991-2019.sst_global:
+    uses:
+      prepared:
+        - "annual.anom_1991-2019.sst_global"
+    apply:
+      rolling_mean:
+        window_size: 4
+      rechunk:
+        time: -1
+        member: -1
+        lat: 10
+        lon: 12
         
   # Prepare 4-year average AMV
   # ================================================
         
-  4-year.anom_1991-2020.amv:
+  4-year.anom_1991-2019.amv:
     uses:
       prepared:
-        - "4-year.anom_1991-2020.sst_global"
+        - "4-year.anom_1991-2019.sst_global"
     apply:
       calculate_amv:
       rechunk:
@@ -183,10 +106,10 @@ prepare:
   # Prepare 4-year average IPO
   # ================================================
   
-  4-year.anom_1991-2020.ipo:
+  4-year.anom_1991-2019.ipo:
     uses:
       prepared:
-        - "4-year.anom_1991-2020.sst_global"
+        - "4-year.anom_1991-2019.sst_global"
     apply:
       calculate_ipo:
       rechunk:
