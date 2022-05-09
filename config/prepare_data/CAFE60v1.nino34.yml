@@ -48,6 +48,7 @@ prepare:
         geolat_t: "lat"
       round_to_start_of_month:
         dim: "time"
+      ensemble_mean:
       calculate_nino34:
       rolling_mean:
         window_size: 3
@@ -55,7 +56,6 @@ prepare:
         dim: "time"
       rechunk:
         time: -1
-        member: -1
         
   # 3-month anomalies - 1991-2019 climatology
   
@@ -69,4 +69,3 @@ prepare:
         frequency: "month"
       rechunk:
         time: -1
-        member: -1

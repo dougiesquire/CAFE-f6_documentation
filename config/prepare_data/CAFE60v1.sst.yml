@@ -47,6 +47,7 @@ prepare:
         geolat_t: "lat"
       round_to_start_of_month:
         dim: "time"
+      ensemble_mean:
       coarsen:
         window_size: 12
         start_points: ["1960-11-01"]
@@ -55,7 +56,6 @@ prepare:
         file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
       rechunk:
         time: -1
-        member: -1
         lat: 10
         lon: 12
 
@@ -71,7 +71,6 @@ prepare:
         frequency: "month"
       rechunk:
         time: -1
-        member: -1
         lat: 10
         lon: 12
     
@@ -86,7 +85,6 @@ prepare:
         window_size: 4
       rechunk:
         time: -1
-        member: -1
         lat: 10
         lon: 12
         
@@ -101,7 +99,6 @@ prepare:
       calculate_amv:
       rechunk:
         time: -1
-        member: -1
         
   # Prepare 4-year average IPO
   # ================================================
@@ -114,4 +111,3 @@ prepare:
       calculate_ipo:
       rechunk:
         time: -1
-        member: -1
