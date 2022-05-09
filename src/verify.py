@@ -568,7 +568,6 @@ def calculate_metric(
 
         # Get the most recent observation at the time of forecast initialisation
         lead_0_spacing = np.diff(lead_0_indices)
-        print(observation.time.values)
         assert all(
             lead_0_spacing == lead_0_spacing[0]
         ), "time spacing along observation must be regular for persistence baseline"
@@ -666,6 +665,7 @@ def calculate_metric(
                 time=verif_times
             )
             references_verif_times.append(persistence_verif_times)
+            exclude_dims_bootstrap.append([])
 
         if climatology_reference:
             observation_verif_times = references_verif_times[0]
@@ -673,6 +673,7 @@ def calculate_metric(
                 observation_verif_times
             )
             references_verif_times.append(climatology_verif_times)
+            exclude_dims_bootstrap.append([])
 
         logger.info(
             (
@@ -736,6 +737,7 @@ def calculate_metric(
                     .drop("init")
                 )
                 references_verif_times.append(persistence_verif_times)
+                exclude_dims_bootstrap.append([])
 
             if climatology_reference:
                 observation_verif_times = references_verif_times[0]
@@ -743,6 +745,7 @@ def calculate_metric(
                     observation_verif_times
                 )
                 references_verif_times.append(climatology_verif_times)
+                exclude_dims_bootstrap.append([])
 
             skill_at_lead = _calculate_metric_from_timeseries(
                 hindcast_verif_times,
@@ -750,6 +753,7 @@ def calculate_metric(
                 metric=metric,
                 metric_kwargs=metric_kwargs,
                 significance=significance,
+                bootstrap_kwargs={"exclude_dims": exclude_dims_bootstrap},
                 transform=transform,
                 alpha=alpha,
             )
