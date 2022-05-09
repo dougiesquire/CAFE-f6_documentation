@@ -640,8 +640,10 @@ def calculate_metric(
     else:
         if isinstance(reference, str) & (reference == "persistence"):
             persistence_reference = True
+            exclude_dims_bootstrap.append([])
         elif isinstance(reference, str) & (reference == "climatology"):
             climatology_reference = True
+            exclude_dims_bootstrap.append([])
         elif reference is not None:
             raise ValueError("Unrecognised input for `reference`")
         references = [observation]
@@ -665,7 +667,6 @@ def calculate_metric(
                 time=verif_times
             )
             references_verif_times.append(persistence_verif_times)
-            exclude_dims_bootstrap.append([])
 
         if climatology_reference:
             observation_verif_times = references_verif_times[0]
@@ -673,7 +674,6 @@ def calculate_metric(
                 observation_verif_times
             )
             references_verif_times.append(climatology_verif_times)
-            exclude_dims_bootstrap.append([])
 
         logger.info(
             (
@@ -737,7 +737,6 @@ def calculate_metric(
                     .drop("init")
                 )
                 references_verif_times.append(persistence_verif_times)
-                exclude_dims_bootstrap.append([])
 
             if climatology_reference:
                 observation_verif_times = references_verif_times[0]
@@ -745,7 +744,6 @@ def calculate_metric(
                     observation_verif_times
                 )
                 references_verif_times.append(climatology_verif_times)
-                exclude_dims_bootstrap.append([])
 
             skill_at_lead = _calculate_metric_from_timeseries(
                 hindcast_verif_times,
