@@ -42,7 +42,6 @@ prepare:
       add_CAFE_grid_info:
       rename:
         ensemble: "member"
-      ensemble_mean:
       convert:
         slp:
           multiply_by: 100
@@ -54,6 +53,7 @@ prepare:
         dim: "time"
       rechunk:
         time: -1
+        member: -1
         lat: 10
         lon: 12
 
@@ -69,6 +69,7 @@ prepare:
         frequency: "month"
       rechunk:
         time: -1
+        member: -1
         lat: 10
         lon: 12
     
@@ -83,5 +84,6 @@ prepare:
         window_size: 4
       rechunk:
         time: -1
+        member: -1
         lat: 10
         lon: 12

@@ -46,7 +46,6 @@ prepare:
         st_ocean: "depth"
         geolon_t: "lon"
         geolat_t: "lat"
-      ensemble_mean:
       convert:
         temp:
           add: 273.15
@@ -61,6 +60,7 @@ prepare:
         file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
       rechunk:
         time: -1
+        member: -1
         lat: 10
         lon: 12
 
@@ -76,6 +76,7 @@ prepare:
         frequency: "month"
       rechunk:
         time: -1
+        member: -1
         lat: 10
         lon: 12
     
@@ -90,5 +91,6 @@ prepare:
         window_size: 4
       rechunk:
         time: -1
+        member: -1
         lat: 10
         lon: 12

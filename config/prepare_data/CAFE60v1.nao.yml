@@ -43,7 +43,6 @@ prepare:
         ensemble: "member"
       round_to_start_of_month:
         dim: "time"
-      ensemble_mean:
       calculate_nao:
         clim_period: ["1991-01-01", "2019-12-31"]
       rolling_mean:
@@ -52,3 +51,4 @@ prepare:
         dim: "time"
       rechunk:
         time: -1
+        member: -1
