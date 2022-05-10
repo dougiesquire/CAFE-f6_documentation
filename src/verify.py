@@ -640,10 +640,10 @@ def calculate_metric(
     else:
         if isinstance(reference, str) & (reference == "persistence"):
             persistence_reference = True
-            exclude_dims_bootstrap.append([])
+            exclude_dims_bootstrap.append(exclude_dims_bootstrap[-1])
         elif isinstance(reference, str) & (reference == "climatology"):
             climatology_reference = True
-            exclude_dims_bootstrap.append([])
+            exclude_dims_bootstrap.append(exclude_dims_bootstrap[-1])
         elif reference is not None:
             raise ValueError("Unrecognised input for `reference`")
         references = [observation]
@@ -652,7 +652,7 @@ def calculate_metric(
 
     if persistence_reference:
         persistence_hindcast = _generate_persistence_hindcast(hindcast, observation)
-
+    
     # Look for metric and transform in this module
     metric = getattr(sys.modules[__name__], metric)
     if transform is not None:
