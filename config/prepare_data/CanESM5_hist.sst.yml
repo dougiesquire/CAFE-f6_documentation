@@ -49,7 +49,7 @@ prepare:
         dim: "time"
       coarsen:
         window_size: 12
-        start_points: ["1870-01-01"]
+        start_points: ["1850-01-01"]
         dim: "time"
       convert_calendar:
         calendar: "julian"
@@ -98,7 +98,7 @@ prepare:
   4-year.anom_1985-2014.amv:
     uses:
       prepared:
-        - "4-year.anom_1985-2014.sst"
+        - "4-year.anom_1985-2014.sst_global"
     apply:
       calculate_amv:
       rechunk:
@@ -111,7 +111,7 @@ prepare:
   4-year.anom_1985-2014.ipo:
     uses:
       prepared:
-        - "4-year.anom_1985-2014.sst"
+        - "4-year.anom_1985-2014.sst_global"
     apply:
       calculate_ipo:
       rechunk:
