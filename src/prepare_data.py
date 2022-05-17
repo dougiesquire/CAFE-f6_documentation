@@ -361,16 +361,25 @@ class _open:
     #             return ds
 
     @staticmethod
-    def _cmip6_historical(model, variant_id, grid, variables, realm, members, version):
+    def _cmip6(model, experiment, variant_id, grid, variables, realm, members, version):
         """
-        Open CMIP6 historical variables from specified realm
+        Open CMIP6 variables from specified realm
 
         Can specify version='latest' but this is slower as it has to search each
         directory for the latest version
         """
 
-        def _hist_files(m, v):
-            path = f"{DATA_DIR}/{model}_hist/r{m}{variant_id}/{realm}/{v}/{grid}"
+        def _cmip_files(m, v):
+            # Would be much better just to name the datasets by the experiment, but too much
+            # effort to change now
+            if experiment == "historical":
+                dataset = f"{model}_hist"
+            elif experiment == "piControl":
+                dataset = f"{model}_ctrl"
+            else:
+                raise ValueError("I'm not sure I can open this experiment type")
+
+            path = f"{DATA_DIR}/{dataset}/r{m}{variant_id}/{realm}/{v}/{grid}"
             if version == "latest":
                 versions = sorted(glob.glob(f"{path}/v????????"))
                 if len(versions) == 0:
@@ -379,7 +388,7 @@ class _open:
                     path = versions[-1]
             else:
                 path = f"{path}/{version}"
-            file_pattern = f"{v}_{realm}_{model}_historical_r*{variant_id}_{grid}_*.nc"
+            file_pattern = f"{v}_{realm}_{model}_{experiment}_r{m}{variant_id}_{grid}_*.nc"
             files = sorted(glob.glob(f"{path}/{file_pattern}"))
             if len(files) == 0:
                 raise ValueError(f"No files found for {path}/{file_pattern}")
@@ -387,25 +396,25 @@ class _open:
                 return files
 
         @dask.delayed
-        def _open_hist_delayed(m, v):
-            files = _hist_files(m, v)
+        def _open_cmip_delayed(m, v):
+            files = _cmip_files(m, v)
             return xr.concat(
                 [xr.open_dataset(f, chunks={}, use_cftime=True) for f in files],
                 dim="time",
             )[v]
 
-        def _open_hist(m, v):
-            var_data = _open_hist_delayed(m, v).data
+        def _open_cmip(m, v):
+            var_data = _open_cmip_delayed(m, v).data
             return dask.array.from_delayed(var_data, d0.shape, d0.dtype)
 
         ds = []
         for v in variables:
-            f0 = _hist_files(members[0], v)
+            f0 = _cmip_files(members[0], v)
             d0 = xr.concat(
                 [xr.open_dataset(f, chunks={}, use_cftime=True) for f in f0], dim="time"
             )[v]
 
-            delayed = dask.array.stack([_open_hist(m, v) for m in members], axis=0)
+            delayed = dask.array.stack([_open_cmip(m, v) for m in members], axis=0)
 
             ds.append(
                 xr.DataArray(
@@ -424,24 +433,53 @@ class _open:
     @staticmethod
     def CanESM5_hist(variables, realm, preprocess):
         """Open CanESM5 historical variables from specified realm"""
-        model = "CanESM5"
-        variant_id = "i1p2f1"
-        grid = "gn"
-        members = range(1, 40 + 1)
-        version = "v20190429"
-        ds = _open._cmip6_historical(
-            model, variant_id, grid, variables, realm, members, version
+        ds = _open._cmip6(
+            "CanESM5",
+            "historical",
+            "i1p2f1",
+            "gn",
+            variables,
+            realm,
+            range(1, 40 + 1),
+            "v20190429",
         )
         ### Add cell area
         if realm == "Omon":
             file = (
-                f"{DATA_DIR}/{model}_hist/r1{variant_id}/Ofx/areacello/{grid}/{version}/"
-                f"areacello_Ofx_{model}_historical_r1{variant_id}_{grid}.nc"
+                f"{DATA_DIR}/CanESM5_hist/r1i1p2f1/Ofx/areacello/gn/v20190429/"
+                f"areacello_Ofx_CanESM5_historical_r1i1p2f1_gn.nc"
             )
         elif realm == "Amon":
             file = (
-                f"{DATA_DIR}/{model}_hist/r1{variant_id}/fx/areacella/{grid}/{version}/"
-                f"areacella_fx_{model}_historical_r1{variant_id}_{grid}.nc"
+                f"{DATA_DIR}/CanESM5_hist/r1i1p2f1/fx/areacella/gn/v20190429/"
+                f"areacella_fx_CanESM5_historical_r1i1p2f1_gn.nc"
+            )
+        else:
+            raise ValueError(f"I don't know where to find the area for realm: {realm}")
+        area = xr.open_dataset(file, chunks={})
+        ds = ds.assign_coords(area)
+
+        if preprocess is not None:
+            return preprocess(ds)
+        else:
+            return ds
+    
+    @staticmethod
+    def CanESM5_ctrl(variables, realm, preprocess):
+        """Open CanESM5 piControl variables from specified realm"""
+        ds = _open._cmip6(
+            "CanESM5", "piControl", "i1p2f1", "gn", variables, realm, [1], "v20190429"
+        ).sel(member=1, drop=True)
+        ### Add cell area
+        if realm == "Omon":
+            file = (
+                f"{DATA_DIR}/CanESM5_hist/r1i1p2f1/Ofx/areacello/gn/v20190429/"
+                f"areacello_Ofx_CanESM5_historical_r1i1p2f1_gn.nc"
+            )
+        elif realm == "Amon":
+            file = (
+                f"{DATA_DIR}/CanESM5_hist/r1i1p2f1/fx/areacella/gn/v20190429/"
+                f"areacella_fx_CanESM5_historical_r1i1p2f1_gn.nc"
             )
         else:
             raise ValueError(f"I don't know where to find the area for realm: {realm}")
@@ -456,28 +494,25 @@ class _open:
     @staticmethod
     def EC_Earth3_hist(variables, realm, preprocess):
         """Open EC-Earth3 historical variables from specified realm"""
-        model = "EC-Earth3"
-        variant_id = "i1p1f1"
         grid = "gn" if realm == "Omon" else "gr"
         # Member 3 has screwy lats that can't be readily concatenated
         # Members 11, 13, 15 start in 1849
         # Member 19 has very few variables replicated for Omon
         # Members 101-150 only span 197001-201412
         members = [1, 2, 4, 6, 7, 9, 10, 12, 14, 16]  # , 17, 18] + list(range(20, 26))
-        version = "v20200???"  # "latest"  # "v20200???"
-        ds = _open._cmip6_historical(
-            model, variant_id, grid, variables, realm, members, version
+        ds = _open._cmip6(
+            "EC-Earth3", "i1p1f1", grid, variables, realm, members, "v20200???"
         )
         ### Add cell area
         if realm == "Omon":
             file = (
-                f"{DATA_DIR}/{model}_hist/r1{variant_id}/Ofx/areacello/{grid}/v20200918/"
-                f"areacello_Ofx_{model}_historical_r1{variant_id}_{grid}.nc"
+                f"{DATA_DIR}/EC-Earth3_hist/r1i1p1f1/Ofx/areacello/{grid}/v20200918/"
+                f"areacello_Ofx_EC-Earth3_historical_r1i1p1f1_{grid}.nc"
             )
         elif realm == "Amon":
             file = (
-                f"{DATA_DIR}/{model}_hist/r1{variant_id}/fx/areacella/{grid}/v20210324/"
-                f"areacella_fx_{model}_historical_r1{variant_id}_{grid}.nc"
+                f"{DATA_DIR}/EC-Earth3_hist/r1i1p1f1/fx/areacella/{grid}/v20210324/"
+                f"areacella_fx_EC-Earth3_historical_r1i1p1f1_{grid}.nc"
             )
         else:
             raise ValueError(f"I don't know where to find the area for realm: {realm}")
