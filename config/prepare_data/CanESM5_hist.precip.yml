@@ -48,7 +48,7 @@ prepare:
         dim: "time"
       coarsen:
         window_size: 12
-        start_points: ["1960-01-01"]
+        start_points: ["1850-01-01"]
         dim: "time"
       convert_calendar:
         calendar: "julian"
@@ -111,7 +111,7 @@ prepare:
         dim: "time"
       coarsen:
         window_size: 12
-        start_points: ["1960-01-01"]
+        start_points: ["1850-01-01"]
         dim: "time"
       convert_calendar:
         calendar: "julian"
