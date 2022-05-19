@@ -480,10 +480,10 @@ def _calculate_metric_from_timeseries(
             bootstrapped_skill = transform(bootstrapped_skill)
 
         pos_signif = (
-            xr.where(bootstrapped_skill < no_skill, 1, 0).mean("iteration") <= alpha
+            xr.where(bootstrapped_skill < no_skill, 1, 0).mean("iteration") <= alpha / 2
         ) & (sample_skill > no_skill)
         neg_signif = (
-            xr.where(bootstrapped_skill > no_skill, 1, 0).mean("iteration") <= alpha
+            xr.where(bootstrapped_skill > no_skill, 1, 0).mean("iteration") <= alpha / 2
         ) & (sample_skill < no_skill)
 
         significance = pos_signif | neg_signif
