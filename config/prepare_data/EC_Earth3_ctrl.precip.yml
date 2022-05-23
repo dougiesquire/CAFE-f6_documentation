@@ -24,7 +24,7 @@
 #        Functions and kwargs from src.utils to be applied sequentially to opened 
 #        (and concatenated/merge, where appropriate) dataset.
 
-name: "EC_Earth3_hist"
+name: "EC_Earth3_ctrl"
 
 prepare:
 
