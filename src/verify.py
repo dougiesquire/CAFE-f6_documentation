@@ -46,7 +46,7 @@ def rXY(hcst, obsv, correlation="pearson_r"):
     obsv : xarray Dataset
         The observed timeseries
     """
-    
+
     obsv = obsv.mean("member") if "member" in obsv.dims else obsv
     hcst = hcst.mean("member") if "member" in hcst.dims else hcst
 
@@ -72,11 +72,11 @@ def ri(hcst, obsv, hist):
     hist : xarray Dataset
         The historical simulation timeseries
     """
-    
+
     obsv = obsv.mean("member") if "member" in obsv.dims else obsv
     hcst = hcst.mean("member") if "member" in hcst.dims else hcst
     hist = hist.mean("member") if "member" in hist.dims else hist
-    
+
     rXY = xs.pearson_r(hcst, obsv, dim="time", skipna=True)
     rXU = xs.pearson_r(obsv, hist, dim="time", skipna=True)
     rYU = xs.pearson_r(hcst, hist, dim="time", skipna=True)
@@ -260,7 +260,7 @@ def _iterative_blocked_bootstrap(*objects, blocks, n_iterations, exclude_dims=No
         in the same way. Where multiple datasets are passed, all datasets need not
         contain all bootstrapped dimensions. However, because of the bootstrapping
         is applied in a nested manner, the dimensions in all input objects must also
-        be nested. E.g., for `blocks.keys=['d1','d2','d3']` an object with dimensions 
+        be nested. E.g., for `blocks.keys=['d1','d2','d3']` an object with dimensions
         'd1' and 'd2' is valid but an object with only dimension 'd2' is not.
     blocks : dict
         Dictionary of the dimension(s) to bootstrap and the block sizes to use along
@@ -282,7 +282,7 @@ def _iterative_blocked_bootstrap(*objects, blocks, n_iterations, exclude_dims=No
             return tuple(bootstrapped)
 
     objects = list(objects)
-    
+
     # Rename exclude_dims so they are not bootstrapped
     if exclude_dims is None:
         exclude_dims = [[] for _ in range(len(objects))]
@@ -297,7 +297,7 @@ def _iterative_blocked_bootstrap(*objects, blocks, n_iterations, exclude_dims=No
     for i, (obj, exclude) in enumerate(zip(objects, exclude_dims)):
         objects[i] = obj.rename({d: f"dim{ii}" for ii, d in enumerate(exclude)})
         renames.append({f"dim{ii}": d for ii, d in enumerate(exclude)})
-    
+
     dim = list(blocks.keys())
     if isinstance(dim, str):
         dim = [dim]
@@ -363,7 +363,7 @@ def _iterative_blocked_bootstrap(*objects, blocks, n_iterations, exclude_dims=No
                 output_dtypes=[output_dtype],
             )
         )
-        
+
     # Rename excluded dimensions
     return tuple(res.rename(rename) for res, rename in zip(result, renames))
 
@@ -383,7 +383,7 @@ def iterative_blocked_bootstrap(*objects, blocks, n_iterations, exclude_dims=Non
         in the same way. Where multiple datasets are passed, all datasets need not
         contain all bootstrapped dimensions. However, because of the bootstrapping
         is applied in a nested manner, the dimensions in all input objects must also
-        be nested. E.g., for `blocks.keys=['d1','d2','d3']` an object with dimensions 
+        be nested. E.g., for `blocks.keys=['d1','d2','d3']` an object with dimensions
         'd1' and 'd2' is valid but an object with only dimension 'd2' is not.
     blocks : dict
         Dictionary of the dimension(s) to bootstrap and the block sizes to use along
@@ -420,14 +420,22 @@ def iterative_blocked_bootstrap(*objects, blocks, n_iterations, exclude_dims=Non
     for _ in range(blocksize, n_iterations + 1, blocksize):
         bootstraps.append(
             _iterative_blocked_bootstrap(
-                *objects, blocks=blocks, n_iterations=blocksize, exclude_dims=exclude_dims
+                *objects,
+                blocks=blocks,
+                n_iterations=blocksize,
+                exclude_dims=exclude_dims,
             )
         )
 
     leftover = n_iterations % blocksize
     if leftover:
         bootstraps.append(
-            _iterative_blocked_bootstrap(*objects, blocks=blocks, n_iterations=leftover, exclude_dims=exclude_dims)
+            _iterative_blocked_bootstrap(
+                *objects,
+                blocks=blocks,
+                n_iterations=leftover,
+                exclude_dims=exclude_dims,
+            )
         )
 
     return tuple(
@@ -467,7 +475,7 @@ def _calculate_metric_from_timeseries(
                 *timeseries,
                 blocks={"time": 5, "member": 1},
                 n_iterations=N_BOOTSTRAP_ITERATIONS,
-                **bootstrap_kwargs
+                **bootstrap_kwargs,
             ),
             **metric_kwargs,
         )
@@ -622,11 +630,11 @@ def calculate_metric(
     PERSIST_TIME_DIM = "persistence_time"
 
     logger = logging.getLogger(__name__)
-    
+
     if "member" in observation.dims:
-        exclude_dims_bootstrap = [[],["member"]]
+        exclude_dims_bootstrap = [[], ["member"]]
     else:
-        exclude_dims_bootstrap = [[],[]]
+        exclude_dims_bootstrap = [[], []]
 
     persistence_reference = False
     climatology_reference = False
@@ -652,7 +660,7 @@ def calculate_metric(
 
     if persistence_reference:
         persistence_hindcast = _generate_persistence_hindcast(hindcast, observation)
-    
+
     # Look for metric and transform in this module
     metric = getattr(sys.modules[__name__], metric)
     if transform is not None:

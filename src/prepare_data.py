@@ -388,7 +388,9 @@ class _open:
                     path = versions[-1]
             else:
                 path = f"{path}/{version}"
-            file_pattern = f"{v}_{realm}_{model}_{experiment}_r{m}{variant_id}_{grid}_*.nc"
+            file_pattern = (
+                f"{v}_{realm}_{model}_{experiment}_r{m}{variant_id}_{grid}_*.nc"
+            )
             files = sorted(glob.glob(f"{path}/{file_pattern}"))
             if len(files) == 0:
                 raise ValueError(f"No files found for {path}/{file_pattern}")
@@ -463,7 +465,7 @@ class _open:
             return preprocess(ds)
         else:
             return ds
-    
+
     @staticmethod
     def CanESM5_ctrl(variables, realm, preprocess):
         """Open CanESM5 piControl variables from specified realm"""
@@ -501,8 +503,53 @@ class _open:
         # Members 101-150 only span 197001-201412
         members = [1, 2, 4, 6, 7, 9, 10, 12, 14, 16]  # , 17, 18] + list(range(20, 26))
         ds = _open._cmip6(
-            "EC-Earth3", "i1p1f1", grid, variables, realm, members, "v20200???"
+            "EC-Earth3",
+            "historical",
+            "i1p1f1",
+            grid,
+            variables,
+            realm,
+            members,
+            "v20200???",
         )
+        ### Add cell area
+        if realm == "Omon":
+            file = (
+                f"{DATA_DIR}/EC-Earth3_hist/r1i1p1f1/Ofx/areacello/{grid}/v20200918/"
+                f"areacello_Ofx_EC-Earth3_historical_r1i1p1f1_{grid}.nc"
+            )
+        elif realm == "Amon":
+            file = (
+                f"{DATA_DIR}/EC-Earth3_hist/r1i1p1f1/fx/areacella/{grid}/v20210324/"
+                f"areacella_fx_EC-Earth3_historical_r1i1p1f1_{grid}.nc"
+            )
+        else:
+            raise ValueError(f"I don't know where to find the area for realm: {realm}")
+        area = xr.open_dataset(file, chunks={})
+
+        # Lat and lon values are not exactly the same to numerical precision for ds and area
+        for c in area.coords:
+            if c in ds.coords:
+                if np.array_equiv(ds[c].values, area[c].values):
+                    pass
+                else:
+                    npt.assert_allclose(ds[c].values, area[c].values, rtol=1e-06)
+                    area = area.assign_coords({c: ds[c]})
+
+        ds = ds.assign_coords(area)
+
+        if preprocess is not None:
+            return preprocess(ds)
+        else:
+            return ds
+
+    @staticmethod
+    def EC_Earth3_ctrl(variables, realm, preprocess):
+        """Open EC-Earth3 piControl variables from specified realm"""
+        grid = "gn" if realm == "Omon" else "gr"
+        ds = _open._cmip6(
+            "EC-Earth3", "piControl", "i1p1f1", grid, variables, realm, [1], "v20200???"
+        ).sel(member=1, drop=True)
         ### Add cell area
         if realm == "Omon":
             file = (

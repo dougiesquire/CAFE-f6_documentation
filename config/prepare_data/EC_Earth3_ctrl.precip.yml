@@ -1,0 +1,89 @@
+# Config file for specifying processing using src.prepare_data()
+# ==================================================================================
+
+# name: required
+#    The name of the dataset. Must match a method in src.prepare_data._open
+#
+# prepare: required
+#    List of unique identifiers for output variables to prepare and save. This will 
+#    be used to save the prepared output variable(s) as {name}.{identifier}.zarr. 
+#    Each identifier can include the following:
+#
+#    uses: required
+#        List of input variables required to compute the output variable(s). For 
+#        some datasets, this should be further broken into subkeys indicating the 
+#        realm for each list of variables (e.g. ocean_month). Alternatively, users 
+#        can provide the identifier of a previously prepared dataset by entering
+#        `prepared: <identifier>`.
+#    preprocess: optional
+#        Functions and kwargs from src.utils to be applied sequentially prior to 
+#        concatenation (for datasets comprised of multiple concatenated files) 
+#        and/or prior to merging input variables from multiple realms where more 
+#        than one are specified.
+#    apply: optional
+#        Functions and kwargs from src.utils to be applied sequentially to opened 
+#        (and concatenated/merge, where appropriate) dataset.
+
+name: "EC_Earth3_hist"
+
+prepare:
+
+  # Prepare anomalies over globe
+  # ================================================
+
+  # Annual average
+  
+  annual.full.precip_global:
+    uses:
+      Amon:
+        - "pr"
+    apply:
+      rename:
+        pr: "precip"
+        areacella: "area"
+      convert:
+        precip:
+          multiply_by: 86400
+      round_to_start_of_month:
+        dim: "time"
+      coarsen:
+        window_size: 12
+        start_points: ["2259-11-01"]
+        dim: "time"
+      convert_calendar:
+        calendar: "julian"
+      interpolate_to_grid_from_file:
+        file: "data/raw/gridinfo/CAFE_atmos_grid.nc"
+      rechunk:
+        time: -1
+        lat: 10
+        lon: 12
+
+  # Annual anomalies - 2730-2759 climatology
+  
+  annual.anom_2730-2759.precip_global:
+    uses:
+      prepared:
+        - "annual.full.precip_global"
+    apply:
+      anomalise:
+        clim_period: ["2730-01-01", "2759-12-31"]
+        frequency: "month"
+      rechunk:
+        time: -1
+        lat: 10
+        lon: 12
+
+  # 4-year anomalies - 2730-2759 climatology
+  
+  4-year.anom_2730-2759.precip_global:
+    uses:
+      prepared:
+        - "annual.anom_2730-2759.precip_global"
+    apply:
+      rolling_mean:
+        window_size: 4
+      rechunk:
+        time: -1
+        lat: 10
+        lon: 12

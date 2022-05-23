@@ -77,6 +77,7 @@ data:
 	ln -sfn /g/data/oi10/replicas/CMIP6/CMIP/CCCma/CanESM5/piControl/ $(RAW_DATA_DIR)/CanESM5_ctrl
 	ln -sfn /g/data/oi10/replicas/CMIP6/DCPP/EC-Earth-Consortium/EC-Earth3/dcppA-hindcast $(RAW_DATA_DIR)/EC-Earth3
 	ln -sfn /g/data/oi10/replicas/CMIP6/CMIP/EC-Earth-Consortium/EC-Earth3/historical $(RAW_DATA_DIR)/EC-Earth3_hist
+	ln -sfn /g/data/oi10/replicas/CMIP6/CMIP/EC-Earth-Consortium/EC-Earth3/piControl $(RAW_DATA_DIR)/EC-Earth3_ctrl
 	ln -sfn /g/data/xv83/reanalyses/EN.4.2.2/ $(RAW_DATA_DIR)/EN.4.2.2
 	ln -sfn /g/data/xv83/reanalyses/HadISST/ $(RAW_DATA_DIR)/HadISST
 	ln -sfn /g/data/xv83/reanalyses/JRA55/ $(RAW_DATA_DIR)/JRA55	

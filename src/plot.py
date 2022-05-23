@@ -27,6 +27,7 @@ cartopy.config["data_dir"] = PROJECT_DIR / "data/cartopy-data"
 
 class MidpointNormalize(colors.Normalize):
     """Normalise the colorbar."""
+
     def __init__(self, vmin=None, vmax=None, midpoint=None, clip=False):
         self.midpoint = midpoint
         colors.Normalize.__init__(self, vmin, vmax, clip)
@@ -34,8 +35,8 @@ class MidpointNormalize(colors.Normalize):
     def __call__(self, value, clip=None):
         x, y = [self.vmin, self.midpoint, self.vmax], [0, 0.5, 1]
         return np.ma.masked_array(np.interp(value, x, y), np.isnan(value))
-    
-    
+
+
 def hindcasts(hcsts, obsvs=None, hists=None, shade=False, ax=None, figsize=(15, 4)):
     """
     Plot sets of hindcasts. Where multiple variables are provided, it is
@@ -176,7 +177,15 @@ def hindcasts(hcsts, obsvs=None, hists=None, shade=False, ax=None, figsize=(15, 
 
 
 def metric_maps(
-    fields, variable, vrange, headings=None, add_colorbar=True, cbar_bounds=None, cmap="PiYG", central_longitude=180, figsize=(15, 15)
+    fields,
+    variable,
+    vrange,
+    headings=None,
+    add_colorbar=True,
+    cbar_bounds=None,
+    cmap="PiYG",
+    central_longitude=180,
+    figsize=(15, 15),
 ):
     """
     Plot panels of skill score maps
@@ -240,12 +249,17 @@ def metric_maps(
 
     if cbar_bounds is None:
         if vrange[0] == -vrange[1]:
-            bounds = np.linspace(vrange[0]-1e-6, vrange[1]+1e-6, 13)
+            bounds = np.linspace(vrange[0] - 1e-6, vrange[1] + 1e-6, 13)
         else:
-            bounds = np.concatenate((np.linspace(vrange[0]-1e-6, 0, 6)[:-1], np.linspace(0, vrange[1]+1e-6, 7)))
+            bounds = np.concatenate(
+                (
+                    np.linspace(vrange[0] - 1e-6, 0, 6)[:-1],
+                    np.linspace(0, vrange[1] + 1e-6, 7),
+                )
+            )
     else:
         bounds = cbar_bounds
-    norm = colors.BoundaryNorm(boundaries=bounds, ncolors=len(bounds)-1)
+    norm = colors.BoundaryNorm(boundaries=bounds, ncolors=len(bounds) - 1)
 
     for r, c in itertools.product(range(n_rows), range(n_columns)):
         ax = axs[r][c]
