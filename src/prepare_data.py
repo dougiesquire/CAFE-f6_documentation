@@ -265,7 +265,7 @@ class _open:
         model = "CanESM5"
         variant_id = "i1p2f1"
         grid = "gn"
-        years = range(1960, 2016 + 1)
+        years = range(1960, 2019 + 1)
         members = range(1, 40 + 1)
         version = "v20190429"
         ds = _open._cmip6_dcppA_hindcast(
