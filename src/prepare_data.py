@@ -334,6 +334,39 @@ class _open:
             return preprocess(ds)
         else:
             return ds
+        
+    @staticmethod
+    def HadGEM3(variables, realm, preprocess):
+        """Open HadGEM3-GC31-MM dcppA-hindcast variables from specified monthly realm"""
+        model = "HadGEM3-GC31-MM"
+        variant_id = "i1p1f2"
+        grid = "gn"
+        years = range(1960, 2018 + 1)
+        members = range(1, 10 + 1)
+        version = "v20200???"
+        ds = _open._cmip6_dcppA_hindcast(
+            model, variant_id, grid, variables, realm, years, members, version
+        )
+        ### Add cell area
+        if realm == "Omon":
+            file = (
+                f"{DATA_DIR}/{model}_ctrl/r1i1p1f1/Ofx/areacello/{grid}/v20200108/"
+                f"areacello_Ofx_{model}_piControl_r1i1p1f1_{grid}.nc"
+            )
+        elif realm == "Amon":
+            file = (
+                f"{DATA_DIR}/{model}_ctrl/r1i1p1f1/fx/areacella/{grid}/v20200108/"
+                f"areacella_fx_{model}_piControl_r1i1p1f1_{grid}.nc"
+            )
+        else:
+            raise ValueError(f"I don't know where to find the area for realm: {realm}")
+        area = xr.open_dataset(file, chunks={})
+        ds = ds.assign_coords(area)
+
+        if preprocess is not None:
+            return preprocess(ds)
+        else:
+            return ds
 
     #     def CESM1(variables, realm, preprocess):
     #         """
