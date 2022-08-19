@@ -534,7 +534,7 @@ class _open:
         # Members 11, 13, 15 start in 1849
         # Member 19 has very few variables replicated for Omon
         # Members 101-150 only span 197001-201412
-        members = [1, 2, 4, 6, 7, 9, 10, 12, 14, 16]  # , 17, 18] + list(range(20, 26))
+        members = [1, 2, 4, 6, 9, 10, 12, 14, 16, 17]  # ,18] + list(range(20, 26))
         ds = _open._cmip6(
             "EC-Earth3",
             "historical",
