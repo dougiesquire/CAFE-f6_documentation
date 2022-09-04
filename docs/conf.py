@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# CAFE-f6_skill_assessment documentation build configuration file, created by
-# sphinx-quickstart.
+# CAFE-f6 documentation build configuration file, created by sphinx-quickstart.
 #
 # This file is execfile()d with the current directory set to its containing dir.
 #
@@ -43,7 +42,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'CAFE-f6 skill assessment'
+project = u'CAFE-f6 documentation'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -188,7 +187,7 @@ latex_elements = {
 latex_documents = [
     ('index',
      'Squire_2022_CAFE-f6.tex',
-     u'CAFE-f6_skill_assessment Documentation',
+     u'CAFE-f6_documentation Documentation',
      u"Dougie Squire", 'manual'),
 ]
 
@@ -218,7 +217,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'Squire_2022_CAFE-f6', u'CAFE-f6_skill_assessment Documentation',
+    ('index', 'Squire_2022_CAFE-f6', u'CAFE-f6 Documentation',
      [u"Dougie Squire"], 1)
 ]
 
@@ -232,9 +231,9 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    ('index', 'Squire_2022_CAFE-f6', u'CAFE-f6_skill_assessment Documentation',
-     u"Dougie Squire", 'CAFE-f6_skill_assessment',
-     'Skill benchmarking of the CAFE-f6 decadal forecasts', 'Miscellaneous'),
+    ('index', 'Squire_2022_CAFE-f6', u'CAFE-f6 Documentation',
+     u"Dougie Squire", 'CAFE-f6',
+     'Documentation of the CAFE-f6 decadal forecasts', 'Miscellaneous'),
 ]
 
 # Documents to append as an appendix to all manuals.
