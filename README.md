@@ -1,4 +1,4 @@
-Documentation of the CAFE-f6 decadal hindcasts/forecasts
+Documentation for the CAFE-f6 decadal hindcasts/forecasts
 ========================================================
 
 [![Documentation Status](https://readthedocs.org/projects/cafef6/badge/?version=latest)](https://cafef6.readthedocs.io/en/latest/?badge=latest)
