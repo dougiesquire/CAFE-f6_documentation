@@ -12,14 +12,13 @@ The CAFE-f6 decadal forecasts were generated using the Climate Analysis Forecast
 Generation of forecasts
 -----------------------
 
-Each forecast in the CAFE-f6 dataset comprises a 96-member ensemble of ten-year integrations from realistic initial states with prescribed external forcing. Forecasts have been initialised at the beginning of every May and November over the period 1981-2020. Full-field initial conditions for the 96 forecast members were taken directly from the 96-member climate reanalysis, CAFE60v1, which was also generated using the CAFE system (however, using MOM 4.1 for the ocean, rather than MOM 5.1). Details and evaluation of CAFE60v1 can be found in :footcite:t:`o2021cafe60v1a` and :footcite:t:`o2021cafe60v1b`. Note that a number of methodological changes were made during the generation of CAFE60v1 that resulted in systematic changes to the reanalysis that are also observed in the CAFE-f6 forecasts - see `Issues with CAFE-f6`_.
+Each forecast in the CAFE-f6 dataset comprises a 96-member ensemble of ten-year integrations from realistic initial states with prescribed external forcing. Forecasts have been initialised at the beginning of every May and November over the period 1981-2020. Full-field initial conditions for the 96 forecast members were taken directly from the 96-member climate reanalysis, CAFE60v1, which was also generated using the CAFE system (however, using MOM 4.1 for the ocean, rather than MOM 5.1). Details and evaluation of CAFE60v1 can be found in :footcite:t:`o2021cafe60v1a` and :footcite:t:`o2021cafe60v1b`. Note that a number of methodological changes were made during the generation of CAFE60v1 that resulted in systematic changes to the reanalysis that are also observed in the CAFE-f6 forecasts - see `Change in CAFE60v1 bias correction scheme`_.
 
-.. _Issues with CAFE-f6: assessment/notebooks/CAFE-f6_issues.ipynb
+.. _Change in CAFE60v1 bias correction scheme: assessment/notebooks/CAFE-f6_issues.ipynb#Change-in-CAFE60v1-bias-correction-scheme-in-1992
 
-Prescribed forcing fields are based on those used for the GFDL CM2.1 submissions to the Coupled Model Intercomparison Project (CMIP), phases 3 and 5 :footcite:p:`zhang2017estimating`.
+Prescribed forcing fields are based on those used for the GFDL CM2.1 submissions to the Coupled Model Intercomparison Project (CMIP), phases 3 and 5 :footcite:p:`zhang2017estimating`. However, some forcing components are applied in a way that is inconsistent with CMIP Decadal Climate Prediction Project (DCPP) specifications. Specifically, a number of the forcing components switch from time-varying to fixed based on the *initialisation date* of the forecast. This means that the same calendar year can experience different forcing, depending on its lead time. See `Application of forcing`_ for more details.
 
-Forcing
--------
+.. _Application of forcing: assessment/notebooks/CAFE-f6_issues.ipynb#Application-of-forcing
 
 Accessing the data
 ------------------
