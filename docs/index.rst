@@ -1,8 +1,3 @@
-.. CAFE-f6_skill_assessment documentation master file, created by
-   sphinx-quickstart.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 CAFE-f6 decadal hindcast/forecast documentation
 ===============================================
 
@@ -16,6 +11,7 @@ Welcome to the documentation for the CSIRO Climate Analysis Forecast Ensemble de
 
 Please open an issue `here <https://github.com/dougiesquire/Squire_2022_CAFE-f6/issues>`_ if you have any questions after reading this documentation.
 
+
 Contents
 --------
 
@@ -23,9 +19,11 @@ Contents
    :maxdepth: 2
 
    overview
-   assessment/index
+   issues
+   assessment
    reproducing/index
    api/index
+
    
 Indices and tables
 ------------------
