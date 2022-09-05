@@ -30,6 +30,7 @@ sys.path.insert(0, os.path.abspath('../src'))
 extensions = ["numpydoc", "sphinx.ext.napoleon",  "sphinx.ext.autosectionlabel", "sphinx.ext.autodoc", "nbsphinx","sphinxcontrib.bibtex"]
 
 bibtex_bibfiles = ['references.bib']
+bibtex_reference_style = 'super'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -189,7 +190,7 @@ latex_elements = {
 latex_documents = [
     ('index',
      'Squire_2022_CAFE-f6.tex',
-     u'CAFE-f6_documentation Documentation',
+     u'CAFE-f6 Documentation',
      u"Dougie Squire", 'manual'),
 ]
 
