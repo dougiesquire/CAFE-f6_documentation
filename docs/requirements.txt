@@ -11,5 +11,6 @@ xskillscore
 matplotlib
 pydata-sphinx-theme
 nbsphinx
+sphinxcontrib-bibtex
 pandoc
 IPython
