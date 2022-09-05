@@ -20,9 +20,9 @@ Currently, CAFE-f6 data is only available to users of Australia's National Compu
 
 References
 ------------------
-.. [Delworth_2006] Delworth, T. L. et al. GFDL’s CM2 global coupled climate models. Part I: formulation and simulation characteristics. J. Clim. 19, 643–674 (2006).
+.. [Delworth_et_al_2006] Delworth, T. L. et al. GFDL’s CM2 global coupled climate models. Part I: formulation and simulation characteristics. J. Clim. 19, 643–674 (2006).
 
-.. [OKane_2018] O’Kane, T. J. et al. Coupled data assimilation and ensemble initialization with application to multiyear ENSO prediction. J. Clim. 32, 997–1024 (2018).
+.. [O'Kane at al, 2018] O’Kane, T. J. et al. Coupled data assimilation and ensemble initialization with application to multiyear ENSO prediction. J. Clim. 32, 997–1024 (2018).
 
 .. [OKane_2021a] O’Kane, T. J. et al. CAFE60v1: a 60-year large ensemble climate reanalysis. Part I: system design, model configuration and data assimilation. J. Clim. 1, 1–48 (2021).
 
