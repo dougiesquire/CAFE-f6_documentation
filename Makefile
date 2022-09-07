@@ -7,7 +7,7 @@
 PROJECT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 PROFILE = default
 PROJECT_NAME = Squire_2022_CAFE-f6
-ENV_NAME = forecast_analysis
+ENV_NAME = cafe-f6_documentation
 NCI_PROJECT = xv83
 RAW_DATA_DIR = ./data/raw/
 TEST_DATA_DIR = ./data/testing/

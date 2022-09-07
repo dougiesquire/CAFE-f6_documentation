@@ -1,5 +1,3 @@
-import functools
-
 import itertools
 from itertools import cycle
 from pathlib import Path
@@ -11,9 +9,6 @@ import xarray as xr
 
 from matplotlib import cm, colors
 import matplotlib.pyplot as plt
-from matplotlib.dates import date2num
-import matplotlib.patches as mpatches
-import matplotlib.gridspec as gridspec
 from mpl_toolkits.axes_grid1 import Divider, Size
 
 import cartopy
@@ -405,8 +400,10 @@ def metrics(
             ax.set_title(headings[r][c])
 
         if ((one_legend is True) & (r == 0) & (c == 0)) | (one_legend is False):
-            legend1 = ax.legend([l[0] for l in plot_lines], metric_dict.keys(), loc=1)
-            has_multiple_lines = [len(l) > 1 for l in plot_lines]
+            legend1 = ax.legend(
+                [line[0] for line in plot_lines], metric_dict.keys(), loc=1
+            )
+            has_multiple_lines = [len(line) > 1 for line in plot_lines]
             if any(has_multiple_lines):
                 line_for_legend = [i for i, x in enumerate(has_multiple_lines) if x][0]
                 leg = ax.legend(

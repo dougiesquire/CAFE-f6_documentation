@@ -51,7 +51,7 @@ class _open:
     @staticmethod
     def HadISST(variables, realm, preprocess):
         """Open HadISST variables from specified realm"""
-        file = DATA_DIR / f"HadISST/HadISST_sst.nc"
+        file = DATA_DIR / "HadISST/HadISST_sst.nc"
         ds = xr.open_dataset(
             file,
             chunks={},
@@ -271,7 +271,7 @@ class _open:
         ds = _open._cmip6_dcppA_hindcast(
             model, variant_id, grid, variables, realm, years, members, version
         )
-        ### Add cell area
+        # Add cell area
         if realm == "Omon":
             file = (
                 f"{DATA_DIR}/{model}_hist/r1{variant_id}/Ofx/areacello/{grid}/{version}/"
@@ -304,7 +304,7 @@ class _open:
         ds = _open._cmip6_dcppA_hindcast(
             model, variant_id, grid, variables, realm, years, members, version
         )
-        ### Add cell area
+        # Add cell area
         if realm == "Omon":
             file = (
                 f"{DATA_DIR}/{model}_hist/r1{variant_id}/Ofx/areacello/{grid}/v20200918/"
@@ -334,7 +334,7 @@ class _open:
             return preprocess(ds)
         else:
             return ds
-        
+
     @staticmethod
     def HadGEM3(variables, realm, preprocess):
         """Open HadGEM3-GC31-MM dcppA-hindcast variables from specified monthly realm"""
@@ -347,7 +347,7 @@ class _open:
         ds = _open._cmip6_dcppA_hindcast(
             model, variant_id, grid, variables, realm, years, members, version
         )
-        ### Add cell area
+        # Add cell area
         if realm == "Omon":
             file = (
                 f"{DATA_DIR}/{model}_ctrl/r1i1p1f1/Ofx/areacello/{grid}/v20200108/"
@@ -478,7 +478,7 @@ class _open:
             range(1, 40 + 1),
             "v20190429",
         )
-        ### Add cell area
+        # Add cell area
         if realm == "Omon":
             file = (
                 f"{DATA_DIR}/CanESM5_hist/r1i1p2f1/Ofx/areacello/gn/v20190429/"
@@ -505,7 +505,7 @@ class _open:
         ds = _open._cmip6(
             "CanESM5", "piControl", "i1p2f1", "gn", variables, realm, [1], "v20190429"
         ).sel(member=1, drop=True)
-        ### Add cell area
+        # Add cell area
         if realm == "Omon":
             file = (
                 f"{DATA_DIR}/CanESM5_hist/r1i1p2f1/Ofx/areacello/gn/v20190429/"
@@ -545,7 +545,7 @@ class _open:
             members,
             "v20200???",
         )
-        ### Add cell area
+        # Add cell area
         if realm == "Omon":
             file = (
                 f"{DATA_DIR}/EC-Earth3_hist/r1i1p1f1/Ofx/areacello/{grid}/v20200918/"
@@ -583,7 +583,7 @@ class _open:
         ds = _open._cmip6(
             "EC-Earth3", "piControl", "i1p1f1", grid, variables, realm, [1], "v20200???"
         ).sel(member=1, drop=True)
-        ### Add cell area
+        # Add cell area
         if realm == "Omon":
             file = (
                 f"{DATA_DIR}/EC-Earth3_hist/r1i1p1f1/Ofx/areacello/{grid}/v20200918/"
@@ -722,7 +722,8 @@ def prepare_dataset(config, save_dir, save=True):
 
     if "name" not in cfg:
         raise ValueError(
-            f"Please provide an entry for 'name' in the config file so that I know how to open the data. Available options are {methods}"
+            "Please provide an entry for 'name' in the config file so that I know how "
+            f"to open the data. Available options are {methods}"
         )
 
     if "prepare" in cfg:
@@ -758,7 +759,10 @@ def prepare_dataset(config, save_dir, save=True):
                         ds.append(getattr(_open, cfg["name"])(var, realm, preprocess))
                     else:
                         raise ValueError(
-                            f"There is no method available to open '{cfg['name']}'. Please ensure that the 'name' entry in the config file matches an existing method in src.data._open, or add a new method for this data. Available methods are {methods}"
+                            f"There is no method available to open '{cfg['name']}'. Please "
+                            "ensure that the 'name' entry in the config file matches an "
+                            "existing method in src.data._open, or add a new method for this "
+                            f"data. Available methods are {methods}"
                         )
             ds = xr.merge(ds)
 
@@ -772,11 +776,11 @@ def prepare_dataset(config, save_dir, save=True):
                     ds[var].encoding = {}
                 ds.to_zarr(f"{save_dir}/{cfg['name']}.{identifier}.zarr", mode="w")
 
-        logger.info(f"Succeeded processing all variables")
+        logger.info("Succeeded processing all variables")
         return prepared
 
     else:
-        raise ValueError(f"No variables were specified to prepare")
+        raise ValueError("No variables were specified to prepare")
 
 
 def main(config, config_dir, save_dir):

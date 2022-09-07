@@ -1,4 +1,5 @@
 # Some functions for producing plots in the notebooks. Putting here to keep notebooks nice and clean
+# flake8: noqa
 
 from pathlib import Path
 
@@ -7,7 +8,7 @@ import functools
 import numpy as np
 
 import xarray as xr
- 
+
 import matplotlib.pyplot as plt
 
 from src import plot, utils
@@ -15,36 +16,47 @@ from src import plot, utils
 PROJECT_DIR = Path(__file__).resolve().parents[1]
 DATA_DIR = PROJECT_DIR / "data"
 
-def plot_hindcasts(hindcasts, historicals, observations, timescale, variable, region=None, diagnostic="anom"):
+
+def plot_hindcasts(
+    hindcasts,
+    historicals,
+    observations,
+    timescale,
+    variable,
+    region=None,
+    diagnostic="anom",
+):
     """
     Helper function for plotting hindcast timeseries. If the data are spatial, plots the global mean
     """
 
     def _load_dataset(dataset, timescale, variable, region, diagnostic):
         """Load a skill metric"""
-        
+
         if region is not None:
             region = f"_{region}"
-        else: region = ""
-        
+        else:
+            region = ""
+
         try:
             file1 = f"{DATA_DIR}/processed/{dataset}.{timescale}.{diagnostic}.{variable}{region}.zarr"
             ds = xr.open_zarr(file1, consolidated=True, decode_timedelta=False)
         except:
             try:
-                file2 = f"{DATA_DIR}/processed/{dataset}.{timescale}.{diagnostic}_{train_period}.{variable}{region}.zarr"
+                file2 = (
+                    f"{DATA_DIR}/processed/{dataset}.{timescale}.{diagnostic}_"
+                    f"{train_period}.{variable}{region}.zarr"
+                )
                 ds = xr.open_zarr(file2, consolidated=True, decode_timedelta=False)
             except:
                 raise OSError(f"Could not find {file1} or {file2}")
-        
+
         if region == "_Aus":
             # Mask out land
             shapefile = f"{DATA_DIR}/raw/NRM_super_clusters/NRM_super_clusters.shp"
-            mask = utils.get_region_masks_from_shp(
-                ds, shapefile, "label"
-            ).sum("region")
+            mask = utils.get_region_masks_from_shp(ds, shapefile, "label").sum("region")
             ds = ds.where(mask)
-        
+
         return ds
 
     def area_mean(ds):
@@ -53,7 +65,7 @@ def plot_hindcasts(hindcasts, historicals, observations, timescale, variable, re
             .weighted(ds["area"])
             .mean(["lon", "lat"], keep_attrs=True)
         )
-    
+
     if region == "Aus_NRM":
         regional = True
     else:
@@ -65,25 +77,27 @@ def plot_hindcasts(hindcasts, historicals, observations, timescale, variable, re
         n_columns = len(hindcasts)
         axs = np.array(fig.subplots(n_rows, n_columns)).T.flatten()
     else:
-        fig = plt.figure(figsize=(15, 4*len(hindcasts)))
+        fig = plt.figure(figsize=(15, 4 * len(hindcasts)))
         n_rows = len(hindcasts)
         n_columns = 1
         axs = np.array(fig.subplots(n_rows, n_columns)).flatten()
-        
+
     ax_n = 0
     for idx, hindcast in enumerate(hindcasts):
         if "CAFE" in hindcast:
             train_period = "1991-2020"
         else:
             train_period = "1985-2014"
-                
+
         hindcast_data = _load_dataset(hindcast, timescale, variable, region, diagnostic)
         if (not regional) & (region is not None):
             hindcast_data = area_mean(hindcast_data)
         hindcast_dict = {hindcast: hindcast_data.compute()}
-                         
+
         try:
-            historical_data = _load_dataset(historicals[idx], timescale, variable, region, diagnostic)
+            historical_data = _load_dataset(
+                historicals[idx], timescale, variable, region, diagnostic
+            )
             if (not regional) & (region is not None):
                 historical_data = area_mean(historical_data)
             historical_dict = {historicals[idx]: historical_data.compute()}
@@ -92,26 +106,48 @@ def plot_hindcasts(hindcasts, historicals, observations, timescale, variable, re
 
         observations_dict = {}
         for observation in observations:
-            observation_data = _load_dataset(observation, timescale, variable, region, diagnostic)
+            observation_data = _load_dataset(
+                observation, timescale, variable, region, diagnostic
+            )
             if (not regional) & (region is not None):
                 observation_data = area_mean(observation_data)
             observations_dict[observation] = observation_data.compute()
 
         if regional:
             for reg in hindcast_dict[list(hindcast_dict.keys())[0]].region:
-                hindcast_dict_region = {k: v.sel(region=reg) for k,v in hindcast_dict.items()}
-                historical_dict_region = {k: v.sel(region=reg) for k,v in historical_dict.items()}
-                observations_dict_region = {k: v.sel(region=reg) for k,v in observations_dict.items()}
-                ax = plot.hindcasts(hindcast_dict_region, observations_dict_region, historical_dict_region, ax=axs[ax_n])
+                hindcast_dict_region = {
+                    k: v.sel(region=reg) for k, v in hindcast_dict.items()
+                }
+                historical_dict_region = {
+                    k: v.sel(region=reg) for k, v in historical_dict.items()
+                }
+                observations_dict_region = {
+                    k: v.sel(region=reg) for k, v in observations_dict.items()
+                }
+                ax = plot.hindcasts(
+                    hindcast_dict_region,
+                    observations_dict_region,
+                    historical_dict_region,
+                    ax=axs[ax_n],
+                )
                 ax.set_title(reg.item())
                 ax_n += 1
         else:
-            _ = plot.hindcasts(hindcast_dict, observations_dict, historical_dict, ax=axs[ax_n])
+            _ = plot.hindcasts(
+                hindcast_dict, observations_dict, historical_dict, ax=axs[ax_n]
+            )
             ax_n += 1
-        
-        
+
+
 def _load_skill_metric(
-    hindcast, reference, timescale, variable, metric, region, diagnostic, verif_period=None
+    hindcast,
+    reference,
+    timescale,
+    variable,
+    metric,
+    region,
+    diagnostic,
+    verif_period=None,
 ):
     """Load a skill metric"""
 
@@ -120,12 +156,12 @@ def _load_skill_metric(
             verif_period = "1991-2020"
         else:
             verif_period = "1985-2014"
-            
+
     if region is not None:
         region = f"_{region}"
     else:
         region = ""
-        
+
     try:
         file1 = (
             f"{DATA_DIR}/skill/{hindcast}.{reference}.{timescale}.{diagnostic}"
@@ -137,24 +173,28 @@ def _load_skill_metric(
             train_period = "1991-2020"
         else:
             train_period = "1985-2014"
-            
+
         try:
             file2 = (
                 f"{DATA_DIR}/skill/{hindcast}.{reference}.{timescale}.{diagnostic}_{train_period}"
                 f".{variable}{region}.{metric}_{verif_period}.zarr"
             )
-            ds = xr.open_zarr(file2, consolidated=True, decode_timedelta=False).compute()
+            ds = xr.open_zarr(
+                file2, consolidated=True, decode_timedelta=False
+            ).compute()
         except:
             raise OSError(f"Could not find {file1} or {file2}")
-            
+
     if region == "_Aus":
         # Mask out land
         shapefile = f"{DATA_DIR}/raw/NRM_super_clusters/NRM_super_clusters.shp"
-        mask = utils.get_region_masks_from_shp(
-            ds, shapefile, "label"
-        ).sum("region").assign_coords({"region": "Australia"})
+        mask = (
+            utils.get_region_masks_from_shp(ds, shapefile, "label")
+            .sum("region")
+            .assign_coords({"region": "Australia"})
+        )
         ds = ds.where(mask)
-            
+
     return ds
 
 
@@ -171,9 +211,8 @@ def plot_metrics(
     """
     Helper function for plotting some skill metrics.
     """
-    
+
     if region == "Aus_NRM":
-        n_regions = 5
         selections = [{"region": i} for i in range(5)]
         figsize = (9, 12)
     else:
@@ -224,12 +263,12 @@ def plot_metric_maps(
     region="global",
     diagnostic="anom",
     verif_period=None,
-    vrange=(-1,1),
+    vrange=(-1, 1),
     add_colorbar=True,
     cbar_bounds=None,
     cmap="PiYG",
     central_longitude=180,
-    figsize=None
+    figsize=None,
 ):
     """
     Helper function for plotting some skill maps. Edit this function to change which
@@ -290,8 +329,10 @@ def plot_metric_maps(
                 positive = ds[[variable]] > 0
                 significant = ds[f"{variable}_signif"]
                 # Deal with nans
-                significant = xr.where(significant.notnull(), significant.astype(bool), False)
-                return ((1*positive) + xr.where(positive & significant, 1, 0)) / 2
+                significant = xr.where(
+                    significant.notnull(), significant.astype(bool), False
+                )
+                return ((1 * positive) + xr.where(positive & significant, 1, 0)) / 2
 
             annual = functools.reduce(
                 both_pos_and_signif, [pos_and_signif(ds) for ds in annual_metrics]
@@ -303,9 +344,9 @@ def plot_metric_maps(
 
         # Change this to change what leads are plotted
         to_plot = {
-            "year 1": annual.isel(lead=1), #.sel(lead=23),
-            "years 1-4": quadrennial.isel(lead=4), #.sel(lead=59),
-            "years 5-8": quadrennial.isel(lead=8), #.sel(lead=107),
+            "year 1": annual.isel(lead=1),  # .sel(lead=23),
+            "years 1-4": quadrennial.isel(lead=4),  # .sel(lead=59),
+            "years 5-8": quadrennial.isel(lead=8),  # .sel(lead=107),
         }
         fields.append(list(to_plot.values()))
         headings.append(

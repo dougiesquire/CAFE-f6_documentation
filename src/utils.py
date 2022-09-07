@@ -1,6 +1,5 @@
 import os
 import sys
-import tempfile
 from pathlib import Path
 
 from functools import reduce, partial
@@ -733,8 +732,8 @@ def ensemble_mean(ds, ensemble_dim="member"):
 def greater_than(ds, value):
     """Return a boolean array with True where elements > value
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     ds: xarray Dataset
         The array to mask
     value: float, xarray Dataset
@@ -746,8 +745,8 @@ def greater_than(ds, value):
 def where_greater_than(ds, value):
     """Return array with elements <= value masked to nan
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     ds: xarray Dataset
         The array to mask
     value: float, xarray Dataset
@@ -1049,7 +1048,7 @@ def _get_groupby_and_reduce_dims(ds, frequency):
             assert all(
                 same_group_per_lead
             ), "All group values are not the same for each lead"
-        groupby = f"init.month"
+        groupby = "init.month"
         reduce_dim = "init"
     else:
         raise ValueError("I can't work out how to apply groupby on this data")
@@ -1313,16 +1312,16 @@ def interpolate_to_grid_from_file(ds, file, add_area=True, ignore_degenerate=Tru
 
     Note, xESMF puts zeros where there is no data to interpolate. Here we
     add an offset to ensure no zeros, mask zeros, and then remove offset
-    This hack will potentially do funny things for interpolation methods 
+    This hack will potentially do funny things for interpolation methods
     more complicated than bilinear.
     See https://github.com/JiaweiZhuang/xESMF/issues/15
-    
+
     Parameters
     ----------
     ds : xarray Dataset
         The data to interpolate
     file : str
-        Path to a file with the grid to interpolate to. This should be relative to 
+        Path to a file with the grid to interpolate to. This should be relative to
         the project directory
     add_area : bool, optional
         If True (default) add a coordinate for the cell areas

@@ -11,6 +11,7 @@ For each hindcast dataset, a forced historical simulation is used to help quanti
 
 .. _Application of forcing: notebooks/issues_forcing.ipynb
 
+.. _Evaluation methods:
 
 Evaluation methods
 ------------------
@@ -36,7 +37,7 @@ A number of deterministic and probabilistic skill metrics were calculated, with 
      - How much of the correlation skill came from initialisation?
      - :footcite:t:`sospedra2020assessing`
    * - Mean Squared Skill Score
-     - :math:`MSSS(Y, R, X) = 1 - \frac{MSE(Y, X)}{MSE(R,X)}` where :math:`MSE` is the mean square error and :math:`R` corresponds to reference predictions of either observed climatology, persistence or uninitialised simulations.
+     - :math:`\mathrm{MSSS}(Y, R, X) = 1 - \frac{\mathrm{MSE}(Y, X)}{\mathrm{MSE}(R,X)}` where :math:`\mathrm{MSE}` is the mean square error and :math:`R` corresponds to reference predictions of either observed climatology, persistence or uninitialised simulations.
      - Is the forecast error smaller than a baseline prediction?
      - :footcite:t:`goddard2013verification`
 
@@ -45,13 +46,12 @@ Statistical significance of the skill scores is evaluated using a non-parametric
 .. note::
    We defined the "0th" lead period of a forecast as the period that includes the initialisation. For example, for annual forecasts initialised on 2022-11-01, "lead year 0" refers to the period 2022-11-01 - 2023-10-31, "lead year 1" refers to 2023-11-01 - 2024-20-31. This is different than some existing studies (e.g. :footcite:t:`sospedra2021decadal`) whose "lead year 1" is equivalent to our "lead year 0".
 
-The following pages present skill maps for a number of global and regional variables and processes:
+The following pages present the skill assessment of a number of global and regional variables and processes:
 
 .. toctree::
     :maxdepth: 2
 
-    notebooks/assessment_CanESM5.ipynb
-    notebooks/assessment_global.ipynb
+    notebooks/assessment_generic.ipynb
     notebooks/assessment_Aus.ipynb
 
 
