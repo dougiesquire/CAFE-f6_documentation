@@ -3,13 +3,9 @@ sphinx-autobuild
 Jinja2<3.1.0
 numpydoc
 pyyaml
-dask
-distributed
 xarray
 cftime
 xskillscore
-xbootstrap
-cartopy
 matplotlib
 pydata-sphinx-theme
 nbsphinx

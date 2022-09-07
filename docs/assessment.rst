@@ -44,7 +44,10 @@ A number of deterministic and probabilistic skill metrics were calculated, with 
 Statistical significance of the skill scores is evaluated using a non-parametric cicular moving-block bootstrap approach :footcite:p:`sospedra2021decadal, goddard2013verification`. Following :footcite:t:`sospedra2021decadal`, 1000 repetitions are performed using 5-year blocks. Skill scores that are found to be significant at the 95\% confidence level are indicated in the following pages (usually via hatching). 
 
 .. note::
-   We defined the "0th" lead period of a forecast as the period that includes the initialisation. For example, for annual forecasts initialised on 2022-11-01, "lead year 0" refers to the period 2022-11-01 - 2023-10-31, "lead year 1" refers to 2023-11-01 - 2024-20-31. This is different than some existing studies (e.g. :footcite:t:`sospedra2021decadal`) whose "lead year 1" is equivalent to our "lead year 0".
+   We define the "0th" lead period of a forecast as the period that includes the initialisation. For example, for annual forecasts initialised on 2022-11-01, "lead year 0" refers to the period 2022-11-01 - 2023-10-31, "lead year 1" refers to 2023-11-01 - 2024-20-31. This is different than some existing studies (e.g. :footcite:t:`sospedra2021decadal`) whose "lead year 1" is equivalent to our "lead year 0".
+
+CAFE-f6 hindcast skill
+----------------------
 
 The following pages present the skill assessment of a number of global and regional variables and processes:
 
