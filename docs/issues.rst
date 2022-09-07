@@ -1,7 +1,7 @@
 Issues
 ======
 
-In these pages, we describe and demonstrate a number of issues with the CAFE-f6 forecasts that must be contended with when using the data. To summarise:
+In these pages, we describe and demonstrate a number of issues with the CAFE-f6 forecasts that must be considered and contended with when using the data. To summarise:
 
 - The external forcing is applied in a way that is inconsistent with CMIP Decadal Climate Prediction Project (DCPP) recommendations. Users are encouraged to familiarise themselves with the issue and consider how it may impact their application of the CAFE-f6 data.
 
