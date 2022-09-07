@@ -19,7 +19,7 @@ Evaluation methods
 
 Unless otherwise specified, skill assessment is performed on hindcast anomalies that are computed relative to each model's own ensemble-mean climatology as a function of lead time. 30-year climatological and verification periods are used for both the CAFE-f6 and DCPP data. However, because the historical CMIP6 data end in 2014, these periods differ slightly for the different model hindcasts: 1991-2020 for CAFE-f6; 1985-2014 for CanESM5 and EC-Earth3. Anomalies of the reference data (the "truth" to verify the hindcasts against, e.g. observations) are computed relative to their climatological mean over the same period as the hindcast data. All model and reference data are bi-linearly interpolated to the CAFE-f6 atmospheric grid prior to the calculation of skill scores.
 
-The following reference datasets are used to assess the hindcast skill.
+The following reference datasets are used to assess the hindcast skill:
 
 .. list-table:: Reference datasets
    :widths: 65 35
@@ -70,7 +70,7 @@ Statistical significance of the skill scores is evaluated using a non-parametric
 CAFE-f6 hindcast skill
 ----------------------
 
-The following pages present the skill assessment of a number of global and regional variables and processes:
+The following pages present the skill assessment of a number of global and regional variables and processes. If you wish to see anything added to these pages, please open an issue `here <https://github.com/dougiesquire/Squire_2022_CAFE-f6/issues>`_.
 
 .. toctree::
     :maxdepth: 2

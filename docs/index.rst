@@ -22,7 +22,6 @@ Contents
    issues
    assessment
    reproducing/index
-   autoapi/index
 
    
 Indices and tables

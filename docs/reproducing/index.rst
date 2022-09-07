@@ -9,3 +9,4 @@ These pages include some details of how the project is currently set up. Please 
    getting_started
    data_preparation
    skill_preparation
+   ../autoapi/index
