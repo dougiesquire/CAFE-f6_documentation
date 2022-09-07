@@ -27,7 +27,7 @@ sys.path.insert(0, os.path.abspath('../src'))
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ["numpydoc", "sphinx.ext.napoleon",  "sphinx.ext.autosectionlabel", "sphinx.ext.autodoc", "nbsphinx","sphinxcontrib.bibtex"]
+extensions = ["numpydoc", "sphinx.ext.napoleon",  "sphinx.ext.autosectionlabel", "sphinx.ext.autodoc", "nbsphinx","sphinxcontrib.bibtex", "sphinx.ext.mathjax"]
 
 bibtex_bibfiles = ['references.bib']
 bibtex_reference_style = 'super'
