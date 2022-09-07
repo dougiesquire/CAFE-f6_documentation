@@ -10,7 +10,6 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import os
 import sys
 
 print(sys.executable)
@@ -19,7 +18,7 @@ print(sys.executable)
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-sys.path.insert(0, os.path.abspath("../src"))
+# sys.path.insert(0, os.path.abspath("../src"))
 
 # -- General configuration -----------------------------------------------------
 
@@ -32,7 +31,7 @@ extensions = [
     "numpydoc",
     "sphinx.ext.napoleon",
     "sphinx.ext.autosectionlabel",
-    "sphinx.ext.autodoc",
+    "autoapi.extension",
     "nbsphinx",
     "sphinxcontrib.bibtex",
     "sphinx.ext.mathjax",
@@ -40,6 +39,8 @@ extensions = [
 
 bibtex_bibfiles = ["references.bib"]
 bibtex_reference_style = "super"
+
+autoapi_dirs = ["../src"]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]

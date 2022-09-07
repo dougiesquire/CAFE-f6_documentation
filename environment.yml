@@ -16,6 +16,7 @@ dependencies:
   - nbsphinx
   - nc-time-axis
   - pip
+  - python=3.9
   - python-cdo
   - sphinx
   - xarray
@@ -28,6 +29,7 @@ dependencies:
     - pre-commit
     - pydata-sphinx-theme
     - sphinx-autobuild
+    - sphinx-autoapi
     - sphinxcontrib.bibtex
     - xbootstrap
     - -e .

@@ -8,9 +8,12 @@ distributed
 xarray
 cftime
 xskillscore
+xbootstrap
+cartopy
 matplotlib
 pydata-sphinx-theme
 nbsphinx
+sphinx-autoapi
 sphinxcontrib-bibtex
 pandoc
 IPython
