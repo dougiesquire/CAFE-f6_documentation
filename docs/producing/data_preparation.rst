@@ -1,10 +1,11 @@
 Data preparation
 ================
 
+
 Configuration files
 -------------------
 
-Steps for preparing the various datasets used in this project are specified in yaml files stored in ``config/prepare_data``. Here is an example config yaml file for preparing annual precipitation and its anomalies for the CAFE-f6 hindcasts/forecasts:
+Steps for preparing the various datasets used in this documentation are specified in yaml files stored in ``config/prepare_data``. Here is an example config yaml file for preparing annual precipitation and its anomalies for the CAFE-f6 hindcasts/forecasts:
 
 .. code-block:: yaml
 
@@ -100,6 +101,7 @@ or process all available datasets with:
 .. code-block:: console
 
    make data
+
 
 Adding a new dataset for preparation
 ------------------------------------

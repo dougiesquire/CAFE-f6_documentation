@@ -21,7 +21,7 @@ cartopy.config["data_dir"] = PROJECT_DIR / "data/cartopy-data"
 
 
 class MidpointNormalize(colors.Normalize):
-    """Normalise the colorbar."""
+    """Midpoint normalised colorbar norm"""
 
     def __init__(self, vmin=None, vmax=None, midpoint=None, clip=False):
         self.midpoint = midpoint

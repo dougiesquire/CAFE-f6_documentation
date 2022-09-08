@@ -16,7 +16,7 @@ Full details of each issue are given in the following pages:
 .. toctree::
    :maxdepth: 2
 
-   notebooks/issues_forcing.ipynb
-   notebooks/issues_bias.ipynb
-   notebooks/issues_executable.ipynb
-   notebooks/issues_timestep.ipynb
+   ../notebooks/issues_forcing.ipynb
+   ../notebooks/issues_bias.ipynb
+   ../notebooks/issues_executable.ipynb
+   ../notebooks/issues_timestep.ipynb

@@ -1,10 +1,13 @@
 Getting started
 ===============
 
-Project structure
------------------
+This documentation was generated using `Sphinx <https://www.sphinx-doc.org/en/master/>`_ from a `public repository hosted on github <https://github.com/dougiesquire/CAFE-f6_documentation>`_. This repository contains all of this documentation, as well as all the (Python) code used to carry out the analyses presented in this documentation (e.g. the :ref:`skill assessment <Assessment>`).
 
-The structure of this project is as follows:
+
+Documentation repo structure
+----------------------------
+
+The structure of the repository is as follows:
 
 ::
 
@@ -49,7 +52,7 @@ The structure of this project is as follows:
 Using `make <https://www.gnu.org/software/make/>`_
 --------------------------------------------------
 
-Key steps for getting set up are handled using `GNU make <https://www.gnu.org/software/make/>`_:
+Key steps for getting set up and processing the data are handled using `GNU make <https://www.gnu.org/software/make/>`_. From the root directory of this repository:
 
 #. ``make environment`` creates the python environment or updates it if it exists
 #. ``make data`` prepares the raw data (in ``data/raw``) for subsequent analysis. The prepared data are stored in ``data/processed``. See :ref:`Data preparation`

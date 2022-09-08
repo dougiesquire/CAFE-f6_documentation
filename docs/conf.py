@@ -37,10 +37,13 @@ extensions = [
     "sphinx.ext.mathjax",
 ]
 
+# bibtex directives
 bibtex_bibfiles = ["references.bib"]
 bibtex_reference_style = "super"
 
+# autoapi directives
 autoapi_dirs = ["../src"]
+autoapi_add_toctree_entry = False
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]

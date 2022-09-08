@@ -44,6 +44,7 @@ Citing the data
 
 If you use CAFE-f6 or any of the contents of this reposititory, please cite it in the following way:
 
+TODO once we're ready to mint a DOI
 
 
 References
