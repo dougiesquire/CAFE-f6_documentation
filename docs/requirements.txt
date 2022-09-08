@@ -11,5 +11,7 @@ pydata-sphinx-theme
 nbsphinx
 sphinx-autoapi
 sphinxcontrib-bibtex
+sphinx_copybutton
+sphinx-panels
 pandoc
 IPython

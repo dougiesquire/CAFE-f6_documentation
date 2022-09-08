@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 982.67722 340.1575"
+   version="1.1"
+   id="svg2104"
+   sodipodi:docname="magnifying-glass-chart-solid.svg"
+   width="260mm"
+   height="90mm"
+   inkscape:version="1.1-alpha (17bc9184, 2021-03-28)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs2108" />
+  <sodipodi:namedview
+     id="namedview2106"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     objecttolerance="10.0"
+     gridtolerance="10.0"
+     guidetolerance="10.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     showgrid="false"
+     units="mm"
+     inkscape:zoom="0.18621417"
+     inkscape:cx="123.5137"
+     inkscape:cy="947.83336"
+     inkscape:window-width="1296"
+     inkscape:window-height="847"
+     inkscape:window-x="2543"
+     inkscape:window-y="368"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg2104"
+     inkscape:document-units="mm" />
+  <!--! Font Awesome Pro 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
+  <path
+     d="m 550.40119,152.36595 c 0,16.94227 -5.49978,32.59263 -14.76449,45.29011 l 46.72964,46.76655 c 4.61391,4.6139 4.61391,12.10689 0,16.7208 -4.61391,4.6139 -12.10689,4.6139 -16.7208,0 L 518.9159,214.37686 c -12.69748,9.30163 -28.34784,14.76449 -45.29011,14.76449 -42.41103,0 -76.7754,-34.36438 -76.7754,-76.7754 0,-42.41103 34.36437,-76.775399 76.7754,-76.775399 42.41102,0 76.7754,34.364369 76.7754,76.775399 z m -115.1631,2.9529 v 23.6232 c 0,4.9092 3.9495,8.85871 8.85869,8.85871 4.9092,0 8.85871,-3.94951 8.85871,-8.85871 v -23.6232 c 0,-4.90919 -3.94951,-8.8587 -8.85871,-8.8587 -4.90919,0 -8.85869,3.94951 -8.85869,8.8587 z m 29.529,-35.4348 v 59.058 c 0,4.9092 3.9495,8.85871 8.8587,8.85871 4.90919,0 8.8587,-3.94951 8.8587,-8.85871 v -59.058 c 0,-4.90919 -3.94951,-8.8587 -8.8587,-8.8587 -4.9092,0 -8.8587,3.94951 -8.8587,8.8587 z m 29.529,23.6232 v 35.4348 c 0,4.9092 3.94951,8.85871 8.8587,8.85871 4.9092,0 8.8587,-3.94951 8.8587,-8.85871 v -35.4348 c 0,-4.90919 -3.9495,-8.8587 -8.8587,-8.8587 -4.90919,0 -8.8587,3.94951 -8.8587,8.8587 z"
+     id="path2102"
+     style="stroke-width:0.369112;fill:#0098b4;fill-opacity:1" />
+</svg>

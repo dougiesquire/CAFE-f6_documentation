@@ -31,5 +31,7 @@ dependencies:
     - sphinx-autobuild
     - sphinx-autoapi
     - sphinxcontrib.bibtex
+    - sphinx-panels
+    - sphinx_copybutton
     - xbootstrap
     - -e .

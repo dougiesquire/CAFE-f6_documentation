@@ -22,6 +22,8 @@ print(sys.executable)
 
 # -- General configuration -----------------------------------------------------
 
+language = "en"
+
 # If your documentation needs a minimal Sphinx version, state it here.
 # needs_sphinx = '1.0'
 
@@ -33,9 +35,31 @@ extensions = [
     "sphinx.ext.autosectionlabel",
     "autoapi.extension",
     "nbsphinx",
+    "sphinx_panels",
+    "sphinx_copybutton",
     "sphinxcontrib.bibtex",
     "sphinx.ext.mathjax",
 ]
+
+# The name of an image file (relative to this directory) to place at the top
+# of the sidebar.
+html_static_path = ["_static"]
+html_logo = "_static/CAFE_light.png"
+html_theme_options = {
+    "use_edit_page_button": True,
+    "github_url": "https://github.com/dougiesquire/CAFE-f6_documentation",
+    "logo": {
+        "image_light": "CAFE_light.png",
+        "image_dark": "CAFE_dark.png",
+        "text": "CAFE-f6 documentation",
+    },
+}
+html_context = {
+    "github_user": "dougiesquire",
+    "github_repo": "CAFE-f6_documentation",
+    "github_version": "main",
+    "doc_path": "./docs",
+}
 
 # bibtex directives
 bibtex_bibfiles = ["references.bib"]
@@ -125,10 +149,6 @@ html_theme = "pydata_sphinx_theme"
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 # html_short_title = None
-
-# The name of an image file (relative to this directory) to place at the top
-# of the sidebar.
-# html_logo = None
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32

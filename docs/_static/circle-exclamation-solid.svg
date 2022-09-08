@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 982.67722 340.1575"
+   version="1.1"
+   id="svg2001"
+   sodipodi:docname="circle-exclamation-solid.svg"
+   width="260mm"
+   height="90mm"
+   inkscape:version="1.1-alpha (17bc9184, 2021-03-28)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs2005" />
+  <sodipodi:namedview
+     id="namedview2003"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     objecttolerance="10.0"
+     gridtolerance="10.0"
+     guidetolerance="10.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     showgrid="false"
+     units="mm"
+     inkscape:zoom="0.38041736"
+     inkscape:cx="488.93668"
+     inkscape:cy="611.17085"
+     inkscape:window-width="1296"
+     inkscape:window-height="847"
+     inkscape:window-x="2153"
+     inkscape:window-y="452"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg2001"
+     inkscape:document-units="mm" />
+  <!--! Font Awesome Pro 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
+  <path
+     d="m 491.33858,264.56693 c 52.18995,0 94.48819,-42.29824 94.48819,-94.48818 0,-52.18996 -42.29824,-94.488199 -94.48819,-94.488199 -52.18996,0 -94.48819,42.298239 -94.48819,94.488199 0,52.18994 42.29823,94.48818 94.48819,94.48818 z m 0,-141.73229 c 4.90895,0 8.85827,3.94932 8.85827,8.85827 v 41.33858 c 0,4.90896 -3.94932,8.85829 -8.85827,8.85829 -4.90895,0 -8.85826,-3.94933 -8.85826,-8.85829 v -41.33858 c 0,-4.90895 3.94931,-8.85827 8.85826,-8.85827 z m 11.81102,82.67717 c 0,6.53297 -5.27805,11.81103 -11.81102,11.81103 -6.53298,0 -11.81103,-5.27806 -11.81103,-11.81103 0,-6.53297 5.27805,-11.81103 11.81103,-11.81103 6.53297,0 11.81102,5.27806 11.81102,11.81103 z"
+     id="path1999"
+     style="fill:#0098b4;fill-opacity:1;stroke-width:0.369094" />
+</svg>
