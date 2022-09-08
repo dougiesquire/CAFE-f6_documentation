@@ -1,7 +1,9 @@
+.. _API:
+
 API reference
 =============
 
-This page contains auto-generated API reference documentation for the Python code used to carry out the analyses presented in this documentation.
+This documentation has been auto-generated using `sphinx-autoapi <https://sphinx-autoapi.readthedocs.io/en/latest/>`_
 
 .. toctree::
    :maxdepth: 2

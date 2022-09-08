@@ -10,7 +10,9 @@ CAFE-f6 decadal hindcast/forecast documentation
    assessment/index
    producing/index
    
-Welcome to the documentation for the CSIRO Climate Analysis Forecast Ensemble decadal hindcast/forecast dataset v6 (CAFE-f6). In brief, the CAFE-f6 dataset comprises 96-member decadal climate forecasts initialised at the beginning of every May and Nov over the period 1981-2020.
+Welcome to the documentation for the CSIRO Climate Analysis Forecast Ensemble decadal hindcast/forecast dataset v6 (CAFE-f6). 
+
+In brief, CAFE-f6 comprises 96-member, 10-year climate forecasts initialised at the beginning of every May and November over the period 1981-2020. This documentation provides some basic information about CAFE-f6, including known issues with the dataset and an assessment of its skill.
 
 .. note::
    Please open an issue `here <https://github.com/dougiesquire/Squire_2022_CAFE-f6/issues>`_ if you have any questions after reading this documentation.
