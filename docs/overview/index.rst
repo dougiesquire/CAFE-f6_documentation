@@ -44,9 +44,7 @@ Currently, CAFE-f6 data are only available to users of Australia's National Comp
 Citing the data
 ---------------
 
-If you use CAFE-f6 or any of the contents of this reposititory, please cite it in the following way:
-
-TODO once we're ready to mint a DOI
+If you use CAFE-f6 or any of the contents of this repository, please cite it using the metadata in `this CITATION.cff file <https://github.com/dougiesquire/CAFE-f6_documentation/blob/main/CITATION.cff>`_ or by nagivating to the `base repository for this documentation <https://github.com/dougiesquire/CAFE-f6_documentation>`_ and clicking "Cite this repository" at the top right of the page.
 
 
 References
