@@ -5,7 +5,7 @@ CAFE-f6 decadal hindcast/forecast documentation
    :maxdepth: 1
    :hidden:
 
-   overview
+   overview/index
    issues/index
    assessment/index
    producing/index

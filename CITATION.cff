@@ -1,0 +1,59 @@
+cff-version: 1.2.0
+title: >-
+  Documentation of the CAFE-f6 decadal climate
+  forecasts
+message: >-
+  If you use the CAFE-f6 dataset or any of the
+  contents of this repository, please cite it using
+  the metadata from this file.
+type: software
+doi: TODO
+authors:
+  - given-names: Dougal T.
+    family-names: Squire
+    email: dougie.squire@csiro.au
+    affiliation: CSIRO Oceans & Atmosphere
+    orcid: 'https://orcid.org/0000-0003-3271-6874'
+  - given-names: Matt A.
+    family-names: Chamberlain
+    affiliation: CSIRO Oceans & Atmosphere
+  - given-names: Chris C.
+    family-names: Chapman
+    affiliation: CSIRO Oceans & Atmosphere
+  - given-names: Mark A.
+    family-names: Collier
+    affiliation: CSIRO Oceans & Atmosphere
+  - given-names: Russell
+    family-names: Fiedler
+    affiliation: CSIRO Oceans & Atmosphere
+  - given-names: Vassili
+    family-names: Kitsios
+    affiliation: CSIRO Oceans & Atmosphere
+  - given-names: Richard J.
+    family-names: Matear
+    affiliation: CSIRO Oceans & Atmosphere
+  - given-names: Thomas  S.
+    name-suffix: II
+    family-names: Moore
+    affiliation: CSIRO Oceans & Atmosphere
+  - given-names: Courtney
+    family-names: Quinn
+    affiliation: University of Tasmania
+  - given-names: Doug
+    family-names: Richardson
+    affiliation: CSIRO Oceans & Atmosphere
+  - given-names: James S.
+    family-names: Risbey
+    affiliation: CSIRO Oceans & Atmosphere
+  - given-names: Pavel
+    family-names: Sakov
+    affiliation: Australian Bureau of Meteorology
+  - given-names: Benjamin J. E.
+    family-names: Schroeter
+    affiliation: CSIRO Oceans & Atmosphere
+  - given-names: Bernadette M.
+    family-names: Sloyan
+    affiliation: CSIRO Oceans and Atmosphere
+  - given-names: Carly R.
+    family-names: Tozer
+    affiliation: CSIRO Oceans & Atmosphere
