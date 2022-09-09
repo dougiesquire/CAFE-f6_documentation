@@ -25,7 +25,7 @@ CAFE-f6 comprises 96-member, 10-year climate forecasts initialised at the beginn
     
     **CAFE-f6 overview**
 
-    Information about the CAFE-f6 dataset and how to access it.
+    Information about the CAFE-f6 dataset including how to access and cite it.
 
 
     +++

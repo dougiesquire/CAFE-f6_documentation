@@ -10,7 +10,9 @@ Skill assessment
     ../notebooks/assessment_generic.ipynb
     ../notebooks/assessment_Aus.ipynb
 
-These pages present some preliminary assessment of the skill of the CAFE-f6 hindcasts. The assessment approach largely follows the assessment of the CanESM5 decadal hindcasts in :footcite:t:`sospedra2021decadal`. Skill scores are computed for the CAFE-f6 hindcasts, and for the (40 ensemble member) CanESM5 :footcite:p:`sospedra2021decadal` and (10 ensemble member) EC-Earth3 :footcite:p:`bilbao2021assessment` CMIP6 Decadal Climate Prediction Project (DCPP) hindcast submissions for comparison. Note that the CanESM5 hindcasts are initialised at the end of December every year, while the CAFE-f6 and EC-Earth3 hindcasts are initialised at the beginning of November every year.
+These pages present some preliminary assessment of the skill of the CAFE-f6 hindcasts. The assessment approach largely follows the assessment of the CanESM5 decadal hindcasts in :footcite:t:`sospedra2021decadal`. Skill scores are computed for the CAFE-f6 hindcasts, and for the (40 ensemble member) CanESM5 :footcite:p:`sospedra2021decadal` and (10 ensemble member) EC-Earth3 :footcite:p:`bilbao2021assessment` CMIP6 Decadal Climate Prediction Project (DCPP) hindcast submissions for comparison. Note that the CanESM5 hindcasts are initialised at the end of December every year, while the CAFE-f6 and EC-Earth3 hindcasts are initialised at the beginning of November every year (only Novemeber-initialised CAFE-f6 forecasts are considered here due to the `reproducibility issue`_ with many of the May-initialised forecasts).
+
+.. _reproducibility issue: ../notebooks/issues_executable.ipynb
 
 
 Forced historical simulations
@@ -45,7 +47,7 @@ The following reference datasets are used to assess the hindcast skill:
    * - Australian 2m temperature, Australian extreme 2m temperature, Australian precipitation, Australian extreme precipitation, Australian drought, Australian EHF severity
      - AGCDv2 :footcite:p:`evans2020enhanced`
      
-A number of deterministic and probabilistic skill metrics were calculated, with only a few deterministic metrics, computed on the ensemble-mean, shown here. Following :footcite:t:`sospedra2021decadal`, the reference anomalies are denoted as :math:`X`, the ensemble-mean hindcast anomalies as :math:`Y`, the ensemble-mean simulation anomalies as :math:`U`, :math:`C_{AB}` denotes the covariance of :math:`A` and :math:`B`, and :math:`\sigma_{A}` denotes the standard deviation of :math:`A`. The following table defines most of the skill metrics presented in this documentation.
+A number of deterministic and probabilistic skill metrics were calculated, with only a few deterministic metrics, computed on the ensemble-mean, shown in this documentation. Following :footcite:t:`sospedra2021decadal`, the reference anomalies are denoted as :math:`X`, the ensemble-mean hindcast anomalies as :math:`Y`, the ensemble-mean simulation anomalies as :math:`U`, :math:`C_{AB}` denotes the covariance of :math:`A` and :math:`B`, and :math:`\sigma_{A}` denotes the standard deviation of :math:`A`. The following table defines the skill metrics presented in this documentation.
 
 .. list-table:: Skill metrics
    :widths: 30 35 35 25

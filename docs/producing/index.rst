@@ -35,13 +35,7 @@ This documentation was generated using `Sphinx <https://www.sphinx-doc.org/en/ma
    │
    ├── docs                <- The Sphinx documentation
    │
-   ├── notebooks           <- Jupyter notebooks containing analyses. Numbers are used for
-   │                          ordering where appropriate
-   │
-   ├── references          <- Data dictionaries, manuals, and all other explanatory materials.
-   │
-   ├── reports             <- Generated analysis as HTML, PDF, LaTeX, etc.
-   │   └── figures         <- Generated graphics and figures to be used in reporting
+   ├── notebooks           <- Jupyter notebooks containing analyses.
    │
    ├── environment.yml     <- yaml file for reproducing the conda analysis environment
    │
@@ -55,6 +49,7 @@ This documentation was generated using `Sphinx <https://www.sphinx-doc.org/en/ma
    │   ├── plot.py         <- Plotting codes
    │   └── utils.py        <- Utility codes, including functions for processing data
    │
+   ├── CITATION.cff.       <- Information on how to cite this documentation
    ├── LICENSE
    └── README.md
 
@@ -75,4 +70,4 @@ Key steps for getting set up and processing the data are handled using `GNU make
 Code documentation
 ------------------
 
-All the Python code used to carry out the analyses presented in this documentation is contained in a Python package `src` which is installed when the analysis environment is set up. `src` contains submodules for data preparation, verification, utilities and plotting. Auto-generated APR reference documentation for `src` and its submodules has been auto-generated and is available at :ref:`API reference <API>`. 
+All the Python code used to carry out the analyses presented in this documentation is contained in a Python package `src` which is installed when the analysis environment is set up. `src` contains submodules for data preparation, verification, utilities and plotting. Auto-generated API reference documentation for `src` and its submodules has been auto-generated and is available at :ref:`API reference <API>`. 

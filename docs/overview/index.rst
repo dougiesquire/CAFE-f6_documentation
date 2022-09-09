@@ -10,7 +10,7 @@ Overview
 The CAFE-f6 model
 -----------------
 
-The CAFE-f6 decadal forecasts were generated using the Climate Analysis Forecast Ensemble (CAFE) near-term climate prediction system, that was developed by the Commonwealth Science and Industrial Research Organization (CSIRO) Decadal Climate Forecast Project (DCFP). The system uses the Geophysical Fluid Dynamics Laboratory Coupled Model (GFDL) version 2.1 :footcite:p:`delworth2006gfdl`, with an upgraded oceanic component. In the version of CAFE used by CAFE-f6, the ocean was modelled using GFDL MOM 5.1. The nominal resolution of ocean model is 1° (with increased resolution in the tropics and Southern Ocean) on 50 vertical levels. The atmospheric model (AM2) has a resolution of 2° in latitude and 2.5° in longitude on 24 hybrid vertical levels. The sea-ice model (SIS) and land model (LM2) are on the same horizontal grids as the ocean and atmospheric models, respectively. A detailed description of the CAFE modelling system can be found in :footcite:t:`o2019coupled`, :footcite:t:`o2021cafe60v1a` and :footcite:t:`o2021cafe60v1b`.
+The CAFE-f6 decadal forecasts were generated using the Climate Analysis Forecast Ensemble (CAFE) near-term climate prediction system that was developed by the Commonwealth Science and Industrial Research Organization (CSIRO) Decadal Climate Forecast Project (DCFP). The system uses the Geophysical Fluid Dynamics Laboratory Coupled Model version 2.1 (GFDL CM2.1) :footcite:p:`delworth2006gfdl`, with an upgraded ocean model component. In the version of CAFE used by CAFE-f6, the ocean was modelled using GFDL MOM 5.1. The nominal resolution of ocean model is 1° (with increased resolution in the tropics and Southern Ocean) on 50 vertical levels. The atmospheric model (AM2) has a resolution of 2° in latitude and 2.5° in longitude on 24 hybrid vertical levels. The sea-ice model (SIS) and land model (LM2) are on the same horizontal grids as the ocean and atmospheric models, respectively. A detailed description of the CAFE modelling system can be found in :footcite:t:`o2019coupled`, :footcite:t:`o2021cafe60v1a` and :footcite:t:`o2021cafe60v1b`.
 
 
 Generation of forecasts
@@ -28,7 +28,7 @@ Prescribed forcing fields are based on those used for the GFDL CM2.1 submissions
 Accessing the data
 ------------------
 
-Currently, CAFE-f6 data are only available to users of Australia's National Computational Infrastructure (NCI). Each forecast is stored as a set of zipped zarr collections within the xv83 project at :code:`/g/data/xv83/dcfp/CAFE-f6`. These collections can be efficiently read and analysed using Python and xarray. For example, to open the forecast of monthly ocean variables initialised on 2020-11:
+Currently, CAFE-f6 data are only available to users of Australia's National Computational Infrastructure (NCI). Each forecast is stored as a set of zipped zarr collections within the xv83 project at :code:`/g/data/xv83/dcfp/CAFE-f6`. These collections can be efficiently read and analysed using Python and xarray. For example, to open the forecast of monthly ocean variables initialised on 2020-11-01:
 
 .. code-block:: python
 
@@ -44,7 +44,7 @@ Currently, CAFE-f6 data are only available to users of Australia's National Comp
 Citing the data
 ---------------
 
-If you use CAFE-f6 and/or any of the contents of this repository, please cite them using the metadata in `this CITATION.cff file <https://github.com/dougiesquire/CAFE-f6_documentation/blob/main/CITATION.cff>`_ or by nagivating to the `base repository for this documentation <https://github.com/dougiesquire/CAFE-f6_documentation>`_ and clicking "Cite this repository" at the top right of the page.
+If you use CAFE-f6 and/or any of the contents of this repository, please cite them using the metadata in `this CITATION.cff file <https://github.com/dougiesquire/CAFE-f6_documentation/blob/main/CITATION.cff>`_ or by navigating to the `base repository for this documentation <https://github.com/dougiesquire/CAFE-f6_documentation>`_ and clicking "Cite this repository" at the top right of the page.
 
 
 References
