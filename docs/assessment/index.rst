@@ -41,7 +41,7 @@ The following reference datasets are used to assess the hindcast skill:
    * - Global 2m temperature, global SLP, SAM, NAO, Australian 10m wind, Australian FFDI
      - JRA55 :footcite:p:`kobayashi2015jra,harada2016jra`
    * - Global precipitation
-     - GPCP :footcite:p:`adler2018global`
+     - GPCP v02r03 :footcite:p:`adler2018global`
    * - Australian 2m temperature, Australian extreme 2m temperature, Australian precipitation, Australian extreme precipitation, Australian drought, Australian EHF severity
      - AGCDv2 :footcite:p:`evans2020enhanced`
      

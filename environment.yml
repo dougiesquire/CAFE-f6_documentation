@@ -15,6 +15,7 @@ dependencies:
   - nb_black
   - nbsphinx
   - nc-time-axis
+  - netcdf4
   - pip
   - python=3.9
   - python-cdo

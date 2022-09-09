@@ -11,6 +11,7 @@ Known issues
    ../notebooks/issues_bias.ipynb
    ../notebooks/issues_executable.ipynb
    ../notebooks/issues_timestep.ipynb
+   ../notebooks/issues_units.ipynb
 
 In these pages, we describe and demonstrate a number of issues with the CAFE-f6 forecasts that must be considered and contended with when using the data. The issues are summarised below, along with recommendations for how to deal with them. Click on the links for more details on each issue:
 
@@ -20,9 +21,12 @@ In these pages, we describe and demonstrate a number of issues with the CAFE-f6 
 
 - `Changes to MOM executable`_ - Changes to the CAFE-f6 ocean model executable were made while the CAFE-f6 dataset was being generated that impact the reproducibility of some of the May-initialised forecasts. Users are encouraged to review which forecasts are reproducible using the current executable. A simple way to avoid this issue altogether is to use only the November-initialised forecasts.
 
-- `Changes to model timesteps`_ - Changes to the atmospheric model timestep for some ensemble members of some forecasts produced unexpected drift in those forecasts. Users are encouraged to use only forecasts that have an atmospheric timestep of 1800 s. A mask for these forecasts can be found at `/g/data/xv83/dcfp/CAFE-f6/CAFE-f6_dt_atmos.nc`
+- `Changes to model timesteps`_ - Changes to the atmospheric model timestep for some ensemble members of some forecasts produced unexpected drift in those forecasts. Users are encouraged to use only forecasts that have an atmospheric timestep of 1800 s. A mask for these forecasts can be found at `/g/data/xv83/dcfp/CAFE-f6/CAFE-f6_dt_atmos.nc`.
+
+- `Incorrect units`_ - During the conversion from raw model output to zarr format, units were incorrectly assigned to the `"precip"` and `"evap"` variables. Users should correct these data prior to analysis by normalising them by the number of days in each month.
 
 .. _Application of forcing: ../notebooks/issues_forcing.ipynb
 .. _Change to CAFE60v1 bias correction scheme: ../notebooks/issues_bias.ipynb
 .. _Changes to MOM executable: ../notebooks/issues_executable.ipynb
 .. _Changes to model timesteps: ../notebooks/issues_timestep.ipynb
+.. _Incorrect units: ../notebooks/issues_units.ipynb
