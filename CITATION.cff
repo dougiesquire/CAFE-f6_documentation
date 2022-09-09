@@ -1,13 +1,12 @@
 cff-version: 1.2.0
-title: >-
-  Documentation of the CAFE-f6 decadal climate
-  forecasts
+
 message: >-
   If you use the CAFE-f6 dataset or any of the
   contents of this repository, please cite it using
   the metadata from this file.
-type: software
-doi: TODO
+title: >-
+  Documentation of the CAFE-f6 decadal climate
+  forecasts
 authors:
   - given-names: Dougal T.
     family-names: Squire
@@ -60,3 +59,7 @@ authors:
   - given-names: Carly R.
     family-names: Tozer
     affiliation: CSIRO Oceans & Atmosphere
+date-released: 2022-09-13
+doi: TODO
+type: software
+url: "https://github.com/dougiesquire/CAFE-f6_documentation"
