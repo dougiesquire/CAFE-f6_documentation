@@ -21,9 +21,9 @@ In these pages, we describe and demonstrate a number of issues with the CAFE-f6 
 
 - `Changes to MOM executable`_ - Changes to the CAFE-f6 ocean model executable were made while the CAFE-f6 dataset was being generated that impact the reproducibility of some of the May-initialised forecasts. Users are encouraged to review which forecasts are reproducible. A simple way to avoid this issue altogether is to use only the November-initialised forecasts, as is done in the :ref:`Skill assessment <Assessment>` section of this documentation.
 
-- `Changes to model timesteps`_ - Changes to the atmospheric model timestep for some ensemble members of some forecasts produced unexpected drift in those forecasts. Users are encouraged to use only forecasts that have an atmospheric timestep of 1800 s. A mask for these forecasts can be found at `/g/data/xv83/dcfp/CAFE-f6/CAFE-f6_dt_atmos.nc`.
+- `Changes to model timesteps`_ - Changes to the atmospheric model timestep for some ensemble members of some forecasts produced unexpected drift in those forecasts. Users are encouraged to use only forecasts that have an atmospheric timestep of 1800 s. A mask for these forecasts can be found at :code:`/g/data/xv83/dcfp/CAFE-f6/CAFE-f6_dt_atmos.nc`.
 
-- `Incorrect units`_ - During the conversion from raw model output to zarr format, units were incorrectly assigned to the `"precip"` and `"evap"` variables in `atmos_isobaric_month.zarr.zip` files. Users should correct these data prior to analysis by normalising them by the number of days in each month.
+- `Incorrect units`_ - During the conversion from raw model output to zarr format, units were incorrectly assigned to the :code:`"precip"` and :code:`"evap"` variables in :code:`atmos_isobaric_month.zarr.zip` files. Users should correct these data prior to analysis by normalising them by the number of days in each month.
 
 .. _Application of forcing: ../notebooks/issues_forcing.ipynb
 .. _Change to CAFE60v1 bias correction scheme: ../notebooks/issues_bias.ipynb

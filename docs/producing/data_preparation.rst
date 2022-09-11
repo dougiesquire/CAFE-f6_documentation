@@ -5,7 +5,7 @@ Data preparation
 Configuration files
 -------------------
 
-Steps for preparing the various datasets used in this documentation are specified in yaml files stored in ``config/prepare_data``. Here is an example config yaml file for preparing annual precipitation and its anomalies for the CAFE-f6 hindcasts/forecasts:
+Steps for preparing the various datasets used in this documentation are specified in yaml files stored in :code:`config/prepare_data`. Here is an example config yaml file for preparing annual precipitation and its anomalies for the CAFE-f6 hindcasts/forecasts:
 
 .. code-block:: yaml
 
@@ -64,7 +64,7 @@ Steps for preparing the various datasets used in this documentation are specifie
            lat: 10
            lon: 12
 
-Code for preparing data from a specified yaml file is in ``src/prepare_data.py``:
+Code for preparing data from a specified yaml file is in :code:`src/prepare_data.py`:
 
 .. code-block:: console
 
@@ -90,7 +90,7 @@ To prepare a particular dataset, run:
 
    make data config=<name-of-config>
 
-This will submit a batch job to prepare all of the diagnositics specified in ``config/prepare_data/<name-of-config>``. An output file (named ``data_<name-of-config>.o????????``) for this batch job will be written to the current directory once this job is complete. Alternatively, users can process multiple datasets in multiple jobs with:
+This will submit a batch job to prepare all of the diagnositics specified in :code:`config/prepare_data/<name-of-config>`. An output file (named :code:`data_<name-of-config>.o????????`) for this batch job will be written to the current directory once this job is complete. Alternatively, users can process multiple datasets in multiple jobs with:
 
 .. code-block:: console
 
@@ -108,7 +108,7 @@ Adding a new dataset for preparation
 
 There are a few steps to adding a new dataset.
 
-#. Add a step to the 'data' trigger within ``Makefile`` symlinking the location of the data in ``data/raw``. (This is really just to keep things tidy/easily-traceable.)
-#. Add a new, appropriately-named, method to ``src/prepare_data._open``. Choose a name that uniquely identifies the dataset being added, e.g. "JRA55".
-#. Prepare a config file for the new dataset. This file can be named anything, however, the 'name' key must match the name of the new method added in 2. Functions for executing new steps should be added to ``src/utils.py``.
-#. Add the new config file to the list of default configs to process (variable ``data_config``) in ``Makefile``
+#. Add a step to the 'data' trigger within :code:`Makefile` symlinking the location of the data in :code:`data/raw`. (This is really just to keep things tidy/easily-traceable.)
+#. Add a new, appropriately-named, method to :code:`src/prepare_data._open`. Choose a name that uniquely identifies the dataset being added, e.g. "JRA55".
+#. Prepare a config file for the new dataset. This file can be named anything, however, the "name" key must match the name of the new method added in 2. Functions for executing new steps should be added to :code:`src/utils.py`.
+#. Add the new config file to the list of default configs to process (variable :code:`data_config`) in :code:`Makefile`

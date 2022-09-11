@@ -54,20 +54,20 @@ This documentation was generated using `Sphinx <https://www.sphinx-doc.org/en/ma
    └── README.md
 
 
-Using `make`
-------------
+Using :code:`make`
+------------------
 
 Key steps for getting set up and processing the data are handled using `GNU make <https://www.gnu.org/software/make/>`_. From the root directory of this repository:
 
-#. ``make environment`` creates the python environment or updates it if it exists.
-#. ``make data`` prepares the raw data (in ``data/raw``) for subsequent analysis. The prepared data are stored in ``data/processed``. See :ref:`Data preparation`.
-#. ``make skill`` calculates the skill metrics from the processed data. See :ref:`Calculating skill metrics`.
-#. ``make docs`` rebuilds this documentation.
-#. ``make clean`` cleans up unneeded files and directories.
-#. ``make lint`` runs ``black`` and ``flake8`` on ``src``.
+#. :code:`make environment` creates the python environment or updates it if it exists.
+#. :code:`make data` prepares the raw data (in :code:`data/raw`) for subsequent analysis. The prepared data are stored in :code:`data/processed`. See :ref:`Data preparation`.
+#. :code:`make skill` calculates the skill metrics from the processed data. See :ref:`Calculating skill metrics`.
+#. :code:`make docs` rebuilds this documentation.
+#. :code:`make clean` cleans up unneeded files and directories.
+#. :code:`make lint` runs `black <https://github.com/psf/black>`_ and `flake8 <https://github.com/PyCQA/flake8>`_ on :code:`src`.
 
 
 Code documentation
 ------------------
 
-All the Python code used to carry out the analyses presented in this documentation is contained in a Python package `src` which is installed when the analysis environment is set up. `src` contains submodules for data preparation, verification, utilities and plotting. Auto-generated API reference documentation for `src` and its submodules has been auto-generated and is available at :ref:`API reference <API>`. 
+All the Python code used to carry out the analyses presented in this documentation is contained in a Python package :code:`src` which is installed when the analysis environment is set up. :code:`src` contains submodules for data preparation, verification, utilities and plotting. Auto-generated API reference documentation for :code:`src` and its submodules has been auto-generated and is available at :ref:`API reference <API>`. 
