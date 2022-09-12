@@ -37,7 +37,7 @@ Currently, CAFE-f6 data are only available to users of Australia's National Comp
   forecast_path = "/g/data/xv83/dcfp/CAFE-f6/c5-d60-pX-f6-20201101/ocean_month.zarr.zip"
   ds = xr.open_dataset(forecast_path, engine="zarr")
   
-Or to open and stack all CAFE-f6 monthly ocean forecasts for analysis:
+Or to open and stack all CAFE-f6 monthly ocean forecasts for analysis (note, the following code opens, but doesn't load, almost 400 TB of data in a matter of seconds thanks to the magic of xarray + dask + zarr):
 
 .. code-block:: python
 
@@ -46,9 +46,8 @@ Or to open and stack all CAFE-f6 monthly ocean forecasts for analysis:
 
   def convert_time_to_lead(ds):
       """
-      Return provided xarray object with time dimension converted to
-      initial/lead time dimensions and time added as additional
-      coordinate
+      Return provided xarray object with time dimension converted to initial/lead time
+      dimensions and time added as additional coordinate
 
       Parameters
       ----------
@@ -83,8 +82,6 @@ Or to open and stack all CAFE-f6 monthly ocean forecasts for analysis:
       engine="zarr",
       parallel=True,
   )
-
-The above code opens (but doesn't load) almost 400 TB of data in a matter of seconds thanks to the magic of xarray + dask + zarr.
 
 .. note::
    The above code blocks will only work for members of the xv83 project.
