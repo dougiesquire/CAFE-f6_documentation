@@ -37,8 +37,57 @@ Currently, CAFE-f6 data are only available to users of Australia's National Comp
   forecast_path = "/g/data/xv83/dcfp/CAFE-f6/c5-d60-pX-f6-20201101/ocean_month.zarr.zip"
   ds = xr.open_dataset(forecast_path, engine="zarr")
   
+Or to open and stack all CAFE-f6 monthly ocean forecasts for analysis:
+
+.. code-block:: python
+
+  import xarray as xr
+
+
+  def convert_time_to_lead(ds):
+      """
+      Return provided xarray object with time dimension converted to
+      initial/lead time dimensions and time added as additional
+      coordinate
+
+      Parameters
+      ----------
+      ds : xarray Dataset
+          A dataset with a time dimension
+      """
+      init_date = ds["time"][0].item()
+      freq = xr.infer_freq(ds["time"])
+      lead_time = range(len(ds["time"]))
+      time_coord = (
+          ds["time"]
+          .rename({"time": "lead"})
+          .assign_coords({"lead": lead_time})
+          .expand_dims({"init": [init_date]})
+      ).compute()
+      dataset = ds.rename({"time": "lead"}).assign_coords(
+          {"lead": lead_time, "init": [init_date]}
+      )
+      dataset = dataset.assign_coords({"time": time_coord})
+      dataset["lead"].attrs["units"] = freq
+      return dataset
+
+
+  forecast_dir = "/g/data/xv83/dcfp/CAFE-f6"
+  realm = "ocean_month"
+  
+  ds = xr.open_mfdataset(
+      f"{forecast_dir}/c5-d60-pX-f6-*/{realm}.zarr.zip",
+      preprocess=convert_time_to_lead,
+      compat="override",
+      coords="minimal",
+      engine="zarr",
+      parallel=True,
+  )
+
+The above code opens (but doesn't load) almost 400 TB of data in a matter of seconds thanks to the magic of xarray + dask + zarr.
+
 .. note::
-   This will only work for members of the xv83 project.
+   The above code blocks will only work for members of the xv83 project.
 
 
 Citing the data
