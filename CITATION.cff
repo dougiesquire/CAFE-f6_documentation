@@ -63,6 +63,9 @@ authors:
   - given-names: Carly R.
     family-names: Tozer
     affiliation: CSIRO Oceans & Atmosphere
+  - given-names: Ian
+    family-names: Watterson
+    affiliation: CSIRO Oceans & Atmosphere
 date-released: 2022-09-13
 doi: TODO
 type: software
