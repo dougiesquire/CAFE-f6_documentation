@@ -66,7 +66,7 @@ authors:
   - given-names: Ian
     family-names: Watterson
     affiliation: CSIRO Oceans & Atmosphere
-date-released: 2022-09-13
-doi: TODO
+date-released: 2022-09-14
+doi: 10.5281/zenodo.7077359
 type: software
 url: "https://github.com/dougiesquire/CAFE-f6_documentation"
