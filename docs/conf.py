@@ -48,6 +48,14 @@ html_logo = "_static/CAFE_light.png"
 html_theme_options = {
     "use_edit_page_button": True,
     "github_url": "https://github.com/dougiesquire/CAFE-f6_documentation",
+    "icon_links": [
+        {
+            "name": "Cite",
+            "url": "https://github.com/dougiesquire/CAFE-f6_documentation/blob/main/CITATION.cff",
+            "icon": "fa-solid fa-quote-right",
+            "type": "fontawesome",
+        },
+    ],
     "logo": {
         "image_light": "CAFE_light.png",
         "image_dark": "CAFE_dark.png",
