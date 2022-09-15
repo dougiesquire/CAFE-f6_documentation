@@ -35,7 +35,7 @@ Currently, CAFE-f6 data are only available to users of Australia's National Comp
   import xarray as xr
   
   forecast_path = "/g/data/xv83/dcfp/CAFE-f6/c5-d60-pX-f6-20201101/ocean_month.zarr.zip"
-  ds = xr.open_dataset(forecast_path, engine="zarr")
+  ds = xr.open_dataset(forecast_path, engine="zarr", chunks={})
   
 Or to open and stack all CAFE-f6 monthly ocean forecasts for analysis (note, the following code opens, but doesn't load, almost 400 TB of data in a matter of seconds thanks to the magic of xarray + dask + zarr):
 
